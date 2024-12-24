@@ -33,14 +33,15 @@ const AllMessages = () => {
 
   useEffect(() => {
     if(data){
-      setAllUsers(data);
+      const filteredData = data.filter(user => user.id !== userData?.id)
+      setAllUsers(filteredData);
     }else{
       setAllUsers(null);
     }
   }, [data])
 
   useEffect(() => {
-    console.log("messenger filter changed, so change users filtered");
+    // console.log("messenger filter changed, so change users filtered");
     
   }, [messengerPeopleFilter])
   

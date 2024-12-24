@@ -2,7 +2,6 @@ import apiClient from "./apiClient";
 import { currentUserID, logout, refresh } from "./authService";
 import { isTokenExpired, getAccessToken, getRefreshToken } from "./secureStorage";
 
-
 export const userDetails = async () => {
     try {
         const userID = await currentUserID();
@@ -17,3 +16,4 @@ export const userDetails = async () => {
     // const token = await getAccessToken();
     // const refreshToken = await getRefreshToken();
 }
+

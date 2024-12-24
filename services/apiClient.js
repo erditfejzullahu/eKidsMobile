@@ -4,7 +4,7 @@ import { logout, refresh } from './authService';
 import { Alert } from 'react-native';
 import NotifierComponent from '../components/NotifierComponent';
 
-const API_URL = 'http://192.168.1.3:7051/'
+const API_URL = 'http://192.168.1.9:7051/'
 
 const apiClient = axios.create({
     baseURL: API_URL,

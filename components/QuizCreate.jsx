@@ -48,6 +48,7 @@ const QuizCreate = ({quizDetails, sendSuccess}) => {
                 successQuiz()
                 sendSuccess(true)
                 setQuizForm({})
+                setQuizParents([1])
                 setQuizAnswersQuantity({
                     "parent_1": [1,2,3]
                 })

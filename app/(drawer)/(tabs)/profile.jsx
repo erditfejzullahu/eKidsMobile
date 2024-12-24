@@ -214,6 +214,7 @@ const profile = () => {
     // console.log(base64Data);
     
     const userId = await currentUserID();
+    
     const formattedBase64 = `${base64Data.type}${base64Data.base64}`;
     // console.log(formattedBase64);
     

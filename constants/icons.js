@@ -61,6 +61,8 @@ import documents from "../assets/icons/google-docs.png"
 import info from "../assets/icons/info.png"
 import infoFilled from "../assets/icons/info-filled.png"
 import eyes from "../assets/icons/eyes.png"
+import tryAgain from "../assets/icons/tryAgain.png"
+import failedQuiz from "../assets/icons/failedQuiz.png"
 
 export default {
   play,
@@ -125,5 +127,7 @@ export default {
   documents,
   info,
   infoFilled,
-  eyes
+  eyes,
+  tryAgain,
+  failedQuiz
 };

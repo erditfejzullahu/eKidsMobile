@@ -328,6 +328,7 @@ export const getAllQuizzes = async (filters) => {
 
         if(filters.orderBy) queryParams.orderBy = filters.orderBy;
         if(filters.categoryId) queryParams.categoryId = filters.categoryId;
+        if(filters.userId) queryParams.userId = filters.userId
 
         const queryString = new URLSearchParams(queryParams).toString();
 
@@ -335,6 +336,16 @@ export const getAllQuizzes = async (filters) => {
         return response ? response.data : null;
     } catch (error) {
         console.error(error);
+        return null;
+    }
+}
+
+export const getQuizById = async (id) => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/Quizzes/${id}?userId=${userId}`)
+        return response ? response.data : null
+    } catch (error) {
         return null;
     }
 }
@@ -379,6 +390,65 @@ export const fetchAllComments = async (sender, receiver, filters) => {
         return response ? response.data : null;
     } catch (error) {
         console.error(error);
+        return null;
+    }
+}
+
+export const getQuizzesCount = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/Quizzes/CountQuizzes/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        console.error(error);
+        return null
+    }
+}
+
+export const reqCreateMistake = async (data) => {
+    try {
+        const response = await apiClient.patch(`/api/QuizzesCompleted/UpdateQuizMistakes/`, data)
+        return response ? response.status : null
+    } catch (error) {
+        console.error(error);
+        return null
+    }
+}
+
+export const reqStartQuizCompletation = async (data) => {
+    try {
+        const response = await apiClient.post(`/api/QuizCompletation/`, data)
+        return response ? response.status : null
+    } catch (error) {
+        return error.response.status
+    }
+}
+
+export const reqQuizCompleted = async (data) => {
+    try {
+        const response = await apiClient.patch(`/api/QuizCompletation/`, data)
+        return response ? response.status : null
+    } catch (error) {
+        console.error(error.response.data);
+        return error.response.status;
+    }
+}
+
+export const getUserQuizzesCreated = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/Quizzes/UserQuizInfo/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
+export const reqGetStatusQuiz = async (quizId) => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/QuizzesCompletation/GetStatusQuizz/${userId}/${quizId}`)
+        return response ? response.data : null
+    } catch (error) {
+        console.error(error, ' asd');
         return null;
     }
 }

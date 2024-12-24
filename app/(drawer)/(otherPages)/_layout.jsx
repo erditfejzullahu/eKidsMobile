@@ -6,12 +6,12 @@ import Topbar from '../../../components/Topbar'
 const _layout = ({children}) => {
   return (
     <>
-    <Stack>
-      {/* <Stack.Screen name="index" options={{ title: 'Home' }} /> */}
+    {/* E para i specifikon krejt options jon per krejt e edyta specifikim per secilin file... */}
+    <Stack screenOptions={{gestureEnabled: true, headerShown: false}}></Stack>
+    {/* <Stack>
       <Stack.Screen name="all-quizzes" options={{ headerShown: false }} />
       <Stack.Screen name="my-quizzes" options={{headerShown: false}} />
-      {/* Add more screens here as needed */}
-    </Stack>
+    </Stack> */}
     {children}
     </>
   )

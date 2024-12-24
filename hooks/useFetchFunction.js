@@ -1,6 +1,5 @@
-import { View, Text } from 'react-native'
-import React, {useEffect, useState} from 'react'
-import apiClient from '../services/apiClient';
+import {useEffect, useState} from 'react'
+import { useRouter } from 'expo-router';
 
 const useFetchFunction = (fn) => {
     const [data, setData] = useState([])
@@ -29,5 +28,25 @@ const useFetchFunction = (fn) => {
     return { data, refetch, isLoading }
     
 }
+
+export const navigateToMessenger = (otherUserData, currentUserData) => {
+  const router = useRouter();
+  if(!otherUserData || !currentUserData) return console.log('Missing details');
+
+  router.replace({
+      pathname: `(messenger)/${otherUserData?.id}`,
+      params: {
+          receiverFirstname: otherUserData.firstname,
+          receiverUsername: otherUserData.username,
+          receiverLastname: otherUserData.lastname,
+          receiverProfilePic: otherUserData.profilePictureUrl,
+          currentUserFirstName: currentUserData.firstname,
+          currentUserLastname: currentUserData.lastname,
+          currentUserProfilePic: currentUserData.profilePictureUrl,
+          currentUserUsername: currentUserData.username,
+      }
+  })
+}
+
 
 export default useFetchFunction

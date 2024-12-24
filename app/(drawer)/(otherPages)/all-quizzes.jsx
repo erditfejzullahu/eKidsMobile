@@ -13,20 +13,21 @@ import EmptyState from '../../../components/EmptyState'
 
 
 const AllQuizzes = () => {
+  const {user, isLoading} = useGlobalContext();
+  const userCategories = user?.data?.categories;  
   const [showModal, setShowModal] = useState(true)
   const [openCategories, setOpenCategories] = useState(false)
   const [quizesData, setQuizesData] = useState(null)
   const [queryParams, setQueryParams] = useState({
     orderBy: '',
-    categoryId: ''
+    categoryId: '',
+    userId: user?.data?.userData?.id
   })
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(queryParams))
 
 
-  const {user, isLoading} = useGlobalContext();
-  const userCategories = user?.data?.categories;  
 
   const sortQuizes = (data) => {
     console.log(data);

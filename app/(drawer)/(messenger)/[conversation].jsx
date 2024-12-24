@@ -144,7 +144,7 @@ const Conversation = () => {
             console.log("TOKEN: ", token);
             
             const newConnection = new SignalR.HubConnectionBuilder()
-              .withUrl('http://192.168.1.3:7051/chatHub', {
+              .withUrl('http://192.168.1.9:7051/chatHub', {
                 headers: {
                     "Authorization": "Bearer " + token
                 }
@@ -332,6 +332,8 @@ const Conversation = () => {
         try {
             const response = await apiClient.get(`/api/Conversations/${conversation?.currentUserUsername}/${conversation?.receiverUsername}?page=${fixPagination.page}&pageSize=${fixPagination.pageSize}`)
             if(response.data){
+                console.log(response.data, ' addOlderData');
+                
                 if(messages){
                     setMessages((prevMessages) => [...prevMessages, ...response.data])
                 }else{
@@ -345,7 +347,7 @@ const Conversation = () => {
     
     useEffect(() => {
         if(fixPagination.page > 1){
-            // addOlderData();
+            addOlderData();
         }
     }, [fixPagination])
     //shtim i meszheve tvjetra
