@@ -33,11 +33,18 @@ export const getCourseCategories = (categories, categoryID) => {
     }
 }
 
-export const fetchCategories = async (param, sort) => {
-    // console.log(param);
-    
+export const fetchCategories = async (filters) => {
     try {
-        const response = await apiClient.get(`/getCategories?name=${param}&sortOrder=${sort?.emri}`)
+        const queryParams = {}
+
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
+
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/getCategories?${queryString}`)
         // console.log(response.data, 'asd??');
         
         return response ? response.data : null
@@ -47,14 +54,20 @@ export const fetchCategories = async (param, sort) => {
     }
 }
 
-export const fetchCategory = async (id, search, sort) => {
-    
+export const fetchCategory = async (filters) => {
     try {
-        // console.log(search, sort, ' AAAAAa');
-        const response = await apiClient.get(`/getCoursesP?page=1&pageSize=10&searchParam=${search}&sortOrder=${sort?.emri}&categoryId=${id}`)
-        // console.log(response.data);
+        const queryParams = {}
         
-        return response ? {pagination: response.data, data: response.data.courses} : null
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/getCoursesP?${queryString}`)
+        console.log(response.data);
+        
+        return response ? response.data : null
     } catch (error) {
         return null;
         // console.error(error);
@@ -326,12 +339,15 @@ export const getAllQuizzes = async (filters) => {
     try {
         const queryParams = {}
 
-        if(filters.orderBy) queryParams.orderBy = filters.orderBy;
-        if(filters.categoryId) queryParams.categoryId = filters.categoryId;
-        if(filters.userId) queryParams.userId = filters.userId
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
 
         const queryString = new URLSearchParams(queryParams).toString();
-
+        console.log(queryString);
+        
         const response = await apiClient.get(`/api/Quizzes/GetAll?${queryString}`)
         return response ? response.data : null;
     } catch (error) {
@@ -355,10 +371,18 @@ export const getAllQuizzesByUser = async (filters) => {
         const userId = await currentUserID();
         const queryParams = {}
 
-        if(filters.orderBy) queryParams.orderBy = filters.orderBy;
-        if(filters.categoryId) queryParams.categoryId = filters.categoryId;
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
+
+        // if(filters.SortByName) queryParams.SortByName = filters.SortByName;
+        // if(filters.categoryId) queryParams.categoryId = filters.categoryId;
 
         const queryString = new URLSearchParams(queryParams).toString();
+        console.log(queryString);
+        
         const response = await apiClient.get(`/api/Quizzes/GetByUser/${userId}?${queryString}`)
         return response ? response.data : null;
     } catch (error) {
@@ -449,6 +473,16 @@ export const reqGetStatusQuiz = async (quizId) => {
         return response ? response.data : null
     } catch (error) {
         console.error(error, ' asd');
+        return null;
+    }
+}
+
+export const increaseViewCount = async (id, postType) => {
+    try {
+        const response = await apiClient.post(`/api/Count/increment/${id}?postType=${postType}`)
+        return response ? response.status : null
+    } catch (error) {
+        console.error(error);
         return null;
     }
 }

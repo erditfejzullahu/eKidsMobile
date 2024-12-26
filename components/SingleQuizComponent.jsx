@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Platform, TouchableOpacity, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useGlobalContext } from '../context/GlobalProvider';
-import { getCourseCategories, reqGetStatusQuiz, reqStartQuizCompletation } from '../services/fetchingService';
+import { getCourseCategories, increaseViewCount, reqGetStatusQuiz, reqStartQuizCompletation } from '../services/fetchingService';
 import * as Animatable from "react-native-animatable"
 import CustomModal from './Modal';
 import { icons } from '../constants';
@@ -38,6 +38,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) 
           "userId": userData?.id,
           "quizId": quizData?.id
         }
+        await increaseViewCount(quizData?.id, 'quiz')
         const response = await reqStartQuizCompletation(payload)
         if(response === 200){
           successNotification();
@@ -55,7 +56,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) 
 
   return (
     <View className="mt-4 mb-4" style={styles.box}>
-            <TouchableOpacity onPress={allQuizzes ? handleQuizStart : router.push(`/quiz/${quizData?.id}`)}>
+            <TouchableOpacity onPress={allQuizzes ? handleQuizStart : () => router.push(`/quiz/${quizData?.id}`)}>
               <View className="border border-black-200 bg-oBlack p-4 relative">
                   <Text className="text-white font-psemibold text-lg">{quizData?.quizName}</Text>
                   <Text className="text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>

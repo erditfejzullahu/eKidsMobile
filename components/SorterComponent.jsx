@@ -42,14 +42,14 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                 {
                     id: 1,
                     name: "Së fundmi",
-                    param: "latest",
+                    param: "desc",
                     selIcon: "latest",
                     ticked: false,
                 },
                 {
                     id: 2,
                     name: "Së pari",
-                    param: "oldest",
+                    param: "asc",
                     selIcon: "oldest",
                     ticked: false,
                 }
@@ -64,14 +64,14 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                 {
                     id: 1,
                     name: "Më së shumti",
-                    param: "popular",
+                    param: "asc",
                     selIcon: "morePopular",
                     ticked: false
                 },
                 {
                     id: 2,
                     name: "Më së paku",
-                    param: "lesspopular",
+                    param: "desc",
                     selIcon: "lessPopular",
                     ticked: false,
                 }

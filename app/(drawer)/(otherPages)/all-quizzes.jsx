@@ -10,7 +10,7 @@ import { getAllQuizzes } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
 import SingleQuizComponent from '../../../components/SingleQuizComponent'
 import EmptyState from '../../../components/EmptyState'
-
+import { initialFilterData } from '../../../services/filterConfig'
 
 const AllQuizzes = () => {
   const {user, isLoading} = useGlobalContext();
@@ -18,26 +18,24 @@ const AllQuizzes = () => {
   const [showModal, setShowModal] = useState(true)
   const [openCategories, setOpenCategories] = useState(false)
   const [quizesData, setQuizesData] = useState(null)
-  const [queryParams, setQueryParams] = useState({
-    orderBy: '',
-    categoryId: '',
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData,
     userId: user?.data?.userData?.id
   })
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(queryParams))
-
-
+  const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(filterData))
 
   const sortQuizes = (data) => {
-    console.log(data);
-    
+    if(data.emri !== null) setFilterData((prevData) => ({...prevData, sortByName: "QuizName", sortNameOrder: data.emri}));
+    if(data.data !== null) setFilterData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
+    if(data.shikime !== null) setFilterData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
   }
 
   
 
   const filterQuizes = (category) => {    
-    setQueryParams((prevValues) => ({
+    setFilterData((prevValues) => ({
       ...prevValues,
       categoryId: category.CategoryID
     }))
@@ -54,17 +52,21 @@ const AllQuizzes = () => {
 
   useEffect(() => {
     refetch();
-  }, [queryParams])
+  }, [filterData])
   
 
   const onRefresh = () => {
     setIsRefreshing(true)
-
-      setQueryParams({
-        orderBy: "",
-        categoryId: ""
-      })
-
+    setFilterData((prevData) => ({
+      ...prevData,
+      sortByName: '',
+      sortNameOrder: '',
+      sortByDate: '',
+      sortDateOrder: '',
+      sortByPopular: '',
+      sortPopularOrder: '',
+      categoryId: '',
+    }))
     setIsRefreshing(false)
   }
 
@@ -89,7 +91,7 @@ const AllQuizzes = () => {
       ListHeaderComponent={() => (
         <>
         <View className="my-4">
-          <Text className="text-2xl text-white font-pmedium">Te gjitha kurset
+          <Text className="text-2xl text-white font-pmedium">Te gjitha kuizet
             <View>
               <Image
                 source={images.path}

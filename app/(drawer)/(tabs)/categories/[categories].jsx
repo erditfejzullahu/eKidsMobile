@@ -13,6 +13,7 @@ import CustomButton from '../../../../components/CustomButton';
 import { useFocusEffect } from 'expo-router';
 import {useGlobalContext} from '../../../../context/GlobalProvider'
 import SorterComponent from '../../../../components/SorterComponent'
+import { initialFilterData } from '../../../../services/filterConfig';
 
 const categories = () => {
   const { categories } = useLocalSearchParams();
@@ -20,7 +21,9 @@ const categories = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [allData, setAllData] = useState([])
   const [sortingData, setSortingData] = useState({
-    searchData: '',
+    ...initialFilterData,
+    categoryId: categories,
+    searchParam: '',
   })
 
   const {user} = useGlobalContext(); //show category information no matter what
@@ -43,7 +46,25 @@ const categories = () => {
     }
   }
   
+  const updateSearchData = (data) => {
+    setSortingData((prevData) => ({
+      ...prevData,
+      searchParam: data
+    }))
+  }
+  
   const onRefresh = async () => {
+    setSortingData((prevData) => ({
+      ...prevData,
+      sortByName: '',
+      sortNameOrder: '',
+      sortByDate: '',
+      sortDateOrder: '',
+      sortByPopular: '',
+      sortPopularOrder: '',
+      categoryId: '',
+      searchParam: ''
+    }))
     await getCategories()
   }
 
@@ -53,9 +74,8 @@ const categories = () => {
     setRefreshing(true)
     try {
       const response = (categories === 'all' || categories === undefined)
-        ? await fetchCategories('', null)
-        : await fetchCategory(categories, '', null)
-
+        ? await fetchCategories(sortingData)
+        : await fetchCategory(sortingData)
         
         if(categories === 'all' || categories === undefined){
           const remDuplicates = Array.from(
@@ -73,6 +93,23 @@ const categories = () => {
       setRefreshing(false)
     }
   }
+
+  const sortCategories = (data) => {
+    if(categories === 'all' || categories === undefined){
+      if(data.emri !== null) setSortingData((prevData) => ({...prevData, sortByName: "CategoryName", sortNameOrder: data.emri}));
+    }else{
+      if(data.emri !== null) setSortingData((prevData) => ({...prevData, sortByName: "CourseName", sortNameOrder: data.emri}));
+    }
+    
+    if(data.data !== null) setSortingData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
+    if(data.shikime !== null) setSortingData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
+  }
+
+
+  useEffect(() => {
+    getCategories();
+  }, [sortingData])
+  
 
   // useEffect(() => {
   //   console.log(categories, " categorieseasd");
@@ -113,7 +150,7 @@ const categories = () => {
           <View className="mt-6 pb-5 border-b border-black-200">
             <SearchInput 
                 // value={searchInput.searchData}
-                searchFunc={(searchData) => searchFunction(searchData)}
+                searchFunc={updateSearchData}
                 placeholder={"Shkruani këtu kategorinë tuaj të dëshiruar"}
                 keyboardType="email-address"
                 valueData={sortingData.searchData}
@@ -122,7 +159,7 @@ const categories = () => {
           <View className="mt-6 overflow-hidden">
             <SorterComponent 
               showSorter={true}
-              sortButton={(sortData) => searchFunction(sortingData.searchData, sortData)}
+              sortButton={sortCategories}
             />
           </View>
         </View>
@@ -173,7 +210,7 @@ const categories = () => {
           :
           <FlatList 
           className="h-full"
-            data={allData?.data || []}
+            data={allData || []}
             keyExtractor={(item) => item?.id.toString() || ''}
             renderItem={({item}) => (
               <FilteredCourses 

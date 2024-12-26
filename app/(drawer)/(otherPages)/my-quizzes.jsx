@@ -9,9 +9,11 @@ import SingleQuizComponent from '../../../components/SingleQuizComponent'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getAllQuizzesByUser } from '../../../services/fetchingService'
 import CustomModal from '../../../components/Modal'
-
+import { initialFilterData } from '../../../services/filterConfig'
 
 const MyQuizzes = () => {
+    const {user, isLoading} = useGlobalContext();
+    const userCategories = user?.data?.categories;  
 
     const [openCategories, setOpenCategories] = useState(false)
     const [yourQuizzesData, setYourQuizzesData] = useState(null)
@@ -19,8 +21,8 @@ const MyQuizzes = () => {
     const [deleteModalVisible, setDeleteModalVisible] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [filterData, setFilterData] = useState({
-        orderBy: '',
-        categoryId: ''
+        ...initialFilterData,
+        userId: user?.data?.userData?.id
     })
 
 
@@ -29,17 +31,25 @@ const MyQuizzes = () => {
 
     const {data, isLoading: quizloading, refetch} = useFetchFunction(() => getAllQuizzesByUser(filterData))
 
-    const {user, isLoading} = useGlobalContext();
-    const userCategories = user?.data?.categories;  
 
     const sortQuizzes = (data) => {
-        console.log(data);
-        
+        if(data.emri !== null) setFilterData((prevData) => ({...prevData, sortByName: "QuizName", sortNameOrder: data.emri}));
+        if(data.data !== null) setFilterData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
+        if(data.shikime !== null) setFilterData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
     }
 
     const onRefresh = async () => {
         setIsRefreshing(true)
-        await refetch();
+            setFilterData((prevData) => ({
+                ...prevData,
+                sortByName: '',
+                sortNameOrder: '',
+                sortByDate: '',
+                sortDateOrder: '',
+                sortByPopular: '',
+                sortPopularOrder: '',
+                categoryId: '',
+            }))
         setIsRefreshing(false)
     }
 
@@ -112,7 +122,7 @@ const MyQuizzes = () => {
                     ListHeaderComponent={() => (
                         <>
                         <View className="my-4">
-                            <Text className="text-2xl text-white font-pmedium">Kurset e mia
+                            <Text className="text-2xl text-white font-pmedium">Kuizet e mia
                                 <View>
                                 <Image
                                     source={images.path}
