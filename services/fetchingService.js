@@ -1,13 +1,18 @@
 import apiClient from "./apiClient";
 import { currentUserID } from "./authService";
 
-export const fetchCourses = async (page, pageSize, searchParam, sort) => {
+export const fetchCourses = async (filters) => {
     try {        
-        // console.log(sort);
+        const queryParams = {}
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
+        const queryString = new URLSearchParams(queryParams).toString()
+        console.log(queryString);
         
-        const response = await apiClient.get(`getCoursesP?page=${page}&pageSize=${pageSize}&searchParam=${searchParam}&sortOrder=${sort?.emri}`)
-        // console.log(response.data);
-        
+        const response = await apiClient.get(`/getCoursesP?${queryString}`)
         return response.data;
     } catch (error) {
         console.error(error);

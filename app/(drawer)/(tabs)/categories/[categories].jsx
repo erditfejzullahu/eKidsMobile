@@ -56,6 +56,8 @@ const categories = () => {
   const onRefresh = async () => {
     setSortingData((prevData) => ({
       ...prevData,
+      pageNumber: 1,
+      pageSize: 15,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -78,12 +80,15 @@ const categories = () => {
         : await fetchCategory(sortingData)
         
         if(categories === 'all' || categories === undefined){
-          const remDuplicates = Array.from(
-            new Set(response.map(item => item.CategoryID))
-          ).map(id => response.find(item => item.CategoryID === id)) // duplicate fix have to figure it out why is duplicating ??? response in postman good
-          setAllData(remDuplicates);
+          setAllData((prevData) => {
+            const existingIds = new Set(prevData.map((categories) => categories.CategoryID))
+            const removeDups = response.filter((category) => !existingIds.has(category.CategoryID))
+            return [...prevData, ...removeDups]
+          });
         }else{
           setAllData(response);
+          console.log(response);
+          
         }
         
     } catch (error) {

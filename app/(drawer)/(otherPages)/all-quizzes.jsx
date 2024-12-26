@@ -59,6 +59,8 @@ const AllQuizzes = () => {
     setIsRefreshing(true)
     setFilterData((prevData) => ({
       ...prevData,
+      pageNumber: 1,
+      pageSize: 15,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',

@@ -13,6 +13,7 @@ import Loading from '../../../components/Loading'
 import CustomButton from '../../../components/CustomButton'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import SorterComponent from '../../../components/SorterComponent'
+import { initialFilterData } from '../../../services/filterConfig'
 
 const Home = () => {
 
@@ -25,104 +26,105 @@ const Home = () => {
 
   const [showSorter, setShowSorter] = useState(false)
   // const showSorter = useRef(false)
-  const [sortData, setSortData] = useState({
-    emri: '',
-    data: '',
-    shikime: '',
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData,
+    searchParam: ''
   })
 
   const [searchData, setSearchData] = useState('')
   const userData = user?.data?.userData;
   const categories = user?.data?.categories
 
-  const [buttonLoading, setButtonLoading] = useState(false)
-
+  const [buttonLoading, setButtonLoading] = useState(false)  
   const [dontRefresh, setDontRefresh] = useState(false)
-  
 
-  const { data: courses, refetch, isLoading } = useFetchFunction(() => fetchCourses(currentPage, 5, searchData, sortData))
+  const { data: courses, refetch, isLoading } = useFetchFunction(() => fetchCourses(filterData))
 
-  const onRefresh = useCallback(async (sortParam) => {
+  const onRefresh = async () => {
     setRefreshing(true)
     setCurrentPage(1);
     setAllCourses([]);
-    if(sortParam !== 'withParam'){
-      setSortData(null)
-      setSearchData("")
-    }
+
+    setFilterData((prevData) => ({
+      ...prevData,
+      pageNumber: 1,
+      pageSize: 15,
+      sortByName: '',
+      sortNameOrder: '',
+      sortByDate: '',
+      sortDateOrder: '',
+      sortByPopular: '',
+      sortPopularOrder: '',
+      categoryId: '',
+      searchParam: ''
+    }))
+
     await refetch();
-    // setShowLoadMore(true);
-    setDontRefresh(false)
     setRefreshing(false)
-  }, [sortData, refetch])
+  }
 
   const loadMoreCourses = () => {
-    
-    if (isLoading || currentPage >= courses?.totalPages) {
-      return
+    // setDontRefresh(true);
+    if(!showLoadMore){
+      return;
     }
-
-    if(courses?.totalPages >= currentPage){
-      setDontRefresh(true);
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-    
+    setFilterData((prevData) => ({
+      ...prevData,
+      pageNumber: parseInt(prevData.pageNumber) + 1
+    }))
+    console.log(filterData.pageNumber);
   }
 
-  const updateFilterData = useCallback((data) => {
-    setSortData(data)
-  }, [])
+  const updateFilterData = (data) => {
+    if(data.emri !== null) setFilterData((prevData) => ({...prevData, sortByName: "courseName", sortNameOrder: data.emri}));
+    if(data.data !== null) setFilterData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
+    if(data.shikime !== null) setFilterData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
+  }
 
   const searchFunction = (data) => {
-    setSearchData(data);
+    setFilterData((prevData) => ({
+      ...prevData,
+      searchParam: data
+    }))
   }
 
   useEffect(() => {
-    if (sortData) { 
-      onRefresh('withParam');
-    }
-  }, [sortData]);
-
-  useEffect(() => {
-    if(searchData){
-      onRefresh('withParam')
-    }
-  }, [searchData])
+    refetch();
+    console.log('u thirr');
+    
+  }, [filterData])
+  
   
 
   useEffect(() => {
-    
-    if(courses?.courses){
-      // console.log(courses);
-      
-      setAllCourses((prevCourses) => [
-        ...prevCourses,
-        ...courses.courses.filter(
-            (newCourse) => !prevCourses.some((prevCourse) => prevCourse.id === newCourse.id)
-        )
-      ]);
-      // console.log("lesson changed");
-    }
-    if(currentPage == courses?.totalPages){
-      setShowLoadMore(false);
+    if(courses){
+      // setAllCourses((prevData) => [...(prevData || []), ...courses])
+      // setAllCourses(courses)
+      if(showLoadMore){
+        setAllCourses((prevData) => {
+          const existingIds = new Set(prevData.map((course) => course.id))
+          const newCourses = courses.filter((course) => !existingIds.has(course.id))
+          return[...prevData, ...newCourses]
+        })
+      }else{
+        setAllCourses(courses)
+      }
     }else{
-      setShowLoadMore(true);
+      setShowLoadMore(false)
     }
-
-    setShowLoadMore(currentPage < courses?.totalPages);
   }, [courses])
 
-  useEffect(() => {
-    if(currentPage <= courses.totalPages){
-      setButtonLoading(true)
-      refetch();
-      setButtonLoading(false)
-    }
+  // useEffect(() => {
+  //   if(currentPage <= courses.totalPages){
+  //     setButtonLoading(true)
+  //     refetch();
+  //     setButtonLoading(false)
+  //   }
 
-    setShowLoadMore(currentPage < courses?.totalPages);
-    // console.log(currentPage, courses.totalPages);
+  //   setShowLoadMore(currentPage < courses?.totalPages);
+  //   // console.log(currentPage, courses.totalPages);
     
-  }, [currentPage])
+  // }, [currentPage])
   
 
   
@@ -134,13 +136,15 @@ const Home = () => {
     return (
       <View className="bg-primary h-full">
         <FlatList 
-          data={allCourses || []}
-          keyExtractor={(item) => item?.id?.toString() || ''}
+          data={allCourses}
+          keyExtractor={(item) => "courses-" + item?.id}
           renderItem={({ item }) => (
             <Courses 
               courses={item}
             />
           )}
+          onEndReached={loadMoreCourses}
+          onEndReachedThreshold={0}
           ListHeaderComponent={() => (
             <View className="my-6 px-4 space-y-6">
               <View className="justify-between items-start flex-row mb-6">
