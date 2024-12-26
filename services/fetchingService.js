@@ -494,12 +494,20 @@ export const increaseViewCount = async (id, postType) => {
 
 export const deleteQuizz = async (id) => {
     try {
-        const response = await apiClient.delete(`/api/Quizzes/${id}`)
-        console.log(id);
-        
+        const response = await apiClient.delete(`/api/Quizzes/${id}`)        
         return response ? response.status : null;
     } catch (error) {
         console.error(error);
         return error.response.status
+    }
+}
+
+export const getCompletedQuizzesByUser = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/QuizzesCompleted/GetByUser/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }

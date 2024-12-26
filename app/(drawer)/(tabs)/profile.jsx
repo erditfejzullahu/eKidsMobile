@@ -2,7 +2,7 @@ import { View, Text, Image, Alert, StyleSheet, RefreshControl, ActivityIndicator
 import React, {useState, useEffect} from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import { images, icons } from '../../../constants'
-import { getCourseCategories, getMetaValue, updateProfilePicture, updateUserDetails } from '../../../services/fetchingService'
+import { getCompletedQuizzesByUser, getCourseCategories, getMetaValue, updateProfilePicture, updateUserDetails } from '../../../services/fetchingService'
 import { TouchableOpacity } from 'react-native'
 import FormField from '../../../components/FormField'
 import { ScrollView } from 'react-native'
@@ -27,6 +27,7 @@ const profile = () => {
   const userCategories = user?.data?.categories
 
   const {data, isLoading: completedLoading, refetch} = useFetchFunction(() => getCompletedLessons())
+  const {data: completedQuizzes, isLoading: quizzesLoading, refetch: quizzesRefetch} = useFetchFunction(() => getCompletedQuizzesByUser(userData?.id))
   
   useEffect(() => {
     if(data){
@@ -46,7 +47,10 @@ const profile = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [completedCourses, setCompletedCourses] = useState(false)
   const [completedCourseData, setCompletedCourseData] = useState(null)
-  const [showMoreCompleted, setShowMoreCompleted] = useState(false)
+  const [showMoreCompleted, setShowMoreCompleted] = useState([])
+  const [showCompletedQuizzes, setShowCompletedQuizzes] = useState(false)
+  const [completedQuizzesData, setCompletedQuizzesData] = useState(null)
+  const [showMoreInQuizzes, setShowMoreInQuizzes] = useState([])
 
   const [form, setForm] = useState({
     firstname: '',
@@ -72,6 +76,17 @@ const profile = () => {
       setRefreshing(false);
     }
   }
+
+  useEffect(() => {
+    if(completedQuizzes){
+      setCompletedQuizzesData(completedQuizzes)
+      console.log(completedQuizzes);
+      
+    }else{
+      setCompletedQuizzesData(null)
+    }
+  }, [completedQuizzes])
+  
 
   useEffect(() => {
     if(userData){
@@ -193,7 +208,7 @@ const profile = () => {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0,
       base64: true,
     })
 
@@ -205,21 +220,27 @@ const profile = () => {
         type: `data:${result.assets[0].mimeType};base64,`,
         base64: result.assets[0].base64
       }));      
-      changeProfilePicture(image);
+      // changeProfilePicture(image);
     }
     
   }
 
+  useEffect(() => {
+    if(image.type && image.base64){
+      changeProfilePicture(image);
+    }
+  }, [image])
+  
+
   const changeProfilePicture = async (base64Data) => {
     // console.log(base64Data);
     
-    const userId = await currentUserID();
     
     const formattedBase64 = `${base64Data.type}${base64Data.base64}`;
     // console.log(formattedBase64);
     
     try {
-      const response = await updateProfilePicture(userId, {"base64Profile": formattedBase64});
+      const response = await updateProfilePicture(userData?.id, {"base64Profile": formattedBase64});
       if(response === 200){
         profileUpdateSuccess();
         onRefresh();
@@ -376,7 +397,7 @@ const profile = () => {
                   handleChangeText={(e) => setForm({ ...form, password: e })}
                   otherStyles={"mt-5"}
                 />
-                <FormField 
+                <FormField
                   title={"Konfirmoni fjalëkalimin e ri"}
                   placeholder={"Shkruani fjalëkalimin e mësipërm"}
                   value={form.confirmPassword}
@@ -395,19 +416,35 @@ const profile = () => {
         </KeyboardAwareScrollView>
         </> : 
             <>
-              <View className={` ${completedCourses ? "bg-oBlack" : ""} border-b border-black-200 p-2`}>
-                <TouchableOpacity onPress={() => setCompletedCourses(!completedCourses)} className="items-center gap-2 flex-row justify-center">
-                  <View>
-                    <Image 
-                      source={images.mortarBoard} 
-                      style={{tintColor: completedCourses ? "#FF9C01" : "#fff"}} 
-                      className="w-6 h-6"
-                      resizeMode='contain'
-                      />
-                  </View>
-                  <Text className="text-sm text-center text-white font-pregular">Kurse te perfunduara</Text>
-                </TouchableOpacity>
+              <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
+                <View className={` ${completedCourses ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200`}>
+                  <TouchableOpacity onPress={() => {setCompletedCourses(!completedCourses), setShowCompletedQuizzes(false)}} className="items-center gap-2 flex-row justify-center">
+                    <View>
+                      <Image 
+                        source={images.mortarBoard} 
+                        style={{tintColor: completedCourses ? "#FF9C01" : "#fff"}} 
+                        className="w-6 h-6"
+                        resizeMode='contain'
+                        />
+                    </View>
+                    <Text className="text-sm text-center text-white font-pregular">Kurse te perfunduara</Text>
+                  </TouchableOpacity>
+                </View>
+                <View className={`${showCompletedQuizzes ? "bg-oBlack" : ""} w-1/2 p-2`}>
+                  <TouchableOpacity onPress={() => {setShowCompletedQuizzes(!showCompletedQuizzes), setCompletedCourses(false)}} className="items-center gap-2 flex-row justify-center">
+                    <View>
+                      <Image 
+                        source={icons.quiz} 
+                        style={{tintColor: showCompletedQuizzes ? "#FF9C01" : "#fff"}} 
+                        className="w-6 h-6"
+                        resizeMode='contain'
+                        />
+                    </View>
+                    <Text className="text-sm text-center text-white font-pregular">Kuize te perfunduara</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
+              
                 {completedCourses && <View className="mb-2">
                   {completedCourseData.map((item) => {
                     
@@ -420,7 +457,7 @@ const profile = () => {
 
                     return(
                       <View 
-                        key={item?.id}
+                        key={"progressItem-" + item?.id}
                         style={styles.box}
                         className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
                       >
@@ -459,11 +496,11 @@ const profile = () => {
                           iterationCount="infinite"
                           animation={bounceDownAnimation}
                           >
-                          <TouchableOpacity onPress={() => setShowMoreCompleted(!showMoreCompleted)}><Text className="text-white font-psemibold text-xs bg-secondary px-2 py-1 rounded-[5px]">{showMoreCompleted ? "Me pak" : "Me shume"}</Text></TouchableOpacity>
+                          <TouchableOpacity onPress={() => setShowMoreCompleted((prevData) => prevData.includes(item?.id) ? prevData.filter((existingIds) => existingIds !== item?.id) : [...prevData, item?.id])}><Text className="text-white font-psemibold text-xs bg-secondary px-2 py-1 rounded-[5px]">{showMoreCompleted.includes(item?.id) ? "Me pak" : "Me shume"}</Text></TouchableOpacity>
                         </Animatable.View>
 
                         {/* more details */}
-                        {showMoreCompleted && <View className="mt-4 overflow-hidden relative">
+                        {showMoreCompleted.includes(item?.id) && <View className="mt-4 overflow-hidden relative">
                           <View className="absolute bottom-0 right-2">
                             <Image 
                               source={images.reward}
@@ -498,9 +535,101 @@ const profile = () => {
                     )
                   })}
                 </View>}
-              {!completedCourses &&<UserProgressComponent
+              {!completedCourses && !showCompletedQuizzes &&
+              <UserProgressComponent
                 userData={userData}
               />}
+                {showCompletedQuizzes && 
+                <View className="mb-4">
+                    {completedQuizzesData && completedQuizzesData.map((item) => {
+                      console.log(item);
+                      const date = new Date(item?.createdAt); // Ensure createdAt is properly parsed
+                      const formattedDate = date.toLocaleDateString('sq-AL', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      });
+                      return(
+                        <View 
+                          key={"quizCompleted-" + item?.id}
+                          style={styles.box}
+                          className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
+                        >
+                          <View className="flex-row justify-between border-b border-black-200 pb-4 items-center gap-2">
+                            <View className="gap-4 flex-col flex-[0.5]">
+                              <View>
+                                <Text className="text-xs font-plight text-white">Emri i kuizit:</Text>
+                                <Text className="text-base font-psemibold text-white">{item?.quiz?.quizName}</Text>
+                              </View>
+                              <View>
+                                <Text className="text-xs font-plight text-white">Kategoria:</Text>
+                                <Text className="text-base font-psemibold text-white">{getCourseCategories(userCategories, item?.quiz?.quizCategory)}</Text>
+                              </View>
+                            </View>
+                            <View className="gap-4 flex-col flex-[0.5]">
+                              <View>
+                                <Text className="text-xs font-plight text-white">Gabimet:</Text>
+                                <Text className="text-base font-psemibold text-white"><Text className="text-secondary">{item?.mistakes}</Text> {item?.mistakes === 1 ? "Gabim" : "Gabime"} </Text>
+                              </View>
+                              <View>
+                                <Text className="text-xs font-plight text-white">Koha:</Text>
+                                <Text className="text-base font-psemibold text-white">{item?.duration}</Text>
+                              </View>
+                            </View>
+                          </View>
+
+                          <View className="absolute left-2 top-2">
+                            <Image 
+                              source={images.mortarBoard}
+                              className="h-20 w-20 opacity-20"
+                              resizeMode='contain'
+                              tintColor={"#FF9C01"}
+                            />
+                          </View>
+                          <Animatable.View 
+                            className="absolute -bottom-3 items-center justify-center right-0 left-0 "
+                            duration={1000}
+                            iterationCount="infinite"
+                            animation={bounceDownAnimation}
+                          >
+                            <TouchableOpacity onPress={() => setShowMoreInQuizzes((prevData) => prevData.includes(item?.id) ? prevData.filter((existingId => existingId !== item?.id)) : [...prevData, item?.id])}><Text className="text-white font-psemibold text-xs bg-secondary px-2 py-1 rounded-[5px]">{showMoreInQuizzes.includes(item?.id) ? "Me pak" : "Me shume"}</Text></TouchableOpacity>
+                          </Animatable.View>
+                            {showMoreInQuizzes.includes(item?.id) && <View className="mt-4 overflow-hidden relative">
+                            <View className="absolute bottom-0 right-2">
+                              <Image 
+                                source={images.reward}
+                                className="h-20 w-20 opacity-20"
+                                resizeMode='contain'
+                                tintColor={"#FF9C01"}
+                              />
+                            </View>
+                              <Animatable.View
+                                animation="fadeInLeft"
+                                duration={700}
+                              >
+                                <Text className="text-base font-psemibold text-white">Pershkrimi i kuizit:</Text>
+                                <Text className="text-xs font-light text-white">{item?.quiz?.quizDescription}</Text>
+                              </Animatable.View>
+
+                              <View className="flex-row items-end justify-between overflow-hidden">
+                                <View className="flex-1">
+                                  <Link className="text-secondary font-psemibold text-xs underline" href={`/quiz/${item?.quiz?.id}`}>Drejtohuni per ne kuiz</Link>
+                                </View>
+                                <Animatable.View 
+                                  className="flex-1"
+                                  animation="fadeInRight"
+                                  duration={700}
+                                >
+                                  <Text className="text-xs font-light text-white text-right">Perfunduar me:</Text>
+                                  <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
+                                </Animatable.View>
+                              </View>
+                          </View>}
+                        </View>
+                      )
+                    })}
+                </View>}
+
             </>
         }
         {/* user details */}
