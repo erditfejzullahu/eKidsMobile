@@ -56,7 +56,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) 
 
   return (
     <View className="mt-4 mb-4" style={styles.box}>
-            <TouchableOpacity onPress={allQuizzes ? handleQuizStart : () => router.push(`/quiz/${quizData?.id}`)}>
+            <TouchableOpacity onPress={allQuizzes ? handleQuizStart : () => openCourseActions(quizData)}>
               <View className="border border-black-200 bg-oBlack p-4 relative">
                   <Text className="text-white font-psemibold text-lg">{quizData?.quizName}</Text>
                   <Text className="text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>
@@ -64,7 +64,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) 
                   <View className="flex-row justify-between pt-2.5 border-t border-black-200">
                     <View>
                       <Text className="text-white font-psemibold text-xs">{allQuizzes ? "Statusi" : "Shikime"}</Text>
-                      <Text className="text-secondary font-pbold text-sm">{allQuizzes ? (quizData?.status ? "E perfunduar" : "E paperfunduar") : "100 shikime"}</Text>
+                      <Text className="text-secondary font-pbold text-sm">{allQuizzes ? (quizData?.status ? "E perfunduar" : "E paperfunduar") : quizData?.viewCount === 1 ? quizData?.viewCount + " shikim" : quizData?.viewCount + " shikime"}</Text>
                     </View>
                     <View>
                       <Text className="text-white font-psemibold text-xs text-right">Sa here i perfunduar?</Text>

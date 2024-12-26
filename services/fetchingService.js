@@ -477,7 +477,7 @@ export const reqGetStatusQuiz = async (quizId) => {
         const response = await apiClient.get(`/api/QuizzesCompletation/GetStatusQuizz/${userId}/${quizId}`)
         return response ? response.data : null
     } catch (error) {
-        console.error(error, ' asd');
+        // console.error(error, ' asd');
         return null;
     }
 }
@@ -489,5 +489,17 @@ export const increaseViewCount = async (id, postType) => {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+export const deleteQuizz = async (id) => {
+    try {
+        const response = await apiClient.delete(`/api/Quizzes/${id}`)
+        console.log(id);
+        
+        return response ? response.status : null;
+    } catch (error) {
+        console.error(error);
+        return error.response.status
     }
 }

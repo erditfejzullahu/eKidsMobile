@@ -7,14 +7,16 @@ import Loading from '../../../components/Loading'
 import SorterComponent from '../../../components/SorterComponent'
 import SingleQuizComponent from '../../../components/SingleQuizComponent'
 import useFetchFunction from '../../../hooks/useFetchFunction'
-import { getAllQuizzesByUser } from '../../../services/fetchingService'
+import { deleteQuizz, getAllQuizzesByUser } from '../../../services/fetchingService'
 import CustomModal from '../../../components/Modal'
 import { initialFilterData } from '../../../services/filterConfig'
+import NotifierComponent from '../../../components/NotifierComponent'
+import { useRouter } from 'expo-router'
 
 const MyQuizzes = () => {
     const {user, isLoading} = useGlobalContext();
     const userCategories = user?.data?.categories;  
-
+    const router = useRouter();
     const [openCategories, setOpenCategories] = useState(false)
     const [yourQuizzesData, setYourQuizzesData] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
@@ -25,6 +27,16 @@ const MyQuizzes = () => {
         userId: user?.data?.userData?.id
     })
 
+    const {showNotification: successDelete} = NotifierComponent({
+        title: "Me sukses!",
+        description: `Sapo keni fshirë me sukses kuizin me emër ${singleQuizData?.quizName}`
+    })
+
+    const {showNotification: unsuccessDelete} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e ndihmes!",
+        alertType: "warning"
+    })
 
     const [singleQuizData, setSingleQuizData] = useState(null)
 
@@ -65,26 +77,33 @@ const MyQuizzes = () => {
     }
 
     const getCourseActions = (quizData) => {
-        console.log(quizData);
-
         setSingleQuizData(quizData);
-        
         setModalVisible(true);
     }
 
     const goToQuiz = () => {
+        setModalVisible(false)
+        router.push(`/quiz/${singleQuizData?.id}`)
+    }   
 
-    }
-
-    const deleteQuizPrompt = () => {
+    const deleteQuizPrompt = async () => {
         setModalVisible(false)
         setTimeout(() => {
             setDeleteModalVisible(true)
         }, 500);
     }
 
-    const deleteQuiz = () => {
-        setDeleteModalVisible(false)
+    const deleteQuiz = async () => {        
+        const response = await deleteQuizz(singleQuizData?.id);
+        
+        if(response === 200){
+            setDeleteModalVisible(false)
+            successDelete();
+            refetch();
+        }else{
+            setDeleteModalVisible(false)
+            unsuccessDelete();
+        }
         console.log("delete quiz!!!");
     }
 
@@ -186,6 +205,7 @@ const MyQuizzes = () => {
                     )}
                     ListFooterComponent={() => (
                         <>
+                        <View className="mb-4"/>
                             {/* Quiz Actions Modal */}
                             <CustomModal 
                                 visible={modalVisible}
