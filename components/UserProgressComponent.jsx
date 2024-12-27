@@ -7,6 +7,7 @@ import { icons } from '../constants'
 import * as Progress from 'react-native-progress';
 import * as Animatable from 'react-native-animatable'
 import { useRouter } from 'expo-router'
+import EmptyState from "./EmptyState";
 
 const UserProgressComponent = ({userData}) => {
     const router = useRouter();
@@ -63,7 +64,7 @@ const UserProgressComponent = ({userData}) => {
                     <Text className="text-white font-pregular text-base">Kurset e shfletuara deri me tani</Text>
                 </View>
                 <View className="flex-col w-full gap-4">
-                    {userData && 
+                    {(userData && data?.length !== 0) ?  
                     data.map((progressItem, index) => {
                         const courseProgress = calculateProgress(progressItem?.lessonDetails);
                         const ProgressID = progressItem?.lessonDetails[0]?.progress[0]?.progressId;
@@ -142,7 +143,15 @@ const UserProgressComponent = ({userData}) => {
                             }
                         </View>
                     )}
-                )}
+                ) : <View style={styles.box} className=" bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                        <EmptyState
+                            title={"Nuk u gjet asnje vijushmeri"}
+                            titleStyle={"!font-pregular mb-2"}
+                            subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo shfletoni kurse te reja duke klikuar ne butonin e meposhtem!"}
+                            buttonTitle={"Shfletoni kurse"}
+                            buttonFunction={() => router.replace('/categories')}
+                        />
+                    </View>}
                 </View>
             </View>
         )

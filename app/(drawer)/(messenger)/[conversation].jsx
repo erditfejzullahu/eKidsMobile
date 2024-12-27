@@ -184,7 +184,7 @@ const Conversation = () => {
             }
 
             newConnection.on('ReceiveMessage', (messageData) => {
-
+                
                 setMessages((prevMessages) => [
                     {
                         content: messageData.content,
@@ -212,6 +212,9 @@ const Conversation = () => {
             })
 
             newConnection.on('MessageSent', (messageData) => {
+                if(messageData?.receiver?.username === messageData?.sender?.username){
+                    return;
+                }
                 // console.log(receiver, message, fileUrl ? fileUrl : ", ", createdAt);
                 console.log('message sent !!');
                 

@@ -33,8 +33,9 @@ const AllMessages = () => {
 
   useEffect(() => {
     if(data){
-      const filteredData = data.filter(user => user.id !== userData?.id)
-      setAllUsers(filteredData);
+      // const filteredData = data.filter(user => user.id !== userData?.id)
+      // setAllUsers(filteredData);
+      setAllUsers(data);
     }else{
       setAllUsers(null);
     }

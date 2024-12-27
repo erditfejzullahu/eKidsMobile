@@ -18,9 +18,11 @@ import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getCompletedLessons } from '../../../services/fetchingService'
 import * as Animatable from 'react-native-animatable'
 import { Link } from 'expo-router'
+import EmptyState from '../../../components/EmptyState'
+import { useRouter } from 'expo-router'
 
 const profile = () => {
-
+const router = useRouter();
   const { user, isLoading, setUser } = useGlobalContext();
   // console.log(isLoading, 'loading');
   const userData = user?.data?.userData;
@@ -445,7 +447,7 @@ const profile = () => {
                 </View>
               </View>
               
-                {completedCourses && <View className="mb-2">
+                {(completedCourses && completedCourseData?.length > 0) ? <View className="mb-2">
                   {completedCourseData.map((item) => {
                     
                     const date = new Date(item?.createdAt); // Ensure createdAt is properly parsed
@@ -534,12 +536,20 @@ const profile = () => {
                       </View>
                     )
                   })}
-                </View>}
+                </View> : (completedCourses && <View style={styles.box} className=" mx-4 mt-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                  <EmptyState
+                      title={"Nuk u gjet asnje kurs i perfunduar"}
+                      titleStyle={"!font-pregular mb-2"}
+                      subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo vazhdoni kurset e mbetura duke klikuar ne butonin e meposhtem!"}
+                      buttonTitle={"Vazhdoni kurset"}
+                      buttonFunction={() => router.replace('/categories')}
+                  />
+                </View>)}
               {!completedCourses && !showCompletedQuizzes &&
               <UserProgressComponent
                 userData={userData}
               />}
-                {showCompletedQuizzes && 
+                {(showCompletedQuizzes && completedQuizzesData?.length > 0) ? 
                 <View className="mb-4">
                     {completedQuizzesData && completedQuizzesData.map((item) => {
                       console.log(item);
@@ -628,7 +638,16 @@ const profile = () => {
                         </View>
                       )
                     })}
-                </View>}
+                </View> : 
+                (showCompletedQuizzes &&  <View style={styles.box} className=" mx-4 mt-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                  <EmptyState
+                      title={"Nuk u gjet asnje kuiz i perfunduar"}
+                      titleStyle={"!font-pregular mb-2"}
+                      subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo vazhdoni kuizet e mbetura duke klikuar ne butonin e meposhtem!"}
+                      buttonTitle={"Vazhdoni kuizet"}
+                      buttonFunction={() => router.replace('/all-quizzes')}
+                  />
+                </View> )}
 
             </>
         }

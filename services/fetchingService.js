@@ -150,6 +150,7 @@ export const userActualProgresses = async (userId) => {
         return response? response.data : null
     } catch (error) {
         console.error(error);
+        return null;
     }
 }
 
@@ -314,7 +315,7 @@ export const getCompletedLessons = async () => {
         const response = await apiClient.get(`/api/CourseCompleted?userId=${userId}`)
         return response ? response.data : null;
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return null;
     }
 }
@@ -507,7 +508,7 @@ export const getCompletedQuizzesByUser = async (userId) => {
         const response = await apiClient.get(`/api/QuizzesCompleted/GetByUser/${userId}`)
         return response ? response.data : null
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return null;
     }
 }

@@ -7,17 +7,17 @@ import { Platform } from 'react-native';
 const AllUsersInteractions = ({usersData, currentUserData}) => {
     const router = useRouter();
 
-    // console.log(usersData, 'asdasdasdasdasd');
+    console.log(usersData, 'asdasdasdasdasd');
     
   return (
     <TouchableOpacity 
         onPress={() => router.push(
             {pathname: `(messenger)/${usersData?.id}`, params: {receiverFirstname: usersData?.firstname, receiverUsername: usersData?.username, receiverLastname: usersData?.lastname, receiverProfilePic: usersData?.profilePictureUrl, currentUserFirstName: currentUserData?.firstname, currentUserLastname: currentUserData?.lastname, currentUserProfilePic: currentUserData?.profilePictureUrl, currentUserUsername: currentUserData?.username}})}>
-        <View style={styles.box} className="bg-oBlack flex-row gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200">
+        <View style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"}  flex-row gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
             <View className="flex-row items-center gap-4 flex-1">
                 <View>
                     <Image 
-                        source={images.testimage}
+                        source={{uri: usersData?.profilePictureUrl || images.testimage}}
                         className="h-16 w-16 rounded-[5px]"
                         resizeMode='cover'
                     />
