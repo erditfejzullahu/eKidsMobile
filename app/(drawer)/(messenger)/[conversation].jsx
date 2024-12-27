@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, TextInput, RefreshControl, StyleSheet } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, TextInput, RefreshControl, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { Image } from 'react-native';
@@ -39,8 +39,10 @@ const Conversation = () => {
     const [connection, setConnection] = useState(null)
     const [receiver, setReceiver] = useState('')
     const [messages, setMessages] = useState([])
+    const [messageSent, setMessageSent] = useState('')
+    const [textInputFocused, setTextInputFocused] = useState(false)
 
-    const messageVal = useRef('')
+    const messageVal = useRef(null)
 
     const [image, setImage] = useState({
         type: '',
@@ -176,9 +178,9 @@ const Conversation = () => {
                         } catch (error) {
                             console.error('refreshtoken error ', error);
                         }
-                        console.error("in startconnection, ", error.message, ' asd');
+                        // console.error("in startconnection, ", error.message, ' asd');
                     }else{
-                        handleReconnect()
+                        await handleReconnect()
                     }
                 }
             }
@@ -293,7 +295,7 @@ const Conversation = () => {
     //connectioni me hub dhe shtimi i mesazheve
 
     const sendMessage = async () => {
-        if((messageVal.text === '' || !messageVal.text) && image.base64 === ''){
+        if(messageSent === '' || !messageSent && image.base64 === ''){
             console.log("enter a image or message");
             return;
         }
@@ -303,12 +305,13 @@ const Conversation = () => {
         // console.log(receiver, ' resiveri');
         
         try {
-            await connection?.invoke('SendPrivateMessage', receiver, messageVal.text, formattedBase64)
+            await connection?.invoke('SendPrivateMessage', receiver, messageSent, formattedBase64)
             setImage({
                 type: '',
                 base64: '',
                 fileName: ''
             })
+            setMessageSent('')
         } catch (error) {
             console.error(error);
         }
@@ -364,190 +367,194 @@ const Conversation = () => {
         )
     } else {
         return (
-        <View className="h-full bg-primary flex-1">
-            <View>
-                <View style={styles.box}  className="flex-row z-20 justify-between bg-oBlack p-4 relative border-b border-black-200">
-                    <View className="flex-row gap-2 items-center">
-                        <View className="mr-2">
-                            <TouchableOpacity onPress={() => router.back()}>
+        <KeyboardAvoidingView className="h-full" style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View className="h-full bg-primary flex-1">
+                <View>
+                    <View style={styles.box}  className="flex-row z-20 justify-between bg-oBlack p-4 relative border-b border-black-200">
+                        <View className="flex-row gap-2 items-center">
+                            <View className="mr-2">
+                                <TouchableOpacity onPress={() => router.back()}>
+                                    <Image 
+                                        source={icons.leftArrow}
+                                        className="h-6 w-6"
+                                        resizeMode='contain'
+                                        tintColor={"#ff9c01"}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View>
                                 <Image 
-                                    source={icons.leftArrow}
-                                    className="h-6 w-6"
+                                    source={{ uri: conversation?.receiverProfilePic || icons.profile}}
+                                    className="h-8 w-8 rounded-full"
+                                    resizeMode='cover'
+                                />
+                            </View>
+                            <View>
+                                <Text className="text-white font-psemibold text-base">{conversation?.receiverFirstname} {conversation?.receiverLastname}</Text>
+                            </View>
+                        </View>
+
+                        <View>
+                            <TouchableOpacity onPress={() => setOpenMoreDetails(!openMoreDetails)}>
+                                <Image 
+                                    source={icons.more}
+                                    className="h-8 w-8"
                                     resizeMode='contain'
                                     tintColor={"#ff9c01"}
                                 />
                             </TouchableOpacity>
                         </View>
+
+                        {openMoreDetails && <View className="absolute bg-oBlack right-6 p-2 z-20 rounded-[5px] border-black-200 border mt-[45px]">
+                            <View className="border-b border-black-200">
+                                <TouchableOpacity className="flex-row items-center" onPress={() => router.replace(`/profile/${conversation?.conversation}`)}>
+                                    <Text className="text-white p-1 font-pregular">Shikoni profilin</Text>
+                                    <Image 
+                                        source={icons.profile}
+                                        className="h-4 w-4"
+                                        resizeMode='contain'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View className="border-b border-black-200">
+                                <TouchableOpacity className="flex-row items-center">
+                                    <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
+                                    <Image 
+                                        source={icons.profile}
+                                        className="h-4 w-4"
+                                        resizeMode='contain'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View>
+                                <TouchableOpacity className="flex-row items-center">
+                                    <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
+                                    <Image 
+                                        source={icons.profile}
+                                        className="h-4 w-4"
+                                        resizeMode='contain'
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>}
+                    </View>
+                </View>
+                <View className="flex-1">
+                    <FlatList
+                        // refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
+                        // className="flex-1"
+                        extraScrollHeight={15}
+                        ref={flatListRef}
+                        onEndReached={onEndReached}
+                        onEndReachedThreshold={0}
+                        inverted //per me shku bot
+                        data={messages} //per me reverse .reverse()
+                        keyExtractor={(item) => 'chat-' + item?.id}
+                        renderItem={({item}) => (
+                            <SenderReceiverChat
+                                renderItem={item}
+                                currentUser={user?.data?.userData}
+                                conversationUserData={conversation}
+                            />
+                        )}
+                        contentContainerStyle={{ flexGrow: 1, gap: 14, paddingTop: 12, paddingBottom: 16, justifyContent: 'flex-end'  }} //flexDirection: 'column-reverse' per me shku bot 
+                        // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }} // fix per me shku fuuteri ne bottom
+                        // ListHeaderComponent={() => (
+                            
+                        // )}
+                        // ListFooterComponent={() => (
+                            
+                        // )}
+                    />
+                </View>
+                <View className={`relative ${textInputFocused ? "mb-24" : ""}`}>
+
+                    {/* fotoja apo dokumenti zgjedhur */}
+                    {image.type !== '' && image.base64 !== '' && <View className="absolute gap-4 items-center justify-center right-[8px] bottom-0 mb-[84px] bg-oBlack z-20 border border-black-200 rounded-[5px] p-4 w-[160px]">
                         <View>
-                            <Image 
-                                source={{ uri: conversation?.receiverProfilePic || icons.profile}}
-                                className="h-8 w-8 rounded-full"
+                            {image.type.includes('image') ? (
+                                <Image 
+                                source={{ uri: `${image.type}${image.base64}` }}
+                                className="h-24 w-32 rounded-[2px]"
                                 resizeMode='cover'
                             />
+                            ) : (  
+                                <Image 
+                                    source={icons.documents}
+                                    className="h-20 rounded-[2px]"
+                                    resizeMode='contain'
+                                    tintColor={"#fff"}
+                                />
+                            )}
                         </View>
                         <View>
-                            <Text className="text-white font-psemibold text-base">{conversation?.receiverFirstname} {conversation?.receiverLastname}</Text>
+                            <Text className="text-white font-pmedium text-center text-xs" numberOfLines={2}>{image.fileName || 'random'}</Text>
                         </View>
-                    </View>
-
-                    <View>
-                        <TouchableOpacity onPress={() => setOpenMoreDetails(!openMoreDetails)}>
-                            <Image 
-                                source={icons.more}
-                                className="h-8 w-8"
-                                resizeMode='contain'
-                                tintColor={"#ff9c01"}
-                            />
-                        </TouchableOpacity>
-                    </View>
-
-                    {openMoreDetails && <View className="absolute bg-oBlack right-6 p-2 z-20 rounded-[5px] border-black-200 border mt-[45px]">
-                        <View className="border-b border-black-200">
-                            <TouchableOpacity className="flex-row items-center" onPress={() => router.replace(`/profile/${conversation?.conversation}`)}>
-                                <Text className="text-white p-1 font-pregular">Shikoni profilin</Text>
+                        <View className="absolute -right-1 -top-1">
+                            <TouchableOpacity className="bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteImage}>
                                 <Image 
-                                    source={icons.profile}
-                                    className="h-4 w-4"
-                                    resizeMode='contain'
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View className="border-b border-black-200">
-                            <TouchableOpacity className="flex-row items-center">
-                                <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
-                                <Image 
-                                    source={icons.profile}
-                                    className="h-4 w-4"
-                                    resizeMode='contain'
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View>
-                            <TouchableOpacity className="flex-row items-center">
-                                <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
-                                <Image 
-                                    source={icons.profile}
-                                    className="h-4 w-4"
-                                    resizeMode='contain'
+                                    source={icons.close}
+                                    tintColor={"#000"}
+                                    className="w-2 h-2"
                                 />
                             </TouchableOpacity>
                         </View>
                     </View>}
-                </View>
-            </View>
-            <View className="flex-1">
-                <FlatList
-                    // refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
-                    // className="flex-1"
-                    extraScrollHeight={15}
-                    ref={flatListRef}
-                    onEndReached={onEndReached}
-                    onEndReachedThreshold={0}
-                    inverted //per me shku bot
-                    data={messages} //per me reverse .reverse()
-                    keyExtractor={(item) => 'chat-' + item?.id}
-                    renderItem={({item}) => (
-                        <SenderReceiverChat
-                            renderItem={item}
-                            currentUser={user?.data?.userData}
-                            conversationUserData={conversation}
-                        />
-                    )}
-                    contentContainerStyle={{ flexGrow: 1, gap: 14, paddingTop: 12, paddingBottom: 16, justifyContent: 'flex-end'  }} //flexDirection: 'column-reverse' per me shku bot 
-                    // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }} // fix per me shku fuuteri ne bottom
-                    // ListHeaderComponent={() => (
-                        
-                    // )}
-                    // ListFooterComponent={() => (
-                        
-                    // )}
-                />
-            </View>
-            <View className="relative">
+                    {/* fotoja apo dokumenti zgjedhur */}
 
-                {/* fotoja apo dokumenti zgjedhur */}
-                {image.type !== '' && image.base64 !== '' && <View className="absolute gap-4 items-center justify-center right-[8px] bottom-0 mb-[84px] bg-oBlack z-20 border border-black-200 rounded-[5px] p-4 w-[160px]">
-                    <View>
-                        {image.type.includes('image') ? (
-                            <Image 
-                            source={{ uri: `${image.type}${image.base64}` }}
-                            className="h-24 w-32 rounded-[2px]"
-                            resizeMode='cover'
-                        />
-                        ) : (  
-                            <Image 
-                                source={icons.documents}
-                                className="h-20 rounded-[2px]"
-                                resizeMode='contain'
-                                tintColor={"#fff"}
-                            />
-                        )}
-                    </View>
-                    <View>
-                        <Text className="text-white font-pmedium text-center text-xs" numberOfLines={2}>{image.fileName || 'random'}</Text>
-                    </View>
-                    <View className="absolute -right-1 -top-1">
-                        <TouchableOpacity className="bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteImage}>
-                            <Image 
-                                source={icons.close}
-                                tintColor={"#000"}
-                                className="w-2 h-2"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>}
-                {/* fotoja apo dokumenti zgjedhur */}
-
-                <View className="bg-oBlack p-4 h-[76px] flex-row items-start justify-center gap-4 border-t border-black-200">
-                    <View className="items-center flex-row gap-4">
-                        <View className="flex-row items-center gap-2">
-                            <View>
-                                <TouchableOpacity onPress={sendImage}>
-                                    <Image 
-                                        source={icons.imageGallery}
-                                        className="h-6 w-6"
-                                        resizeMode='contain'
-                                        tintColor={"#fff"}
-                                    />
-                                </TouchableOpacity>
+                    <View className="bg-oBlack p-4 h-[76px] flex-row items-start justify-center gap-4 border-t border-black-200">
+                        <View className="items-center flex-row gap-4">
+                            <View className="flex-row items-center gap-2">
+                                <View>
+                                    <TouchableOpacity onPress={sendImage}>
+                                        <Image 
+                                            source={icons.imageGallery}
+                                            className="h-6 w-6"
+                                            resizeMode='contain'
+                                            tintColor={"#fff"}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                    <TouchableOpacity>
+                                        <Image 
+                                            source={icons.microphone}
+                                            className="h-6 w-6"
+                                            resizeMode='contain'
+                                            tintColor={"#fff"}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                    <TouchableOpacity onPress={pickDocument}>
+                                        <Image 
+                                            source={icons.documents}
+                                            className="h-6 w-6"
+                                            resizeMode='contain'
+                                            tintColor={"#fff"}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                            <View>
-                                <TouchableOpacity>
-                                    <Image 
-                                        source={icons.microphone}
-                                        className="h-6 w-6"
-                                        resizeMode='contain'
-                                        tintColor={"#fff"}
-                                    />
-                                </TouchableOpacity>
+                            <View className="flex-1">
+                                <TextInput
+                                    ref={messageVal}
+                                    className="bg-primary text-white border border-black-200 p-2 rounded-[5px]"
+                                    placeholder='Shkruaj mesazhin ketu...'
+                                    placeholderTextColor={"#414141"}
+                                    // onChangeText={(text) => messageVal.text = text}
+                                    onChangeText={(e) => setMessageSent(e)}
+                                    value={messageSent}
+                                    onSubmitEditing={() => sendMessage()}
+                                    onFocus={() => setTextInputFocused(true)}
+                                    onBlur={() => setTextInputFocused(false)}
+                                />
                             </View>
-                            <View>
-                                <TouchableOpacity onPress={pickDocument}>
-                                    <Image 
-                                        source={icons.documents}
-                                        className="h-6 w-6"
-                                        resizeMode='contain'
-                                        tintColor={"#fff"}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View className="flex-1">
-                            <TextInput
-                                ref={messageVal}
-                                className="bg-primary text-white border border-black-200 p-2 rounded-[5px]"
-                                placeholder='Shkruaj mesazhin ketu...'
-                                placeholderTextColor={"#414141"}
-                                onChangeText={(text) => messageVal.text = text}
-                                value={messageVal}
-                                onSubmitEditing={() => sendMessage()}
-                            />
                         </View>
                     </View>
                 </View>
             </View>
-        </View>
-        
+        </KeyboardAvoidingView>
         )
     }
 }
@@ -566,6 +573,17 @@ const styles = StyleSheet.create({
               },
         })
     },
+    container: {
+        flex: 1,
+        // padding:40,
+        backgroundColor: "#000",
+        // paddingBottom: 160
+      },
+      content: {
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      },
 })
 
 export default Conversation

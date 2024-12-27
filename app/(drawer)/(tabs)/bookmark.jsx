@@ -27,8 +27,11 @@ const bookmark = () => {
   useEffect(() => {
     if(data){
       setBookmarkData(data);
-      console.log(filterData().courseLength)
+    }else{
+      setBookmarkData(null)
     }
+    
+    
   }, [data])
 
   useEffect(() => {
@@ -40,8 +43,8 @@ const bookmark = () => {
   }, [])
   
   const filterData = () => {
-    const courseData = data.filter(item => item.course)
-    const lessonData = data.filter(item => item.lesson)
+    const courseData = data?.filter(item => item.course)
+    const lessonData = data?.filter(item => item.lesson)
     return {courseLength: courseData.length, lessonLength: lessonData.length};
   }
 
@@ -141,7 +144,6 @@ const bookmark = () => {
         {bookmarkData ? (
         <View className="flex-col gap-4 w-full mt-4">
           {bookmarkData.map((bookItem, index) => {
-
           const date = new Date(bookItem?.createdAt);
           const formattedDate = date.toLocaleDateString('sq-AL', {
               year: 'numeric',
@@ -205,7 +207,7 @@ const bookmark = () => {
                   </View>
                 </View>)
               )
-            ): (
+            ) : (
               (filterData().lessonLength === 0) ? (
                 (index < 1 && <View
                   className="mt-12 border border-black-200 p-4 pt-6 rounded-[10px] w-full"

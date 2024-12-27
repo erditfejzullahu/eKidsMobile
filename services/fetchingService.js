@@ -160,7 +160,7 @@ export const getBookmarks = async () => {
         const response = await apiClient.get(`/api/Bookmarks/GetAll/${userId}`)
         return response ? response.data : null
     } catch (error) {
-        console.error(error);
+        return null;
     }
 }
 
