@@ -7,7 +7,7 @@ import { Platform } from 'react-native';
 const AllUsersInteractions = ({usersData, currentUserData}) => {
     const router = useRouter();
 
-    console.log(usersData, 'asdasdasdasdasd');
+    // console.log(usersData, 'asdasdasdasdasd');
     
   return (
     <TouchableOpacity 

@@ -63,6 +63,7 @@ import infoFilled from "../assets/icons/info-filled.png"
 import eyes from "../assets/icons/eyes.png"
 import tryAgain from "../assets/icons/tryAgain.png"
 import failedQuiz from "../assets/icons/failedQuiz.png"
+import notifications from "../assets/icons/notification.png"
 
 export default {
   play,
@@ -129,5 +130,6 @@ export default {
   infoFilled,
   eyes,
   tryAgain,
-  failedQuiz
+  failedQuiz,
+  notifications
 };

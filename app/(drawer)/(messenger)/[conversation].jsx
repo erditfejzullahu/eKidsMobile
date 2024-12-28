@@ -507,7 +507,7 @@ const Conversation = () => {
                             <View className="flex-row items-center gap-2">
                                 <View>
                                     <TouchableOpacity onPress={sendImage}>
-                                        <Image 
+                                        <Image
                                             source={icons.imageGallery}
                                             className="h-6 w-6"
                                             resizeMode='contain'
@@ -517,7 +517,7 @@ const Conversation = () => {
                                 </View>
                                 <View>
                                     <TouchableOpacity>
-                                        <Image 
+                                        <Image
                                             source={icons.microphone}
                                             className="h-6 w-6"
                                             resizeMode='contain'

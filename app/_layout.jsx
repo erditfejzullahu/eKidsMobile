@@ -9,7 +9,8 @@ import { enableScreens } from 'react-native-screens';
 import "../global.css"
 import Drawer from 'expo-router/drawer';
 import DrawerUpdaterProvider from '../navigation/DrawerUpdater';
-
+import TopbarUpdaterProvider from '../navigation/TopbarUpdater';
+import NotificationProvider from '../context/NotificationState';
 // enableScreens();
 
 SplashScreen.preventAutoHideAsync();
@@ -41,15 +42,19 @@ const RootLayout = () => {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <GlobalProvider>
                 <NotifierWrapper>
-                    <DrawerUpdaterProvider>
-                        <Stack screenOptions={{gestureEnabled: true}}>
-                            <Stack.Screen name="index" options={{ headerShown: false }} />
-                            <Stack.Screen name="(auth)" options={{ headerShown: false}} />
-                            <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
-                            {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
-                            {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
-                        </Stack>
-                    </DrawerUpdaterProvider>
+                    <NotificationProvider>
+                        <DrawerUpdaterProvider>
+                            <TopbarUpdaterProvider>
+                                <Stack screenOptions={{gestureEnabled: true}}>
+                                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                                    <Stack.Screen name="(auth)" options={{ headerShown: false}} />
+                                    <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
+                                    {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
+                                    {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
+                                </Stack>
+                            </TopbarUpdaterProvider>
+                        </DrawerUpdaterProvider>
+                    </NotificationProvider>
                 </NotifierWrapper>
             </GlobalProvider>
         </GestureHandlerRootView>

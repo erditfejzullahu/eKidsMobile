@@ -14,6 +14,8 @@ import { useLocalSearchParams } from 'expo-router'
 import { useDrawerUpdater } from '../../navigation/DrawerUpdater'
 import { ScrollView } from 'react-native-gesture-handler'
 import CustomModal from '../../components/Modal'
+import Notifications from '../../components/Notifications'
+import { useNotificationContext } from '../../context/NotificationState'
 
 const showIcons = (icon, size, color) => {
     return(
@@ -94,6 +96,7 @@ const CustomHeader = (props) => {
                         // onPress={() => router.replace(item.path)}
                     />
                 ))}
+                
             </>
         );
     };
@@ -217,7 +220,10 @@ const CustomHeader = (props) => {
 }
 
 const _layout = () => {
+    const {isOpened, setIsOpened } = useNotificationContext();
+    
     return (
+        <>
         <Drawer
         drawerContent={(props) => <CustomHeader {...props} />}
         screenOptions={{
@@ -227,6 +233,8 @@ const _layout = () => {
         >
             {/* <Drawer.Screen name="(tabs)" options={{ title: 'Main Tabs' }} /> */}
         </Drawer>
+        {isOpened && <Notifications />}
+        </>
     )
 }
 
