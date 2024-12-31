@@ -29,11 +29,12 @@ const useFetchFunction = (fn) => {
     
 }
 
-export const navigateToMessenger = (otherUserData, currentUserData) => {
-  const router = useRouter();
+export const navigateToMessenger = (router, otherUserData, currentUserData) => {
+  if(!router) return console.log('missing router');
+  
   if(!otherUserData || !currentUserData) return console.log('Missing details');
 
-  router.replace({
+  router.push({
       pathname: `(messenger)/${otherUserData?.id}`,
       params: {
           receiverFirstname: otherUserData.firstname,

@@ -17,8 +17,9 @@ import { icons, images } from '../constants';
 import * as Animatable from 'react-native-animatable';
 import { useNotificationContext } from '../context/NotificationState';
 import useFetchFunction from '../hooks/useFetchFunction';
-import { getNotifications, reqMakeNotificationsRead } from '../services/fetchingService';
+import { getNotifications, reqDeleteNotification, reqMakeNotificationsRead } from '../services/fetchingService';
 import Loading from './Loading';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 const Notifications = ({ onClose }) => {
 
@@ -33,11 +34,6 @@ const Notifications = ({ onClose }) => {
             setIsOpened(false);
         }
     };
-
-    const makeReads = async () => {
-        await reqMakeNotificationsRead();
-        // console.log(response);
-    }
 
     const onRefresh = async () => {
         setIsRefreshing(true)
@@ -73,6 +69,24 @@ const Notifications = ({ onClose }) => {
         
     //   }
     // }, [isOpened])
+    
+    const deleteNotification = async (item) => {
+        const response = await reqDeleteNotification(item?.id)
+        console.log(response);
+        
+        if(response === 200) await refetch();
+    }
+
+    const removalButton = ({item}) => (
+        <TouchableOpacity onPress={() => deleteNotification(item)} className="bg-secondary items-end p-6 flex-1 justify-center">
+            <Image 
+                source={icons.trashbin}
+                className="h-10 w-10"
+                resizeMode="contain"
+                tintColor="#fff"
+            />
+        </TouchableOpacity>
+    )
 
     return (
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
@@ -90,7 +104,7 @@ const Notifications = ({ onClose }) => {
                 : 
                     <View className="flex-1">
                         <TouchableWithoutFeedback style={styles.box}>
-                            <FlatList
+                            <SwipeListView
                                 refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
                                 className="w-[95%] max-h-[60%] mt-[100px] z-20 m-auto border border-black-200 bg-oBlack rounded-[10px]"
                                 style={styles.box}
@@ -106,6 +120,7 @@ const Notifications = ({ onClose }) => {
                                         day: 'numeric',
                                     });
                                     return (
+                                        
                                         <Animatable.View
                                             animation={item?.isRead === false ? {
                                                 0: { opacity: 0.5 }, 
@@ -170,6 +185,9 @@ const Notifications = ({ onClose }) => {
                                         </Animatable.View>     
                                     )
                                 }}
+                                renderHiddenItem={removalButton}
+                                disableRightSwipe={true}
+                                rightOpenValue={-75}
                                 ListEmptyComponent={() => (
                                     <View className="p-4 border-b border-black-200">
                                         <Text className="font-psemibold text-white text-lg">Nuk keni njoftime...</Text>

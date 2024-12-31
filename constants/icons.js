@@ -65,6 +65,7 @@ import tryAgain from "../assets/icons/tryAgain.png"
 import failedQuiz from "../assets/icons/failedQuiz.png"
 import notifications from "../assets/icons/notification.png"
 import tick from "../assets/icons/check.png"
+import trashbin from "../assets/icons/trashbin.png"
 
 export default {
   play,
@@ -133,5 +134,6 @@ export default {
   tryAgain,
   failedQuiz,
   notifications,
-  tick
+  tick,
+  trashbin
 };

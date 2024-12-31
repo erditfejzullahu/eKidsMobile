@@ -1,45 +1,59 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, Image, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import React, { useState } from 'react'
 import { icons, images } from '../constants';
 import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
+import { navigateToMessenger } from '../hooks/useFetchFunction';
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
     const router = useRouter();
-
+    const [showOptions, setShowOptions] = useState(false)
     // console.log(usersData, 'asdasdasdasdasd');
     
   return (
-    <TouchableOpacity 
-        onPress={() => router.push(
-            {pathname: `(messenger)/${usersData?.id}`, params: {receiverFirstname: usersData?.firstname, receiverUsername: usersData?.username, receiverLastname: usersData?.lastname, receiverProfilePic: usersData?.profilePictureUrl, currentUserFirstName: currentUserData?.firstname, currentUserLastname: currentUserData?.lastname, currentUserProfilePic: currentUserData?.profilePictureUrl, currentUserUsername: currentUserData?.username}})}>
-        <View style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"}  flex-row gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
-            <View className="flex-row items-center gap-4 flex-1">
+    <TouchableWithoutFeedback onPress={() => setShowOptions(!showOptions)}>
+        <TouchableOpacity onLongPress={() => setShowOptions(!showOptions)} delayLongPress={300}
+            onPress={() => navigateToMessenger(router, usersData, currentUserData)}>
+            <View style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"}  flex-row relative gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
+                <View className="flex-row items-center gap-4 flex-1">
+                    <View>
+                        <Image 
+                            source={{uri: usersData?.profilePictureUrl || images.testimage}}
+                            className="h-16 w-16 rounded-[5px]"
+                            resizeMode='cover'
+                        />
+                    </View>
+
+                    <View className="flex-1">   
+                        <Text className="text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
+                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>Mesazhi i fundit</Text>
+                        <Text className="text-white text-xs font-plight text-right mt-1">21 Jan, 2000</Text>
+                    </View>
+                </View>
                 <View>
                     <Image 
-                        source={{uri: usersData?.profilePictureUrl || images.testimage}}
-                        className="h-16 w-16 rounded-[5px]"
-                        resizeMode='cover'
+                        source={icons.chat}
+                        className="h-8 w-8"
+                        resizeMode='contain'
+                        tintColor={"#fff"}
                     />
                 </View>
 
-                <View className="flex-1">   
-                    <Text className="text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
-                    <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>Mesazhi i fundit</Text>
-                    <Text className="text-white text-xs font-plight text-right mt-1">21 Jan, 2000</Text>
-                </View>
+                {showOptions && <View className="absolute self-start -right-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
+                    <View className="border-b border-black-200">
+                        <TouchableOpacity >
+                            <Text className="font-plight text-white text-sm p-1">Vizitoni profilin</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <TouchableOpacity onPress={() => navigateToMessenger(router, usersData, currentUserData)}>
+                            <Text className="font-plight text-white text-sm p-1">Filloni biseden</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>}
             </View>
-            
-            <View>
-                <Image 
-                    source={icons.chat}
-                    className="h-8 w-8"
-                    resizeMode='contain'
-                    tintColor={"#fff"}
-                />
-            </View>
-        </View>
-    </TouchableOpacity>
+        </TouchableOpacity>
+    </TouchableWithoutFeedback>
   )
 }
 

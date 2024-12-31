@@ -532,3 +532,32 @@ export const reqMakeNotificationsRead = async () => {
         return null;
     }
 }
+
+export const reqGetAllUserTypes = async (userId, types, filters) => {
+    try {
+        // const queryParams = {}
+        // Object.keys(filters).forEach((key) => {
+        //     if(filters[key]){
+        //         queryParams[key] = filters[key]
+        //     }
+        // })
+        // const queryString = new URLSearchParams(queryParams).toString();
+
+        const response = await apiClient.get(`/api/UserFriends/GetAllByUser/${userId}?types=${types}`)        
+        return response ? response.data : null
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const reqDeleteNotification = async (id) => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.delete(`/api/Notifications/${id}?userId=${userId}`)
+        return response ? response.status : false;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}

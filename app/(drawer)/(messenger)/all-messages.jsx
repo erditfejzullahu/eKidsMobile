@@ -1,7 +1,7 @@
 import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import useFetchFunction from '../../../hooks/useFetchFunction'
-import { getAllUsers } from '../../../services/fetchingService'
+import { getAllUsers, reqGetAllUserTypes } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
 import { icons, images } from '../../../constants'
 import { useGlobalContext } from '../../../context/GlobalProvider'
@@ -12,10 +12,14 @@ import { Platform } from 'react-native'
 
 const AllMessages = () => {
   const router = useRouter();
-  const {data, isLoading, refetch} = useFetchFunction(() => getAllUsers())
   const {user, isLoading: userLoading } = useGlobalContext();
   const userData = user?.data?.userData;
   // console.log(userData, 'asdasd');
+  const [userTypes, setUserTypes] = useState({
+    type: 1
+  })
+  
+  const {data, isLoading, refetch} = useFetchFunction(() => reqGetAllUserTypes(userData?.id, userTypes.type))
   
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -36,6 +40,8 @@ const AllMessages = () => {
       // const filteredData = data.filter(user => user.id !== userData?.id)
       // setAllUsers(filteredData);
       setAllUsers(data);
+      console.log(data);
+      
     }else{
       setAllUsers(null);
     }
