@@ -1,20 +1,20 @@
-import { View, Text, Image, StyleSheet, Platform } from 'react-native'
+import { View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { images } from '../constants'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { getCourseCategories } from '../services/fetchingService'
 // import RenderHtml from 'react-native-render-html';
-
+import { useRouter } from 'expo-router'
 
 const Courses = ({ courses: { id, courseName, courseFeaturedImage, courseDescription, courseCategory, lessons, courseEnrolled } }) => {
-
+    const router = useRouter();
 
     const {user} = useGlobalContext()
     const categories = user?.data?.categories;
     
     return (
         <View className="px-4 w-full mb-10 -mt-2" style={styles.box}>
-            <View style={styles.box} className="bg-primary rounded-[15px] overflow-hidden border-2 border-black-200">
+            <TouchableOpacity onPress={() => router.replace(`/categories/course/${id}`)} style={styles.box} className="bg-primary rounded-[15px] overflow-hidden border-2 border-black-200">
                 <View style={styles.box} className=" relative ">
                     <Image
                         source={images.testimage}
@@ -73,7 +73,7 @@ const Courses = ({ courses: { id, courseName, courseFeaturedImage, courseDescrip
                         
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         </View>
     )
 }

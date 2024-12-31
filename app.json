@@ -14,13 +14,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "supportsPictureInPicture": true,
+      "supportsBackgroundPlayback": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "supportsPictureInPicture": true,
+      "supportsBackgroundPlayback": true
     },
     "newArchEnabled": true,
     "web": {

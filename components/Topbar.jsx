@@ -10,6 +10,9 @@ import { DrawerActions } from '@react-navigation/native'
 import { useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import { useNotificationContext } from '../context/NotificationState'
+import _ from 'lodash'
+import { reqUsersBySearch } from '../services/fetchingService'
+import * as Animatable from "react-native-animatable"
 
 const Topbar = () => {
     const router = useRouter()
@@ -18,7 +21,31 @@ const Topbar = () => {
     const [notificationsOpened, setNotificationsOpened] = useState(false)
     const {showSearcher} = useTopbarUpdater();
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
+    const [queryText, setQueryText] = useState(null)
 
+    const fetchUsers = async () => {
+        const response = await reqUsersBySearch(queryText);
+        if(response){
+            setRetrivedData(response);
+            console.log(response);
+        }else{
+            setRetrivedData(null)
+        }
+    }
+
+    useEffect(() => {
+      if(queryText === '' || queryText === null){
+        setRetrivedData(null)
+      }
+    }, [queryText])
+    
+
+    const debounceFetchData = _.debounce(fetchUsers, 500);
+
+    const handleInput = (text) => {        
+        setQueryText(text)
+        if(text.length > 2) debounceFetchData(text)
+    }
     
   return (
     <SafeAreaView className="relative h-[90px]" style={{backgroundColor: "#13131a", borderBottomColor: "#232533", borderBottomWidth: 1}}>
@@ -38,7 +65,8 @@ const Topbar = () => {
             <TextInput 
                 placeholder='Kerkoni perdorues...'
                 placeholderTextColor={"#414141"}
-                className="border bg-primary border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
+                className="border bg-primary text-white border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
+                onChangeText={handleInput}
             />
         </View>}
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
@@ -73,21 +101,22 @@ const Topbar = () => {
         </View>
       </View>
 
-      {showSearcher && <View className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
+      {(showSearcher && retrivedData?.length > 0 && queryText !== '') && <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
         <ScrollView className="max-h-[200px] border border-black-200 rounded-[5px] overflow-hidden">
-            <TouchableOpacity className="p-2">
-                <View className="border-b pb-2 border-black-200 flex-row items-center justify-between">
+            {retrivedData?.map((item) => (
+            <TouchableOpacity key={`searchresult-${item?.id}`} className="py-2 border-b border-black-200 mx-2">
+                <View className=" flex-row items-center justify-between">
                     <View className="flex-row gap-3 items-center">
                         <View>
                             <Image 
-                                source={images.testimage}
-                                className="h-14 w-14 rounded-[3px]"
+                                source={{uri: item?.profilePictureUrl}}
+                                className="h-14 w-14 rounded-[3px] border border-black-200"
                                 resizeMode='cover'
                             />
                         </View>
                         <View>
-                            <Text className="font-psemibold text-lg mb-0.5 text-white">Erdit Fejzullahu</Text>
-                            <Text className="font-pregular text-xs text-gray-400">Mik</Text>
+                            <Text className="font-psemibold text-lg mb-0.5 text-white">{item?.name}</Text>
+                            <Text className="font-pregular text-xs text-gray-400">{item?.isCloseFriend && item?.isFriend ? "Mik i ngushte" : item?.isFriend && !item?.isCloseFriend ? "Mik" : "Bashkeperdorues"}</Text>
                         </View>
                     </View>
                     <View>
@@ -99,8 +128,9 @@ const Topbar = () => {
                     </View>
                 </View>
             </TouchableOpacity>
+            ))}
         </ScrollView>
-      </View>}
+      </Animatable.View>}
 
       <StatusBar backgroundColor='#13131a' style='light'/>
 

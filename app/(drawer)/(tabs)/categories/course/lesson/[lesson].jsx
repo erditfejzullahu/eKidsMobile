@@ -22,6 +22,8 @@ import RenderHTML from 'react-native-render-html';
 import { useDrawerUpdater } from '../../../../../../navigation/DrawerUpdater';
 import apiClient from '../../../../../../services/apiClient';
 
+import * as Animatable from "react-native-animatable"
+
 const lessonContent = () => {
     const { lesson } = useLocalSearchParams(); 
     
@@ -39,6 +41,7 @@ const lessonContent = () => {
     const [lessonData, setLessonData] = useState(null)
     const [commentData, setCommentData] = useState([])
     const [htmlContent, setHtmlContent] = useState({html: ''})
+    const [videoCompleted, setVideoCompleted] = useState(false)
 
     const commentValue = useRef(null)
 
@@ -48,10 +51,25 @@ const lessonContent = () => {
     const videoSource = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
     const player = useVideoPlayer(videoSource, player => {
       if (player) {
-        player.loop = true;
+        player.loop = false;
         player.play();
       }
     })
+
+    useEffect(() => {
+      if(videoSource){
+        const completedVideo = player.addListener('playToEnd', () => {
+          setVideoCompleted(true)
+        })
+
+        // return () => {
+        //   completedVideo.remove();
+        // }
+      }
+      
+    }, [videoSource])
+    
+    
 
     const {isPlaying} = useEvent(player, 'playingChange', {isPlaying: player.playing});
     // const {status} = useEvent(player, 'playToEnd', {status: player?.status}); //check here per kur kryhet video leksioni
@@ -70,20 +88,33 @@ const lessonContent = () => {
     // }, [player])
     
     // to stop video when route chagnes 
-    useFocusEffect(
-      React.useCallback(() => {
-        // This will run when the screen is in focus or going out of focus
-        return () => {
-          try {
-            if (player.playing) {
-              player.pause();
-            }
-          } catch (error) {
-            console.error('Error pausing player:', error);
+    // useFocusEffect(
+    //   React.useCallback(() => {
+    //     // This will run when the screen is in focus or going out of focus
+    //     return () => {
+    //       try {
+    //         if (player.playing) {
+    //           player.pause();
+    //         }
+    //       } catch (error) {
+    //         console.error('Error pausing player:', error);
+    //       }
+    //     };
+    //   }, [player])
+    // )
+
+    useEffect(() => {
+      return () => {
+        try {
+          if(player.playing){
+            player.pause();
           }
-        };
-      }, [player])
-    )
+        } catch (error) {
+          
+        }
+      }
+    }, [player])
+    
     
     
 
@@ -194,7 +225,7 @@ const lessonContent = () => {
     useEffect(() => {
       if(data){        
         setLessonData(data);    
-        console.log(data, 'data');
+        // console.log(data, 'data');
         
         setHtmlContent((prevData) => ({
           ...prevData,
@@ -247,7 +278,7 @@ const lessonContent = () => {
       try {
         const response = await deleteBookmark(userId, null, lessonData?.lesson?.id)
         if(response){
-          console.log(response);
+          // console.log(response);
           
           await onRefresh();
         }
@@ -261,11 +292,20 @@ const lessonContent = () => {
       setIsChecked(!isChecked)
       setShowVideo(!showVideo)
     }
+    useEffect(() => {
+      if(player.duration){
+        if(player.currentTime.toFixed(2) === player.duration.toFixed(2)){
+          setTimeout(() => {
+            setVideoCompleted(true);
+          }, 400);
+        }
+      }
+      
+    }, [player.currentTime, player.duration])
+    
 
     useEffect(() => {
       showVideo ? player.play() : player.pause();
-      console.log(showVideo);
-      
     }, [showVideo])
 
     useEffect(() => {
@@ -529,14 +569,16 @@ const lessonContent = () => {
               </View>
               <View className="flex-[1] flex-row gap-2 border-b border-t border-black-200 items-center justify-center p-2 py-3">
                 <Text className="text-white font-pbold text-sm text-center">{lessonData?.lesson?.lessonName}</Text>
-                <TouchableOpacity onPress={() => setVisibleCurrentProgressModal(true)}>
-                  <Image 
-                    source={lessonData?.currentProgress?.isCompleted ? icons.completed : icons.completedProgress}
-                    resizeMode='contain'
-                    className="h-6 w-6"
-                    tintColor={"#FF9C01"}
-                  />
-                </TouchableOpacity>
+                <Animatable.View animation="pulse" iterationCount="infinite">
+                  <TouchableOpacity onPress={() => setVisibleCurrentProgressModal(true)}>
+                    <Image 
+                      source={lessonData?.currentProgress?.isCompleted ? icons.completed : icons.completedProgress}
+                      resizeMode='contain'
+                      className="h-6 w-6"
+                      tintColor={"#FF9C01"}
+                    />
+                  </TouchableOpacity>
+                </Animatable.View>
               </View>
               <View className="flex-[0.5] border border-r-0 border-b border-black-200 p-2 py-3 items-center justify-center bg-oBlack">
                 <Text className="text-white font-pregular text-sm text-center"><ClockComponent onTimeChange={timeChange}/></Text>
@@ -569,7 +611,9 @@ const lessonContent = () => {
             <View className="min-w-full">
             {showVideo && <VideoView
               player={player}
+              
               allowsFullscreen
+              nativeControls
               allowsPictureInPicture
               contentFit='cover'
               style={{ width: '100%', height: "250" }}
@@ -728,6 +772,32 @@ const lessonContent = () => {
                 </View>
                 <View className="mt-2">
                   <Text className="font-plight text-sm text-center text-white">Brenda disa sekondave do te ridrejtoheni tek dritarja e ardhshme ku do mund te shkarkoni diplomen tuaj te nenshkruar nga <Text className="text-secondary font-psemibold">ShokuMesimit</Text>...</Text>
+                </View>
+              </CustomModal>
+
+              <CustomModal 
+                visible={videoCompleted}
+                title={"Sapo perfunduat materialin!"}
+                onClose={() => setVideoCompleted(false)}
+                onlyCancelButton={true}
+                cancelButtonText={"Largo dritaren"}
+              >
+                <View className="mt-2">
+                  <Text className="text-white text-sm font-plight text-center">
+                  {lessonData?.currentProgress?.isCompleted 
+                  ? <>
+                      {"Materiali visual sapo perfundoj! Ju mund te shikoni nese autori ka lene permbajtje tekstuale apo mund te procedoni me tutje duke permbyllur kursin me butonin "}
+                      <Text key="finish" className="text-secondary font-psemibold">Perfundo</Text>
+                      {" dhe marrjen e certifikates se perfundimit me sukses te kursit "}
+                      <Text key="courseName" className="text-secondary font-psemibold"> {lessonData?.lesson?.course?.courseName}</Text>
+                    </>
+                  : <>
+                      {"Materiali visual sapo perfundoj! Ju mund te shikoni nese autori ka lene permbajtje tekstuale apo mund te procedoni me tutje duke klikuar mbi butonin "}
+                      <Text key="continue" className="text-secondary font-psemibold">Vazhdoni</Text>
+                      {" Ku mund te vazhdoni ne leksionin e radhes!"}
+                    </>
+                }
+                  </Text>
                 </View>
               </CustomModal>
                 

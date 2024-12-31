@@ -561,3 +561,14 @@ export const reqDeleteNotification = async (id) => {
         return false;
     }
 }
+
+export const reqUsersBySearch = async (paramText) => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/UserFriends/SearchUsers?userId=${userId}&searchParam=${paramText}`)
+        return response ? response.data : null
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+}
