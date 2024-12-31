@@ -6,7 +6,7 @@ import { icons } from '../../constants'
 import { Image } from 'react-native'
 import { useRouter, usePathname, router, Link, Stack, useSegments } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
-import { logout } from '../../services/authService'
+import { logout, refresh } from '../../services/authService'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { getMetaValue } from '../../services/fetchingService'
 import Topbar from '../../components/Topbar'
@@ -16,6 +16,10 @@ import { ScrollView } from 'react-native-gesture-handler'
 import CustomModal from '../../components/Modal'
 import Notifications from '../../components/Notifications'
 import { useNotificationContext } from '../../context/NotificationState'
+import { getAccessToken, getRefreshToken } from '../../services/secureStorage'
+import * as SignalR from '@microsoft/signalr';
+import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
+
 
 const showIcons = (icon, size, color) => {
     return(
@@ -220,7 +224,124 @@ const CustomHeader = (props) => {
 }
 
 const _layout = () => {
-    const {isOpened, setIsOpened } = useNotificationContext();
+    const [connection, setConnection] = useState(null)
+    const {isOpened, setIsOpened, notificationsCount, setNotificationsCount, setCurrentConnection } = useNotificationContext();
+    
+    useEffect(() => {
+        const connectToHub = async () => {
+            const token = await getAccessToken();
+            if(!token){
+                return;
+            }
+            console.log(token);
+            
+            const newConnection = new SignalR.HubConnectionBuilder()
+                .withUrl('http://192.168.1.9:7051/notificationsHub', {
+                    headers: {
+                        "Authorization" : "Bearer " + token
+                    }
+                })
+                .configureLogging(SignalR.LogLevel.Information)
+                .build();
+            
+            setConnection(newConnection);
+            setCurrentConnection(newConnection);
+
+            const startConnection = async () => {
+                try {
+                    await newConnection.start();
+                    // if(newConnection.state === SignalR.HubConnectionState.Connected){
+                        await invokeNotifications(newConnection); 
+                    // }
+                    console.log("connected to notification hub");
+                } catch (error) {
+                    if(error.message.includes('401')){
+                        try {
+                            const refreshToken = await getRefreshToken();
+                            const refreshResponse = await refresh(refreshToken)
+                            if(refreshResponse){
+                                await connectToHub();
+                            }
+                        } catch (error) {
+                            console.error('in layout refreshtoken error', error);
+                        }
+                    }else{
+                        await handleReconnect();
+                    }
+                    
+                }
+            }
+
+            newConnection.on('UnreadNotifications', (unreadNotificationsCount) => {
+                //global state for unread notifications
+                console.log(unreadNotificationsCount, ' counteri i notifications');
+                setNotificationsCount(unreadNotificationsCount);
+            })
+
+            newConnection.on('ReceiveNotification', (notification) => {
+                Notifier.showNotification({
+                    title: notification?.type === 1 ? "Informacione per ju!" : notification?.type === 2 ? "Shqyrtoni veprimin!" : notification?.type === 3 ? "Shtoni kujdesin!" : notification?.type === 4 ? "Kerkese miqesie!" : "Nderveprim tjeter!",
+                    description: notification?.type === 4 ? `Hej ${notification?.notificationReceiver?.name}, keni kerkese miqesie nga ${notification?.notificationSender?.name}!` : item?.Information,
+                    showAnimationDuration: 800,
+                    hideAnimationDuration: 800,
+                    Component: NotifierComponents.Notification,
+                    componentProps: {
+                        titleStyle: { color: '#fff', fontFamily: "Poppins-SemiBold" }, 
+                        descriptionStyle: { color: '#9ca3af' , fontFamily: "Poppins-Light"},
+                        containerStyle: { backgroundColor: '#161622' },
+                        imageSource: (notification?.type === 4 || notification?.type === 5) ? {uri: notification?.notificationSender?.profilePicture} : icons.warning,
+                        imageStyle: {
+                            resizeMode: "cover"
+                        }
+                    },
+                    easing: Easing.bounce,
+                    onPress: () => setIsOpened(true)
+                })
+                console.log(' erdh');
+                
+            })
+
+            newConnection.onclose(async (error) => {
+                console.log("connection closed? ", error);
+                if(error?.statusCode === 401){
+                    await startConnection();
+                }else{
+                    await handleReconnect();
+                }
+            })
+
+            const handleReconnect = async () => {
+                setTimeout(async () => {
+                    await connectToHub();
+                }, 5000);
+            }
+
+            await startConnection();
+
+        }
+
+        connectToHub();
+
+        return () => {
+            if(connection){
+                connection.stop();
+            }
+        }
+    }, [])
+
+    const invokeNotifications = async (connectionPassed) => {
+        try {
+            if(connectionPassed.state === SignalR.HubConnectionState.Connected){
+                await connectionPassed.invoke('NotificationsUnreadCount');
+                console.log('invoked');
+            }
+            
+        } catch (error) {
+            console.log(error, ' error infoking noptification count');
+            
+        }
+    }
+    
     
     return (
         <>

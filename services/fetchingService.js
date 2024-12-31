@@ -512,3 +512,23 @@ export const getCompletedQuizzesByUser = async (userId) => {
         return null;
     }
 }
+
+export const getNotifications = async () => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/Notifications/${userId}`)
+        return response ? response.data : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const reqMakeNotificationsRead = async () => {
+    try {
+        const response = await apiClient.get(`/api/Notifications/MakeReadNotifications`)
+        return response ? response.status : null;
+    } catch (error) {
+        console.error(error, ' notifread');
+        return null;
+    }
+}

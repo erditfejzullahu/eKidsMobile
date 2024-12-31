@@ -15,7 +15,7 @@ const NotifierComponent = ({title, description, alertType = "success", onHideFun
             componentProps: {
                 alertType: alertType, // Can also be 'error' or 'info'
                 titleStyle: { color: '#fff', fontFamily: "Poppins-SemiBold" }, 
-                descriptionStyle: { color: '#9ca3af' },
+                descriptionStyle: { color: '#9ca3af', fontFamily: "Poppins-Light" },
                 containerStyle: { backgroundColor: '#161622' },
                 imageSource: alertType === "success" ? icons.checked : alertType === "error" ? icons.error : icons.warning,
                 imageStyle: {

@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons, images } from '../constants'
@@ -17,8 +17,9 @@ const Topbar = () => {
     const [retrivedData, setRetrivedData] = useState(null)
     const [notificationsOpened, setNotificationsOpened] = useState(false)
     const {showSearcher} = useTopbarUpdater();
-    const {isOpened, setIsOpened} = useNotificationContext();
+    const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
 
+    
   return (
     <SafeAreaView className="relative h-[90px]" style={{backgroundColor: "#13131a", borderBottomColor: "#232533", borderBottomWidth: 1}}>
       <View className="flex-row justify-between" style={{height:40}}>
@@ -43,8 +44,12 @@ const Topbar = () => {
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
             <View>
                 <TouchableOpacity
+                    className="relative"
                     onPress={() => setIsOpened(true)}
                 >
+                    {notificationsCount > 0 && <View className={`absolute ${isOpened ? "bg-white" : "bg-secondary"} -right-2 -top-2 rounded-full z-20 h-4 w-4 items-center justify-center`}>
+                        <Text className={`font-psemibold ${isOpened ? "text-secondary" : "text-white"} text-xs`}>{notificationsCount}</Text>
+                    </View>}
                     <Image 
                         source={icons.notifications}
                         className="h-6 w-6"

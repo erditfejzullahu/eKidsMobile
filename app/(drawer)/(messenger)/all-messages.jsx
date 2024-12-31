@@ -55,7 +55,7 @@ const AllMessages = () => {
     return (
       <FlatList
         
-        refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
+        refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
         className="h-full bg-primary px-4"
         data={allUsers}
         contentContainerStyle={{gap: 14}}
