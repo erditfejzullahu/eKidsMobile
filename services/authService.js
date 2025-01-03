@@ -6,7 +6,7 @@ import { getAccessToken } from "./secureStorage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 
-const API_URL = 'http://192.168.1.9:7051'
+const API_URL = 'http://192.168.1.11:5194'
 
 
 export const login = async (username, password) => {

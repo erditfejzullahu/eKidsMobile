@@ -61,7 +61,7 @@ const lessonContent = () => {
         const completedVideo = player.addListener('playToEnd', () => {
           setVideoCompleted(true)
         })
-
+        
         // return () => {
         //   completedVideo.remove();
         // }

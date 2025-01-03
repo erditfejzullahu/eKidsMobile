@@ -572,3 +572,51 @@ export const reqUsersBySearch = async (paramText) => {
         return null
     }
 }
+
+export const getUserProfile = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Users/GetUserById/${id}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null;
+    }
+}
+
+export const getUserRelationStatus = async (senderId, receiverId) => {
+    try {
+        const response = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${senderId}&ReceiverId=${receiverId}`)
+        console.log(response);
+        
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
+export const makeUserFriendReq = async (data) => {
+    try {
+        const response = await apiClient.post(`/api/Notifications/UserFriendReq`, data)
+        return response ? response.status : null
+    } catch (error) {
+        console.error(error.response.data);
+        return null;
+    }
+}
+
+export const removeFriendReq = async (userId, friendId) => {
+    try {
+        const response = await apiClient.delete(`/api/UserFriends/DeleteFriend?userId=${userId}&friendId=${friendId}`)
+        return response && response.status;
+    } catch (error) {
+        return error.response.status;
+    }
+}
+
+export const removeFriendRequestReq = async (userId, receiverId) => {
+    try {
+        const response = await apiClient.put(`/api/UserFriends/DeleteFriendRequest?userId=${userId}&receiverId=${receiverId}`);
+        return response && response.status;
+    } catch (error) {
+        return error.response.status;
+    }
+}

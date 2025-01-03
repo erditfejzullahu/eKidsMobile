@@ -104,7 +104,7 @@ const Topbar = () => {
       {(showSearcher && retrivedData?.length > 0 && queryText !== '') && <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
         <ScrollView className="max-h-[200px] border border-black-200 rounded-[5px] overflow-hidden">
             {retrivedData?.map((item) => (
-            <TouchableOpacity key={`searchresult-${item?.id}`} className="py-2 border-b border-black-200 mx-2">
+            <TouchableOpacity key={`searchresult-${item?.id}`} className="py-2 border-b border-black-200 mx-2" onPress={() => router.replace(`(profiles)/${item?.id}`)}>
                 <View className=" flex-row items-center justify-between">
                     <View className="flex-row gap-3 items-center">
                         <View>

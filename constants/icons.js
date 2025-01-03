@@ -66,6 +66,7 @@ import failedQuiz from "../assets/icons/failedQuiz.png"
 import notifications from "../assets/icons/notification.png"
 import tick from "../assets/icons/check.png"
 import trashbin from "../assets/icons/trashbin.png"
+import report from "../assets/icons/report.png"
 
 export default {
   play,
@@ -135,5 +136,6 @@ export default {
   failedQuiz,
   notifications,
   tick,
-  trashbin
+  trashbin,
+  report
 };

@@ -39,14 +39,14 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
                     />
                 </View>
 
-                {showOptions && <View className="absolute self-start -right-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
+                {showOptions && <View className="absolute self-start -left-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
                     <View className="border-b border-black-200">
-                        <TouchableOpacity >
+                        <TouchableOpacity onPress={() => {router.replace(`(profiles)/${usersData?.id}`), setShowOptions(false)}}>
                             <Text className="font-plight text-white text-sm p-1">Vizitoni profilin</Text>
                         </TouchableOpacity>
                     </View>
                     <View>
-                        <TouchableOpacity onPress={() => navigateToMessenger(router, usersData, currentUserData)}>
+                        <TouchableOpacity onPress={() => {navigateToMessenger(router, usersData, currentUserData), setShowOptions(false)}}>
                             <Text className="font-plight text-white text-sm p-1">Filloni biseden</Text>
                         </TouchableOpacity>
                     </View>

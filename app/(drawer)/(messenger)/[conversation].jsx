@@ -146,7 +146,7 @@ const Conversation = () => {
             console.log("TOKEN: ", token);
             
             const newConnection = new SignalR.HubConnectionBuilder()
-              .withUrl('http://192.168.1.9:7051/chatHub', {
+              .withUrl('http://192.168.1.11:5194/chatHub', {
                 headers: {
                     "Authorization": "Bearer " + token
                 }
@@ -407,7 +407,7 @@ const Conversation = () => {
 
                         {openMoreDetails && <View className="absolute bg-oBlack right-6 p-2 z-20 rounded-[5px] border-black-200 border mt-[45px]">
                             <View className="border-b border-black-200">
-                                <TouchableOpacity className="flex-row items-center" onPress={() => router.replace(`/profile/${conversation?.conversation}`)}>
+                                <TouchableOpacity className="flex-row items-center" onPress={() => router.replace(`(profiles)/${conversation?.conversation}`)}>
                                     <Text className="text-white p-1 font-pregular">Shikoni profilin</Text>
                                     <Image 
                                         source={icons.profile}
