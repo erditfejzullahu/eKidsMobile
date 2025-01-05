@@ -9,22 +9,27 @@ import * as Animatable from 'react-native-animatable'
 import { useRouter } from 'expo-router'
 import EmptyState from "./EmptyState";
 
-const UserProgressComponent = ({userData}) => {
+const UserProgressComponent = ({userDataId}) => {
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false)
-    const {data, refetch, isLoading} = useFetchFunction(() => userActualProgresses(userData?.id))
+    const {data, refetch, isLoading} = useFetchFunction(() => userActualProgresses(userDataId))
     const [courseToggled, setCourseToggled] = useState([])
+    const [theData, setTheData] = useState(null)
     
     useEffect(() => {
-      if(userData?.id){
-        setRefreshing(true)
+      if(userDataId){
         refetch()
       }
-    }, [userData])
-    
+    }, [userDataId])
+
     useEffect(() => {
-        setRefreshing(isLoading)
-    }, [isLoading])
+      if(data){
+        setTheData(data)
+      }else{
+        setTheData(null)
+      }
+    }, [data])
+
 
     const toggleProgress = (id) => {
         setCourseToggled((prev) => {
@@ -51,7 +56,7 @@ const UserProgressComponent = ({userData}) => {
         router.push(`/categories/course/lesson/${lessonItem?.lessonId}`)
     }
 
-    if (refreshing) {
+    if (refreshing || isLoading) {
         return (
             <View className="h-1/2">
                 <Loading />
@@ -64,7 +69,7 @@ const UserProgressComponent = ({userData}) => {
                     <Text className="text-white font-pregular text-base">Kurset e shfletuara deri me tani</Text>
                 </View>
                 <View className="flex-col w-full gap-4">
-                    {(userData && data?.length !== 0) ?  
+                    {(userDataId && data?.length !== 0) ?  
                     data.map((progressItem, index) => {
                         const courseProgress = calculateProgress(progressItem?.lessonDetails);
                         const ProgressID = progressItem?.lessonDetails[0]?.progress[0]?.progressId;

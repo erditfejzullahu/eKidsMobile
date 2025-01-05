@@ -146,7 +146,7 @@ const Conversation = () => {
             console.log("TOKEN: ", token);
             
             const newConnection = new SignalR.HubConnectionBuilder()
-              .withUrl('http://192.168.1.11:5194/chatHub', {
+              .withUrl('https://wanted-globally-impala.ngrok-free.app/chatHub', {
                 headers: {
                     "Authorization": "Bearer " + token
                 }

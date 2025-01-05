@@ -437,7 +437,7 @@ const router = useRouter();
                     <View>
                       <Image 
                         source={icons.quiz} 
-                        style={{tintColor: showCompletedQuizzes ? "#FF9C01" : "#fff"}} 
+                        style={{tintColor: showCompletedQuizzes ? "#FF9C01" : "#fff"}}
                         className="w-6 h-6"
                         resizeMode='contain'
                         />
@@ -547,7 +547,7 @@ const router = useRouter();
                 </View>)}
               {!completedCourses && !showCompletedQuizzes &&
               <UserProgressComponent
-                userData={userData}
+                userData={userData?.id}
               />}
                 {(showCompletedQuizzes && completedQuizzesData?.length > 0) ? 
                 <View className="mb-4">

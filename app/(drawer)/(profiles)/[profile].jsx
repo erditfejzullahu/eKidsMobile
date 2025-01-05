@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleSheet, Platform, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { Redirect, useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
 import Loading from "../../../components/Loading"
@@ -12,17 +12,47 @@ import { navigateToMessenger } from '../../../hooks/useFetchFunction'
 import { useRouter } from 'expo-router'
 import { Modal } from 'react-native'
 import CustomModal from '../../../components/Modal'
+import ProfileCoursesComponent from '../../../components/ProfileCoursesComponent'
+import ProfileQuizzesComponent from '../../../components/ProfileQuizzesComponent'
+import UserCourseCreated from '../../../components/UserCourseCreated'
+import UserQuizzesCreated from '../../../components/UserQuizzesCreated'
+import { ContributionGraph, ProgressChart } from 'react-native-chart-kit'
 
 const profiles = () => {
     const {profile} = useLocalSearchParams();
+    if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
+    const userData = user?.data?.userData;
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
     const {user, isLoading: userLoading} = useGlobalContext();
-    const userData = user?.data?.userData;
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     const router = useRouter();
     const [profileData, setProfileData] = useState(null)
     const [isRefreshing, setIsRefreshing] = useState(false)
-
+    const { width: screenWidth } = Dimensions.get('window');
+    
+    const commitsData = [
+      { date: "2024-01-02", count: 1 },
+      { date: "2017-01-03", count: 2 },
+      { date: "2017-01-04", count: 3 },
+      { date: "2017-01-05", count: 4 },
+      { date: "2017-01-06", count: 5 },
+      { date: "2017-01-30", count: 2 },
+      { date: "2017-01-31", count: 3 },
+      { date: "2017-03-01", count: 2 },
+      { date: "2017-04-02", count: 4 },
+      { date: "2017-03-05", count: 2 },
+      { date: "2017-02-30", count: 4 }
+    ];
+    const chartConfig = {
+      backgroundGradientFrom: "#1E2923",
+      backgroundGradientFromOpacity: 0,
+      backgroundGradientTo: "#08130D",
+      backgroundGradientToOpacity: 0.5,
+      color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+      strokeWidth: 2, // optional, default 3
+      barPercentage: 0.5,
+      useShadowColorFromDataset: false // optional
+    };
     const [showQuizzes, setShowQuizzes] = useState(false)
     const [showCourses, setShowCourses] = useState(false)
     const [showCreatedQuizzes, setShowCreatedQuizzes] = useState(false)
@@ -30,6 +60,14 @@ const profiles = () => {
 
     const [relationStatus, setRelationStatus] = useState(null)
     const [removeFriendModal, setRemoveFriendModal] = useState(false)
+
+    const [profileAboutData, setProfileAboutData] = useState(true)
+    const [personalInformation, setPersonalInformation] = useState(false)
+    const [professionalInformation, setProfessionalInformation] = useState(false)
+
+    const [skillsPart, setSkillsPart] = useState(false)
+    const [commitmentPart, setCommitmentPart] = useState(true)
+    const [projectsPart, setProjectsPart] = useState(false)
 
     const refreshData = async () => {
       setIsRefreshing(true)
@@ -120,6 +158,21 @@ const profiles = () => {
     }, [data])
     
 
+    useEffect(() => {
+      if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes){
+        setProfileAboutData(true)
+      }else{
+        setProfileAboutData(false)
+      }
+
+      if(profileAboutData){
+        setPersonalInformation(false)
+        setProfessionalInformation(true)
+      }
+    }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes])
+    
+    
+
     if(isLoading || userLoading || relationReloading) return <Loading />
   return (
     <ScrollView
@@ -186,7 +239,7 @@ const profiles = () => {
           <View className="w-1/2  border-r border-black-200" style={{backgroundColor: showQuizzes ? "#13131a" : "transparent"}}>
             <TouchableOpacity 
               className="flex-row py-4 items-center gap-2 justify-center text-center"
-              onPress={() => {setShowQuizzes(true), setShowCourses(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
+              onPress={() => {setShowQuizzes(!showQuizzes), setShowCourses(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
             >
               <Image 
                 source={icons.quiz}
@@ -200,7 +253,7 @@ const profiles = () => {
           <View className="w-1/2" style={{backgroundColor: showCourses ? "#13131a" : "transparent"}}>
             <TouchableOpacity 
               className="flex-row  py-4 items-center gap-2 justify-center text-center"
-              onPress={() => {setShowCourses(true), setShowQuizzes(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
+              onPress={() => {setShowCourses(!showCourses), setShowQuizzes(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
               >
               <Image 
                 source={icons.progress}
@@ -218,7 +271,7 @@ const profiles = () => {
       {/* other toggle part */}
       <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
         <View className={` ${showCreatedQuizzes ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200`}>
-          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(true), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center gap-2 flex-row justify-center">
+          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center gap-2 flex-row justify-center">
             <View>
               <Image 
                 source={images.mortarBoard} 
@@ -231,7 +284,7 @@ const profiles = () => {
           </TouchableOpacity>
         </View>
         <View className={`${showCreatedCourses ? "bg-oBlack" : ""} w-1/2 p-2`}>
-          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(false), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(true)}} className="items-center gap-2 flex-row justify-center">
+          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(true)}} className="items-center gap-2 flex-row justify-center">
             <View>
               <Image 
                 source={icons.lectures} 
@@ -245,6 +298,145 @@ const profiles = () => {
         </View>
       </View>
       {/* other toggle part */}
+
+      {showCourses && <View>
+        <ProfileCoursesComponent 
+          userDataId={profile}
+          courseData={profileData?.courseCompleted}
+          userCategories={user?.data?.categories}
+        />
+      </View>}
+
+      {showQuizzes && <View>
+        <ProfileQuizzesComponent 
+          quizzesCompleted={profileData?.quizzesCompleted}
+          userCategories={user?.data?.categories}
+        />
+      </View>}
+
+      {showCreatedCourses && <View>
+        <UserCourseCreated 
+          userCourses={profileData?.courseCreated}
+          userCategories={user?.data?.categories}
+          />
+      </View>}
+
+      {showCreatedQuizzes && <View>
+        <UserQuizzesCreated 
+          quizzesCreated={profileData?.quizzes}
+          userCategories={user?.data?.categories}
+        />
+      </View>}
+
+      {profileAboutData && 
+        <View>
+          <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack border border-black-200 rounded-[10px] justify-between w-[260px]" style={styles.box}>
+          <TouchableOpacity onPress={() => {setPersonalInformation(true), setProfessionalInformation(false)}} className="flex-1 items-center border-r border-black-200">
+              <Text className={`${personalInformation ? "text-secondary font-pregular" : "text-white"} text-sm font-plight text-center`}>Informacione personale</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {setProfessionalInformation(true), setPersonalInformation(false)}} className="flex-1 items-center">
+              <Text className={`${professionalInformation ? "text-secondary font-pregular" : "text-white"} text-sm font-plight text-center`}>Informacione Profesionale</Text>
+          </TouchableOpacity>
+          </View>
+
+          {personalInformation && 
+          <View className="m-4 bg-oBlack border rounded-[10px] border-black-200" style={styles.box}>
+          <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
+            <View>
+              <Text className="text-white font-plight text-sm">Abonimi:</Text>
+              <Text className="text-secondary font-psemibold">Abonues rekurent</Text>
+            </View>
+            <View>
+              <Text className="text-white font-plight text-sm text-right">Angazhimi:</Text>
+              <Text className="text-secondary font-psemibold text-right">Mesatar</Text>
+            </View>
+          </View>
+          <View className="m-4 my-2 flex-row justify-between border-b border-black-200">
+            <View>
+              <Text className="text-white font-plight text-sm">Nofka:</Text>
+              <Text className="text-secondary font-psemibold">{profileData?.username}</Text>
+            </View>
+            <View>
+              <Text className="text-white font-plight text-sm text-right">Roli i krijimit:</Text>
+              <Text className="text-secondary font-psemibold text-right">Pioner</Text>
+            </View>
+          </View>
+          <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
+            <View>
+              <Text className="text-white font-plight text-sm">Data lindjes:</Text>
+              <Text className="text-secondary font-psemibold">21.01.2000</Text>
+            </View>
+            <View>
+              <Text className="text-white font-plight text-sm text-right">Profesioni:</Text>
+              <Text className="text-secondary font-psemibold text-right">Programer</Text>
+            </View>
+          </View>
+          </View>}
+
+          {professionalInformation && 
+          <View className="m-4 bg-oBlack border rounded-[10px] border-black-200" style={styles.box}>
+            <View className="flex-row flex-1 border-b border-black-200">
+              <View className="flex-1 items-center border-r border-black-200">
+                <TouchableOpacity onPress={() => {setSkillsPart(true), setCommitmentPart(false), setProjectsPart(false)}} className="p-2">
+                  <Text className={`${skillsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Aftesite</Text>
+                </TouchableOpacity>
+              </View>
+              <View className="flex-1 items-center border-r border-black-200">
+                <TouchableOpacity onPress={() => {setCommitmentPart(true), setSkillsPart(false), setProjectsPart(false)}} className="p-2">
+                  <Text className={`${commitmentPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Angazhimi</Text>
+                </TouchableOpacity>
+              </View>
+              <View className="flex-1 items-center">
+                <TouchableOpacity className="p-2" onPress={() => {setProjectsPart(true), setSkillsPart(false), setCommitmentPart(false)}}>
+                  <Text className={`${projectsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Projekte</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {skillsPart && 
+            <View className="p-4">
+              <View className="gap-3">
+                <View>
+                  <Text className="text-secondary font-psemibold text-xs">Edukimi shkollor:</Text>
+                  <Text className="text-white font-psemibold text-base">1. Kolegji AAB (2018 - 2022)</Text>
+                  <Text className="text-gray-400 text-sm font-plight">Inxhinieri softuerike</Text>
+                </View>
+                <View>
+                  <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
+                  <Text className="text-white font-psemibold text-base">1. Fullstack Developer (2018 - 2022)</Text>
+                  <Text className="text-gray-400 text-sm font-plight">PBC</Text>
+                </View>
+                <View>
+                  <Text className="text-secondary font-psemibold text-xs">Aftesite:</Text>
+                  <Text className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">1. </Text> HTML</Text>
+                </View>
+                <View>
+                  <Text className="text-secondary font-psemibold text-xs">Aftesi te buta:</Text>
+                  <Text className="text-white font-plight text-base">Fleksibiliteti, Mundesia per te punuar ne stres</Text>
+                </View>
+              </View>
+            </View>}
+
+            {commitmentPart && 
+            <View className="flex-1">
+              <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
+              <ContributionGraph 
+                values={commitsData}
+                width={screenWidth - 32}
+                endDate={new Date("2025-12-30")}
+                numDays={365}
+                height={220}
+                // radius={32}
+                chartConfig={chartConfig}
+              />
+            </View>}
+
+          </View>}
+
+
+      </View>}
+
+
 
       <CustomModal
       visible={removeFriendModal}

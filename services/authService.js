@@ -5,11 +5,23 @@ import { jwtDecode } from "jwt-decode";
 import { getAccessToken } from "./secureStorage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
+// const https = require('https')
 
-const API_URL = 'http://192.168.1.11:5194'
-
-
+const API_URL = 'https://wanted-globally-impala.ngrok-free.app'
+// axios.defaults.httpsAgent = new https.Agent({  
+//     rejectUnauthorized: false  
+// });
+axios.interceptors.request.use(config => {
+    
+    // Disable SSL certificate verification for development (unsafe for production)
+    config.headers['ssl-disable'] = 'true'; // Custom header workaround (Optional)
+    return config;
+  }, error => {
+    return Promise.reject(error);
+  });
 export const login = async (username, password) => {
+    console.log('asd');
+    
     try {
         const response = await axios.post(`${API_URL}/login`, {
             username,
