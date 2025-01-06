@@ -20,6 +20,7 @@ import * as Animatable from 'react-native-animatable'
 import { Link } from 'expo-router'
 import EmptyState from '../../../components/EmptyState'
 import { useRouter } from 'expo-router'
+import ShowOtherDetailsProfile from '../../../components/ShowOtherDetailsProfile'
 
 const profile = () => {
 const router = useRouter();
@@ -53,6 +54,9 @@ const router = useRouter();
   const [showCompletedQuizzes, setShowCompletedQuizzes] = useState(false)
   const [completedQuizzesData, setCompletedQuizzesData] = useState(null)
   const [showMoreInQuizzes, setShowMoreInQuizzes] = useState([])
+
+  const [showImportantDetails, setShowImportantDetails] = useState(true)
+  const [showOtherDetails, setShowOtherDetails] = useState(false)
 
   const [form, setForm] = useState({
     firstname: '',
@@ -339,83 +343,114 @@ const router = useRouter();
   
         {/* user details */}
         { showDetails ? <>
-        <KeyboardAwareScrollView style={styles.container}
-        contentContainerStyle={{ flexGrow: 1 }}
-        enableOnAndroid={true} // Ensures Android support
-        extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
-        keyboardShouldPersistTaps="handled"
-        >
-          <View className="px-4 mb-4">
-            <FormField
-              title={"Emri"}
-              placeholder={"Shkruani emrin tuaj këtu"}
-              value={form.firstname}
-              handleChangeText={(e) => setForm({ ...form, firstname: e })}
-              otherStyles={"mt-5"}
-            />
-            <FormField 
-              title={"Mbiemri"}
-              placeholder={"Shkruani mbiemrin tuaj këtu"}
-              value={form.lastname}
-              handleChangeText={(e) => setForm({ ...form, lastname: e })}
-              otherStyles={"mt-5"}
-            />
-            <FormField 
-              title={"Nofka juaj"}
-              placeholder={"Shkruani nofkën tuaj këtu"}
-              value={form.username}
-              handleChangeText={(e) => setForm({ ...form, username: e })}
-              otherStyles={"mt-5"}
-            />
-            <FormField 
-              title={"Emaili juaj"}
-              placeholder={"Shkruani emailin tuaj këtu"}
-              value={form.email}
-              handleChangeText={(e) => setForm({ ...form, email: e})}
-              otherStyles={"mt-5"}
-              keyboardType="email-address"
-            />
-            <FormField 
-              title={"Numri juaj i telefonit"}
-              placeholder={"044-536-900"}
-              value={form.phone}
-              handleChangeText={(e) => setForm({ ...form, phone: e })}
-              otherStyles={"mt-5"}
-              keyboardType="number-pad"
-            />
-              <TouchableOpacity
-                onPress={togglePassword}
-                className="mt-5"
-              >
-                <Text className="text-base text-secondary font-psemibold">{changePassword ? "Nuk dua të ndryshoj fjalëkalimin" : "Dëshironi të ndryshoni fjalëkalimin?"}</Text>
-              </TouchableOpacity>
-            {changePassword ? 
-              <>
-              <View>
-                <FormField 
-                  title={"Ndryshoni fjalëkalimin"}
-                  placeholder={"Shkruani fjalëkalimin e ri"}
-                  value={form.password}
-                  handleChangeText={(e) => setForm({ ...form, password: e })}
-                  otherStyles={"mt-5"}
-                />
-                <FormField
-                  title={"Konfirmoni fjalëkalimin e ri"}
-                  placeholder={"Shkruani fjalëkalimin e mësipërm"}
-                  value={form.confirmPassword}
-                  handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
-                  otherStyles={"mt-5"}
-                />
+          <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
+              <View className={` ${showImportantDetails ? "bg-oBlack" : ""} p-2 border-r border-black-200 flex-1`}>
+                <TouchableOpacity onPress={() => {setShowImportantDetails(true), setShowOtherDetails(false)}} className="items-center gap-2 flex-row justify-center">
+                  <View>
+                    <Image 
+                      source={icons.info} 
+                      style={{tintColor: showImportantDetails ? "#FF9C01" : "#fff"}} 
+                      className="w-6 h-6"
+                      resizeMode='contain'
+                      />
+                  </View>
+                  <Text className="text-sm text-center text-white font-pregular">Te dhenat kryesore</Text>
+                </TouchableOpacity>
               </View>
-              </> : null}
-              <CustomButton 
-                title={"Përditësoni të dhënat"}
-                containerStyles={"w-full mt-5"}
-                isLoading={submitLoading}
-                handlePress={updateDetails}
-              />
+              <View className={`${showOtherDetails ? "bg-oBlack" : ""} flex-1 p-2`}>
+                <TouchableOpacity onPress={() => {setShowOtherDetails(true), setShowImportantDetails(false)}} className="items-center gap-2 flex-row justify-center">
+                  <View>
+                    <Image 
+                      source={icons.infoFilled} 
+                      style={{tintColor: showOtherDetails ? "#FF9C01" : "#fff"}}
+                      className="w-6 h-6"
+                      resizeMode='contain'
+                      />
+                  </View>
+                  <Text className="text-sm text-center text-white font-pregular">Informacione te tjera</Text>
+                </TouchableOpacity>
+              </View>
           </View>
-        </KeyboardAwareScrollView>
+
+          {showImportantDetails && <KeyboardAwareScrollView style={styles.container}
+          contentContainerStyle={{ flexGrow: 1 }}
+          enableOnAndroid={true} // Ensures Android support
+          extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
+          keyboardShouldPersistTaps="handled"
+          >
+            <View className="px-4 mb-4">
+              <FormField
+                title={"Emri"}
+                placeholder={"Shkruani emrin tuaj këtu"}
+                value={form.firstname}
+                handleChangeText={(e) => setForm({ ...form, firstname: e })}
+                otherStyles={"mt-5"}
+              />
+              <FormField 
+                title={"Mbiemri"}
+                placeholder={"Shkruani mbiemrin tuaj këtu"}
+                value={form.lastname}
+                handleChangeText={(e) => setForm({ ...form, lastname: e })}
+                otherStyles={"mt-5"}
+              />
+              <FormField 
+                title={"Nofka juaj"}
+                placeholder={"Shkruani nofkën tuaj këtu"}
+                value={form.username}
+                handleChangeText={(e) => setForm({ ...form, username: e })}
+                otherStyles={"mt-5"}
+              />
+              <FormField 
+                title={"Emaili juaj"}
+                placeholder={"Shkruani emailin tuaj këtu"}
+                value={form.email}
+                handleChangeText={(e) => setForm({ ...form, email: e})}
+                otherStyles={"mt-5"}
+                keyboardType="email-address"
+              />
+              <FormField 
+                title={"Numri juaj i telefonit"}
+                placeholder={"044-536-900"}
+                value={form.phone}
+                handleChangeText={(e) => setForm({ ...form, phone: e })}
+                otherStyles={"mt-5"}
+                keyboardType="number-pad"
+              />
+                <TouchableOpacity
+                  onPress={togglePassword}
+                  className="mt-5"
+                >
+                  <Text className="text-base text-secondary font-psemibold">{changePassword ? "Nuk dua të ndryshoj fjalëkalimin" : "Dëshironi të ndryshoni fjalëkalimin?"}</Text>
+                </TouchableOpacity>
+              {changePassword ? 
+                <>
+                <View>
+                  <FormField 
+                    title={"Ndryshoni fjalëkalimin"}
+                    placeholder={"Shkruani fjalëkalimin e ri"}
+                    value={form.password}
+                    handleChangeText={(e) => setForm({ ...form, password: e })}
+                    otherStyles={"mt-5"}
+                  />
+                  <FormField
+                    title={"Konfirmoni fjalëkalimin e ri"}
+                    placeholder={"Shkruani fjalëkalimin e mësipërm"}
+                    value={form.confirmPassword}
+                    handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
+                    otherStyles={"mt-5"}
+                  />
+                </View>
+                </> : null}
+                <CustomButton 
+                  title={"Përditësoni të dhënat"}
+                  containerStyles={"w-full mt-5"}
+                  isLoading={submitLoading}
+                  handlePress={updateDetails}
+                />
+            </View>
+          </KeyboardAwareScrollView>}
+
+          {showOtherDetails && <ShowOtherDetailsProfile />}
         </> : 
             <>
               <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
