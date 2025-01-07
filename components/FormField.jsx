@@ -3,15 +3,15 @@ import React, {useState} from 'react'
 import { TouchableOpacity, Image } from 'react-native'
 import { images, icons } from '../constants'
 
-const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, ...props }) => {
+const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, titleStyle, inputParentStyle, ...props }) => {
     const [showPassword, setShowPassword] = useState(false)
 
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     return (
         <View className={`space-y-2 ${otherStyles}`}>
-            <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
-            <View className="border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mt-2">
+            <Text className={`text-base text-gray-100 font-pmedium ${titleStyle}`}>{title}</Text>
+            <View className={`border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mt-2 ${inputParentStyle}`}>
                 <TextInput
                     className="flex-1 text-white font-psemibold text-base"
                     value={value}

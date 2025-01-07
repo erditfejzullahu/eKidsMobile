@@ -450,7 +450,7 @@ const router = useRouter();
             </View>
           </KeyboardAwareScrollView>}
 
-          {showOtherDetails && <ShowOtherDetailsProfile />}
+          {showOtherDetails && <ShowOtherDetailsProfile userId={userData?.id} />}
         </> : 
             <>
               <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
