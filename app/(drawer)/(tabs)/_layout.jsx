@@ -1,11 +1,12 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
-import { Tabs, Redirect } from 'expo-router'
+import { Tabs, Redirect, Link } from 'expo-router'
 import { icons, images } from '../../../constants'
 import { useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Topbar from '../../../components/Topbar'
 import { usePathname } from 'expo-router'
 import { useEffect } from 'react'
+import * as Animatable from "react-native-animatable"
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
   return (
@@ -41,6 +42,21 @@ const TabsLayout = () => {
   };
   return (
     <>
+      <Animatable.View
+        className="absolute flex-row gap-2 z-20 mx-auto items-center justify-center right-[33%] p-2.5 rounded-t-[10px] border-t border-l border-r border-black-200" style={{bottom: "89", backgroundColor: "rgba(19,19,19, 0.5)"}}
+        animation="pulse"
+        iterationCount="infinite"
+        duration={1000}
+        easing={"ease-in-out"}
+      >
+        <Link href={'(blogs)/blogAll'} className="text-white ">Lajmet tona</Link>
+        <Image 
+          source={icons.news}
+          className="h-6 w-6"
+          resizeMode='contain'
+          tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
+        />
+      </Animatable.View>
         <Tabs
           // initialRouteName='home'
           backBehavior='history'
@@ -57,6 +73,7 @@ const TabsLayout = () => {
             // header: () => <Topbar />,
           }}
           >
+            
             <Tabs.Screen
                 name="home"
                 options={{

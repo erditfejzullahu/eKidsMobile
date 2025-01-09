@@ -67,6 +67,7 @@ import notifications from "../assets/icons/notification.png"
 import tick from "../assets/icons/check.png"
 import trashbin from "../assets/icons/trashbin.png"
 import report from "../assets/icons/report.png"
+import news from "../assets/icons/news.png"
 
 export default {
   play,
@@ -137,5 +138,6 @@ export default {
   notifications,
   tick,
   trashbin,
-  report
+  report,
+  news
 };

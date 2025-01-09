@@ -102,19 +102,28 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 ...prevData,
                 userEducations: prevData.userEducations.filter((_, idx) => idx !== index)
             }));
-            setHowManySections((prevValue) => prevValue.howManyEducation - 1);
+            setHowManySections((prevValue) => ({
+                ...prevValue,
+                howManyEducation: prevValue.howManyEducation - 1
+            }))
         }else if(showModals.type === "jobs"){
             setUserInformationData((prevData) => ({
                 ...prevData,
                 userJobs: prevData.userJobs.filter((_, idx) => idx !== index)
             }))
-            setHowManySections((prevValue) => prevValue.howManyJobs - 1)
+            setHowManySections((prevValue) => ({
+                ...prevValue,
+                howManyJobs: prevValue.howManyJobs - 1
+            }))
         }else{
             setUserInformationData((prevData) => ({
                 ...prevData,
                 softSkills: prevData.softSkills.filter((_, idx) => idx !== index)
             }))
-            setHowManySections((prevValue) => prevValue.howManySoftSkills - 1)
+            setHowManySections((prevValue) => ({
+                ...prevValue,
+                howManySoftSkills: prevValue.howManySoftSkills - 1
+            }))
         }
     }
 
@@ -136,7 +145,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
     }
     useEffect(() => {
         console.log(showModals.type);
-    }, [showModals.type]);
+        console.log(howManySections, ' ??');
+        
+    }, [showModals.type, howManySections]);
     
 
   return (
@@ -202,12 +213,19 @@ const ShowOtherDetailsProfile = ({userId}) => {
 
                 {[...Array(showModals.type === "education" ? howManySections.howManyEducation : showModals.type === "jobs" ? howManySections.howManyJobs : howManySections.howManySoftSkills)].map((_, index) => {
                     console.log(index, ' indeksi');
+                    console.log(showModals);
+                    const isLastIndex = 
+                        index === (showModals.type === "education"
+                            ? howManySections.howManyEducation - 1
+                            : showModals.type === "jobs"
+                            ? howManySections.howManyJobs - 1
+                            : {})
                     // console.log(howManySections, ' seksionet');
                     return (
                         <View key={`informations-${index}`}>
                             <View className="w-full items-start gap-6 mt-4 border-b border-black-200 pb-4">
-                                {showModals.type === "education" || showModals.type === "jobs" &&
-                                <View className="w-full">
+                                {(showModals.type === "education" || showModals.type === "jobs") &&
+                                <View className="w-full gap-2">
                                 <View className="flex-row gap-2 w-full">
                                     <View className="flex-1">
                                         <FormField 
@@ -220,10 +238,10 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                             titleStyle={"!text-sm"}
                                         />
                                     </View>
-                                    <View className="flex-[0.2] items-center justify-center h-14 rounded-[10px] border-2 border-white mt-auto bg-secondary">
-                                        <TouchableOpacity onPress={(index === (showModals.type === "education" ? howManySections.howManyEducation - 1 : howManySections.howManyJobs - 1)) ? () => setHowManySections((prevValue) => showModals.type === "education" ? prevValue.howManyEducation + 1 : prevValue.howManyJobs + 1) : () => removeSpecificIndex(index)}>
+                                    <View className="flex-[0.2]">
+                                        <TouchableOpacity className="h-14 items-center justify-center rounded-[10px] border-2 border-white mt-auto bg-secondary" onPress={isLastIndex ? (showModals.type === "education" ? () => setHowManySections((prevValues) => ({...prevValues, howManyEducation: prevValues.howManyEducation + 1})) : () => setHowManySections((prevValues) => ({...prevValues, howManyJobs: prevValues.howManyJobs + 1}))) : () => removeSpecificIndex(index)}>
                                             <Image
-                                                source={(index === ( showModals.type === "education" ? howManySections.howManyEducation - 1 : howManySections.howManyJobs - 1)) ? icons.plus : icons.close}
+                                                source={isLastIndex ? icons.plus : icons.close}
                                                 className="h-6 w-6"
                                                 tintColor={"#fff"}
                                             />
@@ -297,8 +315,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                             titleStyle={"!text-sm"}
                                         />
                                     </View>
-                                    <View className="flex-[0.2] items-center justify-center h-14 rounded-[10px] border-2 border-white mt-auto bg-secondary">
-                                        <TouchableOpacity onPress={index === howManySections.howManySoftSkills - 1 ? () => setHowManySections((prevValue) => prevValue.howManySoftSkills + 1) : () => removeSpecificIndex(index)}>
+                                    <View className="flex-[0.2]">
+                                        <TouchableOpacity className="h-14 items-center justify-center rounded-[10px] border-2 border-white mt-auto bg-secondary" onPress={(index === howManySections.howManySoftSkills - 1) ? () => setHowManySections((prevValue) => ({...prevValue, howManySoftSkills: prevValue.howManySoftSkills + 1})) : () => removeSpecificIndex(index)}>
                                             <Image 
                                                 source={index === howManySections.howManySoftSkills - 1 ? icons.plus : icons.close}
                                                 className="h-6 w-6"
@@ -315,10 +333,10 @@ const ShowOtherDetailsProfile = ({userId}) => {
 
                 <View className="flex-row items-center justify-between w-full flex-wrap my-6">
                     <TouchableOpacity onPress={() => setShowModals({visibility: false, type: ""})} className="bg-oBlack border-2 border-black-200 rounded-[10px] p-3 py-4">
-                        <Text className="text-white text-sm font-plight">Largo dritaren</Text>
+                        <Text className="text-white text-sm font-psemibold">Largo dritaren</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="bg-secondary rounded-[10px] p-3 py-4 border-2 border-white">
-                        <Text className="text-white text-sm font-plight">Ruaj te dhenat</Text>
+                        <Text className="text-white text-sm font-psemibold">Ruaj te dhenat</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
