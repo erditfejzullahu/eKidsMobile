@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
 import { Link, Tabs } from 'expo-router'
-import { icons } from '../../../constants'
+import { icons } from '../../../../constants'
 
 const TabIcon = ({icon, color, name, focused}) => {
     return (
@@ -24,12 +24,14 @@ const TabIcon = ({icon, color, name, focused}) => {
 const BlogsLayout = () => {
   return (
     <>
-    <View className="absolute z-20 mx-auto items-center justify-center right-[45%] bg-oBlack p-2.5 rounded-t-[10px] border-t border-l border-r border-black-200" style={{bottom: "89"}}>
-        <Image 
-            source={icons.plus}
-            className="h-6 w-6"
-            resizeMode='contain'
-        />
+    <View className="items-center justify-center bg-oBlack absolute " style={{bottom: "0", left: 0, right: 0}}>
+        <View style={{marginBottom: 89}} className="z-20 mx-auto items-center justify-center bg-oBlack p-2.5 rounded-t-[20px] border-t border-l border-r border-black-200">
+            <Image
+                source={icons.plus}
+                className="h-7 w-7"
+                resizeMode='contain'
+            />
+        </View>
     </View>
     <Tabs
         backBehavior='history'
@@ -85,6 +87,21 @@ const BlogsLayout = () => {
                         icon={icons.home}
                         color={color}
                         name="Kategorite"
+                        focused={focused}
+                    />
+                )
+            }}
+        />
+        <Tabs.Screen 
+            name="profile"
+            options={{
+                title: "profile",
+                headerShown: false,
+                tabBarIcon: ({color, focused}) => (
+                    <TabIcon 
+                        icon={icons.home}
+                        color={color}
+                        name="Profili"
                         focused={focused}
                     />
                 )

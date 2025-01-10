@@ -42,21 +42,30 @@ const TabsLayout = () => {
   };
   return (
     <>
-      <Animatable.View
-        className="absolute flex-row gap-2 z-20 mx-auto items-center justify-center right-[33%] p-2.5 rounded-t-[10px] border-t border-l border-r border-black-200" style={{bottom: "89", backgroundColor: "rgba(19,19,19, 0.5)"}}
-        animation="pulse"
-        iterationCount="infinite"
-        duration={1000}
-        easing={"ease-in-out"}
+      <View
+        className="absolute z-20 mx-auto items-center justify-center left-0 right-0 bottom-0"
       >
-        <Link href={'(blogs)/blogAll'} className="text-white ">Lajmet tona</Link>
-        <Image 
-          source={icons.news}
-          className="h-6 w-6"
-          resizeMode='contain'
-          tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
-        />
-      </Animatable.View>
+        <TouchableOpacity onPress={() => router.replace("(blogDrawer)/(blogs)/blogAll")} >
+          <Animatable.View className="flex-row gap-2 p-2.5 self-start border-t border-l border-r border-black-200 rounded-t-[10px]" style={{marginBottom: 89}}
+            duration={1000}
+            animation="pulse"
+            iterationCount="infinite"
+            easing={"ease-in-out"}
+          >
+            <View>
+              <Text className="text-white ">Lajmet tona</Text>
+            </View>
+            <View>
+              <Image 
+                source={icons.news}
+                className="h-6 w-6"
+                resizeMode='contain'
+                tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
+              />
+            </View>
+          </Animatable.View>
+        </TouchableOpacity>
+      </View>
         <Tabs
           // initialRouteName='home'
           backBehavior='history'
