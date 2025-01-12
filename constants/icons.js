@@ -68,8 +68,14 @@ import tick from "../assets/icons/check.png"
 import trashbin from "../assets/icons/trashbin.png"
 import report from "../assets/icons/report.png"
 import news from "../assets/icons/news.png"
+import fullscreen from "../assets/icons/fullscreen.png"
+import earth from "../assets/icons/earth.png"
+import privatePost from "../assets/icons/private.png"
 
 export default {
+  privatePost,
+  earth,
+  fullscreen,
   play,
   bookmark,
   home,

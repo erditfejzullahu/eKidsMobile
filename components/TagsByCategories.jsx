@@ -1,40 +1,98 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
+import React, { useState } from 'react'
 import { icons } from '../constants';
+import Loading from "./Loading"
+import { initialFilterData } from '../services/filterConfig';
+import { getAllTagsByCategory, getAllBlogsByTag } from '../services/fetchingService';
 
 const TagsByCategories = ({categories}) => {
-    console.log(categories.categoryName);
-    
+    console.log(categories);
+    const [categoryOpened, setCategoryOpened] = useState(false)
+    const [tagOpened, setTagOpened] = useState(false)
+
+    const [tagsData, setTagsData] = useState(null)
+    const [blogsData, setBlogsData] = useState(null)
+
+    const [paginationData, setPaginationData] = useState({
+        pageNumber: 1,
+        pageSize: 5
+    })
+
+    const getTags = async () => {        
+        const response = await getAllTagsByCategory(categories.CategoryID)
+        console.log(response);
+        
+        response ? setTagsData(response) : null
+        setCategoryOpened(!categoryOpened)
+
+    }
+
+    const getBlogs = async (tagId) => {
+        const response = await getAllBlogsByTag(tagId)
+        response ? setBlogsData(response) : null
+        setTagOpened(!tagOpened)
+
+    }
+
+
   return (
     <View>
-        <TouchableOpacity className="flex-row gap-2 items-center">
+        <TouchableOpacity onPress={getTags} className="flex-row gap-2 items-center">
             <Text className="text-white font-plight text-sm">{categories.categoryName}</Text>
             <Image 
-                source={icons.rightArrow}
+                source={categoryOpened ? icons.downArrow : icons.rightArrow}
                 className="h-4 w-4"
                 resizeMode='contain'
                 tintColor={"#FF9C01"}
             />
         </TouchableOpacity>
-        <View className="border bg-primary border-black-200 rounded-[5px] p-2 m-2 my-3">
-            <View>
-                <View className="flex-row relative items-center gap-2">
-                    <Text className="text-white text-sm italic">asd</Text>
-                    <Image 
-                        source={icons.rightArrow}
-                        className="h-4 w-4"
-                        resizeMode='contain'
-                        tintColor={"#FF9C01"}
-                    />
-                    <View className="absolute h-[12px] w-[1px] -bottom-4 left-[20px] bg-secondary"/>
+
+        {categoryOpened && <FlatList 
+            data={tagsData}
+            keyExtractor={(item) => 'sideTag-' + item?.id}
+            renderItem={({item}) => (
+                <View key={`sideTags-${item?.id}`} className="border bg-primary border-black-200 rounded-[5px] p-2 m-2 my-3">
+                    <View>
+                        <TouchableOpacity onPress={() => getBlogs(item.id)}>
+                            <View className="flex-row relative items-center gap-2">
+                                <Text className="text-white text-sm italic">{item?.name}</Text>
+                                <Image
+                                    source={tagOpened ? icons.downArrow : icons.rightArrow}
+                                    className="h-4 w-4"
+                                    resizeMode='contain'
+                                    tintColor={"#FF9C01"}
+                                />
+                                <View className="absolute h-[12px] w-[1px] -bottom-4 left-[20px] bg-secondary"/>
+                            </View>
+                        </TouchableOpacity>
+                        {/* <View>
+                            <Loading />
+                        </View> */}
+                        <FlatList 
+                            data={blogsData}
+                            keyExtractor={(bItem) => 'sideBlog-' + bItem?.id}
+                            renderItem={({bItem}) => (
+                                <View key={`sideBlogs-${bItem?.id}`} className="mt-3.5 ml-3">
+                                    <Text className="text-white text-sm italic py-0.5">{bItem?.title}</Text>
+                                </View>
+                            )}
+                            ListEmptyComponent={() => (
+                                <View className="mt-3.5 ml-3">
+                                    <Text>Nuk u gjend asnje blog</Text>
+                                </View>
+                            )}
+                        />
+                    </View>
                 </View>
-                <View className="mt-3.5 ml-3">
-                    <Text className="text-white text-sm italic" numberOfLines={1}>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quod eaque quae praesentium debitis vel earum dolore necessitatibus perspiciatis, nesciunt neque perferendis amet molestias quam ut veritatis possimus sapiente omnis esse?</Text>
-                    <Text className="text-white text-sm italic" numberOfLines={1}>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quod eaque quae praesentium debitis vel earum dolore necessitatibus perspiciatis, nesciunt neque perferendis amet molestias quam ut veritatis possimus sapiente omnis esse?</Text>
-                    <Text className="text-white text-sm italic" numberOfLines={1}>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quod eaque quae praesentium debitis vel earum dolore necessitatibus perspiciatis, nesciunt neque perferendis amet molestias quam ut veritatis possimus sapiente omnis esse?</Text>
+            )}
+
+            ListEmptyComponent={() => (
+                <View className="border bg-primary border-black-200 rounded-[5px] p-2 m-2 my-3">
+                    <Text className="text-white text-sm italic">Nuk u gjend asnje etiketim</Text>
                 </View>
-            </View>
-        </View>
+            )}
+        /> }
+        
     </View>
   )
 }

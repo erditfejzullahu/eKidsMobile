@@ -38,7 +38,7 @@ const TagsHeader = () => {
       )}
       ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end"}}
       ListFooterComponent={() => (
-        <View className="py-2 border-t border-black-200">
+        <View className="py-2 border-t border-black-200 mb-2">
           <Text className="text-white font-plight text-xs">Realizuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
         </View>
       )}

@@ -56,7 +56,7 @@ const BlogsLayout = () => {
                     <TabIcon 
                         icon={icons.home}
                         color={color}
-                        name="Kategorite"
+                        name="Postimet"
                         focused={focused}
                     />
                 )

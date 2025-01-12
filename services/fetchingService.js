@@ -620,3 +620,22 @@ export const removeFriendRequestReq = async (userId, receiverId) => {
         return error.response.status;
     }
 }
+
+export const getAllTagsByCategory = async (categoryId) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetAllTags/${categoryId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
+export const getAllBlogsByTag = async (tagId) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null;
+    }
+}
+
