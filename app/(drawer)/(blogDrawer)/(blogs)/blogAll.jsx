@@ -24,7 +24,7 @@ const blog = () => {
           )}
           ListFooterComponent={() => (
           <TouchableWithoutFeedback onPress={userOutsidePostCreation}>
-            <View className="mt-6"><Text>asdasdasdasdasdasdasdasdasd</Text></View>
+            <View className="my-6"><Text>asdasdasdasdasdasdasdasdasd</Text></View>
           </TouchableWithoutFeedback>
           )}
         />

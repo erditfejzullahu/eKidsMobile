@@ -630,6 +630,15 @@ export const getAllTagsByCategory = async (categoryId) => {
     }
 }
 
+export const getAllTagsWithChilds = async (categoryId) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetAllTagsWithChild?categoryId=${categoryId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
 export const getAllBlogsByTag = async (tagId) => {
     try {
         const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}`)
@@ -639,3 +648,13 @@ export const getAllBlogsByTag = async (tagId) => {
     }
 }
 
+export const reqCreatePost = async (payload) => {
+    // console.log(payload);
+    
+    try {
+        const response = await apiClient.post(`/api/Blog`, payload)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}

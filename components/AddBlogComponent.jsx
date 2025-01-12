@@ -1,12 +1,16 @@
-import { View, Text, Image, Platform, StyleSheet, TextInput, ScrollView, Modal, Pressable, TouchableWithoutFeedback, Touchable } from 'react-native'
-import React, { useRef } from 'react'
+import { View, Text, Image, Platform, StyleSheet, TextInput, ScrollView, Modal, Pressable, TouchableWithoutFeedback, Touchable, KeyboardAvoidingView } from 'react-native'
+import React, { useLayoutEffect, useRef } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
-import { getCourseCategories } from '../services/fetchingService'
+import { getAllTagsWithChilds, getCourseCategories, reqCreatePost } from '../services/fetchingService'
 import { FlatList } from 'react-native-gesture-handler'
 import { useEffect } from 'react'
-import { icons } from '../constants'
+import { icons, images } from '../constants'
 import * as Animatable from "react-native-animatable"
+import * as ImagePicker from "expo-image-picker"
+import NotifierComponent from './NotifierComponent'
+import useFetchFunction from "../hooks/useFetchFunction"
+import { flatMap, flatten, flattenDeep, noop } from 'lodash'
 
 const AddBlogComponent = ({userData, getUserOutside}) => {
     const user = userData?.data?.userData
@@ -14,9 +18,15 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     const categories = userData?.data?.categories
 
     const [selectedCategory, setSelectedCategory] = useState(null)
+    const {data: tagData, isLoading: tagLoading, refetch: tagRefetch} = useFetchFunction(selectedCategory !== null ? () => getAllTagsWithChilds(selectedCategory) : noop)
     const [openCategories, setOpenCategories] = useState(false)
+    const [tagsData, setTagsData] = useState(null)
     const [openTags, setOpenTags] = useState(false)
-    const [inputFocused, setInputFocused] = useState(true)
+    const [inputFocused, setInputFocused] = useState(false)
+
+    const [openPostStatus, setOpenPostStatus] = useState(false)
+
+    const [postStatus, setPostStatus] = useState(1)
 
     const [openTagDialog, setOpenTagDialog] = useState(false)
     const [allTags, setAllTags] = useState(true)
@@ -30,15 +40,121 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     const [title, setTitle] = useState('')
 
     const [tagsSelected, setTagsSelected] = useState([])
+    const [imageSelected, setImageSelected] = useState({
+        type: "",
+        base64: "",
+        image: null
+    })
+
+    const [imageHeight, setImageHeight] = useState(0);
+    const [containerWidth, setContainerWidth] = useState(0);
+
+    const handleLayout = (event) => {
+        const { width } = event.nativeEvent.layout;
+        setContainerWidth(width); // Save container width
+    };
+
+    useLayoutEffect(() => {
+        if (containerWidth === 0) return; // Ensure container width is set
+
+        if (imageSelected.image) {
+            // Dynamically calculate height for remote images
+            console.log('hini');
+            
+            Image.getSize(
+                imageSelected.image,
+                (width, height) => {
+                    const calculatedHeight = (height / width) * containerWidth;
+                    setImageHeight(calculatedHeight);
+                    console.log(imageHeight);
+                },
+                (error) => console.error('Error fetching image size:', error)
+            );
+        } else if (images.testimage) {
+            // Dynamically calculate height for local images
+            const { width, height } = Image.resolveAssetSource(images.testimage);
+            const calculatedHeight = (height / width) * containerWidth;
+            setImageHeight(calculatedHeight);
+        }
+    }, [imageSelected, containerWidth])
 
     const selectTags = (item) => {
+        console.log(item, ' item');
+        
         setTagsSelected((prevData) => {
-            if(prevData.includes(item)){
-                return prevData.filter((tag) => tag !== item);
+            const relatedChild = tagsData.filter(tag => tag.parent_Id === item.id)
+            const childTag = tagsData.find(tag => tag.parent_Id === item.id)
+            const relatedOthers = tagsData.filter(tag => tag.parent_Id === item.parent_Id && tag.id !== item.id)
+            const getParent = tagsData.filter(tag => tag.id === item.parent_Id)
+            if(prevData.some((tag => tag.id === item.id))){
+                return prevData.filter(tag => tag.id !== item.id && !relatedChild.some(rt => rt.id === tag.id) && !relatedOthers);
             }else {
-                return [...prevData, item];
+                if(item.isChild){
+                    const newTags = [
+                        ...prevData,
+                        {id: item.id, name: item.name, isChild: true},
+                        ...relatedOthers.map(tag => ({id: tag.id, name: tag.name, isChild: true})),
+                        ...getParent.map(tag => ({id: tag.id, name: tag.name, isChild: false}))
+                    ]
+                    console.log(newTags, 'tags');
+                    
+                    return newTags;
+                }else{        
+                    const newTags = [
+                        ...prevData,
+                        {id: item.id, name: item.name, isChild: false},
+                        ...relatedChild.map(tag => ({id: tag.id, name: tag.name, isChild: true}))    
+                    ]
+                    return newTags;
+                }
             }
         })
+    }
+
+    const addImages = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if(!permissionResult){
+            console.log("permission");
+        }
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4,3],
+            quality: 0,
+            base64: true
+        })
+
+        if(!result.canceled){
+            setImageSelected((prevData) => ({
+                ...prevData,
+                type: `data:${result.assets[0].mimeType};base64,`,
+                base64: result.assets[0].base64,
+                image: result.assets[0].uri
+            }))
+        }
+    }
+
+    const addCameraImage = async () => {
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        if(!permissionResult){
+            console.log("no persmission");
+        }
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4,3],
+            quality: 0,
+            base64: true
+        })
+        if(!result.canceled){
+            setImageSelected((prevData) => ({
+                ...prevData,
+                type: `data:${result.assets[0].mimeType};base64,`,
+                base64: result.assets[0].base64,
+                image: result.assets[0].uri
+            }))
+        }
     }
 
 
@@ -50,6 +166,10 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
         if(outputTags.includes(tag)){
             setOutputTags((prevData) => prevData.filter((item) => item !== tag));
         }
+        setWrittenTags((prevWrittenTags) => {
+            const regex = new RegExp(`\\b${tag}\\b`, 'g');
+            return prevWrittenTags.replace(regex, '').replace(/\s{2,}/g, ' ').trim();
+        })
     }
 
     const switchFromTitle = (e) => {
@@ -63,32 +183,76 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
         }
     }
 
-    const createBlog = () => {
-        const payload = {};
+    const {showNotification: successNotification} = NotifierComponent({
+        title: "Blogu i postua me sukses",
+        description: "Per te pare postimet e tua mund te drejtoheni tek pjesa e profilit!"
+    })
+
+    const {showNotification: failedNotification} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem provoni perseri ne krijimin e postimit tuaj apo kontaktoni Panelin e Ndihmes",
+        alertType: "warning"
+    })   
+
+    const createBlog = async () => {
+        let payload = {};
+        console.log(outputTags.length);
+        
         if(addTags && outputTags.length > 0){
             payload = {
                 blogDto: {
                     title: title,
                     content: blogContent,
                     categoryId: selectedCategory,
-                    status: "1",
+                    status: postStatus,
                     userId: user.id
                 },
                 tagDto: {
-                    name: "",
-                    parentId: "",
+                    name: outputTags[0],
+                    parentId: null,
                     category_Id: selectedCategory,
-                    children: outputTags.map(tag => ({
-                        name: tag.name,
+                    children: outputTags.slice(1).map(tag => ({
+                        name: tag,
                         category_Id: selectedCategory
                     }))
                 }
             }
+            console.log(payload.tagDto.children,  ' ???');
+            
         }else if(allTags && tagsSelected.length > 0){
             payload = {
-                
+                blogDto: {
+                    title: title,
+                    content: blogContent,
+                    categoryId: selectedCategory,
+                    tagId: tagsSelected[0].id,
+                    status: postStatus,
+                    userId: user.id
+                },
+                // tagDto: {
+                //     name: "",
+                //     parentId: "",
+                //     category_Id: selectedCategory,
+                //     children: tagsSelected.map(tag => ({
+                //         name: tag.name,
+                //         category_Id: selectedCategory
+                //     }))
+                // }
             }
         }
+
+        const response = await reqCreatePost(payload);
+        
+        if(response){
+            successNotification()
+        }else{
+            failedNotification()
+        }
+    }
+
+    const removeOpenedDialogs = () => {
+        setOpenTagDialog(false)
+        setOpenPostStatus(false)
     }
 
     useEffect(() => {
@@ -110,9 +274,32 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
       }
     }, [getUserOutside])
     
+    useEffect(() => {        
+      if(tagData){
+        const flatten = flatMap(tagData, parent => [
+            parent,
+            ...parent.children.map(child => ({
+                ...child,
+                isChild: true
+            }))
+        ])        
+        console.log(flatten);
+        
+        setTagsData(flatten)
+      }else{
+        setTagsData(null)
+      }
+    }, [tagData])
+
+    useEffect(() => {
+        tagRefetch()
+    }, [selectedCategory])
+    
     
     
   return (
+      <TouchableWithoutFeedback onPress={removeOpenedDialogs}>
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
             <View 
                 className="relative bg-oBlack border border-black-200 rounded-[10px] flex-1"
                 style={styles.box}
@@ -141,10 +328,10 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                         <View>
                             <Text className="text-white font-psemibold">{user?.firstname} {user?.lastname}</Text>
                         </View>
-                        <TouchableOpacity>
-                            <View className="flex-row gap-2 items-center">
+                        <TouchableOpacity onPress={() => setOpenPostStatus(true)}>
+                            <View className="flex-row gap-2 items-center relative z-50">
                                 <View>
-                                    <Text className="text-gray-400 font-pregular text-sm">Public</Text>
+                                    <Text className="text-gray-400 font-pregular text-sm">{postStatus === 1 ? "Publik" : postStatus === 2 ? "Privat" : "Miqte"}</Text>
                                 </View>
                                 <View>
                                     <Image 
@@ -154,6 +341,17 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                         tintColor={"#9ca3af"}
                                     />
                                 </View>
+                                {openPostStatus && <Animatable.View animation="bounceIn" className="absolute -right-16 -bottom-10 bg-oBlack z-50 border border-black-200 rounded-[5px]" style={styles.box}>
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(1);}} className="p-1.5 mx-2 border-b border-black-200">
+                                    <Text className="text-white font-plight text-sm text-center">Publik</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(2);}} className="p-1.5 mx-2 border-b border-black-200">
+                                    <Text className="text-white font-plight text-sm text-center">Privat</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(3);}} className="p-1.5 mx-2">
+                                    <Text className="text-white font-plight text-sm text-center">Vetem miqte</Text>
+                                </TouchableOpacity>
+                            </Animatable.View>}
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -162,7 +360,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                 {/* content  */}
                 <View className={`${inputFocused ? "" : "mb-2"} mt-4 px-4`}>
                     <TextInput 
-                        className="text-xl font-pbold text-white"
+                        className="text-xl font-pbold text-white -z-10"
                         placeholder='Cfare titulli?'
                         placeholderTextColor="#9ca3af"
                         onChangeText={(e) => setTitle(e)}
@@ -173,7 +371,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     />
                     {enteredOnce && <TextInput
                         ref={blogContentRef}
-                        className="text-gray-200 text-sm font-psemibold p-2 pl-0"
+                        className="text-gray-200 text-sm font-psemibold p-2 pl-0 -z-10"
                         placeholder='Cfare keni ne mendje?'
                         placeholderTextColor="#9ca3af"
                         multiline={true}
@@ -183,7 +381,30 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                         // onBlur={() => setInputFocused(false)}
                     />}
                 </View>
+                
+                {/* photos */}
+                {inputFocused && <View>
 
+                {(imageSelected.image !== null) && <View className="relative w-full mt-6 border border-black-200" onLayout={handleLayout}>
+                    <Image 
+                        source={{uri: imageSelected.image}}
+                        style={{width: "100%", height: imageHeight || "auto"}}
+                        resizeMode='contain'
+                        />
+                    <TouchableOpacity
+                        className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2"
+                        onPress={() => setImageSelected({type: "", base64: "", image: null})}
+                        >
+                        <Image 
+                            source={icons.close}
+                            className="h-4 w-4"
+                            resizeMode='contain'
+                            tintColor={"#fff"}
+                            />
+                    </TouchableOpacity>
+                    </View>}
+                </View>}
+                {/* photos */}
                 {inputFocused && <Animatable.View animation="fadeIn">
                     {/* etiketimet kategorine */}
                     <View className="flex-row justify-between mt-4 gap-2 px-4">
@@ -237,7 +458,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                     <Text className="text-white font-plight text-sm text-center">Shto etiketime</Text>
                                 </TouchableOpacity>
                             </Animatable.View>}
-                            {allTags && <View>
+                            {addTags && <View>
                                 {outputTags.length > 0 && 
                                     <FlatList 
                                         className="h-[60px] border border-black-200 rounded-[5px]"
@@ -265,10 +486,11 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                         placeholder='Etiketimet...'
                                         placeholderTextColor={"#9ca3af"}
                                         onChangeText={(e) => setWrittenTags(e)}
+                                        value={writtenTags}
                                         />
                                 </View>
                             </View>}
-                            {addTags && <View>
+                            {allTags && <View>
                                 <TouchableOpacity onPress={() => setOpenTags(!openTags)} className="border border-black-200 rounded-[5px] p-2 px-4 self-start ml-auto">
                                     <Text className="font-plight text-gray-400 text-sm">Zgjidh etiketimet</Text>    
                                 </TouchableOpacity>
@@ -280,10 +502,10 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                         horizontal={true}
                                         contentContainerStyle={{ flexDirection: "row", gap: 6, padding: 6, flexBasis: "auto"}}
                                         data={tagsSelected || []}
-                                        keyExtractor={(item, index) => `tagunew-${index}`}
+                                        keyExtractor={(item) => `tagunew-${item?.id}`}
                                         renderItem={({item, index}) => (
-                                            <View className={`${index === 0 ? "bg-secondary !border-white" : ""} border relative border-black-200 rounded-[5px] self-start p-2 px-4`}>
-                                                <Text className={`${index === 0 ? "!text-white font-psemibold" : ""} font-plight text-gray-400 text-xs`}>{item}</Text>
+                                            <View className={`${item.isChild ? "" : "bg-secondary !border-white"} border relative border-black-200 rounded-[5px] self-start p-2 px-4`}>
+                                                <Text className={`${item.isChild ? "" : "!text-white font-psemibold"} font-plight text-gray-400 text-xs`}>{item?.name}</Text>
                                             </View>
                                         )}
                                     />}
@@ -291,21 +513,26 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                     <FlatList
                                         className="h-[60px]"
                                         scrollEnabled={true}
-                                        data={tagsexample || []}
-                                        keyExtractor={(item, index) => `selectTags-${index}`}
+                                        data={tagsData || []}
+                                        keyExtractor={(item) => `selectTags-${item?.id}`}
                                         renderItem={({item}) => (
                                             <TouchableOpacity 
                                                 className="p-1 py-1.5 border-b border-black-200 relative"
                                                 onPress={() => {selectTags(item)}}
                                                 >
-                                                <Text className="text-gray-400 font-plight text-sm">{item}</Text>
-                                                {tagsSelected.includes(item) && <Image 
+                                                <Text className="text-gray-400 font-plight text-sm">{item?.name}</Text>
+                                                {tagsSelected.some(tag => tag.id === item.id) && <Image 
                                                     source={icons.tick}
                                                     resizeMode='contain'
                                                     className="w-4 h-4 absolute right-0 top-1.5"
                                                     tintColor={"#ff9c01"}
                                                 />}
                                             </TouchableOpacity>
+                                        )}
+                                        ListEmptyComponent={() => (
+                                            <View className="items-center justify-center m-auto content-center">
+                                                <Text className="text-white text-sm font-psemibold">Ju lutem zgjidhni nje kategori</Text>
+                                            </View>
                                         )}
                                         showsVerticalScrollIndicator
                                     />
@@ -316,8 +543,8 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
 
                     {/* status and photos  */}
                     <View className="flex-row bg-primary justify-between items-center mt-4 p-4 rounded-b-[10px] border-t border-black-200" style={styles.box}>
-                        <View className="flex-row items-center gap-4">
-                            <TouchableOpacity>
+                        <View className="flex-row items-center gap-4" >
+                            <TouchableOpacity onPress={addImages}>
                                 <Image 
                                     source={icons.imageGallery}
                                     className="h-6 w-6"
@@ -325,33 +552,35 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                     tintColor={"#9ca3af"}
                                 />
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={addCameraImage}>
                                 <Image 
-                                    source={icons.videoCamera}
+                                    source={icons.camera}
                                     className="h-6 w-6"
                                     resizeMode='contain'
                                     tintColor={"#9ca3af"}
                                 />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity className="flex-row gap-2 items-center">
+                        <TouchableOpacity onPress={() => setOpenPostStatus(true)} className="flex-row gap-2 items-center">
                             <Image 
                                 source={icons.earth}
                                 className="h-6 w-6"
                                 resizeMode="contain"
                                 tintColor={"#9ca3af"}
                             />
-                            <Text className="text-gray-400 font-pregular text-sm">Public</Text>
+                            <Text className="text-gray-400 font-pregular text-sm">{postStatus === 1 ? "Publik" : postStatus === 2 ? "Privat" : "Miqte"}</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View className="absolute bottom-0 right-0 left-0 bg-white self-start h-[0px]" >
-                        <TouchableOpacity className="bg-secondary px-4 justify-center items-center mx-auto h-10 -mt-6 rounded-[2px]" >
+                        <TouchableOpacity onPress={createBlog} className="bg-secondary px-4 justify-center items-center mx-auto h-10 -mt-6 rounded-[2px]" >
                             <Text className="text-white font-pmedium text-sm">Postoni</Text>
                         </TouchableOpacity>
                     </View>
                 </Animatable.View>}
             </View>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
   )
 }
 const styles = StyleSheet.create({
@@ -367,6 +596,13 @@ const styles = StyleSheet.create({
               elevation: 8,
             },
       })
+  },
+  container: {
+    flex: 1,
+    // padding:40,
+    // paddingBottom: 50
+    // backgroundColor: "#000",
+    // paddingBottom: 160
   },
   });
 export default AddBlogComponent
