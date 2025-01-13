@@ -639,12 +639,25 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (tagId) => {
+export const getAllBlogsByTag = async (tagId, pagination) => {
     try {
         const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}`)
         return response ? response.data : null
     } catch (error) {
         return null;
+    }
+}
+
+export const getAllBlogs = async (pagination) => {
+    try {
+        let queryParams = {}
+        if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
+        if (pagination.pageSize) queryParams.pagesize = pagination.pageSize
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogs?${queryString}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
     }
 }
 
