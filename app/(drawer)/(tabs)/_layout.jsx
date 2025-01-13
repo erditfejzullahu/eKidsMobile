@@ -43,28 +43,30 @@ const TabsLayout = () => {
   return (
     <>
       <View
-        className="absolute z-20 mx-auto items-center justify-center left-0 right-0 bottom-0"
+        className="absolute mx-auto items-center justify-center left-0 right-0 bottom-0"
       >
-        <TouchableOpacity onPress={() => router.replace("(blogDrawer)/(blogs)/blogAll")} >
-          <Animatable.View className="flex-row gap-2 p-2.5 self-start border-t border-l border-r border-black-200 rounded-t-[10px]" style={{marginBottom: 89}}
+          <Animatable.View className="flex-row z-20 border-t border-l border-r border-black-200 rounded-t-[10px]" style={{marginBottom: 89}}
             duration={1000}
             animation="pulse"
             iterationCount="infinite"
             easing={"ease-in-out"}
           >
-            <View>
-              <Text className="text-white ">Lajmet tona</Text>
+        <TouchableOpacity onPress={() => router.replace("(blogDrawer)/(blogs)/blogAll")} >
+            <View className="flex-row gap-2 p-2.5">
+              <View>
+                <Text className="text-white ">Lajmet tona</Text>
+              </View>
+              <View>
+                <Image 
+                  source={icons.news}
+                  className="h-6 w-6"
+                  resizeMode='contain'
+                  tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
+                />
+              </View>
             </View>
-            <View>
-              <Image 
-                source={icons.news}
-                className="h-6 w-6"
-                resizeMode='contain'
-                tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
-              />
-            </View>
-          </Animatable.View>
         </TouchableOpacity>
+          </Animatable.View>
       </View>
         <Tabs
           // initialRouteName='home'
