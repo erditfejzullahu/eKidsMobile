@@ -7,6 +7,8 @@ import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
 
 const BlogCardComponent = ({blog, userData}) => {
+    // console.log(blog);
+    
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
     
@@ -50,21 +52,23 @@ const BlogCardComponent = ({blog, userData}) => {
         {/* title */}
 
         {/* interaction section */}
-        <BlogCardInteractions />
+        <BlogCardInteractions blog={blog} userData={userData}/>
         {/* interaction section */}
 
         {/* tags */}
         <View className="mt-2 bg-primary border-t border-black-200 px-4 py-3" style={styles.box}>
             <View>
-                <Text className="text-gray-400 text-xs font-plight mb-1">Etiketimet:</Text>
-                <TouchableOpacity>
-                    <Text className="text-secondary font-pbold text-sm underline">{blog.tag.name}</Text>
-                </TouchableOpacity>
-                {blog.tag.children.length > 0 && blog.tag.children.map((item) => (
-                    <TouchableOpacity>
-                        <Text className="text-secondary font-pbold text-sm underline">{item.name}</Text>
+                <Text className="text-gray-400 text-sm font-plight mb-1">Etiketimet:</Text>
+                <View className="flex-row gap-2 flex-1 flex-wrap">
+                    <TouchableOpacity className="bg-secondary border-white rounded-[5px] px-4 py-1">
+                        <Text className="text-white font-pbold text-sm">{blog.tags.name}</Text>
                     </TouchableOpacity>
-                ))}
+                    {blog.tags.children.length > 0 && blog.tags.children.map((item) => (
+                        <TouchableOpacity className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog.id}-${item.tagId}`}>
+                            <Text className="text-secondary font-psemibold text-sm">{item.name}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
             </View>
         </View>
         {/* tags */}

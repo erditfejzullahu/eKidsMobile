@@ -236,7 +236,7 @@ const _layout = () => {
             console.log(token);
             
             const newConnection = new SignalR.HubConnectionBuilder()
-                .withUrl('https://wanted-globally-impala.ngrok-free.app/notificationsHub', {
+                .withUrl('https://dove-well-officially.ngrok-free.app/notificationsHub', {
                     headers: {
                         "Authorization" : "Bearer " + token
                     }

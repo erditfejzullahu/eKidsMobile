@@ -299,7 +299,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     
   return (
       <TouchableWithoutFeedback onPress={removeOpenedDialogs}>
-            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
+            {/* <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "position" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}> */}
             <View 
                 className="relative bg-oBlack border border-black-200 rounded-[10px] flex-1"
                 style={styles.box}
@@ -579,7 +579,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     </View>
                 </Animatable.View>}
             </View>
-            </KeyboardAvoidingView>
+            {/* </KeyboardAvoidingView> */}
         </TouchableWithoutFeedback>
   )
 }

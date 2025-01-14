@@ -648,13 +648,13 @@ export const getAllBlogsByTag = async (tagId, pagination) => {
     }
 }
 
-export const getAllBlogs = async (pagination) => {
+export const getAllBlogs = async (userId, pagination) => {
     try {
         let queryParams = {}
         if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
         if (pagination.pageSize) queryParams.pagesize = pagination.pageSize
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogs?${queryString}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}`)
         return response ? response.data : null
     } catch (error) {
         return null
@@ -669,5 +669,41 @@ export const reqCreatePost = async (payload) => {
         return response ? response.data : null
     } catch (error) {
         return null
+    }
+}
+
+export const getCommentsByBlog = async (blogId, userId) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
+export const createBlogComment = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Blogs/CreateComment`, payload)
+        return response ? response.status : null
+    } catch (error) {
+        return error.response.status
+    }
+}
+
+export const reqLikeBlog = async (blogId, userId) => {
+    try {
+        const response = await apiClient.post(`/api/Blogs/LikeBlog?blogId=${blogId}&userId=${userId}`)
+        return response ?? response.status
+    } catch (error) {
+        return error.response.status
+    }
+}
+
+export const reqLikeBlogComment = async (blogCommentId, userId, blogId) => {
+    try {
+        const response = await apiClient.post(`/api/Blogs/LikeComment?blogCommentId=${blogCommentId}&userId=${userId}`)
+        return response ?? response.status
+    } catch (error) {
+        return error.response.status
     }
 }

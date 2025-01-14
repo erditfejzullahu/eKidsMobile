@@ -7,7 +7,7 @@ import { Alert } from "react-native";
 import { router } from "expo-router";
 // const https = require('https')
 
-const API_URL = 'https://wanted-globally-impala.ngrok-free.app'
+const API_URL = 'https://dove-well-officially.ngrok-free.app'
 // axios.defaults.httpsAgent = new https.Agent({  
 //     rejectUnauthorized: false  
 // });

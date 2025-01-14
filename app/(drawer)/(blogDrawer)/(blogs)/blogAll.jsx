@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import AddBlogComponent from '../../../../components/AddBlogComponent'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
@@ -9,7 +9,7 @@ import BlogCardComponent from '../../../../components/BlogCardComponent'
 
 const blog = () => {
   const {user, isLoading} = useGlobalContext();
-  const {data: blogData, isLoading: blogLoading, refetch: blogRefetch} = useFetchFunction(() => getAllBlogs(pagination))
+  const {data: blogData, isLoading: blogLoading, refetch: blogRefetch} = useFetchFunction(() => getAllBlogs(user?.data?.userData?.id, pagination))
   const [passUserOutside, setPassUserOutside] = useState(false)
   const [allBlogs, setAllBlogs] = useState([])
   const [pagination, setPagination] = useState({
@@ -35,6 +35,7 @@ const blog = () => {
   if(blogLoading || isLoading) return (<Loading />)
   return (
     <View className="flex-1">
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}>
       
         <FlatList
           className="p-4 h-full bg-primary"
@@ -56,6 +57,7 @@ const blog = () => {
           )}
         />
         
+    </KeyboardAvoidingView>
     </View>
   )
 }
