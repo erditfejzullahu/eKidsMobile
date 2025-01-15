@@ -691,9 +691,11 @@ export const createBlogComment = async (payload) => {
 }
 
 export const reqLikeBlog = async (blogId, userId) => {
+    console.log("blogId ", blogId);
+    console.log("userId ", userId);
     try {
-        const response = await apiClient.post(`/api/Blogs/LikeBlog?blogId=${blogId}&userId=${userId}`)
-        return response ?? response.status
+        const response = await apiClient.post(`/api/Blogs/LikeBlog?blogId=${blogId}&userId=${userId}`)        
+        return response && response.data
     } catch (error) {
         return error.response.status
     }
@@ -701,8 +703,8 @@ export const reqLikeBlog = async (blogId, userId) => {
 
 export const reqLikeBlogComment = async (blogCommentId, userId, blogId) => {
     try {
-        const response = await apiClient.post(`/api/Blogs/LikeComment?blogCommentId=${blogCommentId}&userId=${userId}`)
-        return response ?? response.status
+        const response = await apiClient.post(`/api/Blogs/LikeComment?blogCommentId=${blogCommentId}&userId=${userId}&blogId=${blogId}`)
+        return response && response.data
     } catch (error) {
         return error.response.status
     }

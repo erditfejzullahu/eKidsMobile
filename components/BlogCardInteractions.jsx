@@ -24,6 +24,7 @@ const BlogCardInteractions = ({blog, userData}) => {
     const [replyComment, setReplyComment] = useState('')
 
     const [blogTemporaryLike, setBlogTemporaryLike] = useState(blog.isLiked)
+    const [commentTemporaryLike, setCommentTemporaryLike] = useState([])
 
     const commentsRef = useRef(null)
 
@@ -192,19 +193,32 @@ const BlogCardInteractions = ({blog, userData}) => {
 
     const likeBlog = async (blogId, userId) => {
         const response = await reqLikeBlog(blogId, userId)
-        if(response === 200){
-            setBlogTemporaryLike(!blogTemporaryLike)
+        console.log(response);
+        
+        if(response.message === "LikeAdd"){
+            setBlogTemporaryLike(true)
+        }else if(response.message === "LikeRemove"){
+            setBlogTemporaryLike(false)
         }else{
-            unsuccessBlogLike();   
+            unsuccessBlogLike()
         }
     }
 
-    const likeBlogComment = async (commentId, userId, blogId) => {
+    const likeBlogComment = async (commentId, userId, blogId) => {        
         const response = await reqLikeBlogComment(commentId, userId, blogId)
-        if(response === 200){
-            await getComments();
+        console.log(response);
+        
+        if(response.message === "LikeAdd"){
+            // await getComments();
+            setCommentTemporaryLike((prevData) => [...prevData, commentId])
+        }else if(response.message === "LikeRemove"){
+            setCommentTemporaryLike((prevData) => {
+                if(prevData.includes(commentId)){
+                    return prevData.filter((idx) => idx !== commentId)
+                }
+            })
         }else{
-            unsuccessBlogLike()
+            unsuccessBlogLike();
         }
     }
     
@@ -214,12 +228,12 @@ const BlogCardInteractions = ({blog, userData}) => {
         <View className="flex-row items-center justify-center gap-4 bg-primary mx-4 -mb-4 z-50 border border-black-200 rounded-[5px] flex-1" style={styles.box}>
             <View className="border-r pr-1.5 border-black-200 flex-1">
                 <TouchableOpacity onPress={() => likeBlog(blog.id, user.id)} className="flex-row items-center justify-center gap-1.5 py-2">
-                    <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{blog.isLiked ? "I pelqyer" : "Pelqeni"}</Text>
+                    <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{(blog.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
                     <Image
                         source={icons.star}
                         className="w-4 h-4 mb-0.5"
                         resizeMode='contain'
-                        tintColor={`${blog.isLiked ? "#FF9C01" : "#fff"}`}
+                        tintColor={`${(blog.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
                     />
                 </TouchableOpacity>
             </View>
@@ -285,8 +299,8 @@ const BlogCardInteractions = ({blog, userData}) => {
 
                             <View className="absolute left-0 flex-row gap-4 -bottom-5 -mb-1">
                                 <View style={styles.box}>
-                                    <TouchableOpacity onPress={() => likeBlogComment(item.commentId, user.id, blog.id)} className={`${item.isLiked ? "bg-secondary" : "bg-oBlack"} relative border border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
-                                        <Text className={`font-pmedium text-xs text-white`}>{item.isLiked ? "Pelqyer" : "Pelqe"}</Text>                                            
+                                    <TouchableOpacity onPress={() => likeBlogComment(item.commentId, user.id, blog.id)} className={`${(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "bg-secondary" : "bg-oBlack"} relative border border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
+                                        <Text className={`font-pmedium text-xs text-white`}>{(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "Pelqyer" : "Pelqe"}</Text>                                            
                                             <Image 
                                                 source={icons.star}
                                                 className="h-4 w-4"
@@ -294,7 +308,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                                                 tintColor={"#fff"}
                                             />
                                             <View className="absolute right-1 -bottom-2 items-center justify-center">
-                                                <Text className={`${item.isLiked ? "text-white" : "text-secondary"} z-50 font-psemibold text-xs`}>{item.likes}</Text>
+                                                <Text className={`${(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "text-white" : "text-secondary"} z-50 font-psemibold text-xs`}>{commentTemporaryLike.includes(item.commentId) ? item.likes + 1 : item.likes}</Text>
                                             </View>
                                     </TouchableOpacity>
                                 </View>
