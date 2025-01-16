@@ -541,12 +541,11 @@ export const reqGetAllUserTypes = async (userId, types, filters) => {
         //         queryParams[key] = filters[key]
         //     }
         // })
-        // const queryString = new URLSearchParams(queryParams).toString();
-
-        const response = await apiClient.get(`/api/UserFriends/GetAllByUser/${userId}?types=${types}`)        
+        // const queryString = new URLSearchParams(queryParams).toString();    
+        const response = await apiClient.get(`/api/UserFriends/GetAllByUser/${userId}?types=${types}`)   //types; 1 for all, 2 for friends, 3 for closefriends
         return response ? response.data : null
     } catch (error) {
-        console.error(error);
+        // console.error(error, 'usertypes');
         return null;
     }
 }
@@ -639,9 +638,11 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (tagId, pagination) => {    
+export const getAllBlogsByTag = async (userId, tagId, pagination) => {    
+    console.log('u thirr');
+    
     try {
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}`)
         return response ? response.data : null
     } catch (error) {
         return null;

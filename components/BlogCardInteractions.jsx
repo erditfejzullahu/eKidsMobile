@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, TextInput, Modal } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { FlatList } from 'react-native-gesture-handler'
-import { icons } from '../constants'
+import { icons, images } from '../constants'
 import { Platform } from 'react-native'
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view'
 import * as Animatable from "react-native-animatable"
@@ -10,7 +10,7 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system';
 import Loading from './Loading'
 import useFetchFunction from '../hooks/useFetchFunction'
-import { createBlogComment, getCommentsByBlog, reqLikeBlog, reqLikeBlogComment } from '../services/fetchingService'
+import { createBlogComment, getCommentsByBlog, reqGetAllUserTypes, reqLikeBlog, reqLikeBlogComment } from '../services/fetchingService'
 import _ from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
@@ -25,6 +25,9 @@ const BlogCardInteractions = ({blog, userData}) => {
 
     const [blogTemporaryLike, setBlogTemporaryLike] = useState(blog.isLiked)
     const [commentTemporaryLike, setCommentTemporaryLike] = useState([])
+
+    const [sendToFriends, setSendToFriends] = useState(false)
+    const [friendsData, setFriendsData] = useState([])
 
     const commentsRef = useRef(null)
 
@@ -224,9 +227,25 @@ const BlogCardInteractions = ({blog, userData}) => {
             unsuccessBlogLike();
         }
     }
+
+    const getAllFriends = async () => {
+        const response = await reqGetAllUserTypes(user.id, 1);
+        if(response){
+            setFriendsData(response)
+        }else{
+            setFriendsData([])
+        }
+    }
+
+    useEffect(() => {
+      if(sendToFriends){
+        getAllFriends()
+      }
+    }, [sendToFriends])
     
 
   return (
+    <>
     <View className="flex-1">
         <View className="flex-row items-center justify-center gap-4 bg-primary mx-4 -mb-4 z-50 border border-black-200 rounded-[5px] flex-1" style={styles.box}>
             <View className="border-r pr-1.5 border-black-200 flex-1">
@@ -259,7 +278,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                 </TouchableOpacity>
             </View>
             <View className="items-center justify-center flex-1">
-                <TouchableOpacity className="flex-row items-center justify-center gap-1.5 py-2">
+                <TouchableOpacity onPress={() => setSendToFriends(true)} className="flex-row items-center justify-center gap-1.5 py-2">
                     <Text className="text-white font-psemibold text-xs">Shperndaje</Text>
                     <Image 
                         source={icons.friends}
@@ -285,9 +304,10 @@ const BlogCardInteractions = ({blog, userData}) => {
                     const date = new Date(item?.createdAt);
                     const formattedDate = date.toLocaleDateString('sq-AL', {
                         year: 'numeric',
-                        month: 'long',  // Full month name
+                        month: 'long',
                         day: 'numeric',
                         });
+                    
                     const getParentId = commentData.find((comment) => comment.commentId === item.parentId);
                     console.log(getParentId, ' parent');
                     
@@ -462,6 +482,71 @@ const BlogCardInteractions = ({blog, userData}) => {
         </Animatable.View>}
         
     </View>
+    <Modal
+        visible={sendToFriends}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setSendToFriends(false)}
+    >
+        <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
+            <View className="h-[80%] w-[80%] bg-primary rounded-[10px] border border-black-200" style={styles.box}>
+                <View className="flex-1 justify-between">
+                    <View className="flex-1">
+                        <FlatList 
+                            data={friendsData}
+                            contentContainerStyle={{flexGrow: 1, gap:10, padding:10}}
+                            ListHeaderComponent={() => (
+                            <View className="pb-6">
+                                <Text className="font-psemibold text-2xl text-white">Lista e miqve
+                                    <View>
+                                        <Image 
+                                            source={images.path}
+                                            className="h-auto w-[100px] absolute -bottom-8 -left-12"
+                                            resizeMode='contain'
+                                        />
+                                    </View>
+                                </Text>
+                            </View>
+                            )}
+                            keyExtractor={(item) => `friends-${item.id}`}
+                            renderItem={({item}) => {
+                                // console.log(item);
+                                return (
+                                    <TouchableOpacity className="bg-oBlack border p-3 border-black-200 rounded-[5px] flex-row items-center justify-between" style={styles.box}>
+                                        <View className="flex-row items-center gap-4">
+                                            <View>
+                                                <Image 
+                                                    source={{uri: item.profilePictureUrl}}
+                                                    className="h-14 w-14 rounded-full border border-black-200"
+                                                    resizeMode='contain'
+                                                />
+                                            </View>
+                                            <View>  
+                                                <Text className="text-white font-psemibold text-sm">{item.firstname} {item.lastname}</Text>
+                                                <Text className="text-gray-400 font-plight text-xs">{item.username}</Text>
+                                                <Text className="text-secondary font-plight text-xs">Mik</Text>
+                                            </View>
+                                        </View>
+                                        <View>
+                                            <Image 
+                                                source={icons.rightArrow}
+                                                className="h-4 w-4"
+                                                tintColor={"#FF9C01"}
+                                            />
+                                        </View>
+                                    </TouchableOpacity>
+                                )
+                            }}
+                        />
+                        <TouchableOpacity className="items-center p-4 justify-center bg-oBlack border-t border-black-200" onPress={() => setSendToFriends(false)}>
+                            <Text className="font-pregular text-white text-sm">Largoni dritaren</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </View>
+    </Modal>
+    </>
   )
 }
 const styles = StyleSheet.create({

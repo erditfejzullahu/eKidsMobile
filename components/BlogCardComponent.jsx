@@ -6,8 +6,7 @@ import { TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
 
-const BlogCardComponent = ({blog, userData}) => {
-    console.log(blog);
+const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
     
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
@@ -32,6 +31,7 @@ const BlogCardComponent = ({blog, userData}) => {
                     className="h-14 w-14 rounded-full"
                     resizeMode='contain'
                 />
+                <Text className="text-white text-2xl">{blog.id}</Text>
             </View>
             <View>
                 <Text className="font-psemibold text-lg text-white">Erdit Fejzullahu</Text>
@@ -60,11 +60,11 @@ const BlogCardComponent = ({blog, userData}) => {
             <View>
                 <Text className="text-gray-400 text-sm font-plight mb-1">Etiketimet:</Text>
                 <View className="flex-row gap-2 flex-1 flex-wrap">
-                    <TouchableOpacity className="bg-secondary border-white rounded-[5px] px-4 py-1">
+                    <TouchableOpacity onPress={() => filterByTagId(blog.tags.tagId)} className="bg-secondary border-white rounded-[5px] px-4 py-1">
                         <Text className="text-white font-pbold text-sm">{blog.tags.name}</Text>
                     </TouchableOpacity>
                     {blog.tags.children.length > 0 && blog.tags.children.map((item) => (
-                        <TouchableOpacity className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog.id}-${item.tagId}`}>
+                        <TouchableOpacity onPress={() => filterByTagId(item.tagId)} className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog.id}-${item.tagId}`}>
                             <Text className="text-secondary font-psemibold text-sm">{item.name}</Text>
                         </TouchableOpacity>
                     ))}
