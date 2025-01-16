@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import AddBlogComponent from '../../../../components/AddBlogComponent'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
@@ -11,6 +11,7 @@ const blog = () => {
   const {user, isLoading} = useGlobalContext();
   const {data: blogData, isLoading: blogLoading, refetch: blogRefetch} = useFetchFunction(() => getAllBlogs(user?.data?.userData?.id, pagination))
   const [passUserOutside, setPassUserOutside] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [allBlogs, setAllBlogs] = useState([])
   const [pagination, setPagination] = useState({
     pageNumber: 1,
@@ -20,6 +21,12 @@ const blog = () => {
   const userOutsidePostCreation = () => {
     setPassUserOutside(!passUserOutside);
   };
+
+  const onRefresh = async () => {
+    setIsRefreshing(false)
+    await blogRefetch();
+    setIsRefreshing(true)
+  }
 
   useEffect(() => {
     
@@ -38,6 +45,7 @@ const blog = () => {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}>
       
         <FlatList
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
           className="p-4 h-full bg-primary"
           data={blogData}
           contentContainerStyle={{gap: 20}}

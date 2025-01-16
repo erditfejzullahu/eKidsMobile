@@ -7,7 +7,7 @@ import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
 
 const BlogCardComponent = ({blog, userData}) => {
-    // console.log(blog);
+    console.log(blog);
     
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;

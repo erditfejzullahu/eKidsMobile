@@ -639,7 +639,7 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (tagId, pagination) => {
+export const getAllBlogsByTag = async (tagId, pagination) => {    
     try {
         const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}`)
         return response ? response.data : null

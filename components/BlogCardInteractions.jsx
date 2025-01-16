@@ -229,12 +229,19 @@ const BlogCardInteractions = ({blog, userData}) => {
             <View className="border-r pr-1.5 border-black-200 flex-1">
                 <TouchableOpacity onPress={() => likeBlog(blog.id, user.id)} className="flex-row items-center justify-center gap-1.5 py-2">
                     <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{(blog.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
-                    <Image
-                        source={icons.star}
-                        className="w-4 h-4 mb-0.5"
-                        resizeMode='contain'
-                        tintColor={`${(blog.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
-                    />
+                    <View className="relative">
+                        <View>
+                        <Image
+                            source={icons.star}
+                            className="w-4 h-4 mb-0.5"
+                            resizeMode='contain'
+                            tintColor={`${(blog.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
+                        />
+                        </View>
+                        <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
+                            <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{(blogTemporaryLike || blog.isLiked) ? blog.likes + 1 : blog.likes}</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             </View>
             <View className="border-r pr-1.5 border-black-200 items-center flex-1 justify-center">

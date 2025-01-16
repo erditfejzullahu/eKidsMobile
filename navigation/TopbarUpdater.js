@@ -7,16 +7,25 @@ const TopbarUpdaterContext = createContext();
 export const useTopbarUpdater = () => useContext(TopbarUpdaterContext);
 const TopbarUpdaterProvider = ({children}) => {
     const [showSearcher, setShowSearcher] = useState(false)
+    const [showBlogSearcher, setShowBlogSearcher] = useState(false)
     const pathname = usePathname();
     
     useEffect(() => {
-        if(pathname === '/all-messages') setShowSearcher(true)
-            else setShowSearcher(false);
+        if(pathname === '/all-messages'){
+            setShowSearcher(true)
+            setShowBlogSearcher(false)
+        }else if(pathname.includes("blogs")){
+            setShowSearcher(false);
+            setShowBlogSearcher(true)
+        }else{
+            setShowSearcher(false)
+            setShowBlogSearcher(false)
+        }
             
     }, [pathname])
     
     return(
-        <TopbarUpdaterContext.Provider value={{showSearcher}} >
+        <TopbarUpdaterContext.Provider value={{showSearcher, showBlogSearcher}} >
             {children}
         </TopbarUpdaterContext.Provider>
     )
