@@ -62,7 +62,7 @@ const BlogCardInteractions = ({blog, userData}) => {
     const getComments = async () => {
         const response = await getCommentsByBlog(blog.id, user.id)
         if(response){
-            console.log(response, ' komente')
+            // console.log(response, ' komente')
             setCommentData(_.flattenDeep(getAllRepliesWithDepth(response)))    
         }else{
             setCommentData([])
@@ -81,7 +81,7 @@ const BlogCardInteractions = ({blog, userData}) => {
     const createComment = async (parentId) => {
         let payload = {
             blogId: blog.id,
-            comment_Content: commentWritten,
+            comment_Content: parentId ? replyComment : commentWritten,
             base64Data: pickedItem.base64 !== "" ? `${base64Data.type}${base64Data.base64}` : null,
             parentId: parentId || null,
             userId: user.id
@@ -94,6 +94,9 @@ const BlogCardInteractions = ({blog, userData}) => {
             successComment()
             await getComments();
             commentsRef?.current?.scrollToEnd({animated: true});
+            setCommentWritten("")
+            setReplyComment("")
+            setOpenReplies([])
         }else{
             unsuccessfulComment()
         }
@@ -285,7 +288,9 @@ const BlogCardInteractions = ({blog, userData}) => {
                         month: 'long',  // Full month name
                         day: 'numeric',
                         });
-                    // const showSpecificReply = openReplies.find(reply => reply.id === item.id)
+                    const getParentId = commentData.find((comment) => comment.commentId === item.parentId);
+                    console.log(getParentId, ' parent');
+                    
                     return (
                         <>
                         <View style={styles.box} className={`${item.depth === 1 ? "ml-8" : item.depth > 1 ? "ml-16" : ""} flex-row h-full gap-4 flex-1 bg-oBlack m-2 mb-0.5 items-center p-4 pt-3 border border-black-200 rounded-[5px]`}>
@@ -301,7 +306,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                                     <Text className="font-psemibold text-base text-white">{item.user.name}</Text>
                                 </View>
                                 <View className="flex-1 mb-1">
-                                    <Text className="font-plight text-gray-400 text-xs">{item.comment_Content}</Text>
+                                    <Text className="font-plight text-gray-400 text-xs">{getParentId ? <><Text className="font-psemibold text-secondary">@{getParentId.user.name}</Text> {item.comment_Content}</> : item.comment_Content}</Text>
                                 </View>
 
                             <View className="absolute left-0 flex-row gap-4 -bottom-5 -mb-1">
@@ -365,6 +370,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                                     value={replyComment}
                                     onChangeText={(e) => setReplyComment(e)}
                                     placeholderTextColor={"#4b5563"}
+                                    onSubmitEditing={() => createComment(item.commentId)}
                                 />
                             </View>
                         </View>)}
