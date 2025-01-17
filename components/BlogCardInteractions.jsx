@@ -17,7 +17,7 @@ import NotifierComponent from './NotifierComponent'
 
 const BlogCardInteractions = ({blog, userData}) => {
     const user = userData?.data?.userData;
-
+    
     const [openComments, setOpenComments] = useState(false)
     const [commentWritten, setCommentWritten] = useState("")
     const [commentData, setCommentData] = useState([])
@@ -99,6 +99,7 @@ const BlogCardInteractions = ({blog, userData}) => {
             commentsRef?.current?.scrollToEnd({animated: true});
             setCommentWritten("")
             setReplyComment("")
+            blog.commentsCount = blog.commentsCount + 1
             setOpenReplies([])
         }else{
             unsuccessfulComment()
@@ -269,12 +270,19 @@ const BlogCardInteractions = ({blog, userData}) => {
             <View className="border-r pr-1.5 border-black-200 items-center flex-1 justify-center">
                 <TouchableOpacity onPress={() => handleCommentVisibility()} className="flex-row items-center justify-center gap-1.5 py-2">
                     <Text className={`${openComments ? "text-secondary" : "text-white"}  font-psemibold text-xs`}>Komentoni</Text>
-                    <Image
-                        source={icons.chat}
-                        className="w-4 h-4 mb-0.5"
-                        resizeMode='contain'
-                        tintColor={openComments ? "#FF9C01" : "#fff"}
-                    />
+                    <View className="relative">
+                        <View>
+                        <Image
+                            source={icons.chat}
+                            className="w-4 h-4 mb-0.5"
+                            resizeMode='contain'
+                            tintColor={openComments ? "#FF9C01" : "#fff"}
+                        />
+                        </View>
+                        <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
+                            <Text className={`${openComments ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{blog.commentsCount}</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             </View>
             <View className="items-center justify-center flex-1">
