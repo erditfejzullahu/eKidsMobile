@@ -45,9 +45,9 @@ const blog = () => {
 
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setBlogTagId(null)
     setPagination({ pageNumber: 1, pageSize: 15 })
     setAllBlogs([])
-    setBlogTagId(null)
     await blogRefetch();
     setIsRefreshing(false)
   }

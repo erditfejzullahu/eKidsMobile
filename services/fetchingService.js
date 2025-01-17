@@ -710,3 +710,31 @@ export const reqLikeBlogComment = async (blogCommentId, userId, blogId) => {
         return error.response.status
     }
 }
+
+export const reqUpdateUserInformation = async (payload) => {
+    try {
+        
+        const response = await apiClient.post(`/api/userInformation`, payload)
+        return response && response.status
+    } catch (error) {        
+        return error.response.status
+    }
+}
+
+export const getUserOtherInformations = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/UserInformation?userId=${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
+
+export const updateUserOtherInformations = async (informationId, payload) => {
+    try {
+        const response = await apiClient.patch(`/api/UserInformation/${informationId}`, payload)
+        return response && response.status
+    } catch (error) {
+        return error.response.status
+    }
+}

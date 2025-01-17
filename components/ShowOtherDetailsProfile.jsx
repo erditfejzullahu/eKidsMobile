@@ -4,8 +4,24 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { icons } from '../constants'
 import FormField from './FormField'
 import { Picker } from '@react-native-picker/picker'
+import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
+import { getUserOtherInformations, reqUpdateUserInformation, updateUserOtherInformations } from '../services/fetchingService'
+import NotifierComponent from './NotifierComponent'
+import useFetchFunction from '../hooks/useFetchFunction'
 
 const ShowOtherDetailsProfile = ({userId}) => {
+
+    const {data, isLoading, refetch} = useFetchFunction(() => getUserOtherInformations(userId))
+    const [userOtherData, setUserOtherData] = useState({})
+
+    useEffect(() => {
+      if(data){
+        setUserOtherData(data)
+      }else{
+        setUserOtherData([])
+      }
+    }, [data])
+    
 
     const { width: screenWidth } = Dimensions.get('window');
     const widthForModal = screenWidth * 0.7
@@ -20,28 +36,41 @@ const ShowOtherDetailsProfile = ({userId}) => {
         howManySoftSkills: 1,
     })
     const [userInformationData, setUserInformationData] = useState({
-        userId: userId,
-        birthDay: "",
-        softSkills: [{soft_Skill: ""}],
-        userEducations: [
-            {
-                place_Name: "",
-                schoolDegree: '1',
-                field: "",
-                start_Year: 0,
-                end_Year: null
-            }
-        ],
-        userJobs: [
-            {
-                job_Place: "",
-                job_Title: "",
-                start_year: 0,
-                end_Year: 0
-            }
-        ],
-    })
+                userId: userId,
+                birthDay: new Date(),
+                softSkills: [],
+                userEducations: [
+                    {
+                        place_Name: "",
+                        school_Degree: '1',
+                        field: "",
+                        start_Year: 0,
+                        end_Year: null
+                    }
+                ],
+                userJobs: [
+                    {
+                        job_Place: "",
+                        job_Title: "",
+                        start_Year: 0,
+                        end_Year: null
+                    }
+                ],
+            })
 
+    useEffect(() => {
+      if(Object.keys(userOtherData) !== 0){
+        setUserInformationData((prevData) => ({
+            ...prevData,
+            birthDay: new Date(userOtherData.birthday),
+            softSkills: typeof userOtherData.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills,
+            userEducations: userOtherData.userEducations,
+            userJobs: userOtherData.userJobs
+        }))        
+      }
+    }, [userOtherData])
+    
+    
     const arrangeData = (text, type, index) => {
         setUserInformationData(prevData => {
             const updatedUserEducations = [...prevData.userEducations]
@@ -51,7 +80,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
             if(!updatedUserEducations[index]){
                 updatedUserEducations[index] = {
                     place_Name: "",
-                    schoolDegree: "1",
+                    school_Degree: "1",
                     field: "",
                     start_Year: 0,
                     end_Year: 0,
@@ -61,7 +90,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 updatedUserJobs[index] = {
                     job_Place: "",
                     job_Title: "",
-                    start_year: 0,
+                    start_Year: 0,
                     end_Year: 0
                 }
             }
@@ -71,23 +100,23 @@ const ShowOtherDetailsProfile = ({userId}) => {
             }else if(type === "drejtimi"){
                 updatedUserEducations[index].field = text
             }else if(type === "mbaruat"){
-                updatedUserEducations[index].end_Year = parseInt(text)
+                updatedUserEducations[index].end_Year = text;
             }else if(type === "filluat"){
-                updatedUserEducations[index].start_Year = parseInt(text);
+                updatedUserEducations[index].start_Year = text;
             }else if(type === 'niveli'){
-                updatedUserEducations[index].schoolDegree = parseInt(text);
+                updatedUserEducations[index].school_Degree = parseInt(text);
             }else if(type === "emri_punes"){
                 updatedUserJobs[index].job_Place = text;
             }else if(type === "titulli_punes"){
                 updatedUserJobs[index].job_Title = text;
             }else if(type === "filluat_punen"){
-                updatedUserJobs[index].start_year = text;
+                updatedUserJobs[index].start_Year = text;
             }else if(type === "mbaruat_punen"){
                 updatedUserJobs[index].end_Year = text;
             }else if(type === "aftesi_buta"){
                 updatedSoftSkills[index].soft_Skill = text;
             }
-            console.log(updatedUserEducations);
+            // console.log(updatedUserEducations);
             
             return {
                 ...prevData,
@@ -127,27 +156,170 @@ const ShowOtherDetailsProfile = ({userId}) => {
         }
     }
 
-    const hideModals = () => {
-        setShowModals({
-            visibility: false,
-            type: ""
-        })
-    }
+    const {showNotification: successUpdate} = NotifierComponent({
+        title: "Sapo perditesuat te dhenat tuaja me sukses!"
+    })
 
-    const openModal = (type) => {
+    const {showNotification: unsuccessfulUpdate} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+        alertType: "warning"
+    })
+
+    const {showNotification: fillFields} = NotifierComponent({
+        title: "Ju lutem mbushini te gjitha fushat!",
+        alertType: "warning"
+    })
+
+    const [showInformationStepTick, setShowInformationStepTick] = useState({
+        education: false,
+        softSkills: false,
+        jobs: false
+    })
+
+    const checkIfDataValid = (type) => {
         if(type === "education"){
-            
-        }else if(type === "softSkills"){
-
+            if(userInformationData.userEducations.every((education) => {
+                return (
+                    education.place_Name.trim() !== "" &&
+                    education.school_Degree > 0 &&
+                    education.field.trim() !== "" &&
+                    (education.start_Year.toString().trim() !== "" || parseInt(education.start_Year) > 1930) &&
+                    (education.end_Year === null || parseInt(education.end_Year) > 1930)
+                )
+            })){
+                setShowModals({visibility: false, type: ""})
+                setShowInformationStepTick((prevData) => ({
+                    ...prevData,
+                    education: true
+                }))
+            }else{
+                fillFields()
+            }
         }else if(type === "jobs"){
-
+            if(userInformationData.userJobs.every((jobs) => {
+                return (
+                    jobs.job_Place.trim() !== "" &&
+                    jobs.job_Title.trim() !== "" &&
+                    (jobs.start_Year.toString().trim() !== "" || parseInt(jobs.start_Year) > 1930) &&
+                    (jobs.end_Year === null || parseInt(jobs.end_Year) > 1930)
+                )
+            })){
+                setShowModals({visibility: false, type: ""})
+                setShowInformationStepTick((prevData) => ({
+                    ...prevData,
+                    jobs: true
+                }))
+            }else{
+                fillFields()
+            }
+        }else if(type === "softSkills"){
+            if(userInformationData.softSkills.length > 0){
+                setShowModals({visibility: false, type: ""})
+                setShowInformationStepTick((prevData) => ({
+                    ...prevData,
+                    softSkills: true
+                }))
+            }else{
+                fillFields()
+            }
         }
     }
-    useEffect(() => {
-        console.log(showModals.type);
-        console.log(howManySections, ' ??');
+
+    const updateInformations = async () => {
+        if(userOtherData && Object.keys(userOtherData).length !== 0){            
+            const birthday = userInformationData.birthDay;
+            const formattedDate = birthday.toISOString().split("T")[0];
+            console.log(formattedDate);
+            
+            const updatedUserInformation = {
+                ...userInformationData,
+                softSkills: JSON.stringify(userInformationData.softSkills),
+                birthDay: formattedDate
+            }
+            const response = await updateUserOtherInformations(userOtherData?.id, updatedUserInformation);
+            if(response === 200){
+                await refetch();
+            }else{
+                unsuccessfulUpdate()
+            }
+        }else{
+            if(showInformationStepTick.education === true && showInformationStepTick.jobs === true && showInformationStepTick.softSkills){
+
+                const birthday = userInformationData.birthDay;
+                const formattedDate = birthday.toISOString().split("T")[0];
+                const updatedData = {
+                    ...userInformationData,
+                    softSkills: JSON.stringify(userInformationData.softSkills),
+                    birthday: formattedDate
+                }
+                
+                const response = await reqUpdateUserInformation(updatedData);
+                if(response === 200){
+                    successUpdate()
+                }else{
+                    unsuccessfulUpdate()
+                }
+            }else{
+                fillFields()
+            }
+        }
+    }
+
+    // useEffect(() => {
+    //     console.log(showModals.type);
+    //     console.log(howManySections, ' ??');
         
-    }, [showModals.type, howManySections]);
+    // }, [showModals.type, howManySections]);    
+
+    
+    const handleChangeDate = (event, date) => {
+        if(date){
+            setUserInformationData((prevData) => ({
+                ...prevData,
+                birthDay: date
+            }))
+        }
+    }
+
+    const clearData = (type) => {
+        if(userOtherData && Object.keys(userOtherData).length === 0){
+            setUserInformationData((prevData) => {
+                if(type === "education"){
+                    return {
+                        ...prevData,
+                        userEducations: [
+                            {
+                                place_Name: "",
+                                school_Degree: '1',
+                                field: "",
+                                start_Year: 0,
+                                end_Year: null
+                            }
+                        ]
+                    }
+                }else if(type === "softSkills"){
+                    return {
+                        ...prevData,
+                        softSkills: []
+                    }
+                }else if(type === "jobs"){
+                    return {
+                        ...prevData,
+                        userJobs: [
+                            {
+                                job_Place: "",
+                                job_Title: "",
+                                start_Year: 0,
+                                end_Year: null
+                            }
+                        ]
+                    }
+                }
+            })
+        }
+        setShowModals({visibility: false, type: ""})
+    }
     
 
   return (
@@ -155,19 +327,27 @@ const ShowOtherDetailsProfile = ({userId}) => {
 
     <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
       <View>
-        <View className="gap-2 border-b border-black-200 pb-4">
+        <View className="gap-2 border-b border-black-200 pb-4" style={styles.box}>
             <Text className="text-white text-sm">Data e lindjes</Text>
-            <View className="border border-black-200 bg-oBlack self-start rounded-[10px]" style={styles.box}>
+            <View className="border border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
                 <RNDateTimePicker
-                style={{marginLeft: -10}}
+                    style={{marginLeft: -15}}
                     display="default"
-                    value={new Date()}
+                    onChange={handleChangeDate}
+                    value={userInformationData.birthDay}
                     maximumDate={new Date()}
                 />
             </View>
         </View>
         <View className="gap-2 border-b border-black-200 py-4">
-            <Text className="text-white text-sm">Edukimi shkollor</Text>
+            <View className="flex-row">
+                <Text className="text-white text-sm">Edukimi shkollor</Text>
+                {showInformationStepTick.education && <Image 
+                    source={icons.tick}
+                    className="w-6 h-6"
+                    tintColor={"#ff9c01"}
+                />}
+            </View>
             <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "education"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
                 <Image 
                     source={icons.plus}
@@ -177,7 +357,14 @@ const ShowOtherDetailsProfile = ({userId}) => {
             </TouchableOpacity>
         </View>
         <View className="gap-2 border-b border-black-200 py-4">
-            <Text className="text-white text-sm">Aftesi te buta</Text>
+            <View className="flex-row">
+                <Text className="text-white text-sm">Aftesi te buta</Text>
+                {showInformationStepTick.softSkills && <Image 
+                    source={icons.tick}
+                    className="w-6 h-6"
+                    tintColor={"#ff9c01"}
+                />}
+            </View>
             <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "softSkills"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
                 <Image 
                     source={icons.plus}
@@ -187,13 +374,25 @@ const ShowOtherDetailsProfile = ({userId}) => {
             </TouchableOpacity>
         </View>
         <View className="gap-2 border-b border-black-200 pt-4">
-            <Text className="text-white text-sm">Punesimi</Text>
+            <View className="flex-row">
+                <Text className="text-white text-sm">Punesimi</Text>
+                {showInformationStepTick.jobs && <Image 
+                    source={icons.tick}
+                    className="w-6 h-6"
+                    tintColor={"#ff9c01"}
+                />}
+            </View>
             <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "jobs"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
                     tintColor={"#fff"}
                 />
+            </TouchableOpacity>
+        </View>
+        <View className="my-4 bg-primary border border-black-200 rounded-[5px] overflow-hidden" style={styles.box}>
+            <TouchableOpacity onPress={updateInformations}>
+                <Text className="text-white font-psemibold text-center p-4">Perditeso te dhenat</Text>
             </TouchableOpacity>
         </View>
       </View>
@@ -212,8 +411,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 </View>
 
                 {[...Array(showModals.type === "education" ? howManySections.howManyEducation : showModals.type === "jobs" ? howManySections.howManyJobs : howManySections.howManySoftSkills)].map((_, index) => {
-                    console.log(index, ' indeksi');
-                    console.log(showModals);
+                    // console.log(index, ' indeksi');
+                    // console.log(showModals);
                     const isLastIndex = 
                         index === (showModals.type === "education"
                             ? howManySections.howManyEducation - 1
@@ -252,7 +451,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                     <Text className="text-gray-100 font-pmedium text-sm">Niveli shkolles</Text>
                                     <View className="-my-4">
                                         <Picker
-                                            selectedValue={userInformationData?.userEducations[index]?.schoolDegree.toString()}
+                                            selectedValue={userInformationData?.userEducations[index]?.school_Degree.toString()}
                                             onValueChange={(e) => arrangeData(e, 'niveli', index)}
                                             placeholder={{ label: "Zhgjidhni nivelin shkollor", value: '' }}
                                             style={[pickerSelectStyles, {width: widthForModal, height:180}]}
@@ -282,7 +481,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                         <FormField 
                                             title={"Filluat"}
                                             otherStyles={"w-full"}
-                                            value={showModals.type === "education" ? userInformationData?.userEducations[index]?.start_Year : userInformationData?.userJobs[index]?.start_Year}
+                                            value={showModals.type === "education" ? userInformationData?.userEducations[index]?.start_Year?.toString() : userInformationData?.userJobs[index]?.start_Year?.toString()}
                                             placeholder={"2020..."}
                                             handleChangeText={showModals.type === "education" ? (e) => arrangeData(e, 'filluat', index) : (e) => arrangeData(e, "filluat_punen", index)}
                                             titleStyle={"!text-sm"}
@@ -294,7 +493,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                         <FormField 
                                             title={"Mbaruat"}
                                             otherStyles={"w-full"}
-                                            value={showModals.type === "education" ? userInformationData?.userEducations[index]?.end_Year : userInformationData?.userJobs[index]?.end_Year}
+                                            value={showModals.type === "education" ? userInformationData?.userEducations[index]?.end_Year?.toString() : userInformationData?.userJobs[index]?.end_Year?.toString()}
                                             placeholder={"2025...Ende?"}
                                             handleChangeText={showModals.type === "education" ? (e) => arrangeData(e, 'mbaruat', index) : (e) => arrangeData(e, 'mbaruat_punen', index)}
                                             titleStyle={"!text-sm"}
@@ -311,6 +510,14 @@ const ShowOtherDetailsProfile = ({userId}) => {
                                             title={"Aftesia " + (index + 1)}
                                             otherStyles={"w-full"}
                                             placeholder={"Shkruani ketu aftesine tuaj te bute..."}
+                                            value={userInformationData?.softSkills[index] || ""}
+                                            handleChangeText={(e) => {
+                                                setUserInformationData((prevData) => {
+                                                    const softSkillsArray = [...prevData.softSkills];
+                                                    softSkillsArray[index] = e;
+                                                    return {...prevData, softSkills: softSkillsArray};
+                                                })
+                                            }}
                                             inputParentStyle={"!h-14 !rounded-[10px]"}
                                             titleStyle={"!text-sm"}
                                         />
@@ -332,10 +539,12 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 })}
 
                 <View className="flex-row items-center justify-between w-full flex-wrap my-6">
-                    <TouchableOpacity onPress={() => setShowModals({visibility: false, type: ""})} className="bg-oBlack border-2 border-black-200 rounded-[10px] p-3 py-4">
+                    <TouchableOpacity onPress={() => clearData(showModals.type) }
+                        className="bg-oBlack border-2 border-black-200 rounded-[10px] p-3 py-4"
+                        >
                         <Text className="text-white text-sm font-psemibold">Largo dritaren</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity className="bg-secondary rounded-[10px] p-3 py-4 border-2 border-white">
+                    <TouchableOpacity onPress={() => checkIfDataValid(showModals.type)} className="bg-secondary rounded-[10px] p-3 py-4 border-2 border-white">
                         <Text className="text-white text-sm font-psemibold">Ruaj te dhenat</Text>
                     </TouchableOpacity>
                 </View>
