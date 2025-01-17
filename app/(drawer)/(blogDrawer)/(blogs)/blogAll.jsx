@@ -11,7 +11,7 @@ const blog = () => {
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
         blogTagId === null ? getAllBlogs(user?.data?.userData?.id, pagination)
-        : getAllBlogsByTag(user?.data?.userData?.id, blogTagId, pagination)
+        : getAllBlogsByTag(user?.data?.userData?.id, blogTagId?.tagId, pagination)
   );  
   const [passUserOutside, setPassUserOutside] = useState(false)
 
@@ -67,7 +67,7 @@ const blog = () => {
       if(data && data?.length > 0){
         const newBlogs = data.filter((blog) => !allBlogs.some((existingBlog) => existingBlog.id === blog.id))
         if(newBlogs.length > 0){
-          setAllBlogs((prevBlogs) => [...prevBlogs, ...data])
+          setAllBlogs((prevBlogs) => [...prevBlogs, ...newBlogs])
         }
       }
       setHasMoreBlogs(hasMore)
@@ -75,6 +75,13 @@ const blog = () => {
       setAllBlogs([])
     }
   }, [blogData])
+
+  useEffect(() => {
+    if(blogData){
+
+    }
+  }, [blogData])
+  
   
   
   if((blogLoading || isLoading) && pagination.pageNumber === 1) return (<Loading />)
@@ -94,9 +101,20 @@ const blog = () => {
           onEndReached={nextPage}
           onEndReachedThreshold={0.1}
           ListHeaderComponent={() => (
-            <View className="-mb-2 border-b border-black-200 pb-4">
+            <>
+            <View className={`${blogTagId === null ? "-mb-2" : ""} border-b border-black-200 pb-4`}>
               <AddBlogComponent userData={user} getUserOutside={passUserOutside} />
             </View>
+            {blogTagId !== null && 
+            <View className="-mb-2 mt-4 flex-row items-center gap-2">
+              <View>
+                <Text className="text-gray-400 font-plight text-sm">Etiketimi i zgjedhur:</Text>
+              </View>
+              <View className="bg-secondary px-2 py-0.5 rounded-[5px]">
+                <Text className="text-white font-psemibold text-sm">{blogTagId.name}</Text>
+              </View>
+            </View>}
+            </>
           )}
           ListFooterComponent={() => (
             <>

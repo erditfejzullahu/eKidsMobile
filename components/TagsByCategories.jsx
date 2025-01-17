@@ -41,9 +41,7 @@ const TagsByCategories = ({categories}) => {
                 return [...prevData, tagId]
             }
         })
-        console.log(tagOpened);
-        
-
+        // console.log(tagOpened);
     }
 
     const goToBlog = (blogId) => {

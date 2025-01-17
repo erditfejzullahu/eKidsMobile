@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
 import React, { useEffect } from 'react'
 import { getCourseCategories } from '../services/fetchingService'
-import { flatMap } from 'lodash';
+import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
@@ -17,6 +17,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
         month: 'long',  // Full month name
         day: 'numeric',
     });
+    
     
   return (
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
@@ -60,11 +61,11 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
             <View>
                 <Text className="text-gray-400 text-sm font-plight mb-1">Etiketimet:</Text>
                 <View className="flex-row gap-2 flex-1 flex-wrap">
-                    <TouchableOpacity onPress={() => filterByTagId(blog.tags.tagId)} className="bg-secondary border-white rounded-[5px] px-4 py-1">
+                    <TouchableOpacity onPress={() => filterByTagId(blog.tags)} className="bg-secondary border-white rounded-[5px] px-4 py-1">
                         <Text className="text-white font-pbold text-sm">{blog.tags.name}</Text>
                     </TouchableOpacity>
                     {blog.tags.children.length > 0 && blog.tags.children.map((item) => (
-                        <TouchableOpacity onPress={() => filterByTagId(item.tagId)} className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog.id}-${item.tagId}`}>
+                        <TouchableOpacity onPress={() => filterByTagId(item)} className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog.id}-${item.tagId}`}>
                             <Text className="text-secondary font-psemibold text-sm">{item.name}</Text>
                         </TouchableOpacity>
                     ))}

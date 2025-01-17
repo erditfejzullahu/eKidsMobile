@@ -79,7 +79,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     }, [imageSelected, containerWidth])
 
     const selectTags = (item) => {
-        console.log(item, ' item');
+        // console.log(item, ' item');
         
         setTagsSelected((prevData) => {
             const relatedChild = tagsData.filter(tag => tag.parent_Id === item.id)
@@ -240,7 +240,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                 // }
             }
         }
-
+        
         const response = await reqCreatePost(payload);
         
         if(response){
