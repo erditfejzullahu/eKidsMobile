@@ -738,3 +738,12 @@ export const updateUserOtherInformations = async (informationId, payload) => {
         return error.response.status
     }
 }
+
+export const getBlogByTitle = async (title) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetByName?title=${title}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}

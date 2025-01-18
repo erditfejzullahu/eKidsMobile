@@ -6,8 +6,10 @@ import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { getAllBlogs, getAllBlogsByTag } from '../../../../services/fetchingService'
 import Loading from '../../../../components/Loading'
 import BlogCardComponent from '../../../../components/BlogCardComponent'
+import { usePathname } from 'expo-router'
 
 const blog = () => {
+  
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
         blogTagId === null ? getAllBlogs(user?.data?.userData?.id, pagination)

@@ -11,15 +11,20 @@ import { useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import { useNotificationContext } from '../context/NotificationState'
 import _ from 'lodash'
-import { reqUsersBySearch } from '../services/fetchingService'
+import { getBlogByTitle, reqUsersBySearch } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
+import BlogSearchInput from './ShowBlogsQuery'
+import ShowBlogsQuery from './ShowBlogsQuery'
+import { useGlobalContext } from '../context/GlobalProvider'
 
 const Topbar = () => {
+    const {user, isLoading} = useGlobalContext();
     const router = useRouter()
     const navigator = useNavigation();
     const [retrivedData, setRetrivedData] = useState(null)
+    const [retrivedBlogData, setRetrivedBlogData] = useState([])
     const [notificationsOpened, setNotificationsOpened] = useState(false)
-    const {showSearcher} = useTopbarUpdater();
+    const {showSearcher, showBlogSearcher} = useTopbarUpdater();
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
     const [queryText, setQueryText] = useState(null)
 
@@ -27,9 +32,19 @@ const Topbar = () => {
         const response = await reqUsersBySearch(queryText);
         if(response){
             setRetrivedData(response);
-            console.log(response);
         }else{
             setRetrivedData(null)
+        }
+    }
+
+    const fetchBlogs = async () => {
+        const response = await getBlogByTitle(queryText)
+        if(response){
+            console.log(response);
+            
+            setRetrivedBlogData(response)
+        }else{
+            setRetrivedBlogData([])
         }
     }
 
@@ -41,10 +56,15 @@ const Topbar = () => {
     
 
     const debounceFetchData = _.debounce(fetchUsers, 500);
+    const debounceFetchBlogData = _.debounce(fetchBlogs, 500);
 
     const handleInput = (text) => {        
         setQueryText(text)
-        if(text.length > 2) debounceFetchData(text)
+        if(showSearcher){
+            if(text.length > 2) debounceFetchData(text)
+        }else if(showBlogSearcher){
+            if(text.length > 2) debounceFetchBlogData(text)
+        }
     }
     
   return (
@@ -65,10 +85,22 @@ const Topbar = () => {
             <TextInput 
                 placeholder='Kerkoni perdorues...'
                 placeholderTextColor={"#414141"}
+                value={queryText}
                 className="border bg-primary text-white border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
                 onChangeText={handleInput}
             />
         </View>}
+
+        {showBlogSearcher && <View className="jusitfy-center items-center flex-1">
+            <TextInput 
+                placeholder='Kerkoni blogs...'
+                placeholderTextColor={"#414141"}
+                value={queryText}
+                className="border bg-primary text-white border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
+                onChangeText={handleInput}
+            />
+        </View>}
+
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
             <View>
                 <TouchableOpacity
@@ -99,6 +131,10 @@ const Topbar = () => {
                 </TouchableOpacity>
             </View>
         </View>
+
+        
+
+
       </View>
 
       {(showSearcher && retrivedData?.length > 0 && queryText !== '') && <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
@@ -131,6 +167,12 @@ const Topbar = () => {
             ))}
         </ScrollView>
       </Animatable.View>}
+        
+        {(showBlogSearcher && retrivedBlogData?.length > 0 && queryText !== '') && 
+        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
+            <ShowBlogsQuery retrivedBlogData={retrivedBlogData} userData={user}/>
+        </Animatable.View>
+        }
 
       <StatusBar backgroundColor='#13131a' style='light'/>
 

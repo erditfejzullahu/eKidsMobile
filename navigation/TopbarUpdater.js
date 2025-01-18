@@ -14,7 +14,7 @@ const TopbarUpdaterProvider = ({children}) => {
         if(pathname === '/all-messages'){
             setShowSearcher(true)
             setShowBlogSearcher(false)
-        }else if(pathname.includes("blogs")){
+        }else if(pathname.includes("/blogAll")){
             setShowSearcher(false);
             setShowBlogSearcher(true)
         }else{
