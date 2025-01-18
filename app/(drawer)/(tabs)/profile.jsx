@@ -27,6 +27,7 @@ const router = useRouter();
   const { user, isLoading, setUser } = useGlobalContext();
   // console.log(isLoading, 'loading');
   const userData = user?.data?.userData;
+  
   const userCategories = user?.data?.categories
 
   const {data, isLoading: completedLoading, refetch} = useFetchFunction(() => getCompletedLessons())
@@ -582,7 +583,7 @@ const router = useRouter();
                 </View>)}
               {!completedCourses && !showCompletedQuizzes &&
               <UserProgressComponent
-                userData={userData?.id}
+                userDataId={userData?.id}
               />}
                 {(showCompletedQuizzes && completedQuizzesData?.length > 0) ? 
                 <View className="mb-4">

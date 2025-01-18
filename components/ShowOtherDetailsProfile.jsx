@@ -8,6 +8,7 @@ import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { getUserOtherInformations, reqUpdateUserInformation, updateUserOtherInformations } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from '../hooks/useFetchFunction'
+import Loading from './Loading'
 
 const ShowOtherDetailsProfile = ({userId}) => {
 
@@ -321,7 +322,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
         setShowModals({visibility: false, type: ""})
     }
     
-
+if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 rounded-[5px] mx-4 p-4"><Loading /></View>)
   return (
     <>
 
