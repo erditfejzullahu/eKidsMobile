@@ -114,7 +114,16 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                           <Text className="text-xs font-light text-white text-right">Perfunduar me:</Text>
                           <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
                         </Animatable.View>
+                        
                       </View>
+                      <Animatable.View
+                        className="flex-1 my-4"
+                        animation="fadeInLeft"
+                        duration={700}
+                        >
+                          <Text className="text-xs font-light text-white">Deshmija:</Text>
+                          <Text className="text-sm font-psemibold text-secondary">{item?.testimonial}</Text>
+                        </Animatable.View>
                     </View>}
                     {/* more details */}
                   </View>

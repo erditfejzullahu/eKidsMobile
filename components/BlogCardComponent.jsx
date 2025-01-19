@@ -32,7 +32,6 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
                     className="h-14 w-14 rounded-full"
                     resizeMode='contain'
                 />
-                <Text className="text-white text-2xl">{blog.id}</Text>
             </View>
             <View>
                 <Text className="font-psemibold text-lg text-white">Erdit Fejzullahu</Text>

@@ -229,13 +229,17 @@ const BlogCardInteractions = ({blog, userData}) => {
         }
     }
 
+    const [allFriendsLoading, setAllFriendsLoading] = useState(false)
+
     const getAllFriends = async () => {
+        setAllFriendsLoading(true)
         const response = await reqGetAllUserTypes(user.id, 1);
         if(response){
             setFriendsData(response)
         }else{
             setFriendsData([])
         }
+        setAllFriendsLoading(false)
     }
 
     useEffect(() => {
@@ -498,7 +502,8 @@ const BlogCardInteractions = ({blog, userData}) => {
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
             <View className="h-[80%] w-[80%] bg-primary rounded-[10px] border border-black-200" style={styles.box}>
-                <View className="flex-1 justify-between">
+                {allFriendsLoading && <Loading />}
+                {!allFriendsLoading && <View className="flex-1 justify-between">
                     <View className="flex-1">
                         <FlatList 
                             data={friendsData}
@@ -550,7 +555,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                             <Text className="font-pregular text-white text-sm">Largoni dritaren</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View>}
             </View>
         </View>
     </Modal>
