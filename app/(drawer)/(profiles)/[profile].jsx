@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleSheet, Platform, Dimensions } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleSheet, Platform, Dimensions, Touchable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../hooks/useFetchFunction'
@@ -178,12 +178,28 @@ const profiles = () => {
         }
       }
     }, [allFriendsModal])
+
+    const outputRelation = () => {
+      if(relationStatus === null){
+        return 0 // Shto miqesine 0
+      }else{
+        if((relationStatus?.senderId !== userData?.id) && relationStatus?.status === 1){
+          return 1 //ma ka qu aj mu // 1 //Shoqerohu!
+        }else if((relationStatus?.senderId === userData?.id) && relationStatus?.status === 1){
+          return 2 // ja kom qu un atij // 2 //Ne pritje
+        }else{
+          return 3 // 3 //Largo miqesine
+        }
+      }
+    }
+    
     
 
     useEffect(() => {
       if(relationData){
         setRelationStatus(relationData);
-      }else{
+        
+      }else{        
         setRelationStatus(null);
       }
       // console.log(relationStatus === null);
@@ -191,8 +207,10 @@ const profiles = () => {
 
     useEffect(() => {
       setProfileData(null);
+      setRelationStatus(null)
       setSoftSkills([])
       refetch();
+      relationRefetch();
     }, [profile])
     
 
@@ -279,8 +297,8 @@ const profiles = () => {
       {/* profile part */}
 
       <View className="max-w-[350px] mb-4 flex-row flex-1 mx-auto gap-4" style={styles.box}>
-        <TouchableOpacity onPress={relationStatus === null ? makeFriend : relationStatus?.status === 1 ? removeOnWaitingFriend : () => setRemoveFriendModal(true)} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
-          <Text className="text-white font-psemibold text-base text-center">{relationStatus === null ? "Shto miqesine" : relationStatus?.status === 1 ? "Ne pritje" : "Largo miqesine"}</Text>
+        <TouchableOpacity onPress={outputRelation() === 0 ? makeFriend : outputRelation() === 1 ? acceptFriend : outputRelation() === 2 ? removeOnWaitingFriend : outputRelation() === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
+          <Text className="text-white font-psemibold text-base text-center">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : "default"}</Text>
           <Image 
             source={icons.friends}
             className="w-6 h-6"

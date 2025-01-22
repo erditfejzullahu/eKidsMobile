@@ -585,9 +585,7 @@ export const getUserProfile = async (id) => {
 
 export const getUserRelationStatus = async (senderId, receiverId) => {
     try {
-        const response = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${senderId}&ReceiverId=${receiverId}`)
-        console.log(response);
-        
+        const response = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${senderId}&ReceiverId=${receiverId}`)        
         return response ? response.data : null
     } catch (error) {
         return null
@@ -615,7 +613,7 @@ export const removeFriendReq = async (userId, friendId) => {
 
 export const removeFriendRequestReq = async (userId, receiverId) => {
     try {
-        const response = await apiClient.put(`/api/UserFriends/DeleteFriendRequest?userId=${userId}&receiverId=${receiverId}`);
+        const response = await apiClient.delete(`/api/UserFriends/DeleteFriendRequest?userId=${userId}&receiverId=${receiverId}`);
         return response && response.status;
     } catch (error) {
         return error.response.status;
