@@ -575,6 +575,8 @@ export const reqUsersBySearch = async (paramText) => {
 export const getUserProfile = async (id) => {
     try {
         const response = await apiClient.get(`/api/Users/GetUserById/${id}`)
+        console.log(response.data);
+        
         return response ? response.data : null
     } catch (error) {
         return null;

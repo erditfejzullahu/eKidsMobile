@@ -5,7 +5,7 @@ import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
 import Loading from "../../../components/Loading"
 import {useGlobalContext} from "../../../context/GlobalProvider"
-import { getMetaValue } from '../../../services/fetchingService'
+import { getMetaValue, reqGetAllUserTypes } from '../../../services/fetchingService'
 import { icons, images } from '../../../constants'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { navigateToMessenger } from '../../../hooks/useFetchFunction'
@@ -17,13 +17,18 @@ import ProfileQuizzesComponent from '../../../components/ProfileQuizzesComponent
 import UserCourseCreated from '../../../components/UserCourseCreated'
 import UserQuizzesCreated from '../../../components/UserQuizzesCreated'
 import { ContributionGraph, ProgressChart } from 'react-native-chart-kit'
+import { FlatList } from 'react-native-gesture-handler'
+import * as Animatable from "react-native-animatable"
+import EmptyState from '../../../components/EmptyState'
 
 const profiles = () => {
     const {profile} = useLocalSearchParams();
-    if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
-    const userData = user?.data?.userData;
-    const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
+    
     const {user, isLoading: userLoading} = useGlobalContext();
+    const userData = user?.data?.userData;
+    if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
+    
+    const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     const router = useRouter();
     const [profileData, setProfileData] = useState(null)
@@ -61,10 +66,13 @@ const profiles = () => {
 
     const [relationStatus, setRelationStatus] = useState(null)
     const [removeFriendModal, setRemoveFriendModal] = useState(false)
+    const [allFriendsModal, setAllFriendsModal] = useState(true)
+    const [showFriendListOptions, setShowFriendListOptions] = useState([])
 
     const [profileAboutData, setProfileAboutData] = useState(true)
     const [personalInformation, setPersonalInformation] = useState(false)
     const [professionalInformation, setProfessionalInformation] = useState(false)
+    const [allFriendsData, setAllFriendsData] = useState([])
 
     const [skillsPart, setSkillsPart] = useState(false)
     const [commitmentPart, setCommitmentPart] = useState(true)
@@ -133,6 +141,45 @@ const profiles = () => {
       }
     }
 
+    const getAllFriends = async () => {
+      const response = await reqGetAllUserTypes(profileData?.id, 1)
+      if(response){
+        console.log(response);
+        setAllFriendsData(response)
+      }else{
+        setAllFriendsData([])
+      }
+    }
+
+    const goToMessenger = (user) => {
+      // console.log(user);
+      
+      const otherUserData = {
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        username: user.username,
+        profilePictureUrl: user.profilePictureUrl
+      }
+      setAllFriendsModal(false)
+      setShowFriendListOptions([])
+      
+      navigateToMessenger(router, otherUserData, userData);
+    }
+
+    const showOptionsFriendList = (id) => {
+      setShowFriendListOptions([id])
+    }
+
+    useEffect(() => {
+      if(allFriendsModal){
+        if(allFriendsData.length === 0){
+          getAllFriends()
+        }
+      }
+    }, [allFriendsModal])
+    
+
     useEffect(() => {
       if(relationData){
         setRelationStatus(relationData);
@@ -163,10 +210,13 @@ const profiles = () => {
                 return []
               }
             })();
-            return [softSkills]
+            
+            return [...softSkills]
           }
           return currentData;
         })
+        console.log(data);
+        console.log(softSkills);
         
       }else {
         setProfileData(null)
@@ -213,7 +263,7 @@ const profiles = () => {
             <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{profileData?.email}</Text>
             <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(profileData?.userMeta, "UserRole")}</Text>
             <View className="flex-row justify-between w-[300px] mt-6 gap-4">
-              <TouchableOpacity className="border border-black-200 rounded-[10px] px-6 py-2 bg-oBlack flex-1">
+              <TouchableOpacity onPress={() => setAllFriendsModal(true)} className="border border-black-200 rounded-[10px] px-6 py-2 bg-oBlack flex-1">
                 <Text className="text-gray-200 text-base font-pregular text-center">Komuniteti:</Text>
                 {/* <Text className="text-secondary text-lg font-psemibold text-center">{getMetaValue(userData?.userMeta, "LessonsCompleted")}</Text> */}
                 <Text className="text-secondary text-lg font-psemibold text-center">{profileData?.friends?.length}</Text>
@@ -300,7 +350,7 @@ const profiles = () => {
           </TouchableOpacity>
         </View>
         <View className={`${showCreatedCourses ? "bg-oBlack" : ""} w-1/2 p-2`}>
-          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(true)}} className="items-center gap-2 flex-row justify-center">
+          <TouchableOpacity onPress={() => {setShowCreatedCourses(!showCreatedCourses), setShowCourses(false), setShowQuizzes(false), setShowCreatedQuizzes(false)}} className="items-center gap-2 flex-row justify-center">
             <View>
               <Image 
                 source={icons.lectures} 
@@ -315,34 +365,66 @@ const profiles = () => {
       </View>
       {/* other toggle part */}
 
-      {showCourses && <View>
+      {showCourses && (profileData?.courseCompleted?.length > 0 ? <View>
         <ProfileCoursesComponent 
           userDataId={profile}
           courseData={profileData?.courseCompleted}
           userCategories={user?.data?.categories}
         />
-      </View>}
+      </View>: 
+      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+        <EmptyState 
+          title={"Nuk u gjet asnje progress!"}
+          subtitle={"Perdoruesi nuk ka filluar perfundimin e ndonje kursi!"}
+          showButton={false}
+          titleStyle={"!font-psemibold"}
+        />
+      </View>)}
 
-      {showQuizzes && <View>
+      {showQuizzes && (profileData?.quizzesCompleted?.length > 0 ? <View>
         <ProfileQuizzesComponent 
           quizzesCompleted={profileData?.quizzesCompleted}
           userCategories={user?.data?.categories}
         />
-      </View>}
+      </View> : 
+      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+        <EmptyState 
+          title={"Nuk u gjet asnje progress!"}
+          subtitle={"Perdoruesi nuk ka filluar perfundimin e ndonje kuizi!"}
+          showButton={false}
+          titleStyle={"!font-psemibold"}
+        />
+      </View>)}
 
-      {showCreatedCourses && <View>
+      {showCreatedCourses && (profileData?.courseCreated?.length > 0 ? <View>
         <UserCourseCreated 
           userCourses={profileData?.courseCreated}
           userCategories={user?.data?.categories}
           />
-      </View>}
+      </View> :
+      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+        <EmptyState 
+          title={"Nuk u gjet asnje kurs!"}
+          subtitle={"Perdoruesi nuk ka krijuar kurse ende!"}
+          showButton={false}
+          titleStyle={"!font-psemibold"}
+        />
+      </View>)}
 
-      {showCreatedQuizzes && <View>
+      {showCreatedQuizzes && (profileData?.quizzes?.length > 0 ? <View>
         <UserQuizzesCreated 
           quizzesCreated={profileData?.quizzes}
           userCategories={user?.data?.categories}
         />
-      </View>}
+      </View> :
+      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+        <EmptyState 
+          title={"Nuk u gjet asnje kuiz!"}
+          subtitle={"Perdoruesi nuk ka krijuar kuize ende!"}
+          showButton={false}
+          titleStyle={"!font-psemibold"}
+        />
+      </View>)}
 
       {profileAboutData && 
         <View>
@@ -380,7 +462,7 @@ const profiles = () => {
           <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
             <View>
               <Text className="text-white font-plight text-sm">Data lindjes:</Text>
-              <Text className="text-secondary font-psemibold">{profileData?.userInformation?.birthday}</Text>
+              <Text className="text-secondary font-psemibold">{profileData?.userInformation?.birthday || "Nuk ka informate"}</Text>
             </View>
             <View>
               <Text className="text-white font-plight text-sm text-right">Profesioni:</Text>
@@ -480,50 +562,66 @@ const profiles = () => {
       </CustomModal>
 
       <Modal
-      visible={false}
+      visible={allFriendsModal}
       transparent={true}
       animationType="slide"
-      
+      onClose={() => setAllFriendsModal(false)}
       >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-          <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200" style={styles.box}>
-            <View className="p-4 mx-auto border-b border-black-200 border-l border-r bg-oBlack rounded-b-[10px]" style={styles.box}>
-              <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
-            </View>
-            <View className="mt-2">
-              <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>
-                <View>
-                  <Image 
-                    source={profileData?.profilePictureUrl}
-                    className="h-14 w-14 border border-black-200 rounded-[10px]"
-                    resizeMode='contain'
-                  />
+          <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={styles.box}>
+            <View className="border-b border-black-200 flex-1">
+              <FlatList 
+              scrollEnabled={true}
+                contentContainerStyle={{gap:6}}
+                data={allFriendsData}
+                keyExtractor={(item) => `userfriends-${item.id}`}
+                ListHeaderComponent={() => (
+                <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px]" style={styles.box}>
+                  <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
                 </View>
-                <View className="flex-row items-center justify-between flex-1 relative">
-                  <View className="absolute bg-oBlack right-0 z-20 p-2 border border-black-200 rounded-[10px]" style={styles.box}>
-                    <TouchableOpacity className="p-2 items-center border-b border-black-200">
-                      <Text className="text-white font-plight text-sm">Vizito profilin</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="p-2 items-center">
-                      <Text className="text-white font-plight text-sm">Kontaktoni</Text>
-                    </TouchableOpacity>
-                  </View> 
-                  <View>
-                    <Text className="text-white font-psemibold text-lg mb-1">Erdit Fejzullahu</Text>
-                    <Text className="text-gray-400 font-plight text-xs">Student</Text>
-                  </View>
-                  <View>
-                    <TouchableOpacity>
+                )}
+                renderItem={({item}) => (
+                  <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>
+                    <View>
                       <Image 
-                        source={icons.more}
-                        className="h-10 w-10"
+                        source={item?.profilePictureUrl}
+                        className="h-14 w-14 border border-black-200 rounded-[10px]"
                         resizeMode='contain'
-                        tintColor={"#FF9C01"}
                       />
-                    </TouchableOpacity>
+                    </View>
+                    <View className="flex-row items-center justify-between flex-1 relative">
+                      {showFriendListOptions.includes(item.id) && 
+                      <Animatable.View animation="bounceIn" className="absolute bg-oBlack right-0 z-20 p-2 border border-black-200 rounded-[10px]" style={styles.box}>
+                        <TouchableOpacity onPress={() => router.replace(`(profiles)/${item.id}`)} className="p-2 items-center border-b border-black-200">
+                          <Text className="text-white font-plight text-sm">Vizito profilin</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className="p-2 items-center" onPress={() => goToMessenger(item)}>
+                          <Text className="text-white font-plight text-sm">Kontaktoni</Text>
+                        </TouchableOpacity>
+                      </Animatable.View>}
+                      <View>
+                        <Text className="text-white font-psemibold text-lg mb-1">{item?.firstname} {item?.lastname}</Text>
+                        <Text className="text-gray-400 font-plight text-xs">Student</Text>
+                      </View>
+                      <View>
+                        <TouchableOpacity onPress={() => showOptionsFriendList(item.id)}>
+                          <Image 
+                            source={icons.more}
+                            className="h-10 w-10"
+                            resizeMode='contain'
+                            tintColor={"#FF9C01"}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
+                )}
+              />
+            </View>
+            <View className="h-[60px]">
+              <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" style={styles.box} onPress={() => {setAllFriendsModal(false), setShowFriendListOptions([])}}>
+                <Text className="text-sm font-psemibold text-white">Largoni dritaren</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
