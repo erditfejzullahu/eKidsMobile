@@ -27,11 +27,12 @@ const profiles = () => {
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     const router = useRouter();
     const [profileData, setProfileData] = useState(null)
+    const [softSkills, setSoftSkills] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(false)
     const { width: screenWidth } = Dimensions.get('window');
     
     const commitsData = [
-      { date: "2024-01-02", count: 1 },
+      { date: "2025-01-22", count: 10 },
       { date: "2017-01-03", count: 2 },
       { date: "2017-01-04", count: 3 },
       { date: "2017-01-05", count: 4 },
@@ -143,6 +144,7 @@ const profiles = () => {
 
     useEffect(() => {
       setProfileData(null);
+      setSoftSkills([])
       refetch();
     }, [profile])
     
@@ -150,7 +152,21 @@ const profiles = () => {
     useEffect(() => {
       if(data){
         setProfileData(data)
-        console.log(data);
+        setSoftSkills((prevData) => {
+          const currentData = prevData || [];
+          if(data?.userInformation?.softSkills !== null){
+            const softSkills = (() => {
+              try {
+                const parsedData = JSON.parse(data?.userInformation?.softSkills)
+                return Array.isArray(parsedData) ? parsedData : data?.userInformation?.softSkills;
+              } catch (error) {
+                return []
+              }
+            })();
+            return [softSkills]
+          }
+          return currentData;
+        })
         
       }else {
         setProfileData(null)
@@ -364,7 +380,7 @@ const profiles = () => {
           <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
             <View>
               <Text className="text-white font-plight text-sm">Data lindjes:</Text>
-              <Text className="text-secondary font-psemibold">21.01.2000</Text>
+              <Text className="text-secondary font-psemibold">{profileData?.userInformation?.birthday}</Text>
             </View>
             <View>
               <Text className="text-white font-plight text-sm text-right">Profesioni:</Text>
@@ -398,21 +414,32 @@ const profiles = () => {
               <View className="gap-3">
                 <View>
                   <Text className="text-secondary font-psemibold text-xs">Edukimi shkollor:</Text>
-                  <Text className="text-white font-psemibold text-base">1. Kolegji AAB (2018 - 2022)</Text>
-                  <Text className="text-gray-400 text-sm font-plight">Inxhinieri softuerike</Text>
+                  {profileData?.userInformation?.userEducation?.length > 0 ? profileData?.userInformation?.userEducation.map((item, index) => (
+                    <View key={`usereducation-${index}`}>
+                      <Text className="text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
+                      <Text className="text-gray-400 text-sm font-plight">{item.field}</Text>
+                    </View>
+                  )) : <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>} 
+                  
                 </View>
-                <View>
-                  <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
-                  <Text className="text-white font-psemibold text-base">1. Fullstack Developer (2018 - 2022)</Text>
-                  <Text className="text-gray-400 text-sm font-plight">PBC</Text>
-                </View>
+                {profileData?.userInformation?.userJobs?.length > 0 ? profileData?.userInformation?.userJobs.map((item, index) => (
+                  <View key={`userjobs-${index}`}>
+                    <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
+                    <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
+                    <Text className="text-gray-400 text-sm font-plight">{item.job_Place}</Text>
+                  </View>
+                )) : <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>} 
                 <View>
                   <Text className="text-secondary font-psemibold text-xs">Aftesite:</Text>
-                  <Text className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">1. </Text> HTML</Text>
+                  <View>
+                    <Text className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">1. </Text> HTML</Text>
+                  </View>
                 </View>
                 <View>
                   <Text className="text-secondary font-psemibold text-xs">Aftesi te buta:</Text>
-                  <Text className="text-white font-plight text-base">Fleksibiliteti, Mundesia per te punuar ne stres</Text>
+                  {softSkills.length > 0 ? softSkills.map((item, index) => (
+                    <Text key={`softskills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400">{index + 1}.</Text> {item} </Text>
+                  )): <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>}
                 </View>
               </View>
             </View>}
@@ -422,7 +449,9 @@ const profiles = () => {
               <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
               <ContributionGraph 
                 values={commitsData}
+                showOutOfRangeDays={true}
                 width={screenWidth - 32}
+                onDayPress={(date) => console.log(date)}
                 endDate={new Date("2025-12-30")}
                 numDays={365}
                 height={220}

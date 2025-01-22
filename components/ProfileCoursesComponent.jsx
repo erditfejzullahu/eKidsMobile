@@ -116,14 +116,14 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                         </Animatable.View>
                         
                       </View>
-                      <Animatable.View
+                      {item?.testimonial &&<Animatable.View
                         className="flex-1 my-4"
                         animation="fadeInLeft"
                         duration={700}
                         >
                           <Text className="text-xs font-light text-white">Deshmija:</Text>
                           <Text className="text-sm font-psemibold text-secondary">{item?.testimonial}</Text>
-                        </Animatable.View>
+                        </Animatable.View>}
                     </View>}
                     {/* more details */}
                   </View>
