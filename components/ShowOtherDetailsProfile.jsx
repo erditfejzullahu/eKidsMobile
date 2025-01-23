@@ -35,11 +35,14 @@ const ShowOtherDetailsProfile = ({userId}) => {
         howManyEducation: 1,
         howManyJobs: 1,
         howManySoftSkills: 1,
+        howManyProfessionalSkills: 1
     })
     const [userInformationData, setUserInformationData] = useState({
                 userId: userId,
                 birthDay: new Date(),
                 softSkills: [],
+                profession: null,
+                professionalSkills: [],
                 userEducations: [
                     {
                         place_Name: "",
@@ -63,12 +66,23 @@ const ShowOtherDetailsProfile = ({userId}) => {
       if(Object.keys(userOtherData) !== 0){
         setUserInformationData((prevData) => ({
             ...prevData,
-            birthDay: new Date(userOtherData.birthday),
-            softSkills: typeof userOtherData.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills,
-            userEducations: userOtherData.userEducations,
-            userJobs: userOtherData.userJobs
+            birthDay: userOtherData.birthday !== null ? new Date(userOtherData.birthday) : new Date(),
+            softSkills: userOtherData.softSkills !== null ? (typeof userOtherData.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [],
+            userEducations: userOtherData.userEducations.length > 0 ? userOtherData.userEducations : prevData.userEducations,
+            userJobs: userOtherData.userJobs.length > 0 ? userOtherData.userJobs : prevData.userJobs,
+            professionalSkills: userOtherData.skills !== null ? userOtherData.skills : [],
+            profession: userOtherData.profession
         }))        
       }
+
+      setShowInformationStepTick((prevData) => ({
+        ...prevData,
+        education: userOtherData.userEducations.length > 0,
+        jobs: userOtherData.userJobs.length > 0,
+        professionalSkills: userOtherData.skills !== null,
+        softSkills: userOtherData.softSkills !== null
+      }))
+      
     }, [userOtherData])
     
     
@@ -76,7 +90,6 @@ const ShowOtherDetailsProfile = ({userId}) => {
         setUserInformationData(prevData => {
             const updatedUserEducations = [...prevData.userEducations]
             const updatedUserJobs = [...prevData.userJobs]
-            const updatedSoftSkills = [...prevData.softSkills]
 
             if(!updatedUserEducations[index]){
                 updatedUserEducations[index] = {
@@ -114,14 +127,13 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 updatedUserJobs[index].start_Year = text;
             }else if(type === "mbaruat_punen"){
                 updatedUserJobs[index].end_Year = text;
-            }else if(type === "aftesi_buta"){
-                updatedSoftSkills[index].soft_Skill = text;
             }
             // console.log(updatedUserEducations);
             
             return {
                 ...prevData,
                 userEducations: updatedUserEducations,
+                userJobs: updatedUserJobs,
             }
         })
     }
@@ -145,7 +157,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 ...prevValue,
                 howManyJobs: prevValue.howManyJobs - 1
             }))
-        }else{
+        }else if(showModals.type === "softSkills"){
             setUserInformationData((prevData) => ({
                 ...prevData,
                 softSkills: prevData.softSkills.filter((_, idx) => idx !== index)
@@ -153,6 +165,15 @@ const ShowOtherDetailsProfile = ({userId}) => {
             setHowManySections((prevValue) => ({
                 ...prevValue,
                 howManySoftSkills: prevValue.howManySoftSkills - 1
+            }))
+        }else{
+            setUserInformationData((prevData) => ({
+                ...prevData,
+                professionalSkills: prevData.professionalSkills.filter((_, idx) => idx !== index)
+            }))
+            setHowManySections((prevValue) => ({
+                ...prevValue,
+                howManyProfessionalSkills: prevValue.howManyProfessionalSkills - 1
             }))
         }
     }
@@ -175,7 +196,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
     const [showInformationStepTick, setShowInformationStepTick] = useState({
         education: false,
         softSkills: false,
-        jobs: false
+        jobs: false,
+        professionalSkills: false
     })
 
     const checkIfDataValid = (type) => {
@@ -224,6 +246,14 @@ const ShowOtherDetailsProfile = ({userId}) => {
             }else{
                 fillFields()
             }
+        }else if(type === "professionalSkills"){
+            if(userInformationData.professionalSkills.length > 0){
+                setShowModals({visibility: false, type: ""})
+                setShowInformationStepTick((prevData) => ({
+                    ...prevData,
+                    professionalSkills: true
+                }))
+            }
         }
     }
 
@@ -245,14 +275,15 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 unsuccessfulUpdate()
             }
         }else{
-            if(showInformationStepTick.education === true && showInformationStepTick.jobs === true && showInformationStepTick.softSkills){
+            if(showInformationStepTick.education === true && showInformationStepTick.jobs === true && showInformationStepTick.softSkills && showInformationStepTick.professionalSkills){
 
                 const birthday = userInformationData.birthDay;
                 const formattedDate = birthday.toISOString().split("T")[0];
                 const updatedData = {
                     ...userInformationData,
                     softSkills: JSON.stringify(userInformationData.softSkills),
-                    birthday: formattedDate
+                    birthday: formattedDate,
+                    professionalSkills: JSON.stringify(userInformationData.professionalSkills)
                 }
                 
                 const response = await reqUpdateUserInformation(updatedData);
@@ -316,6 +347,11 @@ const ShowOtherDetailsProfile = ({userId}) => {
                             }
                         ]
                     }
+                }else if(type === "professionalSkills"){
+                    return {
+                        ...prevData,
+                        professionalSkills: []
+                    }
                 }
             })
         }
@@ -328,21 +364,33 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
 
     <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
       <View>
-        <View className="gap-2 border-b border-black-200 pb-4" style={styles.box}>
-            <Text className="text-white text-sm">Data e lindjes</Text>
-            <View className="border border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
-                <RNDateTimePicker
-                    style={{marginLeft: -15}}
-                    display="default"
-                    onChange={handleChangeDate}
-                    value={userInformationData.birthDay}
-                    maximumDate={new Date()}
+        <View className="flex-row flex-wrap justify-between border-b border-black-200">
+            <View className="gap-2  pb-4 flex-1" style={styles.box}>
+                <Text className="text-white text-sm font-plight">Data e lindjes</Text>
+                <View className="border border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
+                    <RNDateTimePicker
+                        style={{marginLeft: -25}}
+                        display="default"
+                        onChange={handleChangeDate}
+                        value={userInformationData.birthDay}
+                        maximumDate={new Date()}
+                    />
+                </View>
+            </View>
+            <View className="flex-1">
+                <FormField 
+                    title={"Profesioni juaj"}
+                    value={userInformationData.profession || ""}
+                    handleChangeText={(e) => setUserInformationData((prevData) => ({...prevData, profession: e}))}
+                    inputParentStyle={"!h-11 !rounded-[10px] "}
+                    placeholder={"Sh. Polic, Programer"}
+                    titleStyle={"!text-sm !font-plight !text-white"}
                 />
             </View>
         </View>
         <View className="gap-2 border-b border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white text-sm">Edukimi shkollor</Text>
+                <Text className="text-white font-plight text-sm">Edukimi shkollor</Text>
                 {showInformationStepTick.education && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
@@ -357,9 +405,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 />
             </TouchableOpacity>
         </View>
+        
         <View className="gap-2 border-b border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white text-sm">Aftesi te buta</Text>
+                <Text className="text-white font-plight text-sm">Aftesi te buta</Text>
                 {showInformationStepTick.softSkills && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
@@ -374,9 +423,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 />
             </TouchableOpacity>
         </View>
-        <View className="gap-2 border-b border-black-200 pt-4">
+
+        <View className="gap-2 border-b border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white text-sm">Punesimi</Text>
+                <Text className="text-white font-plight text-sm">Punesimi</Text>
                 {showInformationStepTick.jobs && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
@@ -384,6 +434,23 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 />}
             </View>
             <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "jobs"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
+                <Image 
+                    source={icons.plus}
+                    className="h-10 border-2 border-secondary-100  rounded-full w-10"
+                    tintColor={"#fff"}
+                />
+            </TouchableOpacity>
+        </View>
+        <View className="gap-2 border-b border-black-200 py-4">
+            <View className="flex-row">
+                <Text className="text-white font-plight text-sm">Aftesite profesionale</Text>
+                {showInformationStepTick.professionalSkills && <Image 
+                    source={icons.tick}
+                    className="w-6 h-6"
+                    tintColor={"#ff9c01"}
+                />}
+            </View>
+            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "professionalSkills"})} className="flex-1 bg-secondary items-center justify-center !p-1.5 rounded-[10px]" style={styles.box}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
@@ -408,10 +475,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
             <ScrollView style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[85%] max-h-[80vh]" contentContainerStyle={{alignItems: "center"}}>
                 <View className="bg-oBlack w-full p-2 rounded-t-[10px] border border-oBlack mb-3" style={styles.box}>
-                    <Text className="text-white font-pregular text-center text-2xl">{showModals.type === "education" ? "Edukimi shkollor" : showModals.type === "jobs" ? "Eksperienca profesionale" : "Aftesi te buta"}</Text>
+                    <Text className="text-white font-pregular text-center text-2xl">{showModals.type === "education" ? "Edukimi shkollor" : showModals.type === "jobs" ? "Eksperienca profesionale" : showModals.type === "softSkills" ? "Aftesi te buta" : "Aftesi profesionale"}</Text>
                 </View>
 
-                {[...Array(showModals.type === "education" ? howManySections.howManyEducation : showModals.type === "jobs" ? howManySections.howManyJobs : howManySections.howManySoftSkills)].map((_, index) => {
+                {[...Array(showModals.type === "education" ? howManySections.howManyEducation : showModals.type === "jobs" ? howManySections.howManyJobs : showModals.type === "softSkills" ? howManySections.howManySoftSkills : howManySections.howManyProfessionalSkills)].map((_, index) => {
                     // console.log(index, ' indeksi');
                     // console.log(showModals);
                     const isLastIndex = 
@@ -508,7 +575,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                 {showModals.type === "softSkills" && <View className="flex-row gap-2">
                                     <View className="flex-1">
                                         <FormField 
-                                            title={"Aftesia " + (index + 1)}
+                                            title={"Aftesia e bute " + (index + 1)}
                                             otherStyles={"w-full"}
                                             placeholder={"Shkruani ketu aftesine tuaj te bute..."}
                                             value={userInformationData?.softSkills[index] || ""}
@@ -527,6 +594,35 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                         <TouchableOpacity className="h-14 items-center justify-center rounded-[10px] border-2 border-white mt-auto bg-secondary" onPress={(index === howManySections.howManySoftSkills - 1) ? () => setHowManySections((prevValue) => ({...prevValue, howManySoftSkills: prevValue.howManySoftSkills + 1})) : () => removeSpecificIndex(index)}>
                                             <Image 
                                                 source={index === howManySections.howManySoftSkills - 1 ? icons.plus : icons.close}
+                                                className="h-6 w-6"
+                                                tintColor={"#fff"}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>}
+
+                                {showModals.type === "professionalSkills" && <View className="flex-row gap-2">
+                                    <View className="flex-1">
+                                        <FormField 
+                                            title={"Aftesia profesionale " + (index + 1)}
+                                            otherStyles={"w-full"}
+                                            placeholder={"Shkruani ketu aftesite tuaja profesionale..."}
+                                            value={userInformationData?.professionalSkills[index] || ""}
+                                            handleChangeText={(e) => {
+                                                setUserInformationData((prevData) => {
+                                                    const professionalSkillsArray = [...prevData.professionalSkills];
+                                                    professionalSkillsArray[index] = e;
+                                                    return {...prevData, professionalSkills: professionalSkillsArray};
+                                                })
+                                            }}
+                                            inputParentStyle={"!h-14 !rounded-[10px]"}
+                                            titleStyle={"!text-sm"}
+                                        />
+                                    </View>
+                                    <View className="flex-[0.2]">
+                                        <TouchableOpacity className="h-14 items-center justify-center rounded-[10px] border-2 border-white mt-auto bg-secondary" onPress={(index === howManySections.howManyProfessionalSkills - 1) ? () => setHowManySections((prevValue) => ({...prevValue, howManyProfessionalSkills: prevValue.howManyProfessionalSkills + 1})) : () => removeSpecificIndex(index)}>
+                                            <Image 
+                                                source={index === howManySections.howManyProfessionalSkills - 1 ? icons.plus : icons.close}
                                                 className="h-6 w-6"
                                                 tintColor={"#fff"}
                                             />
