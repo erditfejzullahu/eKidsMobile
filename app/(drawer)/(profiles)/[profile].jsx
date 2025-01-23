@@ -136,7 +136,10 @@ const profiles = () => {
       const response = await removeFriendReq(userData?.id, profile)
       if(response === 200){
         successFriendDeletion()
+        setRemoveFriendModal(false);
+        await refreshData()
       }else{
+        setRemoveFriendModal(false);
         failedReq()
       }
     }
