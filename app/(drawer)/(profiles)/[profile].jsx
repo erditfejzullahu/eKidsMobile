@@ -2,7 +2,7 @@ import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleS
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../hooks/useFetchFunction'
-import { getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
+import { acceptFriendRequest, getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
 import Loading from "../../../components/Loading"
 import {useGlobalContext} from "../../../context/GlobalProvider"
 import { getMetaValue, reqGetAllUserTypes } from '../../../services/fetchingService'
@@ -66,7 +66,7 @@ const profiles = () => {
 
     const [relationStatus, setRelationStatus] = useState(null)
     const [removeFriendModal, setRemoveFriendModal] = useState(false)
-    const [allFriendsModal, setAllFriendsModal] = useState(true)
+    const [allFriendsModal, setAllFriendsModal] = useState(false)
     const [showFriendListOptions, setShowFriendListOptions] = useState([])
 
     const [profileAboutData, setProfileAboutData] = useState(true)
@@ -142,9 +142,9 @@ const profiles = () => {
     }
 
     const getAllFriends = async () => {
-      const response = await reqGetAllUserTypes(profileData?.id, 1)
+      const response = await reqGetAllUserTypes(profileData?.id, 2)
       if(response){
-        console.log(response);
+        // console.log(response);
         setAllFriendsData(response)
       }else{
         setAllFriendsData([])
@@ -187,8 +187,12 @@ const profiles = () => {
           return 1 //ma ka qu aj mu // 1 //Shoqerohu!
         }else if((relationStatus?.senderId === userData?.id) && relationStatus?.status === 1){
           return 2 // ja kom qu un atij // 2 //Ne pritje
+        }else if((relationStatus?.receiverId !== userData?.id) && relationStatus?.status === 1){
+          return 1;
+        }else if((relationStatus?.receiverId === userData?.id) && relationStatus?.status === 1){
+          return 2;
         }else{
-          return 3 // 3 //Largo miqesine
+          return 3 //shoqerohu
         }
       }
     }
@@ -198,8 +202,10 @@ const profiles = () => {
     useEffect(() => {
       if(relationData){
         setRelationStatus(relationData);
+        console.log(relationData, ' asdasdasd');
         
       }else{        
+        console.log(relationData, ' asdasdasd123');
         setRelationStatus(null);
       }
       // console.log(relationStatus === null);
@@ -233,14 +239,23 @@ const profiles = () => {
           }
           return currentData;
         })
-        console.log(data);
-        console.log(softSkills);
+        // console.log(data);
+        // console.log(softSkills);
         
       }else {
         setProfileData(null)
       }
     }, [data])
     
+
+    const acceptFriend = async () => {
+      const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
+      if(response === 200){
+        await refreshData();
+      }else{
+        failedReq()
+      }
+    }
 
     useEffect(() => {
       if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes){

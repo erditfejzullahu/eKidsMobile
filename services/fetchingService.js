@@ -574,22 +574,32 @@ export const reqUsersBySearch = async (paramText) => {
 
 export const getUserProfile = async (id) => {
     try {
-        const response = await apiClient.get(`/api/Users/GetUserById/${id}`)
-        console.log(response.data);
-        
+        const response = await apiClient.get(`/api/Users/GetUserById/${id}`)        
         return response ? response.data : null
     } catch (error) {
         return null;
     }
 }
 
-export const getUserRelationStatus = async (senderId, receiverId) => {
+export const getUserRelationStatus = async (senderId, receiverId) => {    
     try {
-        const response = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${senderId}&ReceiverId=${receiverId}`)        
-        return response ? response.data : null
-    } catch (error) {
-        return null
+        const response = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${senderId}&ReceiverId=${parseInt(receiverId)}`)
+        if(response.data){
+            return response.data
+        }
+    } catch (error) {        
+        console.log(error);
     }
+    try {
+        const reverseResponse = await apiClient.get(`/api/UserFriends/GetUserRelationStatus?SenderId=${parseInt(receiverId)}&ReceiverId=${senderId}`)        
+        if(reverseResponse.data){
+            return reverseResponse.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    return null;
 }
 
 export const makeUserFriendReq = async (data) => {
@@ -745,5 +755,14 @@ export const getBlogByTitle = async (title) => {
         return response ? response.data : null
     } catch (error) {
         return null
+    }
+}
+
+export const acceptFriendRequest = async (senderId, receiverId) => {
+    try {
+        const response = await apiClient.put(`/api/UserFriends/AcceptFriendRequest?senderId=${senderId}&receiverId=${receiverId}`)
+        return response && response.status;
+    } catch (error) {
+        return error.response.status
     }
 }
