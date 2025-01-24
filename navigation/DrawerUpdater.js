@@ -14,7 +14,7 @@ const defaultMenuItems = [
     { label: 'Statistikat studentore', icon: icons.students, path: '/all-students' },
     { label: 'Shto një kuiz', icon: icons.plus, path: '/add-quiz' },
     { label: 'Kuizet e mia', icon: icons.quiz, path: '/my-quizzes'},
-    { label: 'Statistikat e mia', icon: icons.statistics, path: '/my-statistics' },
+    { label: 'Statistikat e mia', icon: icons.statistics, path: '(userStatistics)/statistics/1' },
     { label: 'Perfundo kuize', icon: icons.closure, path: '/all-quizzes' },
 ];
 

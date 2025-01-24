@@ -10,7 +10,7 @@ import TagsByCategories from '../../../components/TagsByCategories';
 const TagsHeader = () => {
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;
-  console.log(userCategories);
+  // console.log(userCategories);
   
   
   return (
