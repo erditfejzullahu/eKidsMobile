@@ -766,3 +766,12 @@ export const acceptFriendRequest = async (senderId, receiverId) => {
         return error.response.status
     }
 }
+
+export const getUserCommits = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/Users/GetCommitments/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null;
+    }
+}

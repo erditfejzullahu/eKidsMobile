@@ -5,15 +5,43 @@ import { icons } from '../constants'
 import FormField from './FormField'
 import { Picker } from '@react-native-picker/picker'
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
-import { getUserOtherInformations, reqUpdateUserInformation, updateUserOtherInformations } from '../services/fetchingService'
+import { getUserCommits, getUserOtherInformations, reqUpdateUserInformation, updateUserOtherInformations } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from '../hooks/useFetchFunction'
 import Loading from './Loading'
+import { ContributionGraph } from 'react-native-chart-kit'
 
 const ShowOtherDetailsProfile = ({userId}) => {
 
     const {data, isLoading, refetch} = useFetchFunction(() => getUserOtherInformations(userId))
     const [userOtherData, setUserOtherData] = useState({})
+    const [commitmentSection, setCommitmentSection] = useState(false)
+    const [commitsData, setCommitsData] = useState([])
+    const [commitsDataLoading, setCommitsDataLoading] = useState(false)
+    const { width: screenWidthGraph } = Dimensions.get('window');
+    const chartConfig = {
+        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFromOpacity: 0,
+        backgroundGradientTo: "#08130D",
+        backgroundGradientToOpacity: 0.5,
+        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+        strokeWidth: 2, // optional, default 3
+        barPercentage: 0.5,
+        useShadowColorFromDataset: false // optional
+    };
+    // const commitsData = [
+    //     { date: "2025-01-22", count: 10 },
+    //     { date: "2017-01-03", count: 2 },
+    //     { date: "2017-01-04", count: 3 },
+    //     { date: "2017-01-05", count: 4 },
+    //     { date: "2017-01-06", count: 5 },
+    //     { date: "2017-01-30", count: 2 },
+    //     { date: "2017-01-31", count: 3 },
+    //     { date: "2017-03-01", count: 2 },
+    //     { date: "2017-04-02", count: 4 },
+    //     { date: "2017-03-05", count: 2 },
+    //     { date: "2017-02-30", count: 4 }
+    //   ];
 
     useEffect(() => {
       if(data){
@@ -66,21 +94,21 @@ const ShowOtherDetailsProfile = ({userId}) => {
       if(Object.keys(userOtherData) !== 0){
         setUserInformationData((prevData) => ({
             ...prevData,
-            birthDay: userOtherData.birthday !== null ? new Date(userOtherData.birthday) : new Date(),
-            softSkills: userOtherData.softSkills !== null ? (typeof userOtherData.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [],
-            userEducations: userOtherData.userEducations.length > 0 ? userOtherData.userEducations : prevData.userEducations,
-            userJobs: userOtherData.userJobs.length > 0 ? userOtherData.userJobs : prevData.userJobs,
-            professionalSkills: userOtherData.skills !== null ? userOtherData.skills : [],
-            profession: userOtherData.profession
+            birthDay: userOtherData?.birthday !== null ? new Date(userOtherData?.birthday) : new Date(),
+            softSkills: userOtherData?.softSkills !== null ? (typeof userOtherData?.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [],
+            userEducations: userOtherData?.userEducations?.length > 0 ? userOtherData?.userEducations : prevData.userEducations,
+            userJobs: userOtherData?.userJobs?.length > 0 ? userOtherData?.userJobs : prevData.userJobs,
+            professionalSkills: userOtherData?.skills !== null ? userOtherData?.skills : [],
+            profession: userOtherData?.profession
         }))        
       }
 
       setShowInformationStepTick((prevData) => ({
         ...prevData,
-        education: userOtherData.userEducations.length > 0,
-        jobs: userOtherData.userJobs.length > 0,
-        professionalSkills: userOtherData.skills !== null,
-        softSkills: userOtherData.softSkills !== null
+        education: userOtherData?.userEducations?.length > 0,
+        jobs: userOtherData?.userJobs?.length > 0,
+        professionalSkills: userOtherData?.skills !== null,
+        softSkills: userOtherData?.softSkills !== null
       }))
       
     }, [userOtherData])
@@ -357,12 +385,63 @@ const ShowOtherDetailsProfile = ({userId}) => {
         }
         setShowModals({visibility: false, type: ""})
     }
+
+    const getCommitments = async () => {
+        setCommitsDataLoading(true)
+        const response = await getUserCommits(userId);
+        console.log('asdasd');
+        
+        if(response){
+            setCommitsData(response);
+            setCommitsDataLoading(false)
+        }
+    }
+
+    useEffect(() => {
+      if(commitmentSection){
+        getCommitments()
+      }
+    }, [commitmentSection])
+    
     
 if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 rounded-[5px] mx-4 p-4"><Loading /></View>)
   return (
     <>
+    <View className="m-4 mb-2" style={styles.box}>
+        <TouchableOpacity onPress={() => setCommitmentSection(!commitmentSection)} className={`${commitmentSection ? "bg-oBlack" : "bg-primary"} border items-center justify-center flex-row-reverse gap-2 border-black-200 rounded-[5px] p-2 w-[50%] mx-auto`}>
+            <Text className="text-sm font-plight text-white">Angazhimi juaj</Text>
+            <View>
+                <Image 
+                    source={icons.commitment}
+                    className="h-6 w-6"
+                    tintColor={commitmentSection ? "#ff9c01" : "#fff"}
+                />
+            </View>
+        </TouchableOpacity>
+    </View>
 
-    <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
+    {commitmentSection && (!commitsDataLoading ? 
+        <View className="flex-1 mx-4 border border-black-200 rounded-[5px] overflow-hidden mb-4">
+            <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
+            <ContributionGraph 
+                values={commitsData}
+                showOutOfRangeDays={true}
+                width={screenWidthGraph - 32}
+                onDayPress={(date) => console.log(date)}
+                endDate={new Date("2025-12-30")}
+                numDays={365}
+                height={220}
+                // radius={32}
+                chartConfig={chartConfig}
+            />
+        </View>
+    :
+    <View className="mt-10">
+        <Loading />
+    </View>
+    )}
+
+    {!commitmentSection && <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
       <View>
         <View className="flex-row flex-wrap justify-between border-b border-black-200">
             <View className="gap-2  pb-4 flex-1" style={styles.box}>
@@ -464,7 +543,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
             </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </View>}
 
     <Modal
     visible={showModals.visibility}

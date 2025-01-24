@@ -72,8 +72,10 @@ import fullscreen from "../assets/icons/fullscreen.png"
 import earth from "../assets/icons/earth.png"
 import privatePost from "../assets/icons/private.png"
 import camera from "../assets/icons/camera.png"
+import commitment from "../assets/icons/commitment.png"
 
 export default {
+  commitment,
   camera,
   privatePost,
   earth,
