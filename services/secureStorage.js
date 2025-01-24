@@ -38,7 +38,6 @@ export const getRefreshToken = async () => {
 export const isTokenExpired = (token) => {
     try {
       const { exp } = jwtDecode(token);
-    //   console.log(exp);
       return exp < Date.now() / 1000;
     } catch (error) {
       return true;

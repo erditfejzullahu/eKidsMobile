@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getAccessToken, getRefreshToken, removeTokens } from './secureStorage'
-import { logout, refresh } from './authService';
+import { currentUserID, logout, refresh } from './authService';
 import { Alert } from 'react-native';
 import NotifierComponent from '../components/NotifierComponent';
 
@@ -27,8 +27,26 @@ const {showNotification} = NotifierComponent({
     description: "Ju lutem kyçuni përsëri"
 })
 
+let requestCounter = 0;
+let commitmentInProgress = false;
+
 apiClient.interceptors.response.use(
-    (response) => response,
+    async (response) => {
+        requestCounter += 1;
+        if(requestCounter > 15 && !commitmentInProgress){
+            commitmentInProgress = true;
+            try {
+                const userId = await currentUserID();
+                await apiClient.put(`/api/Users/IncreaseCommitment/${userId}`);
+            } catch (error) {
+                console.error(error.response, " error in increasing commitment");
+            } finally {
+                requestCounter = 0;
+                commitmentInProgress = false;
+            }
+        }
+        return response
+    },
     async (error) => {
         const originalRequest = error.config;
 
