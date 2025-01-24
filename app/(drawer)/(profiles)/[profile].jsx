@@ -34,8 +34,12 @@ const profiles = () => {
     const [profileData, setProfileData] = useState(null)
     const [softSkills, setSoftSkills] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const { width: screenWidth } = Dimensions.get('window');
-    
+
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(`${currentYear}-01-01`); // January 1st
+    const endDate = new Date(`${currentYear}-12-31`); // December 31st
+    const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
     const commitsData = [
       { date: "2025-01-22", count: 10 },
       { date: "2017-01-03", count: 2 },
@@ -54,7 +58,8 @@ const profiles = () => {
       backgroundGradientFromOpacity: 0,
       backgroundGradientTo: "#08130D",
       backgroundGradientToOpacity: 0.5,
-      color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+      color: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(255, 255 ,255, ${opacity})`,
       strokeWidth: 2, // optional, default 3
       barPercentage: 0.5,
       useShadowColorFromDataset: false // optional
@@ -225,7 +230,7 @@ const profiles = () => {
 
     useEffect(() => {
       if(data){
-        setProfileData(data)
+        setProfileData(data)        
         setSoftSkills((prevData) => {
           const currentData = prevData || [];
           if(data?.userInformation?.softSkills !== null){
@@ -565,17 +570,19 @@ const profiles = () => {
             {commitmentPart && 
             <View className="flex-1">
               <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
-              <ContributionGraph 
-                values={commitsData}
-                showOutOfRangeDays={true}
-                width={screenWidth - 32}
-                onDayPress={(date) => console.log(date)}
-                endDate={new Date("2025-12-30")}
-                numDays={365}
-                height={220}
-                // radius={32}
-                chartConfig={chartConfig}
-              />
+              <ScrollView horizontal>
+                <ContributionGraph 
+                  values={profileData?.commitsData}
+                  showOutOfRangeDays={true}
+                  width={1200}
+                  onDayPress={(date) => console.log(date)}
+                  endDate={endDate}
+                  numDays={numDays}
+                  height={220}
+                  // radius={32}
+                  chartConfig={chartConfig}
+                />
+              </ScrollView>
             </View>}
 
           </View>}

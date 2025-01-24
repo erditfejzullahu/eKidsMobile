@@ -18,13 +18,18 @@ const ShowOtherDetailsProfile = ({userId}) => {
     const [commitmentSection, setCommitmentSection] = useState(false)
     const [commitsData, setCommitsData] = useState([])
     const [commitsDataLoading, setCommitsDataLoading] = useState(false)
-    const { width: screenWidthGraph } = Dimensions.get('window');
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(`${currentYear}-01-01`); // January 1st
+    const endDate = new Date(`${currentYear}-12-31`); // December 31st
+    const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    // const chartWidth = Math.max(screenWidthGraph, data.labels.length * 80);
     const chartConfig = {
         backgroundGradientFrom: "#1E2923",
         backgroundGradientFromOpacity: 0,
         backgroundGradientTo: "#08130D",
         backgroundGradientToOpacity: 0.5,
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+        color: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
+        labelColor: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
         strokeWidth: 2, // optional, default 3
         barPercentage: 0.5,
         useShadowColorFromDataset: false // optional
@@ -423,17 +428,18 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
     {commitmentSection && (!commitsDataLoading ? 
         <View className="flex-1 mx-4 border border-black-200 rounded-[5px] overflow-hidden mb-4">
             <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
+            <ScrollView horizontal>
             <ContributionGraph 
                 values={commitsData}
                 showOutOfRangeDays={true}
-                width={screenWidthGraph - 32}
+                width={1200}
                 onDayPress={(date) => console.log(date)}
-                endDate={new Date("2025-12-30")}
-                numDays={365}
+                endDate={endDate}
+                numDays={numDays}
                 height={220}
-                // radius={32}
                 chartConfig={chartConfig}
             />
+            </ScrollView>
         </View>
     :
     <View className="mt-10">
