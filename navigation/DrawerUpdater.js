@@ -11,7 +11,7 @@ const defaultMenuItems = [
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
     { label: 'Prindërit pjesëmarrës', icon: icons.parents, path: '/all-parents' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
-    { label: 'Statistikat studentore', icon: icons.students, path: '/all-students' },
+    { label: 'Statistikat studentore', icon: icons.students, path: '(userStatistics)/all-students' },
     { label: 'Shto një kuiz', icon: icons.plus, path: '/add-quiz' },
     { label: 'Kuizet e mia', icon: icons.quiz, path: '/my-quizzes'},
     { label: 'Statistikat e mia', icon: icons.statistics, path: '(userStatistics)/statistics/1' },
