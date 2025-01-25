@@ -775,3 +775,12 @@ export const getUserCommits = async (userId) => {
         return null;
     }
 }
+
+export const getAllUsersStatstics = async () => {
+    try {
+        const response = await apiClient.get(`/api/Users/GetAllUsersStatistics`)
+        return response ? response.data : null
+    } catch (error) {
+        return null
+    }
+}
