@@ -73,8 +73,12 @@ import earth from "../assets/icons/earth.png"
 import privatePost from "../assets/icons/private.png"
 import camera from "../assets/icons/camera.png"
 import commitment from "../assets/icons/commitment.png"
+import share from "../assets/icons/share.png"
+import send from "../assets/icons/send.png"
 
 export default {
+  send,
+  share,
   commitment,
   camera,
   privatePost,

@@ -11,6 +11,7 @@ import Loading from '../../../components/Loading'
 import SingleQuizComponent from '../../../components/SingleQuizComponent'
 import EmptyState from '../../../components/EmptyState'
 import { initialFilterData } from '../../../services/filterConfig'
+import ShareToFriends from '../../../components/ShareToFriends'
 
 const AllQuizzes = () => {
   const {user, isLoading} = useGlobalContext();
@@ -158,6 +159,11 @@ const AllQuizzes = () => {
           
         </View>
       )}
+    />
+
+    <ShareToFriends 
+      currentUserData={user?.data?.userData}
+      shareType="quiz"
     />
 
     {/* modali */}

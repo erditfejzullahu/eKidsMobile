@@ -8,6 +8,8 @@ import SingleCourse from '../../../../../components/SingleCourse';
 import { currentUserID } from '../../../../../services/authService';
 import { getUserCourseStatus } from '../../../../../services/fetchingService';
 import { useRouter } from 'expo-router';
+import ShareToFriends from '../../../../../components/ShareToFriends';
+import { useGlobalContext } from '../../../../../context/GlobalProvider';
 
 const course = () => {
   const router = useRouter();
@@ -17,6 +19,8 @@ const course = () => {
   const [refreshing, setRefreshing] = useState(false)
   const [userStartedCourse, setUserStartedCourse] = useState(null)
   const [userProgressData, setUserProgressData] = useState([])
+
+  const {user} = useGlobalContext();
 
   const getStatus = async () => {
     try {
@@ -103,6 +107,10 @@ const course = () => {
             <Text className="text-white font-pregular text-base p-4">Ju keni filluar shfletimin e ketij kursi! Duke u ridrejtuar...</Text>
           </View>
         )}
+        <ShareToFriends 
+          currentUserData={user?.data?.userData}
+          shareType="course"
+        />
       </ScrollView>
     )
   }

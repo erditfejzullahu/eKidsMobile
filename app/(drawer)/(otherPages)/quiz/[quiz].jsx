@@ -1,8 +1,8 @@
-import { View, Text, ScrollView, RefreshControl, Image, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, Image, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Modal, FlatList } from 'react-native'
 import React from 'react'
 import { Link, useLocalSearchParams } from 'expo-router'
 import useFetchFunction, { navigateToMessenger } from '../../../../hooks/useFetchFunction'
-import { getCourseCategories, getQuizById, getUserQuizzesCreated, reqCreateMistake, reqGetStatusQuiz, reqQuizCompleted } from '../../../../services/fetchingService'
+import { getCourseCategories, getQuizById, getUserQuizzesCreated, reqCreateMistake, reqGetAllUserTypes, reqGetStatusQuiz, reqQuizCompleted } from '../../../../services/fetchingService'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
 import Loading from '../../../../components/Loading'
 import { useState } from 'react'
@@ -13,10 +13,11 @@ import { useRouter } from 'expo-router'
 import Checkbox from 'expo-checkbox'
 import CustomModal from '../../../../components/Modal'
 import NotifierComponent from '../../../../components/NotifierComponent'
+import { useTopbarUpdater } from '../../../../navigation/TopbarUpdater'
+import ShareToFriends from '../../../../components/ShareToFriends'
 
 const Quiz = () => {
     const { quiz } = useLocalSearchParams();
-    
     const {user, isLoading: userLoading} = useGlobalContext();
     const userCategories = user?.data?.categories;
     const userData = user?.data?.userData;
@@ -187,6 +188,8 @@ const Quiz = () => {
         else setQuizCompletationStatus(null)    
     
     }, [quizStatusData])
+
+    
         
 
     if(isLoading || userLoading || quizStatusLoading) return( <Loading /> )
@@ -357,6 +360,11 @@ const Quiz = () => {
                 </View>
             </View>
         </TouchableWithoutFeedback>
+        
+        <ShareToFriends 
+            currentUserData={userData}
+            shareType="quiz"
+        />
 
         <CustomModal
             visible={successfulModal.visible}

@@ -24,7 +24,7 @@ const Topbar = () => {
     const [retrivedData, setRetrivedData] = useState(null)
     const [retrivedBlogData, setRetrivedBlogData] = useState([])
     const [notificationsOpened, setNotificationsOpened] = useState(false)
-    const {showSearcher, showBlogSearcher} = useTopbarUpdater();
+    const {showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened} = useTopbarUpdater();
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
     const [queryText, setQueryText] = useState(null)
 
@@ -80,7 +80,7 @@ const Topbar = () => {
                 />
             </TouchableOpacity>
         </View>
-        {showSearcher && <View className="jusitfy-center items-center flex-1">
+        {showSearcher && <View className="justify-center items-center flex-1">
             <TextInput 
                 placeholder='Kerkoni perdorues...'
                 placeholderTextColor={"#414141"}
@@ -90,7 +90,7 @@ const Topbar = () => {
             />
         </View>}
 
-        {showBlogSearcher && <View className="jusitfy-center items-center flex-1">
+        {showBlogSearcher && <View className="justify-center items-center flex-1">
             <TextInput 
                 placeholder='Kerkoni blogs...'
                 placeholderTextColor={"#414141"}
@@ -100,7 +100,17 @@ const Topbar = () => {
             />
         </View>}
 
+        
+
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
+            {showQuizOrCourseSharer && <TouchableOpacity onPress={() => setShareOpened(!shareOpened)} className={`justify-center items-center border ${shareOpened ? "border-[#FF9C01]" : "border-[#CDCDE0]"} rounded-full`}>
+                <Image 
+                    source={icons.share}
+                    className="h-6 w-6 p-1"
+                    resizeMode='contain'
+                    tintColor={shareOpened ? "#FF9C01" : "#CDCDE0"}
+                />
+            </TouchableOpacity>}
             <View>
                 <TouchableOpacity
                     className="relative"

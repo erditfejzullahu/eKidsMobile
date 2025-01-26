@@ -18,15 +18,17 @@ import { useEventListener } from 'expo';
 import EmptyState from '../../../../../../components/EmptyState'
 import CustomModal from '../../../../../../components/Modal';
 import RenderHTML from 'react-native-render-html';
+import { useGlobalContext } from '../../../../../../context/GlobalProvider';
 
 import { useDrawerUpdater } from '../../../../../../navigation/DrawerUpdater';
 import apiClient from '../../../../../../services/apiClient';
 
 import * as Animatable from "react-native-animatable"
+import ShareToFriends from '../../../../../../components/ShareToFriends';
 
 const lessonContent = () => {
     const { lesson } = useLocalSearchParams(); 
-    
+    const {user} = useGlobalContext();
     const {width} = useWindowDimensions();
 
     const {updateCourseData, drawerItemLoading: loading}  = useDrawerUpdater();
@@ -800,6 +802,10 @@ const lessonContent = () => {
                   </Text>
                 </View>
               </CustomModal>
+
+              
+
+              
                 
               </>
             )}
@@ -818,8 +824,14 @@ const lessonContent = () => {
             contentContainerStyle={{ flexGrow: 1 }}
           />
         </View>
-        
 
+
+          <ShareToFriends  //nuk po hapet diqka ?? fix
+            currentUserData={user?.data?.userData}
+            shareType="lesson"
+          />
+
+          
         </>
       )
     }

@@ -627,7 +627,7 @@ const profiles = () => {
                   <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>
                     <View>
                       <Image 
-                        source={item?.profilePictureUrl}
+                        source={{uri: item?.profilePictureUrl}}
                         className="h-14 w-14 border border-black-200 rounded-[10px]"
                         resizeMode='contain'
                       />

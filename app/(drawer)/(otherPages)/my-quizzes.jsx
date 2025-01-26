@@ -12,6 +12,7 @@ import CustomModal from '../../../components/Modal'
 import { initialFilterData } from '../../../services/filterConfig'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useRouter } from 'expo-router'
+import ShareToFriends from '../../../components/ShareToFriends'
 
 const MyQuizzes = () => {
     const {user, isLoading} = useGlobalContext();
@@ -241,6 +242,11 @@ const MyQuizzes = () => {
                                 </View>
                             </CustomModal>
 
+                            <ShareToFriends 
+                                currentUserData={user?.data?.userData}
+                                shareType="quiz"
+                            />
+                            
                             {/* Delete Confirmation Modal */}
                             <CustomModal
                                 visible={deleteModalVisible}
