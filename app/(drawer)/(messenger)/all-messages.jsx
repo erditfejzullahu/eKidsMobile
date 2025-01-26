@@ -42,9 +42,9 @@ const AllMessages = () => {
               <View className="flex-row bg-oBlack flex-wrap justify-between items-center p-4 border border-black-200 rounded-[10px]">
                 <View className="">
                   <Image 
-                    // source={{uri: userData?.profilePictureUrl}}
-                    source={icons.profile}
-                    className="h-14 w-14 rounded-[10px]"
+                    source={{uri: userData?.profilePictureUrl}}
+                    // source={icons.profile}
+                    className="h-14 w-14 rounded-[5px]"
                     resizeMode='contain'
                   />
                 </View>

@@ -4,17 +4,30 @@ import { icons, images } from '../constants';
 import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
+import * as Animatable from "react-native-animatable"
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
-    // console.log(usersData, 'asdasdasdasdasd');
-    
+    const date = new Date(usersData?.lastMessage?.message?.createdAt);
+    const formattedDate = date.toLocaleDateString('sq-AL', {
+        year: 'numeric',
+        month: 'long',  // Full month name
+        day: 'numeric',
+    });
   return (
     <TouchableWithoutFeedback onPress={() => setShowOptions(!showOptions)}>
         <TouchableOpacity onLongPress={() => setShowOptions(!showOptions)} delayLongPress={300}
             onPress={() => navigateToMessenger(router, usersData, currentUserData)}>
-            <View style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"}  flex-row relative gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
+            <Animatable.View 
+            iterationCount="infinite"
+            duration={1500}
+            animation={usersData?.lastMessage?.message?.isRead === false ? {
+                0: {backgroundColor: "#13131a"},
+                0.5: {backgroundColor: "rgba(255, 156, 1, 0.4)"},
+                1: {backgroundColor: "#13131a"}
+            } : undefined}
+            style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"} flex-row relative gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
                 <View className="flex-row items-center gap-4 flex-1">
                     <View>
                         <Image 
@@ -26,8 +39,8 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
                     <View className="flex-1">   
                         <Text className="text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
-                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>Mesazhi i fundit</Text>
-                        <Text className="text-white text-xs font-plight text-right mt-1">21 Jan, 2000</Text>
+                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>{usersData?.lastMessage?.message?.content || "Nuk ka te dhena, fillo biseden tani!"}</Text>
+                        <Text className="text-white text-xs font-plight text-right mt-1">{usersData?.lastMessage?.message?.createdAt ? formattedDate : ""}</Text>
                     </View>
                 </View>
                 <View>
@@ -51,7 +64,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
                         </TouchableOpacity>
                     </View>
                 </View>}
-            </View>
+            </Animatable.View>
         </TouchableOpacity>
     </TouchableWithoutFeedback>
   )
