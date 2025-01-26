@@ -572,7 +572,7 @@ const profiles = () => {
               <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
               <ScrollView horizontal>
                 <ContributionGraph 
-                  values={profileData?.commitsData}
+                  values={profileData?.commitsData || []}
                   showOutOfRangeDays={true}
                   width={1200}
                   onDayPress={(date) => console.log(date)}
