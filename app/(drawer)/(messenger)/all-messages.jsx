@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, StyleSheet, Touchable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getAllUsers, reqGetAllUserTypes } from '../../../services/fetchingService'
@@ -15,6 +15,7 @@ const AllMessages = () => {
   const router = useRouter();
   const {user, isLoading: userLoading } = useGlobalContext();
   const userData = user?.data?.userData;
+  const [hideHeader, setHideHeader] = useState(false)
 
   if(userLoading){
     return(
@@ -23,8 +24,15 @@ const AllMessages = () => {
   }else{
     return (
       <View style={styles.box} className="bg-primary px-4 pb-4 h-full">
+        <TouchableOpacity onPress={() => setHideHeader(!hideHeader)} className="absolute top-4 right-4 bg-oBlack border border-black-200 rounded-full p-2 z-50">
+          <Image 
+            source={hideHeader ? icons.downArrow : icons.upArrow}
+            className="h-6 w-6"
+            tintColor={"#ff9c01"}
+          />
+        </TouchableOpacity>
         <View className="border-b border-black-200 mb-4">
-          <View className="my-4 border-b border-black-200 pb-4">
+          <View className={`my-4 ${hideHeader === false ? "border-b border-black-200 pb-4" : ""} `}>
             <Text className="text-2xl text-white font-pmedium">Lajmetari juaj
               <View>
                 <Image
@@ -34,10 +42,10 @@ const AllMessages = () => {
                 />
               </View>
             </Text>
-            <Text className="text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve apo kuizeve ne pergjithesi!</Text>
+            {hideHeader === false && <Text className="text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve apo kuizeve ne pergjithesi!</Text>}
           </View>
           <View className="relative w-full mb-4">
-            <View className="border border-black-200 rounded-[10px] p-2">
+            {hideHeader === false && <View className="border border-black-200 rounded-[10px] p-2">
               <Text className="text-white font-pregular text-base mb-2">Detajet tuaja te komunikimit:</Text>
               <View className="flex-row bg-oBlack flex-wrap justify-between items-center p-4 border border-black-200 rounded-[10px]">
                 <View className="">
@@ -63,13 +71,13 @@ const AllMessages = () => {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
+            </View>}
           </View>
         </View>
-        <View>
+        <View className="flex-1">
           <AllUsersFilter userData={userData}/>
         </View>
-        <View>
+        <View className="border-t border-black-200 py-2 mt-2">
           <Text className="text-white font-plight text-sm">Mundesuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
         </View>
         </View>
