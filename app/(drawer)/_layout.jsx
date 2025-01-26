@@ -233,7 +233,6 @@ const _layout = () => {
             if(!token){
                 return;
             }
-            console.log(token);
             
             const newConnection = new SignalR.HubConnectionBuilder()
                 .withUrl('https://dove-well-officially.ngrok-free.app/notificationsHub', {
@@ -268,7 +267,6 @@ const _layout = () => {
                     }else{
                         await handleReconnect();
                     }
-                    
                 }
             }
 

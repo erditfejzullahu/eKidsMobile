@@ -17,15 +17,17 @@ import { icons, images } from '../constants';
 import * as Animatable from 'react-native-animatable';
 import { useNotificationContext } from '../context/NotificationState';
 import useFetchFunction from '../hooks/useFetchFunction';
-import { getNotifications, reqDeleteNotification, reqMakeNotificationsRead } from '../services/fetchingService';
+import { acceptFriendRequest, getNotifications, removeFriendRequestReq, reqDeleteNotification, reqMakeNotificationsRead } from '../services/fetchingService';
 import Loading from './Loading';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import NotifierComponent from './NotifierComponent';
+import { useRouter } from 'expo-router';
 
 const Notifications = ({ onClose }) => {
-
+    const router = useRouter();
     const {data, isLoading, refetch} = useFetchFunction(() => getNotifications())
     // const {data: readStatus, isLoading: readLoading, refetch: readRefetch} = useFetchFunction(() => reqMakeNotificationsRead())
-    const [notificationData, setNotificationData] = useState(null)
+    const [notificationData, setNotificationData] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(false)
     const {isOpened, setIsOpened, currentConnection} = useNotificationContext();
     const handleOutsidePress = (event) => {
@@ -37,6 +39,7 @@ const Notifications = ({ onClose }) => {
 
     const onRefresh = async () => {
         setIsRefreshing(true)
+        setNotificationData([])
         await refetch();
         setIsRefreshing(false)
     }
@@ -74,7 +77,54 @@ const Notifications = ({ onClose }) => {
         const response = await reqDeleteNotification(item?.id)
         console.log(response);
         
-        if(response === 200) await refetch();
+        if(response === 200){
+            // await refetch();
+            setNotificationData((prevData) => {
+                const newArray = prevData.filter((idx) => idx.id !== item.id);
+                return newArray;
+            })
+        } 
+    }
+
+
+    const {showNotification: errorInRequests} = NotifierComponent({
+        title: "Dicka shkoi gabim",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes"
+    })
+
+    const {showNotification: acceptedFriendRequest} = NotifierComponent({
+        title: "Sapo keni pranuar kerkesen e miqesise me sukses",
+    })
+
+    const {showNotification: removedFriendRequest} = NotifierComponent({
+        title: "Sapo keni pranuar kerkesen e miqesise me sukses",
+    })
+    
+    const acceptFriendReq = async (senderId, receiverId, notificationId) => {
+        const response = await acceptFriendRequest(senderId, receiverId);
+        if(response === 200){
+            acceptedFriendRequest()
+            await deleteNotification(notificationId);
+        }else{
+            errorInRequests()
+        }
+    }
+
+    const removeAcceptReq = async (senderId, receiverId, notificationId) => {
+        const response = await removeFriendRequestReq(senderId, receiverId);
+        if(response === 200){
+            removedFriendRequest();
+            await deleteNotification(notificationId);
+        }else{
+            errorInRequests()
+        }
+    }
+
+    const handleNotificationClick = (notification) => {        
+        if(notification.type === 6){ //friend accepted
+            setIsOpened(false)
+            router.replace(`(profiles)/${notification.userId}`)
+        }
     }
 
     const removalButton = ({item}) => (
@@ -130,8 +180,10 @@ const Notifications = ({ onClose }) => {
                                             duration={1000} 
                                             iterationCount="infinite"
                                             easing="ease-in-out" 
+                                            useNativeDriver
                                         >
                                             <TouchableOpacity 
+                                            onPress={() => handleNotificationClick(item)}
                                             style={styles.box} 
                                             className={`border-b border-black-200 p-3 flex-row gap-2 flex-1 relative ${item?.type === 1 ? "bg-oBlack" : item?.type === 4 ? "bg-black" : "bg-primary"}`}
                                             // onPress={}
@@ -147,7 +199,7 @@ const Notifications = ({ onClose }) => {
                                                     </View>
                                                     {item?.type === 4 &&
                                                     <View className="flex-row gap-2 mt-2 justify-between">
-                                                        <TouchableOpacity className="bg-secondary rounded-[5px]">
+                                                        <TouchableOpacity onPress={() => acceptFriendReq(item?.userId, item?.receiverId, item?.id)} className="bg-secondary rounded-[5px]">
                                                             <Image 
                                                                 source={icons.checked}
                                                                 className="w-7 h-7"
@@ -155,7 +207,7 @@ const Notifications = ({ onClose }) => {
                                                                 tintColor={"#fff"}
                                                                 />
                                                         </TouchableOpacity>
-                                                        <TouchableOpacity className="bg-secondary rounded-[5px]">
+                                                        <TouchableOpacity onPress={() => removeAcceptReq(item?.userId, item?.receiverId, item?.id)} className="bg-secondary rounded-[5px]">
                                                             <Image 
                                                                 source={icons.close}
                                                                 className="w-7 h-7 p-1"
@@ -166,8 +218,29 @@ const Notifications = ({ onClose }) => {
                                                     </View>}
                                                 </View>
                                                 <View className="flex-1">
-                                                    <Text className="text-white font-psemibold text-base mb-1" numberOfLines={2}>{item?.type === 4 ? <>Kerkese miqesie nga <Text className="text-secondary">{item?.notificationSender?.name}</Text> </> : <>Informacion nga <Text className="text-secondary">ShokuMesimit</Text> </>}</Text>
-                                                    <Text className="text-gray-400 font-plight text-xs mb-2" numberOfLines={3}>{item?.type === 4 ? <>Hej {item?.notificationReceiver?.name}, sapo te dergova kerkese miqesie... Pres pergjigjen tuaj!</> : item?.information}</Text>
+                                                    <Text className="text-white font-psemibold text-base mb-1" numberOfLines={2}>
+                                                        {item?.type === 1 &&  //informacione
+                                                        <>Information nga <Text className="text-secondary">ShokuMesimit</Text></>}
+                                                        {item?.type === 2 &&  //warningg kujdes
+                                                        <>Kujdes te shtuar nga <Text className="text-secondary">ShokuMesimit</Text></>}
+                                                        {item?.type === 3 && //error dicka nvaret 
+                                                        <><Text className="text-secondary">Dicka shkoi gabim ne veprimin tuaj</Text></>}
+                                                        {item?.type === 4 && //Friend request
+                                                        <>Kerkese miqesie nga <Text className="text-secondary">{item?.notificationSender?.name}</Text></>
+                                                        }
+                                                        {item?.type === 5 && //user action req PSH. quiz SHARE course SHARE etj
+                                                        <>Nderveprim nga <Text className="text-secondary">{item?.notificationSender?.name}</Text></>
+                                                        }
+                                                        {item?.type === 6 && //accepted friend
+                                                        <>Informacion mbi shoqerine</>
+                                                        }
+                                                    </Text>
+                                                        
+                                                    <Text className="text-gray-400 font-plight text-xs mb-2" numberOfLines={3}>
+                                                        {(item?.type === 1 || item?.type === 2 || item?.type === 3 || item?.type === 5) && item?.information}
+                                                        {item?.type === 4 && <>Hej {item?.notificationReceiver?.name}, sapo te dergova kerkese miqesie... Pres pergjigjen tuaj!</>}
+                                                        {item?.type === 6 && <>Hej {item?.notificationReceiver?.name}, <Text className="text-secondary">{item?.notificationSender?.name}</Text> sapo pranoi kerkesen tende te miqesise! Klikoni per tu ridrejtuar tek ai...</>}
+                                                        </Text>
                                                 </View>
                                                 <View className="absolute bottom-1 right-2">
                                                     <Text className="text-secondary font-psemibold text-xs">{formattedDate}</Text>
