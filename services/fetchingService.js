@@ -776,9 +776,9 @@ export const getUserCommits = async (userId) => {
     }
 }
 
-export const getAllUsersStatstics = async () => {
+export const getAllUsersStatstics = async (searchInput) => {
     try {
-        const response = await apiClient.get(`/api/Users/GetAllUsersStatistics`)
+        const response = await apiClient.get(`/api/Users/GetAllUsersStatistics?searchParam=${searchInput}`)
         return response ? response.data : null
     } catch (error) {
         return null
