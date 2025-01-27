@@ -13,6 +13,7 @@ import { initialFilterData } from '../../../services/filterConfig'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useRouter } from 'expo-router'
 import ShareToFriends from '../../../components/ShareToFriends'
+import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
 
 const MyQuizzes = () => {
     const {user, isLoading} = useGlobalContext();
@@ -27,6 +28,8 @@ const MyQuizzes = () => {
         ...initialFilterData,
         userId: user?.data?.userData?.id
     })
+
+    const {shareOpened, setShareOpened} = useTopbarUpdater();
 
     const {showNotification: successDelete} = NotifierComponent({
         title: "Me sukses!",
@@ -83,11 +86,17 @@ const MyQuizzes = () => {
     }
 
     const goToQuiz = () => {
+        if(shareOpened){
+            setShareOpened(false)
+        }
         setModalVisible(false)
         router.push(`/quiz/${singleQuizData?.id}`)
     }   
 
     const deleteQuizPrompt = async () => {
+        if(shareOpened){
+            setShareOpened(true)
+        }
         setModalVisible(false)
         setTimeout(() => {
             setDeleteModalVisible(true)
@@ -220,6 +229,22 @@ const MyQuizzes = () => {
                                         Këtu mund të ndërveproni në lidhje me kursin tuaj! Gjatë kohës do të shtohen edhe mundësitë për redaktimin e kursit dhe shikimin e statistikave ndërmjet kurseve tjera!
                                     </Text>
                                 </View>
+                                <View>
+                                    <TouchableOpacity onPress={() => {
+                                        setModalVisible(false); 
+                                        setTimeout(() => {
+                                            setShareOpened(true)
+                                        }, 150); }} 
+                                        className="bg-secondary p-2 py-1.5 items-center justify-center gap-2 flex-row rounded-[5px] mb-2">
+                                        <Text className="text-white font-pregular text-sm">Shperndani kursin</Text>
+                                        <Image 
+                                            source={icons.share}
+                                            className="h-6 w-6"
+                                            resizeMode='contain'
+                                            tintColor={"#fff"}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                                 <View className="gap-2 flex-row flex-wrap mb-2">
                                     <TouchableOpacity onPress={goToQuiz} className="flex-row flex-1 items-center justify-center gap-2 bg-secondary p-2 py-1.5 rounded-[5px]">
                                         <Text className="text-white font-pregular text-sm">Shikoni kursin</Text>
@@ -242,11 +267,13 @@ const MyQuizzes = () => {
                                 </View>
                             </CustomModal>
 
+
                             <ShareToFriends 
                                 currentUserData={user?.data?.userData}
                                 shareType="quiz"
+                                passedItemId={singleQuizData?.id}
                             />
-                            
+
                             {/* Delete Confirmation Modal */}
                             <CustomModal
                                 visible={deleteModalVisible}

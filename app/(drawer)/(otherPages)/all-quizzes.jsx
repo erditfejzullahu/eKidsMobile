@@ -12,6 +12,7 @@ import SingleQuizComponent from '../../../components/SingleQuizComponent'
 import EmptyState from '../../../components/EmptyState'
 import { initialFilterData } from '../../../services/filterConfig'
 import ShareToFriends from '../../../components/ShareToFriends'
+import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
 
 const AllQuizzes = () => {
   const {user, isLoading} = useGlobalContext();
@@ -23,6 +24,8 @@ const AllQuizzes = () => {
     ...initialFilterData,
     userId: user?.data?.userData?.id
   })
+  const [singleQuizData, setSingleQuizData] = useState(null)
+
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(filterData))
@@ -40,6 +43,14 @@ const AllQuizzes = () => {
       ...prevValues,
       categoryId: category.CategoryID
     }))
+  }
+
+  const {setShareOpened, shareOpened} = useTopbarUpdater();
+  const handleLongPressShare = (quizData) => {
+    console.log(quizData, ' data');
+    
+    setSingleQuizData(quizData?.id)
+    setShareOpened(true);
   }
 
   useEffect(() => {
@@ -89,6 +100,7 @@ const AllQuizzes = () => {
         <SingleQuizComponent 
           quizData={item}
           allQuizzes={true}
+          longPressShare={handleLongPressShare}
         />
       )}
       ListHeaderComponent={() => (
@@ -164,6 +176,7 @@ const AllQuizzes = () => {
     <ShareToFriends 
       currentUserData={user?.data?.userData}
       shareType="quiz"
+      passedItemId={singleQuizData}
     />
 
     {/* modali */}

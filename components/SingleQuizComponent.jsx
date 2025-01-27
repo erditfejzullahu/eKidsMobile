@@ -9,13 +9,15 @@ import { useRouter } from 'expo-router';
 import NotifierComponent from './NotifierComponent';
 
 
-const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) => {
+const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions, longPressShare}) => {
   
     const {user, isLoading} = useGlobalContext();
     const userCategories = user?.data?.categories;
     const userData = user?.data?.userData;
     const router = useRouter();
     
+
+
     const bounceDownAnimation = {
       0: { transform: [{ translateY: 0 }] },
       0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
@@ -56,7 +58,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, openCourseActions}) 
 
   return (
     <View className="mt-4 mb-4" style={styles.box}>
-            <TouchableOpacity onPress={allQuizzes ? handleQuizStart : () => openCourseActions(quizData)}>
+            <TouchableOpacity onLongPress={allQuizzes ? () => longPressShare(quizData) : {}} delayLongPress={300} onPress={allQuizzes ? handleQuizStart : () => openCourseActions(quizData)}>
               <View className="border border-black-200 bg-oBlack p-4 relative">
                   <Text className="text-white font-psemibold text-lg">{quizData?.quizName}</Text>
                   <Text className="text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>

@@ -364,6 +364,7 @@ const Quiz = () => {
         <ShareToFriends 
             currentUserData={userData}
             shareType="quiz"
+            passedItemId={quiz}
         />
 
         <CustomModal

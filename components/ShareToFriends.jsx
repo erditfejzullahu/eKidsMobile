@@ -4,19 +4,53 @@ import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import Loading from './Loading';
 import { StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { reqGetAllUserTypes } from '../services/fetchingService';
+import { reqGetAllUserTypes, reqShareToUser } from '../services/fetchingService';
 import { icons } from '../constants';
+import NotifierComponent from './NotifierComponent';
 
-const ShareToFriends = ({currentUserData, shareType}) => {
+const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     console.log(shareType);
-    if(shareType !== "quiz" || shareType !== "course" || shareType !== "lesson"){
-        return null;
-    }
+    console.log(passedItemId);
+    console.log(currentUserData);
+    
+    // if(shareType !== "quiz" || shareType !== "course" || shareType !== "lesson"){
+    //     return null;
+    // }
     
     const {shareOpened, setShareOpened} = useTopbarUpdater();
     const [userFriendLoading, setUserFriendLoading] = useState(false)
     const [quizSelected, setQuizSelected] = useState(null);
     const [userFriendData, setUserFriendData] = useState([])
+
+    const {showNotification: successShare} = NotifierComponent({
+        title: `Sapo derguat ${shareType === "quiz" ? "Kuizin" : shareType === "lesson" ? "Leksionin" : shareType === "course" ? "Kursin" : " "} me sukses`,
+        description: "Mund te kontrolloni mesazhin e derguat tek biseda me marresin e mesazhit!"
+    })
+
+    const {showNotification: errorShare} = NotifierComponent({
+        title: "Dicka shkoi gabim",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+        alertType: "warning"
+    })
+    
+    const shareToUser = async (receiverUser) => {        
+        console.log(passedItemId);
+        
+        const payload = {
+            senderUsername: currentUserData?.username,
+            receiverUsername: receiverUser?.username,
+            lessonId: shareType === "lesson" ? passedItemId : null,
+            quizId: shareType === "quiz" ? passedItemId : null,
+            courseId: shareType === "course" ? passedItemId : null 
+        }
+        const response = await reqShareToUser(shareType === "quiz" ? 1 : shareType === "lesson" ? 2 : shareType === "course" ? 3 : null, payload);
+        setShareOpened(false)
+        if(response === 200){
+            successShare();
+        }else{
+            errorShare();
+        }
+    }
 
     useEffect(() => {
         if(shareOpened){        
@@ -35,10 +69,6 @@ const ShareToFriends = ({currentUserData, shareType}) => {
         setUserFriendLoading(false)
     }
 
-    const sendQuizToUser = (userId) => {
-        setShareOpened(false)
-        console.log(userId);
-    }
   return (
     <Modal
         visible={shareOpened}
@@ -77,7 +107,7 @@ const ShareToFriends = ({currentUserData, shareType}) => {
                                         <Text className="text-gray-400 font-plight text-xs">Student</Text>
                                     </View>
                                     <View>
-                                        <TouchableOpacity onPress={() => sendQuizToUser(item.id)} className="mr-2">
+                                        <TouchableOpacity onPress={() => shareToUser(item)} className="mr-2">
                                             <Image
                                                 source={icons.send}
                                                 className="h-6 w-6"

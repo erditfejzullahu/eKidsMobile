@@ -784,3 +784,12 @@ export const getAllUsersStatstics = async (searchInput) => {
         return null
     }
 }
+
+export const reqShareToUser = async (shareType, payload) => {
+    try {
+        const response = await apiClient.post(`/api/Conversations/ShareToUser?shareType=${shareType}`, payload)
+        return response && response.status;
+    } catch (error) {
+        return error.response.status;
+    }
+}

@@ -829,9 +829,10 @@ const lessonContent = () => {
           <ShareToFriends  //nuk po hapet diqka ?? fix
             currentUserData={user?.data?.userData}
             shareType="lesson"
+            passedItemId={lesson}
           />
 
-          
+
         </>
       )
     }

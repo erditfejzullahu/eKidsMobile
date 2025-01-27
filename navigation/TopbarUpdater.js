@@ -22,7 +22,7 @@ const TopbarUpdaterProvider = ({children}) => {
             setShowSearcher(false);
             setShowBlogSearcher(true)
             setShowQuizOrCourseSharer(false)
-        }else if(pathname.includes("/quiz") || pathname.includes("/course") || pathname.includes("/all-quizzes") || pathname.includes("/my-quizzes")){
+        }else if(pathname.includes("/quiz") || pathname.includes("/course")){
             setShowSearcher(false)
             setShowBlogSearcher(false)
             setShowQuizOrCourseSharer(true)

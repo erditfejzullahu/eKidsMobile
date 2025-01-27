@@ -110,6 +110,7 @@ const course = () => {
         <ShareToFriends 
           currentUserData={user?.data?.userData}
           shareType="course"
+          passedItemId={course}
         />
       </ScrollView>
     )
