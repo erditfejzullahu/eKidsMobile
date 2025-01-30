@@ -88,9 +88,14 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
                         data={userFriendData}
                         keyExtractor={(item) => `userfriends-${item.id}`}
                         ListHeaderComponent={() => (
+                            <>
                             <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px]" style={styles.box}>
                                 <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
                             </View>
+                            <View className="ml-2">
+                                <Text className="text-xs text-white font-plight">Shperndaje tek:</Text>
+                            </View>
+                            </>
                         )}
                         renderItem={({ item }) => (
                             <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>

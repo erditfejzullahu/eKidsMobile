@@ -126,7 +126,7 @@ const Conversation = () => {
     useEffect(() => {
       if(data){
         setMessages(data)      
-        // console.log(data);
+        console.log(data);
       }
     //   else{
     //     setMessages(null)
