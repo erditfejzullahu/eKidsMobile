@@ -13,7 +13,7 @@ import { Platform } from 'react-native';
 import * as SignalR from '@microsoft/signalr';
 import { getAccessToken, getRefreshToken, isTokenExpired } from '../../../services/secureStorage';
 import { refresh } from '../../../services/authService';
-import { fetchAllComments } from '../../../services/fetchingService';
+import { fetchAllComments, reqReadMessages } from '../../../services/fetchingService';
 import apiClient from '../../../services/apiClient';
 import * as ImagePicker from 'expo-image-picker'
 import * as DocumentPicker from 'expo-document-picker'
@@ -115,6 +115,15 @@ const Conversation = () => {
         
         setIsRefreshing(false)
     }
+
+    const updateReadMessages = async () => {
+        const response = await reqReadMessages(conversation?.currentUserUsername, conversation?.receiverUsername)
+        if(response === 200){
+            console.log("Messages read succesfully");
+        }else{
+            console.log("Error reading messages");
+        }
+    }
     
     
     useEffect(() => {
@@ -127,6 +136,7 @@ const Conversation = () => {
       if(data){
         setMessages(data)      
         console.log(data);
+        updateReadMessages()
       }
     //   else{
     //     setMessages(null)
@@ -440,6 +450,8 @@ const Conversation = () => {
                     </View>
                 </View>
                 <View className="flex-1">
+                    {commentsLoading 
+                        ? <Loading /> : 
                     <FlatList
                         // refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
                         // className="flex-1"
@@ -458,14 +470,7 @@ const Conversation = () => {
                             />
                         )}
                         contentContainerStyle={{ flexGrow: 1, gap: 14, paddingTop: 12, paddingBottom: 16, justifyContent: 'flex-end'  }} //flexDirection: 'column-reverse' per me shku bot 
-                        // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }} // fix per me shku fuuteri ne bottom
-                        // ListHeaderComponent={() => (
-                            
-                        // )}
-                        // ListFooterComponent={() => (
-                            
-                        // )}
-                    />
+                    />}
                 </View>
                 <View className={`relative ${textInputFocused ? "mb-24" : ""}`}>
 

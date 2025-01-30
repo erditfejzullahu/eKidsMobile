@@ -793,3 +793,12 @@ export const reqShareToUser = async (shareType, payload) => {
         return error.response.status;
     }
 }
+
+export const reqReadMessages = async (sender, receiver) => {
+    try {
+        const response = await apiClient.patch(`/api/Conversations/ReadMessages/${sender}/${receiver}`)
+        return response && response.status
+    } catch (error) {
+        return error.response.status;
+    }
+}
