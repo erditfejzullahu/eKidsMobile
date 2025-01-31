@@ -22,7 +22,13 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
     
   return (
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
-        <TouchableOpacity onPress={() => router.push(`${blog.id}`)} className="absolute right-4 border border-black-200 top-0 bottom-0 items-center justify-center h-12 w-12 mt-16 bg-primary rounded-full " style={styles.box}>
+        <TouchableOpacity onPress={() => 
+            router.push({
+                pathname: `${blog.id}`,
+                params: {userId: blog.userId, userName: blog.user.name, userPhoto: blog.user.profilePicture}
+            })
+        } 
+        className="absolute right-4 border border-black-200 top-0 bottom-0 items-center justify-center h-12 w-12 mt-16 bg-primary rounded-full " style={styles.box}>
             <Image 
                 source={icons.rightArrow}
                 className="h-5 w-5"

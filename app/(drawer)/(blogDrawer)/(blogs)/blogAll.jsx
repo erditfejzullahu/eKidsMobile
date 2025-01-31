@@ -65,6 +65,8 @@ const blog = () => {
 
   useEffect(() => {
     if(blogData){
+      console.log(blogData);
+      
       const {data, hasMore} = blogData;
       if(data && data?.length > 0){
         const newBlogs = data.filter((blog) => !allBlogs.some((existingBlog) => existingBlog.id === blog.id))
