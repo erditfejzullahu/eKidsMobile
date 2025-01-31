@@ -107,6 +107,10 @@ const BlogsLayout = () => {
                 )
             }}
         />
+        <Tabs.Screen 
+              name="[blogs]"
+              options={{tabBarVisible: false, href: null, headerShown: false}}
+            />
     </Tabs>
     </>
   )

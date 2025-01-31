@@ -5,9 +5,10 @@ import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
+import { useRouter } from 'expo-router';
 
 const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
-    
+    const router = useRouter();
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
     
@@ -21,6 +22,14 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null}) => {
     
   return (
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
+        <TouchableOpacity onPress={() => router.push(`${blog.id}`)} className="absolute right-4 border border-black-200 top-0 bottom-0 items-center justify-center h-12 w-12 mt-16 bg-primary rounded-full " style={styles.box}>
+            <Image 
+                source={icons.rightArrow}
+                className="h-5 w-5"
+                tintColor={"#fff"}
+                resizeMode='contain'
+            />
+        </TouchableOpacity>
         <View className="top-0 right-0 p-2 pt-1.5 bg-secondary absolute rounded-bl-[10px]">
             <Text className="font-psemibold text-xs text-white">{getCourseCategories(categories, blog.categoryId)}</Text>
         </View>
