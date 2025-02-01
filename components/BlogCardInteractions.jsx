@@ -18,7 +18,7 @@ import NotifierComponent from './NotifierComponent'
 const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
     
-    const [openComments, setOpenComments] = useState(fullBlogSection === true ? true : false)
+    const [openComments, setOpenComments] = useState(false)
     const [commentWritten, setCommentWritten] = useState("")
     const [commentData, setCommentData] = useState([])
     const [hasMore, setHasMore] = useState(false)
@@ -26,7 +26,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
 
     const [pagination, setPagination] = useState({
         pageNumber: 1,
-        pageSize: 15
+        pageSize: 3
     })
 
     const [blogTemporaryLike, setBlogTemporaryLike] = useState(blog?.isLiked)
@@ -64,26 +64,48 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     }
 
     const handleCommentVisibility = async () => {
-        await getComments()
-        setOpenComments(!openComments)
+        if(!openComments){
+            await getComments()
+            setOpenComments(true)
+        }else{
+            setOpenComments(false)
+        }
     }
 
     useEffect(() => {
-      if(fullBlogSection){
+      if(fullBlogSection === true){
         getComments()
+        setOpenComments(true)
       }
     }, [fullBlogSection])
     
     useEffect(() => {
-      getComments();
-    }, [pagination.pageNumber])
+        if(pagination.pageNumber > 1){
+            getComments();
+        }
+    }, [pagination])
     
 
-    const getComments = async () => {
-        const response = await getCommentsByBlog(blog.id, user.id, fullBlogComments, pagination)
-        if(response){
+    const getComments = async () => {        
+        const response = await getCommentsByBlog(blog.id, user.id, fullBlogSection, pagination)
+        
+        if(response && response?.blogComments?.length > 0){
             // console.log(response, ' komente')
-            setCommentData(_.flattenDeep(getAllRepliesWithDepth(response.blogComments)))
+            // setCommentData(_.flattenDeep(getAllRepliesWithDepth(response.blogComments)))
+            const newComments = _.flattenDeep(getAllRepliesWithDepth(response.blogComments))
+            setCommentData((prevComments) => {
+                const mergedComments = [...prevComments]
+
+                newComments.forEach((newComment) => {
+                    const exists = mergedComments.some((existingComment) => existingComment.commentId === newComment.commentId)
+                    if(!exists){
+                        mergedComments.push(newComment)
+                    }
+                })
+                return mergedComments;
+            })
+            console.log(response);
+            
             setHasMore(response.hasMore)
 
         }else{
@@ -292,7 +314,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                 </TouchableOpacity>
             </View>
             <View className="border-r pr-1.5 border-black-200 items-center flex-1 justify-center">
-                <TouchableOpacity onPress={() => handleCommentVisibility()} className="flex-row items-center justify-center gap-1.5 py-2">
+                <TouchableOpacity onPress={handleCommentVisibility} className="flex-row items-center justify-center gap-1.5 py-2">
                     <Text className={`${openComments ? "text-secondary" : "text-white"}  font-psemibold text-xs`}>Komentoni</Text>
                     <View className="relative">
                         <View>
@@ -431,7 +453,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                 }}
                 ListFooterComponent={() => (
                     ((hasMore && !fullBlogSection) && <View className="m-2">
-                        <TouchableOpacity onPress={() => setPagination((prevValue) => ({...prevValue, pageNumber: prevValue.pageNumber + 1}))}>
+                        <TouchableOpacity onPress={() => hasMore && setPagination((prevValue) => ({...prevValue, pageNumber: prevValue.pageNumber + 1}))}>
                             <Text className="text-secondary text-xs font-psemibold">Shfaq me shume</Text>
                         </TouchableOpacity>
                     </View>)
