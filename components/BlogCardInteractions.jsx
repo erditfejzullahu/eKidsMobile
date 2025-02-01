@@ -15,15 +15,21 @@ import _ from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
 
-const BlogCardInteractions = ({blog, userData}) => {
+const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
     
-    const [openComments, setOpenComments] = useState(false)
+    const [openComments, setOpenComments] = useState(fullBlogSection === true ? true : false)
     const [commentWritten, setCommentWritten] = useState("")
     const [commentData, setCommentData] = useState([])
+    const [hasMore, setHasMore] = useState(false)
     const [replyComment, setReplyComment] = useState('')
 
-    const [blogTemporaryLike, setBlogTemporaryLike] = useState(blog.isLiked)
+    const [pagination, setPagination] = useState({
+        pageNumber: 1,
+        pageSize: 15
+    })
+
+    const [blogTemporaryLike, setBlogTemporaryLike] = useState(blog?.isLiked)
     const [commentTemporaryLike, setCommentTemporaryLike] = useState([])
 
     const [sendToFriends, setSendToFriends] = useState(false)
@@ -62,13 +68,27 @@ const BlogCardInteractions = ({blog, userData}) => {
         setOpenComments(!openComments)
     }
 
+    useEffect(() => {
+      if(fullBlogSection){
+        getComments()
+      }
+    }, [fullBlogSection])
+    
+    useEffect(() => {
+      getComments();
+    }, [pagination.pageNumber])
+    
+
     const getComments = async () => {
-        const response = await getCommentsByBlog(blog.id, user.id)
+        const response = await getCommentsByBlog(blog.id, user.id, fullBlogComments, pagination)
         if(response){
             // console.log(response, ' komente')
-            setCommentData(_.flattenDeep(getAllRepliesWithDepth(response)))    
+            setCommentData(_.flattenDeep(getAllRepliesWithDepth(response.blogComments)))
+            setHasMore(response.hasMore)
+
         }else{
             setCommentData([])
+            setHasMore(false)
         }
     }
 
@@ -254,19 +274,19 @@ const BlogCardInteractions = ({blog, userData}) => {
     <View className="flex-1">
         <View className="flex-row items-center justify-center gap-4 bg-primary mx-4 -mb-4 z-50 border border-black-200 rounded-[5px] flex-1" style={styles.box}>
             <View className="border-r pr-1.5 border-black-200 flex-1">
-                <TouchableOpacity onPress={() => likeBlog(blog.id, user.id)} className="flex-row items-center justify-center gap-1.5 py-2">
-                    <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{(blog.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
+                <TouchableOpacity onPress={() => likeBlog(blog?.id, user?.id)} className="flex-row items-center justify-center gap-1.5 py-2">
+                    <Text className={`${(blog?.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{(blog?.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
                     <View className="relative">
                         <View>
                         <Image
                             source={icons.star}
                             className="w-4 h-4 mb-0.5"
                             resizeMode='contain'
-                            tintColor={`${(blog.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
+                            tintColor={`${(blog?.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
                         />
                         </View>
                         <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
-                            <Text className={`${(blog.isLiked || blogTemporaryLike) ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{(blogTemporaryLike || blog.isLiked) ? blog.likes + 1 : blog.likes}</Text>
+                            <Text className={`${(blog?.isLiked || blogTemporaryLike) ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{(blogTemporaryLike || blog?.isLiked) ? blog?.likes + 1 : blog?.likes}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -284,7 +304,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                         />
                         </View>
                         <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
-                            <Text className={`${openComments ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{blog.commentsCount}</Text>
+                            <Text className={`${openComments ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{blog?.commentsCount}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -321,7 +341,7 @@ const BlogCardInteractions = ({blog, userData}) => {
                         });
                     
                     const getParentId = commentData.find((comment) => comment.commentId === item.parentId);
-                    console.log(getParentId, ' parent');
+                    // console.log(getParentId, ' parent');
                     
                     return (
                         <>
@@ -410,8 +430,8 @@ const BlogCardInteractions = ({blog, userData}) => {
                     )
                 }}
                 ListFooterComponent={() => (
-                    (commentData && commentData?.length > 0 && <View className="m-2">
-                        <TouchableOpacity>
+                    ((hasMore && !fullBlogSection) && <View className="m-2">
+                        <TouchableOpacity onPress={() => setPagination((prevValue) => ({...prevValue, pageNumber: prevValue.pageNumber + 1}))}>
                             <Text className="text-secondary text-xs font-psemibold">Shfaq me shume</Text>
                         </TouchableOpacity>
                     </View>)

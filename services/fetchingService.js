@@ -672,6 +672,15 @@ export const getAllBlogs = async (userId, pagination) => {
     }
 }
 
+export const getBlogById = async (blogId, userId) => {
+    try {
+        const response = await apiClient.get(`/api/Blogs/GetBlogById/${blogId}/${userId}`)
+        return response ? response.data : null
+    } catch (error) {
+        return null;
+    }
+} 
+
 export const reqCreatePost = async (payload) => {
     // console.log(payload);
     
@@ -683,9 +692,14 @@ export const reqCreatePost = async (payload) => {
     }
 }
 
-export const getCommentsByBlog = async (blogId, userId) => {
+export const getCommentsByBlog = async (blogId, userId, fullBlogComments, pagination) => {
     try {
-        const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}/${userId}`)
+        let queryParams = {};
+        if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
+        if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
+
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}/${userId}?fullBlogComments=${fullBlogComments}&${queryString}`)
         return response ? response.data : null
     } catch (error) {
         return null
