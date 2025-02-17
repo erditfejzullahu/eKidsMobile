@@ -68,16 +68,13 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             await getComments()
             setOpenComments(true)
         }else{
+            setPagination((prevValue) => ({...prevValue, pageNumber: 1}))
+            setCommentData([])
             setOpenComments(false)
         }
     }
 
-    useEffect(() => {
-      if(fullBlogSection === true){
-        getComments()
-        setOpenComments(true)
-      }
-    }, [fullBlogSection])
+    
     
     useEffect(() => {
         if(pagination.pageNumber > 1){
@@ -86,8 +83,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     }, [pagination])
     
 
-    const getComments = async () => {        
+    const getComments = async () => {                
         const response = await getCommentsByBlog(blog.id, user.id, fullBlogSection, pagination)
+        console.log(' [p hin?');
         
         if(response && response?.blogComments?.length > 0){
             // console.log(response, ' komente')
@@ -113,6 +111,37 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setHasMore(false)
         }
     }
+
+
+    useEffect(() => {        
+        console.log(fullBlogSection,  ' asddddddddddddddddd');
+            if(fullBlogSection){
+                const fetchComments = async () => {
+                    const response = await getCommentsByBlog(blog.id, user.id, fullBlogSection)
+                    
+                    if(response && response?.blogComments?.length > 0){
+                        console.log(response,  ' responsi');
+                        const newComments = _.flattenDeep(getAllRepliesWithDepth(response.blogComments))
+                        setCommentData(newComments)
+                    }else{
+                        setCommentData([])
+                    }
+                }
+
+                fetchComments();
+                setOpenComments(true)
+            }
+            
+    }, [fullBlogSection])
+    
+    useEffect(() => {
+    
+      return () => {
+        setOpenComments(false)
+        setCommentData([])
+    };
+    }, [])
+    
 
     const {showNotification: successComment} = NotifierComponent({
         title: "Sapo keni komentuar me sukses",

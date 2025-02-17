@@ -42,7 +42,8 @@ const Blogs = () => {
 
     if(isLoading || isRefreshing) return <Loading />
   return (
-    <ScrollView 
+    <ScrollView
+    nestedScrollEnabled 
       refreshControl={< RefreshControl refreshin={isRefreshing} onRefresh={onRefresh}/>}
       className="bg-primary"
     >
@@ -81,7 +82,7 @@ const Blogs = () => {
         <BlogCardComponent 
           blog={blogData}
           userData={user}
-          fullBlogSection
+          fullBlogSection={true}
         />
       </View>
 

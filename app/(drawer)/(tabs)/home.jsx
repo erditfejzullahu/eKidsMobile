@@ -36,7 +36,6 @@ const Home = () => {
   const categories = user?.data?.categories
 
   const [buttonLoading, setButtonLoading] = useState(false)  
-  const [dontRefresh, setDontRefresh] = useState(false)
 
   const { data: courses, refetch, isLoading } = useFetchFunction(() => fetchCourses(filterData))
 
@@ -89,17 +88,11 @@ const Home = () => {
   }
 
   useEffect(() => {
-    refetch();
-    console.log('u thirr');
-    
+    refetch();    
   }, [filterData])
-  
-  
 
   useEffect(() => {
     if(courses){
-      // setAllCourses((prevData) => [...(prevData || []), ...courses])
-      // setAllCourses(courses)
       if(showLoadMore){
         setAllCourses((prevData) => {
           const existingIds = new Set(prevData.map((course) => course.id))
@@ -110,25 +103,12 @@ const Home = () => {
         setAllCourses(courses)
       }
     }else{
+      setAllCourses([])
       setShowLoadMore(false)
     }
   }, [courses])
-
-  // useEffect(() => {
-  //   if(currentPage <= courses.totalPages){
-  //     setButtonLoading(true)
-  //     refetch();
-  //     setButtonLoading(false)
-  //   }
-
-  //   setShowLoadMore(currentPage < courses?.totalPages);
-  //   // console.log(currentPage, courses.totalPages);
-    
-  // }, [currentPage])
   
-
-  
-  if (!dontRefresh && (isLoading || userDataLoading)) {
+  if ((isLoading || userDataLoading)) {
     return (
       <Loading />
     );

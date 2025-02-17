@@ -67,7 +67,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         {/* title */}
 
         {/* interaction section */}
-        <BlogCardInteractions blog={blog} userData={userData} fullBlogSection={fullBlogSection === true ? true : false}/>
+        <BlogCardInteractions blog={blog} userData={userData} fullBlogSection={fullBlogSection}/>
         {/* interaction section */}
 
         {/* tags */}

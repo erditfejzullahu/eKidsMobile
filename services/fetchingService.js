@@ -696,11 +696,12 @@ export const getCommentsByBlog = async (blogId, userId, fullBlogComments, pagina
     
     try {
         let queryParams = {};
-        if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
-        if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
+        if(!fullBlogComments){
+            if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
+            if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
+        }
 
         const queryString = new URLSearchParams(queryParams).toString();
-        console.log(queryString);
         
         const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}/${userId}?fullBlogComments=${fullBlogComments}&${queryString}`)
         return response ? response.data : null
