@@ -21,14 +21,12 @@ const AllStudentsStatistics = () => {
         setIsRefreshing(false)
     }
 
-    const searchUsers = (data) => {
+    const searchUsers = (data) => {        
         setSearchInput(data)
     }
     
     useEffect(() => {
-      if(searchInput){
-        refetch();
-      }
+      refetch();
     }, [searchInput])
     
 
@@ -62,6 +60,11 @@ const AllStudentsStatistics = () => {
                 valueData={searchInput}
             />
         </View>
+        {searchInput !== "" && (
+            <View className="px-4 pb-2">
+                <Text className="text-white text-sm">Te dhenat per kerkimin me emer: <Text className="text-secondary">{searchInput}</Text></Text>
+            </View>
+        )}
         {usersData.length > 0 ? <View className="flex-1 mr-4 ml-4 border-b border-black-200 pb-4">
             <FlatList
                 data={usersData}

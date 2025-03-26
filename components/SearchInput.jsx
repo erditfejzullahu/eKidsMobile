@@ -15,7 +15,7 @@ const SearchInput = ({ title, placeholder, otherStyles, searchFunc, valueData, .
             <View className="border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row">
                 <TextInput
                     className="text-base my-6 h-full items-center text-white flex-1 font-pregular"
-                    value={searchData.data || valueData}
+                    value={searchData.data}
                     placeholder={placeholder}
                     placeholderTextColor="rgba(255,255,255,0.2)"
                     onChangeText={(e) => {setSearchData({...searchData, data: e})}}
