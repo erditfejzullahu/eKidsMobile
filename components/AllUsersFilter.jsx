@@ -23,7 +23,7 @@ const AllUsersFilter = ({userData}) => {
     useEffect(() => {
       if(data){
         setUsersData(data)
-        console.log(data);
+        console.log(data, " uuuuuu");
         
       }
     }, [data])

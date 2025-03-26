@@ -7,6 +7,8 @@ import { navigateToMessenger } from '../hooks/useFetchFunction';
 import * as Animatable from "react-native-animatable"
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
+    console.log(currentUserData);
+    
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
     const date = new Date(usersData?.lastMessage?.message?.createdAt);
@@ -22,7 +24,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
             <Animatable.View 
             iterationCount="infinite"
             duration={1500}
-            animation={usersData?.lastMessage?.message?.isRead === false ? {
+            animation={usersData?.lastMessage?.message?.isRead === false && usersData?.lastMessage?.message?.senderUsername !== currentUserData?.username ? {
                 0: {backgroundColor: "#13131a"},
                 0.5: {backgroundColor: "rgba(255, 156, 1, 0.4)"},
                 1: {backgroundColor: "#13131a"}
