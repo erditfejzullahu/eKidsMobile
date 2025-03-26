@@ -3,10 +3,12 @@ import React, { useEffect } from 'react'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getAllUsersStatstics, getMetaValue } from '../../../services/fetchingService'
 import { useState } from 'react'
-import { images } from '../../../constants'
+import { icons, images } from '../../../constants'
 import { StyleSheet } from 'react-native'
 import SearchInput from "../../../components/SearchInput"
 import Loading from '../../../components/Loading'
+import * as Animatable from "react-native-animatable"
+
 const AllStudentsStatistics = () => {
     const {data, isLoading, refetch} = useFetchFunction(() => getAllUsersStatstics(searchInput))
     const [usersData, setUsersData] = useState([])
@@ -51,6 +53,22 @@ const AllStudentsStatistics = () => {
                     />
                 </View>
                 </Text>
+        </View>
+        <View className="absolute flex items-center justify-center left-0 bottom-0 top-0 z-20">
+            <Animatable.View 
+                animation={{
+                    0: { translateX: 0, opacity: 1 },   // Start position
+                    0.5: { translateX: 10, opacity: 1 }, // Moves slightly to the right
+                    1: { translateX: 0, opacity: 0.2 }  // Comes back & fades out
+                }} 
+                duration={2000} iterationCount="infinite">
+                <Image
+                    source={icons.rightArrow}
+                    tintColor={"#fff"}
+                    className="size-8 bg-oBlack p-2 border rounded-lg"
+                    resizeMode='contain'
+                />
+            </Animatable.View>
         </View>
         <View className="mx-4 mb-4 border-b border-black-200 pb-4">
             <SearchInput 

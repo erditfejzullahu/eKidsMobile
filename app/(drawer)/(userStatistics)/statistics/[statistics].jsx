@@ -1,8 +1,9 @@
 import { View, Text, Image, Dimensions, ScrollView } from 'react-native'
 import React from 'react'
 import { Link, useLocalSearchParams } from 'expo-router'
-import { images } from '../../../../constants';
+import { icons, images } from '../../../../constants';
 import { LineChart } from 'react-native-chart-kit';
+import * as Animatable from "react-native-animatable"
 
 const statistics = () => {
   const {statistics} = useLocalSearchParams();  
@@ -44,7 +45,7 @@ const statistics = () => {
 
   return (
     <ScrollView className="h-full bg-primary px-4">
-      <View className="my-4">
+      <View className="my-4 relative">
         <Text className="text-white font-psemibold text-2xl">Statistikat per <Text className="text-secondary">{statistics === '1' ? "Kurset" : statistics === '2' ? "Kuizet" : statistics === '3' ? "Blogs" : "Nderveprimet"}</Text>
         <View>
             <Image
@@ -54,6 +55,22 @@ const statistics = () => {
             />
         </View>
         </Text>
+        <View className="absolute flex items-center justify-center left-0 -bottom-8 z-20">
+            <Animatable.View 
+                animation={{
+                    0: { translateX: 0, opacity: 1 },   // Start position
+                    0.5: { translateX: 10, opacity: 1 }, // Moves slightly to the right
+                    1: { translateX: 0, opacity: 0.2 }  // Comes back & fades out
+                }} 
+                duration={2000} iterationCount="infinite">
+                <Image
+                    source={icons.rightArrow}
+                    tintColor={"#fff"}
+                    className="size-8 bg-oBlack p-2 border rounded-lg"
+                    resizeMode='contain'
+                />
+            </Animatable.View>
+        </View>
       </View>
 
       <View className="mt-4">
