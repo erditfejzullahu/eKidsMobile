@@ -1,6 +1,6 @@
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Platform, RefreshControl, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { icons, images } from '../../../constants'
 import CustomModal from '../../../components/Modal'
 import SorterComponent from '../../../components/SorterComponent'
@@ -163,6 +163,7 @@ const AllQuizzes = () => {
             subtitle={"Ju lutem provoni perseri apo provoni te shtoni kuize te reja duke klikuar butonin e meposhtem!"}
             isSearchPage={true}
             buttonTitle={"Krijoni nje kuiz te ri!"}
+            buttonFunction={() => router.replace('/add-quiz')}
           />  
         </View>
       )}

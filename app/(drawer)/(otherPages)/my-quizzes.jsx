@@ -210,6 +210,7 @@ const MyQuizzes = () => {
                                 subtitle={"Ju lutem provoni perseri apo provoni te shtoni kuize te reja duke klikuar butonin e meposhtem!"}
                                 isSearchPage={true}
                                 buttonTitle={"Krijoni nje kuiz te ri!"}
+                                buttonFunction={() => router.replace('/add-quiz')}
                             />  
                         </View>
                     )}
