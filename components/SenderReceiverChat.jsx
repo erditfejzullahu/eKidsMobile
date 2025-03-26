@@ -9,11 +9,12 @@ import * as Progress from 'react-native-progress';
 import { getCourseCategories } from '../services/fetchingService';
 import { useGlobalContext } from '../context/GlobalProvider';
 import Loading from './Loading';
-
+import { useRouter } from 'expo-router';
 
 
 const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => {
     // console.log(currentUser);
+    const router = useRouter();
     const {user, isLoading} = useGlobalContext();
     const categories = user?.data?.categories;
     const [progress, setProgress] = useState(0)
@@ -46,6 +47,17 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
 
     // console.log(renderItem);
 
+    const handleGoToLocation = (item) => {
+        if(item === null) return;
+
+        if(item.lesson){
+            router.replace(`/categories/course/lesson/${item.lesson.id}`)
+        }else if(item.course){
+            router.replace(`/categories/course/${item.course.id}`)
+        }else if(item.quiz){
+            router.replace(`/quiz/${item.quiz.id}`)
+        }   
+    }
     
     const downloadFile = async () => {
         try {
@@ -133,7 +145,9 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson) ? (
                             <>
                             <View className="bg-oBlack border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
-                                <Text className="text-white font-psemibold text-xs absolute top-0 right-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}</Text>
+                                <TouchableOpacity className="absolute top-0 right-0" onPress={() => handleGoToLocation(renderItem)}>
+                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} className="text-white font-psemibold text-xs  px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}</Animatable.Text>
+                                </TouchableOpacity>
                                 <View>
                                     <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson?.lessonName}</Text>
                                 </View>
@@ -213,7 +227,18 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                             </View>
                         ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson) ? (
                             <View className="bg-primary border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
-                                <Text className="text-white font-psemibold text-xs absolute top-0 right-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}</Text>
+                                <TouchableOpacity
+                                    onPress={() => handleGoToLocation(renderItem)}
+                                    className="absolute top-0 right-0"
+                                >
+                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000}
+                                        className="text-white font-psemibold text-xs absolute px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200"
+                                        style={styles.box}
+                                        
+                                    >
+                                        {renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}
+                                    </Animatable.Text>
+                                </TouchableOpacity>
                                 <View>
                                     <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson?.lessonName}</Text>
                                 </View>
