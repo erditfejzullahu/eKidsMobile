@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, Image, FlatList, Touchable } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../constants';
 import Loading from "./Loading"
@@ -6,15 +6,20 @@ import { initialFilterData } from '../services/filterConfig';
 import { getAllTagsByCategory, getAllBlogsByTag } from '../services/fetchingService';
 import { useRouter } from 'expo-router';
 import * as Animatable from "react-native-animatable"
+import { currentUserID } from '../services/authService';
+import { useBlogsDrawerContext } from '../context/BlogsDrawerProvider';
+import { usePathname } from 'expo-router';
 
 const TagsByCategories = ({categories}) => {
     // console.log(categories);
     const router = useRouter();
+    const pathname = usePathname();
     const [categoryOpened, setCategoryOpened] = useState(false)
     const [tagOpened, setTagOpened] = useState([])
 
-    const [tagsData, setTagsData] = useState(null)
-    const [blogsData, setBlogsData] = useState(null)
+    const [tagsData, setTagsData] = useState([])
+    const [blogsData, setBlogsData] = useState([])
+
     const [pairOfBlogs, setPairOfBlogs] = useState([])
 
     const [paginationData, setPaginationData] = useState({
@@ -26,26 +31,45 @@ const TagsByCategories = ({categories}) => {
         const response = await getAllTagsByCategory(categories.CategoryID)
         // console.log(response);
         
-        response ? setTagsData(response) : null
+        response ? setTagsData(response) : []
         setCategoryOpened(!categoryOpened)
 
     }
 
     const getBlogs = async (tagId) => {        
-        const response = await getAllBlogsByTag(tagId)        
-        response ? setBlogsData(response) : null
+        const userId = await currentUserID()
+        const response = await getAllBlogsByTag(userId, tagId)
+        response ? setBlogsData(response) : []
+        // setTagOpened((prevData) => {
+        //     if(prevData.includes(tagId)){
+        //         return prevData.filter((idx) => idx !== tagId)
+        //     }else{
+        //         return [...prevData, tagId]
+        //     }
+        // })
         setTagOpened((prevData) => {
-            if(prevData.includes(tagId)){
-                return prevData.filter((idx) => idx !== tagId)
-            }else{
-                return [...prevData, tagId]
+            if(prevData.includes(tagId)) {
+                return []
+            }else {
+                return [tagId]
             }
         })
-        // console.log(tagOpened);
+        console.log(tagId, ' ???');
+        console.log(response)
     }
 
-    const goToBlog = (blogId) => {
-        router.push(`(blogs)/(discussions)/${blogId}`)
+    const {setIsDrawerOpened} = useBlogsDrawerContext();
+    const goToBlog = (blog) => {
+        router.replace({
+            pathname: `(blogs)/${blog.id}`,
+            params: {userId: blog?.userId, userName: blog?.user?.name, userPhoto: blog?.user?.profilePicture}
+        })
+        setIsDrawerOpened(false);
+        // router.push(`(blogs)/${blogId}`)
+    }
+
+    const loadMoreBlogs = (tagId) => {
+        //TODO: load more blogs when clicked
     }
 
 
@@ -61,7 +85,7 @@ const TagsByCategories = ({categories}) => {
             />
         </TouchableOpacity>
 
-        {categoryOpened && <FlatList 
+        {categoryOpened && <FlatList
             data={tagsData}
             keyExtractor={(item) => 'sideTag-' + item?.id}
             renderItem={({item}) => (
@@ -69,7 +93,7 @@ const TagsByCategories = ({categories}) => {
                     <View>
                         <TouchableOpacity onPress={() => getBlogs(item.id)}>
                             <View className="flex-row relative items-center gap-2">
-                                <Text className="text-white text-sm italic">{item?.name}</Text>
+                                <Text className={`text-sm italic ${tagOpened.includes(item.id) ? "text-secondary font-semibold" : "text-white"}`}>{item?.name}</Text>
                                 <Image
                                     source={tagOpened.includes(item.id) ? icons.downArrow : icons.rightArrow}
                                     className="h-4 w-4"
@@ -82,17 +106,24 @@ const TagsByCategories = ({categories}) => {
                         {/* <View>
                             <Loading />
                         </View> */}
-                        {(tagOpened.includes(item.id) && blogsData.some(tagId => tagId.tagId === item.id)) && 
+                        {tagOpened.includes(item.id) && 
                         <Animatable.View animation="fadeIn">
                         <FlatList
-                            data={blogsData}
+                            data={blogsData?.data}
                             keyExtractor={(bItem) => 'sideBlog-' + bItem?.id}
                             renderItem={({item, index}) => (
                                 <View key={`sideBlogs-${item?.id}`} className={`${index === 0 ? "mt-3.5" : ""} ml-3`}>
-                                    <TouchableOpacity onPress={() => goToBlog(item.id)}>
-                                        <Text className="text-white text-sm italic py-0.5">{item?.title}</Text>
+                                    <TouchableOpacity onPress={() => goToBlog(item)}>
+                                        <Text className={`text-sm italic py-0.5 ${pathname.includes(item.id) ? "text-secondary" : "text-white"}`}>{item?.title}</Text>
                                     </TouchableOpacity>
                                 </View>
+                            )}
+                            ListFooterComponent={() => (
+                                (blogsData?.hasMore && (
+                                    <TouchableOpacity className="p-1" onPress={() => loadMoreBlogs(item.tagId)}>
+                                        <Text className="text-white text-xs italic text-right">Me shume</Text>
+                                    </TouchableOpacity>
+                                ))
                             )}
                             ListEmptyComponent={() => (
                                 <View className="mt-3.5 ml-3">

@@ -11,6 +11,7 @@ import Drawer from 'expo-router/drawer';
 import DrawerUpdaterProvider from '../navigation/DrawerUpdater';
 import TopbarUpdaterProvider from '../navigation/TopbarUpdater';
 import NotificationProvider from '../context/NotificationState';
+import BlogsDrawerProvider from '../context/BlogsDrawerProvider';
 // enableScreens();
 
 SplashScreen.preventAutoHideAsync();
@@ -45,13 +46,15 @@ const RootLayout = () => {
                     <NotificationProvider>
                         <DrawerUpdaterProvider>
                             <TopbarUpdaterProvider>
-                                <Stack screenOptions={{gestureEnabled: true}}>
-                                    <Stack.Screen name="index" options={{ headerShown: false }} />
-                                    <Stack.Screen name="(auth)" options={{ headerShown: false}} />
-                                    <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
-                                    {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
-                                    {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
-                                </Stack>
+                                <BlogsDrawerProvider>
+                                    <Stack screenOptions={{gestureEnabled: true}}>
+                                        <Stack.Screen name="index" options={{ headerShown: false }} />
+                                        <Stack.Screen name="(auth)" options={{ headerShown: false}} />
+                                        <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
+                                        {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
+                                        {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
+                                    </Stack>
+                                </BlogsDrawerProvider>
                             </TopbarUpdaterProvider>
                         </DrawerUpdaterProvider>
                     </NotificationProvider>

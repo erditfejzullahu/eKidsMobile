@@ -648,9 +648,7 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (userId, tagId, pagination) => {    
-    console.log('u thirr');
-    
+export const getAllBlogsByTag = async (userId, tagId, pagination) => {        
     try {
         const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}`)
         return response ? response.data : null

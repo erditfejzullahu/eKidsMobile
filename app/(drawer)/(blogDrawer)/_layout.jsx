@@ -6,6 +6,8 @@ import { Dimensions } from 'react-native';
 import { images } from '../../../constants';
 import {useGlobalContext} from '../../../context/GlobalProvider'
 import TagsByCategories from '../../../components/TagsByCategories';
+import { useBlogsDrawerContext } from '../../../context/BlogsDrawerProvider';
+import BlogsDrawerContext from "../../../context/BlogsDrawerProvider"
 
 const TagsHeader = () => {
   const {user, isLoading} = useGlobalContext();
@@ -25,7 +27,7 @@ const TagsHeader = () => {
       )}
       ListHeaderComponent={() => (
         <View className="mb-6">
-          <Text className="text-white font-psemibold text-xl">Shfletoni etiketimet
+          <Text className="text-white font-psemibold text-xl">Shfletoni kategorite
             <View>
               <Image
                 source={images.path}
@@ -49,14 +51,15 @@ const TagsHeader = () => {
 };
 
 const _layout = () => {
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const {isDrawerOpened, setIsDrawerOpened} = useBlogsDrawerContext();
+  // const [isDrawerOpen, setDrawerOpen] = useState(isDrawerOpened);
   return (
     <>
       <Drawer
         drawerPosition="left"
-        open={isDrawerOpen}
-        onOpen={() => setDrawerOpen(true)}
-        onClose={() => setDrawerOpen(false)}
+        open={isDrawerOpened}
+        onOpen={() => setIsDrawerOpened(true)}
+        onClose={() => setIsDrawerOpened(false)}
         renderDrawerContent={() => <TagsHeader />}
         // drawerType="front"
         drawerStyle={{
