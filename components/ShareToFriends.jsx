@@ -24,7 +24,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
 
     const {showNotification: successShare} = NotifierComponent({
         title: `Sapo derguat ${shareType === "quiz" ? "Kuizin" : shareType === "lesson" ? "Leksionin" : shareType === "course" ? "Kursin" : " "} me sukses`,
-        description: "Mund te kontrolloni mesazhin e derguat tek biseda me marresin e mesazhit!"
+        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!"
     })
 
     const {showNotification: errorShare} = NotifierComponent({

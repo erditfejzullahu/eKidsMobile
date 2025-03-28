@@ -7,7 +7,7 @@ import { navigateToMessenger } from '../hooks/useFetchFunction';
 import * as Animatable from "react-native-animatable"
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
-    console.log(currentUserData);
+    console.log(usersData);
     
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
@@ -17,6 +17,43 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
         month: 'long',  // Full month name
         day: 'numeric',
     });
+
+    const returnLastMessage = () => {
+
+        if(usersData?.lastMessage?.message === null){
+            return "Nuk ka bisede aktuale. Fillo biseden tani!"
+        }
+
+        if(usersData?.lastMessage?.message?.content !== null){
+            return usersData?.lastMessage?.message?.content
+        }else if(usersData?.lastMessage?.message?.content === null){
+            if(usersData?.lastMessage?.message?.blogId !== null){
+                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Blog. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Blog. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.message?.courseId !== null){
+                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Kurs. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Kurs. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.message?.lessonId !== null){
+                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Leksion. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Leksion. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.message?.quizId !== null){
+                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Kuiz. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Kuiz. Vazhdo biseden tani!`
+                }
+            } 
+        }
+    }
   return (
     <TouchableWithoutFeedback onPress={() => setShowOptions(!showOptions)}>
         <TouchableOpacity onLongPress={() => setShowOptions(!showOptions)} delayLongPress={300}
@@ -41,7 +78,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
                     <View className="flex-1">   
                         <Text className="text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
-                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>{usersData?.lastMessage?.message?.content || "Nuk ka te dhena, fillo biseden tani!"}</Text>
+                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>{returnLastMessage()}</Text>
                         <Text className="text-white text-xs font-plight text-right mt-1">{usersData?.lastMessage?.message?.createdAt ? formattedDate : ""}</Text>
                     </View>
                 </View>

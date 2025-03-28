@@ -10,7 +10,7 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system';
 import Loading from './Loading'
 import useFetchFunction from '../hooks/useFetchFunction'
-import { createBlogComment, getCommentsByBlog, reqGetAllUserTypes, reqLikeBlog, reqLikeBlogComment } from '../services/fetchingService'
+import { createBlogComment, getCommentsByBlog, reqGetAllUserTypes, reqLikeBlog, reqLikeBlogComment, reqShareToUser } from '../services/fetchingService'
 import _ from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
@@ -304,13 +304,38 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
 
     const getAllFriends = async () => {
         setAllFriendsLoading(true)
-        const response = await reqGetAllUserTypes(user.id, 1);
+        const response = await reqGetAllUserTypes(user.id, 2);
         if(response){
             setFriendsData(response)
         }else{
             setFriendsData([])
         }
         setAllFriendsLoading(false)
+    }
+
+    const {showNotification: successSender} = NotifierComponent({
+        title: "Sapo derguat Blogun me sukses",
+        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!"
+    })
+    const {showNotification: errorShare} = NotifierComponent({
+        title: "Dicka shkoi gabim",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+        alertType: "warning"
+    })
+
+    const handleShareToUser = async (sendToUser) => {
+        const payload = {
+            "senderUsername": user?.username,
+            "receiverUsername": sendToUser?.username,
+            "blogId": blog?.id
+        }
+        const response = await reqShareToUser(4, payload);
+        if(response === 200){
+            successSender()
+        }else{
+            errorShare()
+        }
+        setSendToFriends(false)
     }
 
     useEffect(() => {
@@ -596,7 +621,10 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             renderItem={({item}) => {
                                 // console.log(item);
                                 return (
-                                    <TouchableOpacity className="bg-oBlack border p-3 border-black-200 rounded-[5px] flex-row items-center justify-between" style={styles.box}>
+                                    <TouchableOpacity 
+                                        className="bg-oBlack border p-3 border-black-200 rounded-[5px] flex-row items-center justify-between" style={styles.box}
+                                        onPress={() => handleShareToUser(item)}
+                                        >
                                         <View className="flex-row items-center gap-4">
                                             <View>
                                                 <Image 

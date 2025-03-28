@@ -40,7 +40,7 @@ const course = () => {
 
     const {showNotification: successNotifier} = NotifierComponent({
         title: "Veprimi u krye me sukses!",
-        description: "Deshmia u dergua me sukses... Ne shkarkim do paraqitet poashtu edhe deshmia juaj, dhe poashtu mund te perdoret nga ana jone!"
+        description: "Deshmia u dergua me sukses... Ne shkarkim do paraqitet edhe deshmia juaj, dhe poashtu mund te perdoret nga ana jone!"
     })
 
     const {showNotification: errorNotifier} = NotifierComponent({
