@@ -28,7 +28,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
       day: 'numeric',
     });
 
-    const sharedItemDates = new Date(renderItem?.quiz ? renderItem?.quiz?.createdAt : renderItem?.course ? renderItem?.course?.createdAt : renderItem?.lesson?.createdAt);
+    const sharedItemDates = new Date(renderItem?.quiz ? renderItem?.quiz?.createdAt : renderItem?.course ? renderItem?.course?.createdAt : renderItem?.lesson ? renderItem?.lesson?.createdAt : renderItem?.blog?.createdAt);
     const formateSharedItemDates = sharedItemDates.toLocaleDateString('sq-AL', {
         year: 'numeric',
         month: 'long',  // Full month name
@@ -56,7 +56,9 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             router.replace(`/categories/course/${item.course.id}`)
         }else if(item.quiz){
             router.replace(`/quiz/${item.quiz.id}`)
-        }   
+        }else if(item.blog){
+            router.replace(`(blogs)/${item.blog.id}`)
+        }
     }
     
     const downloadFile = async () => {
@@ -142,18 +144,18 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     className="h-full max-h-[200px] rounded-[10px]"
                                 />
                             </View>
-                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson) ? (
+                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem.blog ) ? (
                             <>
                             <View className="bg-oBlack border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
                                 <TouchableOpacity className="absolute top-0 right-0" onPress={() => handleGoToLocation(renderItem)}>
-                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} className="text-white font-psemibold text-xs  px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}</Animatable.Text>
+                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} className="text-white font-psemibold text-xs  px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : "Shfleto blogun"}</Animatable.Text>
                                 </TouchableOpacity>
                                 <View>
-                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson?.lessonName}</Text>
+                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog?.title}</Text>
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course?.courseDescription}</Text>
+                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog?.content}</Text>
                                     </View>
                                     <View>
                                         {(renderItem?.course || renderItem?.lesson) && <Image 
@@ -172,7 +174,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     </View>
                                 </View>
                                 <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{formateSharedItemDates}</Text>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-primary border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.course?.courseCategory : renderItem?.quiz?.quizCategory)}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog?.categoryId)}</Text>
                             </View>
                             </>
                         ) : (<Text className="text-white text-sm italic">Mesazhi eshte fshire</Text>)}
@@ -236,15 +238,15 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         style={styles.box}
                                         
                                     >
-                                        {renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : "Ploteso kuizin"}
+                                        {renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : "Shfleto blogun"}
                                     </Animatable.Text>
                                 </TouchableOpacity>
                                 <View>
-                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson?.lessonName}</Text>
+                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog?.title}</Text>
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course?.courseDescription}</Text>
+                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog?.content}</Text>
                                     </View>
                                     <View>
                                         {(renderItem?.course || renderItem?.lesson) && <Image 
@@ -263,7 +265,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     </View>
                                 </View>
                                 <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{formateSharedItemDates}</Text>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.course?.courseCategory : renderItem?.quiz?.quizCategory)}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog?.categoryId)}</Text>
                             </View>
                         ) : (<Text className="text-white text-sm italic">Mesazhi eshte fshire</Text>)}
                         
