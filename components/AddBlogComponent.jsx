@@ -40,11 +40,8 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     const [title, setTitle] = useState('')
 
     const [tagsSelected, setTagsSelected] = useState([])
-    const [imageSelected, setImageSelected] = useState({
-        type: "",
-        base64: "",
-        image: null
-    })
+
+    const [imagesSelected, setImagesSelected] = useState([])
 
     const [imageHeight, setImageHeight] = useState(0);
     const [containerWidth, setContainerWidth] = useState(0);
@@ -54,29 +51,29 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
         setContainerWidth(width); // Save container width
     };
 
-    useLayoutEffect(() => {
-        if (containerWidth === 0) return; // Ensure container width is set
+    // useLayoutEffect(() => {
+    //     if (containerWidth === 0) return; // Ensure container width is set
 
-        if (imageSelected.image) {
-            // Dynamically calculate height for remote images
-            console.log('hini');
+    //     if (imageSelected.image) {
+    //         // Dynamically calculate height for remote images
+    //         console.log('hini');
             
-            Image.getSize(
-                imageSelected.image,
-                (width, height) => {
-                    const calculatedHeight = (height / width) * containerWidth;
-                    setImageHeight(calculatedHeight);
-                    console.log(imageHeight);
-                },
-                (error) => console.error('Error fetching image size:', error)
-            );
-        } else if (images.testimage) {
-            // Dynamically calculate height for local images
-            const { width, height } = Image.resolveAssetSource(images.testimage);
-            const calculatedHeight = (height / width) * containerWidth;
-            setImageHeight(calculatedHeight);
-        }
-    }, [imageSelected, containerWidth])
+    //         Image.getSize(
+    //             imageSelected.image,
+    //             (width, height) => {
+    //                 const calculatedHeight = (height / width) * containerWidth;
+    //                 setImageHeight(calculatedHeight);
+    //                 console.log(imageHeight);
+    //             },
+    //             (error) => console.error('Error fetching image size:', error)
+    //         );
+    //     } else if (images.testimage) {
+    //         // Dynamically calculate height for local images
+    //         const { width, height } = Image.resolveAssetSource(images.testimage);
+    //         const calculatedHeight = (height / width) * containerWidth;
+    //         setImageHeight(calculatedHeight);
+    //     }
+    // }, [imageSelected, containerWidth])
 
     const selectTags = (item) => {
         // console.log(item, ' item');
@@ -119,19 +116,22 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
 
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            allowsEditing: true,
+            // allowsEditing: true,
+            allowsMultipleSelection: true,
             aspect: [4,3],
             quality: 0,
             base64: true
         })
+        console.log(result);
+        
 
         if(!result.canceled){
-            setImageSelected((prevData) => ({
-                ...prevData,
-                type: `data:${result.assets[0].mimeType};base64,`,
-                base64: result.assets[0].base64,
-                image: result.assets[0].uri
+            const selectedImages = result.assets.map((image) => ({
+                type: `data:${image.mimeType};base64,`,
+                base64: image.base64,
+                image: image.uri
             }))
+            setImagesSelected(selectedImages)
         }
     }
 
@@ -148,12 +148,12 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
             base64: true
         })
         if(!result.canceled){
-            setImageSelected((prevData) => ({
-                ...prevData,
+            const newImage = {
                 type: `data:${result.assets[0].mimeType};base64,`,
                 base64: result.assets[0].base64,
                 image: result.assets[0].uri
-            }))
+            }
+            setImagesSelected(newImage)
         }
     }
 
@@ -205,6 +205,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     content: blogContent,
                     categoryId: selectedCategory,
                     status: postStatus,
+                    images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => [type + base64]) : null,
                     userId: user.id
                 },
                 tagDto: {
@@ -217,7 +218,6 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     }))
                 }
             }
-            console.log(payload.tagDto.children,  ' ???');
             
         }else if(allTags && tagsSelected.length > 0){
             payload = {
@@ -226,25 +226,34 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     content: blogContent,
                     categoryId: selectedCategory,
                     tagId: tagsSelected[0].id,
+                    images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => type + base64) : null,
                     status: postStatus,
                     userId: user.id
                 },
                 // tagDto: {
-                //     name: "",
-                //     parentId: "",
-                //     category_Id: selectedCategory,
-                //     children: tagsSelected.map(tag => ({
-                //         name: tag.name,
-                //         category_Id: selectedCategory
-                //     }))
-                // }
-            }
-        }
-        
-        const response = await reqCreatePost(payload);
-        
+                    //     name: "",
+                    //     parentId: "",
+                    //     category_Id: selectedCategory,
+                    //     children: tagsSelected.map(tag => ({
+                        //         name: tag.name,
+                        //         category_Id: selectedCategory
+                        //     }))
+                        // }
+                    }
+                }
+                
+                console.log(payload,  ' ???');
+                const response = await reqCreatePost(payload);
+                
         if(response){
             successNotification()
+            setInputFocused(false)
+            setTitle("")
+            setBlogContent("")
+            setSelectedCategory(null)
+            setTagsSelected([])
+            setPostStatus(1)
+            setOutputTags([])
         }else{
             failedNotification()
         }
@@ -293,6 +302,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
 
     useEffect(() => {
         tagRefetch()
+        console.log(tagData)
     }, [selectedCategory])
     
     
@@ -385,23 +395,27 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                 {/* photos */}
                 {inputFocused && <View>
 
-                {(imageSelected.image !== null) && <View className="relative w-full mt-6 border border-black-200" onLayout={handleLayout}>
-                    <Image 
-                        source={{uri: imageSelected.image}}
-                        style={{width: "100%", height: imageHeight || "auto"}}
-                        resizeMode='contain'
-                        />
-                    <TouchableOpacity
-                        className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2"
-                        onPress={() => setImageSelected({type: "", base64: "", image: null})}
-                        >
-                        <Image 
-                            source={icons.close}
-                            className="h-4 w-4"
-                            resizeMode='contain'
-                            tintColor={"#fff"}
-                            />
-                    </TouchableOpacity>
+                {(imagesSelected.length > 0) && <View className="relative flex-1 gap-2 flex-row w-full mt-6 border border-black-200" onLayout={handleLayout}>
+                    {imagesSelected.map((item, index) => (
+                        <View key={`image-${index}`} className="flex-1">
+                            <Image 
+                                source={{uri: item.image}}
+                                style={{width: "100%", height: 200}}
+                                resizeMode='contain'
+                                />
+                            <TouchableOpacity
+                                className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2"
+                                onPress={() => setImagesSelected((prevData) => prevData.filter((_, i) => i !== index))}
+                                >
+                                <Image 
+                                    source={icons.close}
+                                    className="h-4 w-4"
+                                    resizeMode='contain'
+                                    tintColor={"#fff"}
+                                    />
+                            </TouchableOpacity>
+                        </View>
+                    ))}
                     </View>}
                 </View>}
                 {/* photos */}

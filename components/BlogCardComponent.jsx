@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getCourseCategories } from '../services/fetchingService'
 import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
@@ -11,6 +11,8 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
     const router = useRouter();
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
+
+    const [blogImages, setBlogImages] = useState([])
     
     const date = new Date(blog?.createdAt);
     const formattedDate = date.toLocaleDateString('sq-AL', {
@@ -18,7 +20,15 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         month: 'long',  // Full month name
         day: 'numeric',
     });
+    // console.log(blog);
     
+    useEffect(() => {
+      if(blog?.imageUrls){
+        setBlogImages(JSON.parse(blog?.imageUrls) || [])
+      }
+    }, [blog?.imageUrls])
+    
+    console.log(blogImages);
     
   return (
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
@@ -63,6 +73,21 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
             <View>
                 <Text className="text-white font-plight text-sm">{blog?.content}</Text>
             </View>
+
+            {/* TODO: IN CLICK OF PHOTOS TO MAKE FULLSCREEN PHOTOS COMPONENT */}
+            {blogImages.length > 0 && (
+                <View className="flex-1 flex flex-row gap-2 bg-primary rounded-lg p-2" style={styles.box}>
+                    {blogImages.map((img, idx) => (
+                        <View key={`${blog?.id}-${idx}`} className="flex-1 rounded-md overflow-hidden">
+                            <Image 
+                                source={{uri: img}}
+                                className="min-h-[200px]"
+                                resizeMode='cover'
+                            />
+                        </View>
+                    ))}
+                </View>
+            )}
         </View>
         {/* title */}
 

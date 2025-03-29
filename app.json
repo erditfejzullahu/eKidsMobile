@@ -7,7 +7,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,7 +18,8 @@
     "ios": {
       "supportsTablet": true,
       "supportsPictureInPicture": true,
-      "supportsBackgroundPlayback": true
+      "supportsBackgroundPlayback": true,
+      "bundleIdentifier": "com.anonymous.ekidsMobapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +27,11 @@
         "backgroundColor": "#ffffff"
       },
       "supportsPictureInPicture": true,
-      "supportsBackgroundPlayback": true
+      "supportsBackgroundPlayback": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.ekidsMobapp"
     },
     "newArchEnabled": true,
     "web": {
@@ -33,11 +40,13 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      ["expo-video",
-      {
-        "supportsBackgroundPlayback": true,
-        "supportsPictureInPicture": true
-      }],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
       [
         "expo-image-picker",
         {
