@@ -4,6 +4,7 @@ import * as Animatable from 'react-native-animatable'
 import { images, icons } from '../constants'
 import FormField from '../components/FormField'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { useLessonCommentsContext } from '../context/LessonCommentsProvider'
 
 
 const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, handleCommentLike }) => {
@@ -13,6 +14,8 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
 
     const [showRepliesComments, setShowRepliesComments] = useState(false)
     const [showFirstTierRepliesComments, setShowFirstTierRepliesComments] = useState(false)
+
+    const {setHideHalfVideo} = useLessonCommentsContext();
 
     const makeReply = (reply) => {
         setShowReply((prevReplies) => {
@@ -133,6 +136,8 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
                                                 placeholder='Shprehe mendimin tend...'
                                                 placeholderTextColor="rgba(255,255,255,0.2)"
                                                 onChangeText={(text) => setCommentValue(text)}
+                                                onFocus={() => setHideHalfVideo(true)}
+                                                onBlur={() => setHideHalfVideo(false)}
                                                 onSubmitEditing={() => prepareReplyComment(item, commentValue)}
                                             />
                                         </View>

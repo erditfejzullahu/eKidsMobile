@@ -78,7 +78,7 @@ const Blogs = () => {
         </View>
       </View>
 
-      <View className="px-4 mt-4">
+      <View className="px-4 my-4">
         <BlogCardComponent 
           blog={blogData}
           userData={user}

@@ -12,6 +12,7 @@ import DrawerUpdaterProvider from '../navigation/DrawerUpdater';
 import TopbarUpdaterProvider from '../navigation/TopbarUpdater';
 import NotificationProvider from '../context/NotificationState';
 import BlogsDrawerProvider from '../context/BlogsDrawerProvider';
+import LessonCommentsProvider from '../context/LessonCommentsProvider';
 // enableScreens();
 
 SplashScreen.preventAutoHideAsync();
@@ -47,13 +48,15 @@ const RootLayout = () => {
                         <DrawerUpdaterProvider>
                             <TopbarUpdaterProvider>
                                 <BlogsDrawerProvider>
-                                    <Stack screenOptions={{gestureEnabled: true}}>
-                                        <Stack.Screen name="index" options={{ headerShown: false }} />
-                                        <Stack.Screen name="(auth)" options={{ headerShown: false}} />
-                                        <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
-                                        {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
-                                        {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
-                                    </Stack>
+                                    <LessonCommentsProvider>
+                                        <Stack screenOptions={{gestureEnabled: true}}>
+                                            <Stack.Screen name="index" options={{ headerShown: false }} />
+                                            <Stack.Screen name="(auth)" options={{ headerShown: false}} />
+                                            <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
+                                            {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
+                                            {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
+                                        </Stack>
+                                    </LessonCommentsProvider>
                                 </BlogsDrawerProvider>
                             </TopbarUpdaterProvider>
                         </DrawerUpdaterProvider>
