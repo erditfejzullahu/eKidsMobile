@@ -23,15 +23,13 @@ import { useGlobalContext } from '../../../../../../context/GlobalProvider';
 import { useDrawerUpdater } from '../../../../../../navigation/DrawerUpdater';
 import apiClient from '../../../../../../services/apiClient';
 
-import * as Animatable from "react-native-animatable"
 import ShareToFriends from '../../../../../../components/ShareToFriends';
-import LessonContent from '../../../../../../components/LessonContent';
-import VideoContent from '../../../../../../components/VideoContent';
-import LessonHeader from '../../../../../../components/LessonTitle';
+
 import LessonTitle from '../../../../../../components/LessonTitle';
 import LessonInteractions from '../../../../../../components/LessonInteractions';
 import LessonComments from '../../../../../../components/LessonComments';
 import { useLessonCommentsContext } from '../../../../../../context/LessonCommentsProvider';
+import LessonVideoContent from '../../../../../../components/LessonVideoContent';
 
 const lessonContent = () => {
     const { lesson } = useLocalSearchParams(); 
@@ -344,7 +342,7 @@ const lessonContent = () => {
             </View>
             
             {/* VIDEO WITH WRITTEN CONTENT  */}
-              <VideoContent successBookmarkDelete={handleBookmarkDelete} successBookmarkMade={handleBookmarkMade} videoContent={videoSource} writtenContent={htmlContent} lessonData={lessonData} />
+              <LessonVideoContent successBookmarkDelete={handleBookmarkDelete} successBookmarkMade={handleBookmarkMade} videoContent={videoSource} writtenContent={htmlContent} lessonData={lessonData} />
             {/* VIDEO WITH WRITTEN CONTENT  */}
 
             {/* LESSON INTERACTIONS LIKE COMMENT  */}

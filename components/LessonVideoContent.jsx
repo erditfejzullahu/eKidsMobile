@@ -1,6 +1,6 @@
 import Checkbox from 'expo-checkbox';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Image, Text, View } from 'react-native';
 import { icons } from '../constants';
 import { currentUserID } from '../services/authService';
@@ -10,8 +10,9 @@ import { TouchableOpacity } from 'react-native';
 import CustomModal from './Modal';
 import LessonContent from './LessonContent';
 import NotifierComponent from './NotifierComponent';
+import { useFocusEffect } from 'expo-router';
 
-const VideoContent = ({videoContent, writtenContent, lessonData, successBookmarkDelete, successBookmarkMade}) => {
+const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBookmarkDelete, successBookmarkMade}) => {
     const [videoCompleted, setVideoCompleted] = useState(false)
     const [showVideo, setShowVideo] = useState(true)
     const [isChecked, setIsChecked] = useState(false)
@@ -63,17 +64,32 @@ const VideoContent = ({videoContent, writtenContent, lessonData, successBookmark
         setShowVideo(!showVideo)
     }
 
+    useFocusEffect(
+        useCallback(() => {
+            return () => {
+                if(player && player.playing){
+                    player.pause();
+                }
+            }
+        }, [player])
+    )
+
     useEffect(() => {
         if(videoContent){
         const completedVideo = player.addListener('playToEnd', () => {
             setVideoCompleted(true)
         })
-        
-        // return () => {
-        //   completedVideo.remove();
-        // }
+        return () => {
+            if(player && player.playing) {
+                player.pause();  // Pause the video
+            }
+            // Remove any listeners (important to prevent memory leaks)
+            if (player && player.removeListener) {
+                player.removeListener('playToEnd'); 
+            }
+        };
         }
-    }, [videoContent])
+    }, [videoContent, player])
 
 
     
@@ -176,4 +192,4 @@ const VideoContent = ({videoContent, writtenContent, lessonData, successBookmark
   )
 }
 
-export default VideoContent
+export default LessonVideoContent
