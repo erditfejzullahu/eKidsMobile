@@ -47,7 +47,7 @@ const BlogsLayout = () => {
             },
         }}
     >
-        <Tabs.Screen 
+        {/* <Tabs.Screen 
             name='blogCategories'
             options={{
                 title: "blogCategories",
@@ -61,7 +61,7 @@ const BlogsLayout = () => {
                     />
                 )
             }}
-        />
+        /> */}
         <Tabs.Screen 
             name='blogAll'
             options={{
@@ -69,7 +69,7 @@ const BlogsLayout = () => {
                 headerShown: false,
                 tabBarIcon: ({color, focused}) => (
                     <TabIcon 
-                        icon={icons.home}
+                        icon={icons.blogs}
                         color={color}
                         name="Te rejat"
                         focused={focused}
@@ -77,7 +77,7 @@ const BlogsLayout = () => {
                 )
             }}
         />
-        <Tabs.Screen 
+        {/* <Tabs.Screen 
             name='blogTags'
             options={{
                 title: "blogTags",
@@ -91,6 +91,21 @@ const BlogsLayout = () => {
                     />
                 )
             }}
+        /> */}
+        <Tabs.Screen 
+            name="discussions"
+            options={{
+                title: "discussions",
+                headerShown: false,
+                tabBarIcon: ({color, focused}) => (
+                    <TabIcon 
+                        icon={icons.discussion}
+                        color={color}
+                        name="Diskutimet"
+                        focused={focused}
+                    />
+                )
+            }}
         />
         <Tabs.Screen 
             name="profile"
@@ -99,7 +114,7 @@ const BlogsLayout = () => {
                 headerShown: false,
                 tabBarIcon: ({color, focused}) => (
                     <TabIcon 
-                        icon={icons.home}
+                        icon={icons.profile}
                         color={color}
                         name="Profili"
                         focused={focused}

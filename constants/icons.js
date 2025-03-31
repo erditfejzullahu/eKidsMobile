@@ -75,8 +75,18 @@ import camera from "../assets/icons/camera.png"
 import commitment from "../assets/icons/commitment.png"
 import share from "../assets/icons/share.png"
 import send from "../assets/icons/send.png"
+import blogs from "../assets/icons/blog.png"
+import discussion from "../assets/icons/discussion.png"
+import waiting from "../assets/icons/waiting-room.png"
+import votes from "../assets/icons/positive-vote.png"
+import answers from "../assets/icons/correct.png"
 
 export default {
+  answers,
+  votes,
+  waiting,
+  discussion,
+  blogs,
   send,
   share,
   commitment,
