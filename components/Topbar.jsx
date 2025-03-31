@@ -24,7 +24,7 @@ const Topbar = () => {
     const [retrivedData, setRetrivedData] = useState(null)
     const [retrivedBlogData, setRetrivedBlogData] = useState([])
     const [notificationsOpened, setNotificationsOpened] = useState(false)
-    const {showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened} = useTopbarUpdater();
+    const {showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened, showDiscussionSearcher} = useTopbarUpdater();
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
     const [queryText, setQueryText] = useState(null)
 
@@ -81,9 +81,9 @@ const Topbar = () => {
                 />
             </TouchableOpacity>
         </View>
-        {showSearcher && <View className="justify-center items-center flex-1 max-w-[60%] relative">
+        {(showSearcher || showDiscussionSearcher || showBlogSearcher) && <View className="justify-center items-center flex-1 max-w-[60%] relative">
             <TextInput 
-                placeholder='Kerkoni perdorues...'
+                placeholder={`${showSearcher ? "Kerkoni perdorues..." : showBlogSearcher ? "Kerkoni blogs..." : showDiscussionSearcher ? "Kerkoni diskutime..." : ""}`}
                 placeholderTextColor={"#414141"}
                 value={queryText}
                 className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
@@ -96,26 +96,7 @@ const Topbar = () => {
                     tintColor={"#fff"}
                 />
             </TouchableOpacity>}
-        </View>}
-
-        {showBlogSearcher && <View className="justify-center items-center flex-1 max-w-[60%] relative">
-            <TextInput 
-                placeholder='Kerkoni blogs...'
-                placeholderTextColor={"#414141"}
-                value={queryText}
-                className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
-                onChangeText={(text) => setQueryText(text)}
-            />
-            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]" onPress={() => setQueryText("")}>
-                <Image 
-                    source={icons.close}
-                    className="size-4"
-                    tintColor={"#fff"}
-                />
-            </TouchableOpacity>}
-        </View>}
-
-        
+        </View>} 
 
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
             {showQuizOrCourseSharer && <TouchableOpacity onPress={() => setShareOpened(!shareOpened)} className={`justify-center items-center border ${shareOpened ? "border-[#FF9C01]" : "border-[#CDCDE0]"} rounded-full`}>
