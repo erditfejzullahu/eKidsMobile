@@ -15,7 +15,8 @@ const dummyDiscussions = [
         },
         votes: 15,
         answers: 3,
-        views: 120
+        views: 120,
+        createdAt: Date.now()
     },
     {
         title: "What's the best way to manage state in Vue 3?",
@@ -27,7 +28,8 @@ const dummyDiscussions = [
         },
         votes: 22,
         answers: 5,
-        views: 200
+        views: 200,
+        createdAt: Date.now()
     },
     {
         title: "How does Prisma handle self-referencing tables?",
@@ -39,7 +41,8 @@ const dummyDiscussions = [
         },
         votes: 10,
         answers: 2,
-        views: 85
+        views: 85,
+        createdAt: Date.now()
     },
     {
         title: "What are the security best practices for NestJS?",
@@ -51,7 +54,8 @@ const dummyDiscussions = [
         },
         votes: 30,
         answers: 8,
-        views: 350
+        views: 350,
+        createdAt: Date.now()
     }
 ];
 
@@ -69,7 +73,7 @@ const allDiscussions = () => {
     <FlatList 
         className="bg-primary px-4"
         data={dummyDiscussions}
-        contentContainerStyle={{gap:10}}
+        contentContainerStyle={{gap:20}}
         keyExtractor={(item) => item.title}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         renderItem={({item}) => (
