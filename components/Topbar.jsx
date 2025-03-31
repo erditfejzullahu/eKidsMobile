@@ -89,7 +89,7 @@ const Topbar = () => {
                 className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
                 onChangeText={(text) => setQueryText(text)}
             />
-            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]">
+            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]" onPress={() => setQueryText("")}>
                 <Image 
                     source={icons.close}
                     className="size-4"
@@ -106,7 +106,7 @@ const Topbar = () => {
                 className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
                 onChangeText={(text) => setQueryText(text)}
             />
-            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]">
+            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]" onPress={() => setQueryText("")}>
                 <Image 
                     source={icons.close}
                     className="size-4"
