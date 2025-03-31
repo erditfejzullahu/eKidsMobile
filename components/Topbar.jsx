@@ -50,6 +50,8 @@ const Topbar = () => {
       if(queryText === '' || queryText === null){
         setRetrivedData(null)
         setRetrivedBlogData(null)
+      }else{
+        handleInput();
       }
     }, [queryText])
     
@@ -57,12 +59,11 @@ const Topbar = () => {
     const debounceFetchData = _.debounce(fetchUsers, 500);
     const debounceFetchBlogData = _.debounce(fetchBlogs, 500);
 
-    const handleInput = (text) => {        
-        setQueryText(text)
+    const handleInput = () => {        
         if(showSearcher){
-            if(text.length > 2) debounceFetchData(text)
+            if(queryText.length > 2) debounceFetchData(queryText)
         }else if(showBlogSearcher){
-            if(text.length > 2) debounceFetchBlogData(text)
+            if(queryText.length > 2) debounceFetchBlogData(queryText)
         }
     }
     
@@ -80,24 +81,38 @@ const Topbar = () => {
                 />
             </TouchableOpacity>
         </View>
-        {showSearcher && <View className="justify-center items-center flex-1">
+        {showSearcher && <View className="justify-center items-center flex-1 max-w-[60%] relative">
             <TextInput 
                 placeholder='Kerkoni perdorues...'
                 placeholderTextColor={"#414141"}
                 value={queryText}
-                className="border bg-primary text-white border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
-                onChangeText={handleInput}
+                className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
+                onChangeText={(text) => setQueryText(text)}
             />
+            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]">
+                <Image 
+                    source={icons.close}
+                    className="size-4"
+                    tintColor={"#fff"}
+                />
+            </TouchableOpacity>}
         </View>}
 
-        {showBlogSearcher && <View className="justify-center items-center flex-1">
+        {showBlogSearcher && <View className="justify-center items-center flex-1 max-w-[60%] relative">
             <TextInput 
                 placeholder='Kerkoni blogs...'
                 placeholderTextColor={"#414141"}
                 value={queryText}
-                className="border bg-primary text-white border-black-200 h-10 mt-1 p-2 rounded-[5px] w-[80%]"
-                onChangeText={handleInput}
+                className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
+                onChangeText={(text) => setQueryText(text)}
             />
+            {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]">
+                <Image 
+                    source={icons.close}
+                    className="size-4"
+                    tintColor={"#fff"}
+                />
+            </TouchableOpacity>}
         </View>}
 
         
