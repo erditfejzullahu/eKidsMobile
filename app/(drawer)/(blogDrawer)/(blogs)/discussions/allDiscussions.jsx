@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { FlatList, Image, RefreshControl, ScrollView, Text, View } from 'react-native'
+import { FlatList, Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { icons, images } from '../../../../../constants'
 import DiscussionsFilter from '../../../../../components/DiscussionsFilter'
 import DiscussionsCard from '../../../../../components/DiscussionsCard'
+import { useRouter } from 'expo-router'
 
 const dummyDiscussions = [
     {
@@ -61,6 +62,7 @@ const dummyDiscussions = [
 
 
 const allDiscussions = () => {
+    const router = useRouter();
     const [isRefreshing, setIsRefreshing] = useState(false)
 
     const onRefresh = () => {
@@ -81,7 +83,15 @@ const allDiscussions = () => {
         )}
         ListHeaderComponent={() => (
             <>
-            <View className={`my-4 flex-row items-center gap-2`}>
+            <View className={`my-4 flex-row items-center gap-2 relative`}>
+                <TouchableOpacity onPress={() => router.push('/discussions/addDiscussion')} className="absolute top-0 right-0 bg-secondary p-2 rounded-md" style={styles.box}>
+                    <Image 
+                        source={icons.plusnotfilled}
+                        className="h-6 w-6"
+                        resizeMode='contain'
+                        tintColor={"#fff"}
+                    />
+                </TouchableOpacity>
                 <View>
                     <Text className="text-2xl text-white font-pmedium">Diskutimet
                         <View>
@@ -119,3 +129,19 @@ const allDiscussions = () => {
 }
 
 export default allDiscussions
+
+const styles = StyleSheet.create({
+    box: {
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.6,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 8,
+            },
+        })
+    },
+});

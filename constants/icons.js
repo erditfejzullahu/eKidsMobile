@@ -80,8 +80,10 @@ import discussion from "../assets/icons/discussion.png"
 import waiting from "../assets/icons/waiting-room.png"
 import votes from "../assets/icons/positive-vote.png"
 import answers from "../assets/icons/correct.png"
+import plusnotfilled from "../assets/icons/plusnotfilled.png"
 
 export default {
+  plusnotfilled,
   answers,
   votes,
   waiting,

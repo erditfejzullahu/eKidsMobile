@@ -6,6 +6,7 @@ const _layout = () => {
     <Stack screenOptions={{gestureEnabled: true, headerShown: false}}>
         <Stack.Screen name='allDiscussions' />
         <Stack.Screen name='[id]' />
+        <Stack.Screen name="addDiscussion" />
     </Stack>
   )
 }
