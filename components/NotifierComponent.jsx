@@ -13,7 +13,7 @@ const NotifierComponent = ({title, description, alertType = "success", onHideFun
             hideAnimationDuration: 800,
             Component: NotifierComponents.Notification,
             componentProps: {
-                alertType: alertType, // Can also be 'error' or 'info'
+                alertType: alertType, // Can also be 'error' "warning" or 'info'
                 titleStyle: { color: '#fff', fontFamily: "Poppins-SemiBold" }, 
                 descriptionStyle: { color: '#9ca3af', fontFamily: "Poppins-Light" },
                 containerStyle: { backgroundColor: '#161622' },

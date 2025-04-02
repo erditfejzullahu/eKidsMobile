@@ -3,11 +3,12 @@ import React from 'react'
 import { icons, images } from '../../../../../constants'
 import { useRouter } from 'expo-router'
 import CreateDiscussionForm from '../../../../../components/CreateDiscussionForm'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const addDiscussion = () => {
     const router = useRouter();
   return (
-    <ScrollView className="h-full bg-primary px-4">
+    <KeyboardAwareScrollView  className="h-full bg-primary px-4" keyboardShouldPersistTaps="handled" behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View className="my-4 flex-row items-center gap-2 relative border-b border-black-200 pb-6">
             <TouchableOpacity onPress={() => router.back()} className="absolute top-0 right-0 bg-secondary p-2 rounded-md" style={styles.box}>
                 <Image 
@@ -37,7 +38,7 @@ const addDiscussion = () => {
             </View>
         </View>
         <CreateDiscussionForm />
-    </ScrollView>
+    </KeyboardAwareScrollView>
   )
 }
 

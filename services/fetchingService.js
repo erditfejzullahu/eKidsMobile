@@ -821,3 +821,14 @@ export const reqReadMessages = async (sender, receiver) => {
         return error.response.status;
     }
 }
+
+export const createDiscussion = async (payload) => {
+    try {
+        const response = await apiClient.post("/api/Discussions", payload)
+        return response && response.status;
+    } catch (error) {
+        console.error(error.response.errors);
+        
+        return error.response.status;
+    }
+}
