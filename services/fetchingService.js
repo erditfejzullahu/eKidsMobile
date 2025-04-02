@@ -832,3 +832,12 @@ export const createDiscussion = async (payload) => {
         return error.response.status;
     }
 }
+
+export const getTagsByTitle = async (title) => {
+    try {
+        const response = await apiClient.get(`/api/Discussions/TypingTags?title=${title}`)
+        return response && response.data;
+    } catch (error) {
+        return null
+    }
+}

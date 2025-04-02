@@ -7,9 +7,10 @@ import CustomButton from "./CustomButton"
 import { CoreBridge, PlaceholderBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor';
 import Placeholder from '@tiptap/extension-placeholder'
 import { currentUserID } from '../services/authService'
-import { createDiscussion } from '../services/fetchingService'
+import { createDiscussion, getTagsByTitle } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import { useRouter } from 'expo-router'
+import _ from 'lodash'
 
 const CreateDiscussionForm = () => {
     const router = useRouter();
@@ -41,16 +42,32 @@ const CreateDiscussionForm = () => {
 
     const [preferAnonimity, setPreferAnonimity] = useState(false)
 
+    const [tagsResponse, setTagsResponse] = useState([])
+
     const removeTag = (tag) => {
         setTags((prevData) => prevData.filter((itm) => itm !== tag))
         setTagInput((prevInput) => prevInput.split(" ").filter((word) => word !== tag).join(" "))
     }
 
-    const addExistingTag = () => {
-        setTags((prevData) => [...prevData, "Tag1"])
-        setTagInput((prevInput) => prevInput + " Tag1")
+    const addExistingTag = (tag) => {
+        setTags((prevData) => [...prevData, tag])
+        setTagInput((prevInput) => prevInput + ` ${tag}`)
     }
 
+    const handleGetTags = async () => {        
+        const response = await getTagsByTitle(tagInput);
+        if(response){
+            setTagsResponse(response)
+        }else{
+            setTagsResponse([])
+        }
+    }
+    const debounceTagData = _.debounce(() => handleGetTags(), 500);
+
+    useEffect(() => {
+      debounceTagData()
+    }, [tagInput])
+    
 
     useEffect(() => {
       const newTags = tagInput.trim().split(" ").filter(tag => tag.length > 0);
@@ -89,6 +106,7 @@ const CreateDiscussionForm = () => {
     })
 
     const handleCreateDiscussion = async () => {
+        setIsLoading(true)
         const userId = await currentUserID();
         const payload = {
             "title": title,
@@ -97,7 +115,6 @@ const CreateDiscussionForm = () => {
             "preferAnonimity": preferAnonimity ? 1 : 2,
             "tags": tags.map((tag) => ({"title": tag}))
         }
-        console.log(payload);
         
         const response = await createDiscussion(payload);
         if(response === 200){
@@ -106,6 +123,7 @@ const CreateDiscussionForm = () => {
         }else{
             failedCreation()
         }
+        setIsLoading(false)
     }
 
     
@@ -156,17 +174,16 @@ const CreateDiscussionForm = () => {
                     title={"Etiketimet"}
                     placeholder={"Shkruani etiketimet tuaj ketu..."}
                     value={tagInput}
-                    handleChangeText={(text) => setTagInput(text)}
+                    handleChangeText={(text) => {setTagInput(text);}}
                     titleStyle={"!font-psemibold"}
                 />
-                {/* <ScrollView nestedScrollEnabled className="absolute w-[80%] bottom-0 -mb-20 z-20 bg-primary max-h-[70px] h-full rounded-lg border border-black-200" style={styles.box}>
-                    <TouchableOpacity className="border-t border-b border-black-200 px-2 py-2" onPress={() => addExistingTag()}>
-                        <Text className="text-white font-psemibold text-sm">Tagu 1</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity className="border-t border-b border-black-200 px-2 py-2">
-                        <Text className="text-white font-psemibold text-sm">Tagu 1</Text>
-                    </TouchableOpacity>
-                </ScrollView> */}
+                {tagsResponse.length > 0 && <ScrollView nestedScrollEnabled className="absolute w-[80%] bottom-0 -mb-20 z-20 bg-primary max-h-[70px] h-full rounded-lg border border-black-200" style={styles.box}>
+                    {tagsResponse.map((tag, idx) => (
+                        <TouchableOpacity key={`tag-${idx}`} className="border-t border-b border-black-200 px-2 py-2" onPress={() => addExistingTag(tag.title)}>
+                            <Text className="text-white font-psemibold text-sm">{tag.title}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>}
             </View>
         <Text className="text-gray-400 mt-1 font-plight text-sm">Vemendje: Per qdo hapsire qe behet, krijohet nje etikitim i ri!</Text>
         </View>
