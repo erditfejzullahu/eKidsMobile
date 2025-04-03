@@ -841,3 +841,12 @@ export const getTagsByTitle = async (title) => {
         return null
     }
 }
+
+export const getDiscussions = async (userId) => {
+    try {
+        const response = await apiClient.get(`/api/Discussions`)
+        return response && response.data
+    } catch (error) {
+        return null;
+    }
+}

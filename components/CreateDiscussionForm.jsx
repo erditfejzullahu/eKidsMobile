@@ -112,7 +112,7 @@ const CreateDiscussionForm = () => {
             "title": title,
             "content": content,
             "userId": userId,
-            "preferAnonimity": preferAnonimity ? 1 : 2,
+            "preferAnonimity": preferAnonimity ? 1 : 0,
             "tags": tags.map((tag) => ({"title": tag}))
         }
         

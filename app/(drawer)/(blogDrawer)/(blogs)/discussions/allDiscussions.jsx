@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FlatList, Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { icons, images } from '../../../../../constants'
 import DiscussionsFilter from '../../../../../components/DiscussionsFilter'
 import DiscussionsCard from '../../../../../components/DiscussionsCard'
 import { useRouter } from 'expo-router'
+import useFetchFunction from '../../../../../hooks/useFetchFunction'
+import { getDiscussions } from '../../../../../services/fetchingService'
+import Loading from "../../../../../components/Loading"
 
 const dummyDiscussions = [
     {
@@ -63,20 +66,34 @@ const dummyDiscussions = [
 
 const allDiscussions = () => {
     const router = useRouter();
+    const {data, isLoading, refetch} = useFetchFunction(getDiscussions)
+    
     const [isRefreshing, setIsRefreshing] = useState(false)
+    const [discussionData, setDiscussionData] = useState([])
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setIsRefreshing(true)
-
+        await refetch();
         setIsRefreshing(false)
     }
 
+    useEffect(() => {
+      if(data){
+        setDiscussionData(data)
+        console.log(discussionData);
+        
+      }else{
+        setDiscussionData([])
+      }
+    }, [data])
+    
+if(isLoading) return <Loading />
   return (
     <FlatList 
         className="bg-primary px-4"
-        data={dummyDiscussions}
+        data={discussionData?.data}
         contentContainerStyle={{gap:20}}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item.id}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         renderItem={({item}) => (
             <DiscussionsCard discussion={item}/>
@@ -115,13 +132,13 @@ const allDiscussions = () => {
             <DiscussionsFilter />
 
             <View className="mt-2">
-                <Text className="text-white font-psemibold"><Text className="text-secondary">123124</Text> Diskutime</Text>
+                <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
             </View>
             </>
         )}
         ListFooterComponent={() => (
             <View className="mb-4">
-
+                {discussionData?.hasMore && <Loading />}
             </View>
         )}
     />

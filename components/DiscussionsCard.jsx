@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native'
 import { icons } from '../constants'
 import { TouchableOpacity } from 'react-native'
 
-const DiscussionsCard = ({discussion: {title, content, tags, user, votes, answers, views, createdAt}}) => {
+const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt}}) => {
     const date = new Date(createdAt).toLocaleDateString('sq-AL', {
         year: 'numeric',
         month: 'long',  // Full month name
@@ -13,11 +13,11 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, answer
   return (
     <TouchableOpacity className="bg-oBlack p-4 relative border border-black-200" style={styles.box}>
         <View className="absolute -right-2 -top-2 border border-black-200 rounded-md bg-primary p-2" style={styles.box}>
-            <Image 
-                source={icons.userProfile}
-                className="w-12 h-12"
+            {user !== null ? <Image 
+                source={{uri: user?.profilePictureUrl}}
+                className="w-12 h-12 rounded-sm"
                 resizeMode='contain'
-            />
+            /> : <Image source={icons.profile} className="w-12 h12" resizeMode='contain'/>}
         </View>
         <View className="-bottom-2 -left-2 bg-primary px-2 py-1 absolute border border-black-200 rounded-md" style={styles.box}>
             <Text className="text-white font-psemibold text-sm">{date}</Text>
@@ -26,8 +26,8 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, answer
         <Text numberOfLines={3} className="text-sm text-gray-400 font-plight">{content}</Text>
 
         <View className="flex-row flex-wrap gap-2 mt-4">
-        {tags.map((item, index) => (
-            <Text key={index} className="text-white font-semibold bg-secondary rounded-md px-2 py-1">{item}</Text>
+        {tags.map((item) => (
+            <Text key={item.id} className="text-white font-semibold bg-secondary rounded-md px-2 py-1">{item?.title}</Text>
         ))}
         </View>
 
@@ -38,16 +38,16 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, answer
                     source={icons.votes}
                     className="size-6"
                     resizeMode='contain'
-                    tintColor={"ff9c01"}
+                    tintColor={"#ff9c01"}
                 />
             </View>
             <View className="flex-row gap-1.5 items-center">
-                <Text className="text-white font-psemibold text-sm"><Text className="text-secondary">{answers}</Text> Pergjigjje</Text>
+                <Text className="text-white font-psemibold text-sm"><Text className="text-secondary">{answers || 0}</Text> Pergjigjje</Text>
                 <Image 
                     source={icons.answers}
                     className="size-6"
                     resizeMode='contain'
-                    tintColor={"ff9c01"}
+                    tintColor={"#ff9c01"}
                 />
             </View>
             <View className="flex-row gap-1.5 items-center">
@@ -56,7 +56,7 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, answer
                     source={icons.popular}
                     className="size-6"
                     resizeMode='contain'
-                    tintColor={"ff9c01"}
+                    tintColor={"#ff9c01"}
                 />
             </View>
         </View>
