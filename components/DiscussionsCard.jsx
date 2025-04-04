@@ -1,10 +1,23 @@
-import { View, Text, Platform, Image } from 'react-native'
-import React from 'react'
+import { View, Text, Platform, Image, useWindowDimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { icons } from '../constants'
 import { TouchableOpacity } from 'react-native'
+import RenderHTML from 'react-native-render-html'
 
 const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt}}) => {
+    const [htmlContent, setHtmlContent] = useState({html: ""})
+    const {width} = useWindowDimensions();
+
+    useEffect(() => {
+        if(content){
+            setHtmlContent((prevData) => ({
+                ...prevData,
+                html: content
+            }))
+        }
+    }, [content])
+    
     const date = new Date(createdAt).toLocaleDateString('sq-AL', {
         year: 'numeric',
         month: 'long',  // Full month name
@@ -17,13 +30,35 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
                 source={{uri: user?.profilePictureUrl}}
                 className="w-12 h-12 rounded-sm"
                 resizeMode='contain'
-            /> : <Image source={icons.profile} className="w-12 h12" resizeMode='contain'/>}
+            /> : <Image source={icons.profile} className="w-12 h-12" resizeMode='contain'/>}
         </View>
         <View className="-bottom-2 -left-2 bg-primary px-2 py-1 absolute border border-black-200 rounded-md" style={styles.box}>
             <Text className="text-white font-psemibold text-sm">{date}</Text>
         </View>
         <Text className="text-xl font-psemibold text-white mb-3">{title}</Text>
-        <Text numberOfLines={3} className="text-sm text-gray-400 font-plight">{content}</Text>
+        
+        {/* content */}
+        <RenderHTML 
+            tagsStyles={{
+            h1: {color:"white", fontFamily: 'Poppins-Black', marginTop:"1.5em", marginBottom: "0.5em"},
+            h2: {color:"white", fontFamily: 'Poppins-Bold', marginTop:"1.25em", marginBottom: "0.75em"},
+            h3: {color:"white", fontFamily: 'Poppins-Medium', marginTop: "1em", marginBottom: "0.5em"},
+            h4: {color:"white", fontFamily: "Poppins-Medium", marginTop: "0.75em", marginBottom: "0.5em"},
+            h5: {color:"white", fontFamily:"Poppins-Regular", marginTop:"0.5em", marginBottom: "0.25em"},
+            p: {color:"#9ca3af", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0px", marginBottom: "10px"},
+            strong: {color:"white", fontFamily: "Poppins-Bold", fontSize: 12},
+            li: {color:"white", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0.25em", marginBottom: "0.25em"},
+            ol: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12,  marginTop: "1em", marginBottom: "1em"},
+            ul: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12, marginTop: "1em", marginBottom: "1em"}
+            }}
+            contentWidth={width}
+            source={htmlContent}
+            classesStyles={{ //for classes exmpl yellow clr
+            special: { color: 'green', fontStyle: 'italic' },
+            }}
+            systemFonts={['Poppins-Black', 'Poppins-Bold', 'Poppins-ExtraBold', 'Poppins-Light', 'Poppins-Medium', 'Poppins-Regular', 'Popping-SemiBold']}
+        />
+        {/* content */}
 
         <View className="flex-row flex-wrap gap-2 mt-4">
         {tags.map((item) => (

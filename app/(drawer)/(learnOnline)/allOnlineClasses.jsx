@@ -119,6 +119,9 @@ const allOnlineClasses = () => {
                 <SorterComponent showSorter={true}/>
                 </View>
             )}
+            ListFooterComponent={() => (
+              <View className="mb-4"></View>
+            )}
         />
 
         
