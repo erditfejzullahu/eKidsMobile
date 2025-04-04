@@ -850,3 +850,17 @@ export const getDiscussions = async (userId) => {
         return null;
     }
 }
+
+export const getUserCreatedBlogsOrDiscussions = async (type, userId) => {
+    try {
+        let response;
+        if(type === "blogs"){
+            response = await apiClient.get(`/api/Blogs/GetAllBlogsByUser/${userId}`)
+        }else if (type === "discussions"){
+            response = await apiClient.get(`/api/Discussions/GetAllDiscussionsByUser/${userId}`)
+        }
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}

@@ -74,7 +74,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         visible={shareOpened}
         transparent={true}
         animationType="slide"
-        onClose={() => setShareOpened(false)}
+        onRequestClose={() => setShareOpened(false)}
     >
         <View className="flex-1 justify-center items-center" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
             <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={styles.box}>

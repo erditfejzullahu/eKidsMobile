@@ -242,7 +242,6 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                     }
                 }
                 
-                console.log(payload,  ' ???');
                 const response = await reqCreatePost(payload);
                 
         if(response){
@@ -254,6 +253,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
             setTagsSelected([])
             setPostStatus(1)
             setOutputTags([])
+            setImagesSelected([])
         }else{
             failedNotification()
         }

@@ -21,6 +21,8 @@ import { Link } from 'expo-router'
 import EmptyState from '../../../components/EmptyState'
 import { useRouter } from 'expo-router'
 import ShowOtherDetailsProfile from '../../../components/ShowOtherDetailsProfile'
+import DiscussionsProfile from '../../../components/DiscussionsProfile'
+import BlogsProfile from '../../../components/BlogsProfile'
 
 const profile = () => {
 const router = useRouter();
@@ -258,8 +260,8 @@ const router = useRouter();
       console.error(error, '????');
     }
   }
-
-  if(refreshing){
+  
+  if(refreshing || isLoading){
     return(
       <Loading />
     )
@@ -275,7 +277,10 @@ const router = useRouter();
         }
       >
         {/* profile part */}
-        <View className="w-full items-center justify-center mb-8">
+        <View className="w-full items-center justify-center mb-8 relative" style={styles.box}>
+          <DiscussionsProfile userData={user}/>
+          <BlogsProfile userData={user}/>
+
           <View className="h-16 w-16 bg-secondary rounded-[15px] justify-center items-center mt-10">
             <TouchableOpacity onPress={profileImage}>
               <Image 

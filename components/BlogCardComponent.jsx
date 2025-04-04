@@ -28,7 +28,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
       }
     }, [blog?.imageUrls])
     
-    console.log(blogImages);
+    // console.log(blogImages);
     
   return (
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
