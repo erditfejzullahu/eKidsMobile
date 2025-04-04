@@ -81,8 +81,14 @@ import waiting from "../assets/icons/waiting-room.png"
 import votes from "../assets/icons/positive-vote.png"
 import answers from "../assets/icons/correct.png"
 import plusnotfilled from "../assets/icons/plusnotfilled.png"
+import upcoming from "../assets/icons/upcoming.png"
+import tutor from "../assets/icons/tutor.png"
+import onlineclasses from "../assets/icons/onlineclasses.png"
 
 export default {
+  tutor,
+  onlineclasses,
+  upcoming,
   plusnotfilled,
   answers,
   votes,

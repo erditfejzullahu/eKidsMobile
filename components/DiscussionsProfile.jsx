@@ -7,7 +7,7 @@ import DiscussionsCard from './DiscussionsCard'
 import Loading from './Loading'
 
 const DiscussionsProfile = ({userData}) => {
-    const [openModal, setOpenModal] = useState(true)
+    const [openModal, setOpenModal] = useState(false)
     const [discussionsLoading, setDiscussionsLoading] = useState(false)
     const [discussionsData, setDiscussionsData] = useState([])
     

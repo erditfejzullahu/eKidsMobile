@@ -20,6 +20,8 @@ import { ContributionGraph, ProgressChart } from 'react-native-chart-kit'
 import { FlatList } from 'react-native-gesture-handler'
 import * as Animatable from "react-native-animatable"
 import EmptyState from '../../../components/EmptyState'
+import BlogsProfile from '../../../components/BlogsProfile'
+import DiscussionsProfile from '../../../components/DiscussionsProfile'
 
 const profiles = () => {
     const {profile} = useLocalSearchParams();
@@ -287,7 +289,9 @@ const profiles = () => {
       className="h-full bg-primary"
     >
       {/* profile part */}
-      <View className="w-full items-center justify-center pb-4 mb-4" style={styles.box}>
+      <View className="w-full items-center justify-center pb-4 mb-4 relative" style={styles.box}>
+        <BlogsProfile userData={profileData}/> {/* to fix */}
+        <DiscussionsProfile userData={profileData}/> {/* to fix */}
           <View className="h-16 w-16 bg-secondary rounded-[15px] justify-center items-center mt-10">
             <TouchableOpacity onPress={profileImage}>
               <Image 
