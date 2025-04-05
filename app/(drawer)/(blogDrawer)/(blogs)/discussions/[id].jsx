@@ -11,6 +11,78 @@ import RenderHTML from 'react-native-render-html';
 import { useRouter } from 'expo-router';
 import { CoreBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor';
 import Placeholder from '@tiptap/extension-placeholder';
+import DiscussionCommentsSort from '../../../../../components/DiscussionCommentsSort';
+import DiscussionsCommentCard from '../../../../../components/DiscussionsCommentCard';
+const discussionComments = [
+  {
+    id: 1,
+    userId: 101,
+    username: "CodeMaster99",
+    avatar: "https://example.com/avatars/user1.png",
+    content: "You can fix this error by updating your React Native version to 0.73.2. It was a bug in older versions.",
+    createdAt: "2025-04-05T08:30:00Z",
+    upvotes: 15,
+    downvotes: 2,
+    isAnswer: true,
+    replies: [
+      {
+        id: 11,
+        userId: 102,
+        username: "DevGirl_21",
+        avatar: "https://example.com/avatars/user2.png",
+        content: "Yep, this worked for me. Also had to clear the cache!",
+        createdAt: "2025-04-05T09:15:00Z",
+        upvotes: 5,
+        downvotes: 0,
+      },
+      {
+        id: 12,
+        userId: 103,
+        username: "frontendFan",
+        avatar: "https://example.com/avatars/user3.png",
+        content: "React Native cache is always the hidden monster 😩",
+        createdAt: "2025-04-05T10:00:00Z",
+        upvotes: 3,
+        downvotes: 1,
+      }
+    ]
+  },
+  {
+    id: 2,
+    userId: 104,
+    username: "JS_Wizard",
+    avatar: "https://example.com/avatars/user4.png",
+    content: "You could also use Expo EAS build, it handles most native dependencies better.",
+    createdAt: "2025-04-05T08:45:00Z",
+    upvotes: 8,
+    downvotes: 1,
+    isAnswer: false,
+    replies: []
+  },
+  {
+    id: 3,
+    userId: 105,
+    username: "NoobCoder",
+    avatar: "https://example.com/avatars/user5.png",
+    content: "Still having this issue after updating, anyone else?",
+    createdAt: "2025-04-05T09:00:00Z",
+    upvotes: 2,
+    downvotes: 0,
+    isAnswer: false,
+    replies: [
+      {
+        id: 13,
+        userId: 106,
+        username: "StackPro",
+        avatar: "https://example.com/avatars/user6.png",
+        content: "Did you also run `npx react-native-clean-project`?",
+        createdAt: "2025-04-05T09:20:00Z",
+        upvotes: 4,
+        downvotes: 0,
+      }
+    ]
+  }
+];
 
 const discussion = () => {
   const router = useRouter();
@@ -79,6 +151,12 @@ const discussion = () => {
       <FlatList 
         // contentContainerStyle={{paddingLeft: 16, paddingRight: 16}}
         refreshControl={<RefreshControl refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
+        contentContainerStyle={{gap:24}}
+        data={discussionComments}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => (
+          <DiscussionsCommentCard item={item}/>
+        )}
         ListHeaderComponent={() => (
           <>
           <View className="bg-oBlack p-4 flex-row justify-between gap-2 items-start border-b border-black-200" style={styles.box}>
@@ -162,7 +240,7 @@ const discussion = () => {
                     systemFonts={['Poppins-Black', 'Poppins-Bold', 'Poppins-ExtraBold', 'Poppins-Light', 'Poppins-Medium', 'Poppins-Regular', 'Popping-SemiBold']}
                 />
               </ScrollView>
-              <TouchableOpacity className="absolute -bottom-3 left-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center">
+              <TouchableOpacity className="absolute -bottom-3 left-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
                   <Text className="font-psemibold text-sm text-white">Shperndaje</Text>
                   <Image
                     source={icons.share}
@@ -171,7 +249,7 @@ const discussion = () => {
                     tintColor={"#ff9c01"}
                   />
               </TouchableOpacity>
-              <TouchableOpacity className="absolute -bottom-3 right-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center">
+              <TouchableOpacity className="absolute -bottom-3 right-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
                   <Text className="font-psemibold text-sm text-white">Komento</Text>
                   <Image
                     source={icons.chat}
@@ -183,10 +261,21 @@ const discussion = () => {
             </View>
             <Image />
           </View>
+
+          {/* comments and sorting comments */}
+          <View className="flex-row items-center justify-between px-4 mt-8">
+            <View>
+              <Text className="text-secondary font-psemibold text-base">10 <Text className="text-white">pergjigjje/komente</Text></Text>
+            </View>
+            <View>
+              <DiscussionCommentsSort />
+            </View>
+          </View>
+          {/* comments and sorting comments */}
           </>
         )}
         ListFooterComponent={() => (
-          <View className="border max-h-[300px] h-full mt-6 bg-primary border-black-200 overflow-hidden p-2">
+          <View className="border-t border-b max-h-[300px] h-full mt-6 bg-primary border-black-200 overflow-hidden p-2 px-4">
               <Text className="text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
               <Text className="text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
               <RichText editor={editor} style={[{backgroundColor: "#13131a", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: "#232533"}, styles.box]}/>
