@@ -5,6 +5,7 @@ import * as Animatable from "react-native-animatable"
 import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
 import DiscussionsCard from './DiscussionsCard'
 import Loading from './Loading'
+import { RefreshControl } from 'react-native'
 
 const DiscussionsProfile = ({userData}) => {
     const [openModal, setOpenModal] = useState(false)
@@ -56,6 +57,7 @@ const DiscussionsProfile = ({userData}) => {
                     :
                     <View className="border-b border-black-200 flex-1">
                         <FlatList
+                            refreshControl={<RefreshControl refreshing={discussionsLoading} onRefresh={async () => await getDiscussions()}/>}
                             scrollEnabled={true}
                             contentContainerStyle={{gap: 24, paddingLeft: 16, paddingRight: 16}}
                             data={discussionsData?.discussions}

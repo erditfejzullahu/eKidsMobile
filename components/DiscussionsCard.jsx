@@ -4,8 +4,10 @@ import { StyleSheet } from 'react-native'
 import { icons } from '../constants'
 import { TouchableOpacity } from 'react-native'
 import RenderHTML from 'react-native-render-html'
+import { useRouter } from 'expo-router'
 
-const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt}}) => {
+const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt, id}}) => {
+    const router = useRouter();
     const [htmlContent, setHtmlContent] = useState({html: ""})
     const {width} = useWindowDimensions();
 
@@ -24,7 +26,7 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
         day: 'numeric',
       });
   return (
-    <TouchableOpacity className="bg-oBlack p-4 relative border border-black-200" style={styles.box}>
+    <TouchableOpacity className="bg-oBlack p-4 relative border border-black-200" style={styles.box} onPress={() => router.push(`/discussions/${id}`)}>
         <View className="absolute -right-2 -top-2 border border-black-200 rounded-md bg-primary p-2" style={styles.box}>
             {user !== null ? <Image 
                 source={{uri: user?.profilePictureUrl}}
@@ -49,7 +51,7 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
             strong: {color:"white", fontFamily: "Poppins-Bold", fontSize: 12},
             li: {color:"white", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0.25em", marginBottom: "0.25em"},
             ol: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12,  marginTop: "1em", marginBottom: "1em"},
-            ul: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12, marginTop: "1em", marginBottom: "1em"}
+            ul: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12, marginTop: "1em", marginBottom: "1em"},
             }}
             contentWidth={width}
             source={htmlContent}

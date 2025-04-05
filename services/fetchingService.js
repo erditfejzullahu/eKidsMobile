@@ -864,3 +864,12 @@ export const getUserCreatedBlogsOrDiscussions = async (type, userId) => {
         return null;
     }
 }
+
+export const getDiscussionById = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Discussions/${id}`)
+        return response && response.data
+    } catch (error) {
+        return null;
+    }
+}

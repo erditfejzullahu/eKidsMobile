@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, Modal, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, Modal, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
 import * as Animatable from "react-native-animatable"
@@ -10,8 +10,11 @@ const BlogsProfile = ({userData}) => {
     const [openModal, setOpenModal] = useState(false)
     const [blogsLoading, setBlogsLoading] = useState(false)
     const [blogsData, setBlogsData] = useState([])
-    console.log(userData);
     
+    const onRefresh = async () => {
+        await getBlogs();
+    }
+
     const getBlogs = async () => {
         setBlogsLoading(true)
         const response = await getUserCreatedBlogsOrDiscussions("blogs", userData?.data?.userData?.id)
@@ -55,6 +58,7 @@ const BlogsProfile = ({userData}) => {
                 :
                 <View className="border-b border-black-200 flex-1 px-4">
                     <FlatList 
+                        refreshControl={<RefreshControl refreshing={blogsLoading} onRefresh={onRefresh}/>}
                         scrollEnabled={true}
                         contentContainerStyle={{gap: 24}}
                         data={blogsData?.data}
