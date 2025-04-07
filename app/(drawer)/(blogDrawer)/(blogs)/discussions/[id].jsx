@@ -174,8 +174,9 @@ const discussion = () => {
     if(isLoading || discussionRefreshing) return <Loading />
     
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 h-full bg-primary">
       <FlatList 
+      className="h-full flex-1"
         // contentContainerStyle={{paddingLeft: 16, paddingRight: 16}}
         refreshControl={<RefreshControl refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
         contentContainerStyle={{gap:24}}
@@ -186,7 +187,16 @@ const discussion = () => {
         )}
         ListHeaderComponent={() => (
           <>
-          <View className="bg-oBlack p-4 flex-row justify-between gap-2 items-start border-b border-black-200" style={styles.box}>
+          <View className="flex-1">
+          <View className="bg-oBlack relative p-4 flex-row justify-between gap-2 items-start border-b border-black-200" style={styles.box}>
+              <TouchableOpacity onPress={() => router.back()} className="bg-primary border border-black-200 absolute left-4 -bottom-2 px-6 py-0.5 rounded-md" style={styles.box}>
+                <Image 
+                  source={icons.leftArrow}
+                  className="h-4 w-4"
+                  resizeMode='contain'
+                  tintColor={"#FF9C01"}
+                />
+              </TouchableOpacity>
             <View className="flex-1">
               <Text className="text-2xl font-psemibold text-white">{discussionData?.title}</Text>
               <View className="flex-row items-center gap-2 justify-between flex-wrap mt-1">
@@ -298,11 +308,12 @@ const discussion = () => {
               <DiscussionCommentsSort />
             </View>
           </View>
+          </View>
           {/* comments and sorting comments */}
           </>
         )}
         ListFooterComponent={() => (
-          <View className="border-t border-b max-h-[300px] h-full mt-6 bg-primary border-black-200 overflow-hidden p-2 px-4">
+          <View className="border-t flex-1 border-b min-h-full  bg-primary border-black-200 overflow-hidden p-2 px-4">
               <Text className="text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
               <Text className="text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
               <RichText editor={editor} style={[{backgroundColor: "#13131a", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: "#232533"}, styles.box]}/>
