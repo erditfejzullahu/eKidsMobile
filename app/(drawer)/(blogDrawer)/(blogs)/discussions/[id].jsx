@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FlatList, Image, KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import useFetchFunction from '../../../../../hooks/useFetchFunction';
-import { getDiscussionById, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
+import { getDiscussionById, getDiscussionsAnswers, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
 import Loading from "../../../../../components/Loading"
 import { Platform } from 'react-native';
 import { icons } from '../../../../../constants';
@@ -14,6 +14,8 @@ import Placeholder from '@tiptap/extension-placeholder';
 import DiscussionCommentsSort from '../../../../../components/DiscussionCommentsSort';
 import DiscussionsCommentCard from '../../../../../components/DiscussionsCommentCard';
 import { currentUserID } from '../../../../../services/authService';
+import DiscussionVotesComponent from '../../../../../components/DiscussionVotesComponent';
+import EmptyState from "../../../../../components/EmptyState"
 const discussionComments = [
   {
     id: 1,
@@ -89,12 +91,14 @@ const discussion = () => {
   const router = useRouter();
     const {id} = useLocalSearchParams();
     const {data, isLoading, refetch} = useFetchFunction(() => getDiscussionById(id))
+    const {data: answersData, isLoading: answersLoading, refetch: answersRefetch} = useFetchFunction(() => getDiscussionsAnswers(id))
     const [discussionData, setDiscussionData] = useState(null)
+    const [discussionAnswerData, setDiscussionAnswerData] = useState([]);
     const [discussionRefreshing, setDiscussionRefreshing] = useState(false);
     const [discussionCommentMade, setDiscussionCommentMade] = useState("")
     const [htmlContent, setHtmlContent] = useState({html: ""})
+
     const {width} = useWindowDimensions();
-  console.log(data);
   
     const date = new Date(discussionData?.createdAt).toLocaleDateString("sq-AL", {
       day: "numeric",
@@ -122,33 +126,8 @@ const discussion = () => {
     const onRefresh = async () => {
       setDiscussionRefreshing(true)
       await refetch();
+      await answersRefetch();
       setDiscussionRefreshing(false)
-    }
-
-    const handleDiscussionVote = async (voteType) => {
-      // voteType as 0(voteup) or 1(votedown)
-      const userId = await currentUserID();
-      const payload = {
-        userId: userId,
-        discussionId: id,
-        discussionVoteType: voteType
-      }
-      const response = await handleDiscussionVoteFunc(payload)
-      if(response){
-        if(response.voteResponse === 0){
-          if(discussionData.voteDetails){
-            //to remove vote that is made (decrease by 2) //check this logic in backend too
-          }else{
-            //to add one vote(increase by 1)
-          }
-        }else if(response.voteResponse === 1){
-          if(discussionData.voteDetails){
-            //to remove vote that is made(increase)
-          }else{
-            //to add one vote(decrase)
-          }
-        }
-      }
     }
 
     useEffect(() => {
@@ -168,19 +147,31 @@ const discussion = () => {
     }, [data])
 
     useEffect(() => {
+      if(answersData){
+        
+        setDiscussionAnswerData(answersData);
+      }else{
+        setDiscussionAnswerData([])
+      }
+      console.log(answersData, ' answerdata');
+    }, [answersData])
+    
+
+    useEffect(() => {
       refetch();
+      answersRefetch();
     }, [id])
     
-    if(isLoading || discussionRefreshing) return <Loading />
+    if(isLoading || discussionRefreshing || answersLoading) return <Loading />
     
   return (
     <View className="flex-1 h-full bg-primary">
-      <FlatList 
+      <FlatList
       className="h-full flex-1"
         // contentContainerStyle={{paddingLeft: 16, paddingRight: 16}}
         refreshControl={<RefreshControl refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
         contentContainerStyle={{gap:24}}
-        data={discussionComments}
+        data={discussionAnswerData}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
           <DiscussionsCommentCard item={item}/>
@@ -216,28 +207,9 @@ const discussion = () => {
             </TouchableOpacity>
             </View>
           </View>
+          
           <View className="border-b-8 border-black-200 pb-8">
-            <View className="flex-row items-center justify-between p-4">
-              <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(discussionData?.voteDetails === null || !discussionData?.voteDetails?.isVotedUp) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
-                <Image 
-                  source={icons.upArrow}
-                   className="h-8 w-8"
-                   resizeMode='contain'
-                   tintColor={"#fff"}
-                />
-              </TouchableOpacity>
-
-              <Text className="text-xl font-psemibold text-white">{discussionData?.votes} <Text className="text-gray-400 text-sm font-plight">{discussionData?.votes === 0 || discussionData?.votes > 1 ? "Vota" : "Vote"}</Text></Text>
-
-              <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(discussionData?.voteDetails === null || !discussionData?.voteDetails?.isVotedDown) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
-                <Image 
-                  source={icons.downArrow}
-                   className="h-8 w-8"
-                   resizeMode='contain'
-                   tintColor={"#fff"}
-                />
-              </TouchableOpacity>
-            </View>
+            <DiscussionVotesComponent discussionData={discussionData}/>
 
             <View className="flex-1 bg-oBlack p-4 border-t border-b border-black-200 relative" style={styles.box}>
               <View className="absolute left-0 right-0 -top-5 min-w-full">
@@ -302,11 +274,23 @@ const discussion = () => {
           {/* comments and sorting comments */}
           <View className="flex-row items-center justify-between px-4 mt-4">
             <View>
-              <Text className="text-secondary font-psemibold text-base">10 <Text className="text-white">pergjigjje/komente</Text></Text>
+            <Text className="text-secondary font-psemibold text-base">
+              {discussionAnswerData.length === 0 ? (
+                <>
+                  <Text className="text-white">Filloni me </Text>
+                  <Text className="text-secondary">komentin e parë</Text>
+                </>
+              ) : (
+                <>
+                  {discussionAnswerData?.answersCount} <Text className="text-white">përgjigjje/komente</Text>
+                </>
+              )}
+            </Text>
+
             </View>
-            <View>
+            {discussionAnswerData.length > 0 &&<View>
               <DiscussionCommentsSort />
-            </View>
+            </View>}
           </View>
           </View>
           {/* comments and sorting comments */}
@@ -323,6 +307,16 @@ const discussion = () => {
               <TouchableOpacity className="bg-secondary py-2 px-4 self-start ml-auto rounded-md my-2">
                 <Text className="text-white font-psemibold text-sm">Pergjigju/Komento</Text>
               </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <View className="border-t pb-4 border-b border-black-200 bg-oBlack" style={styles.box}>
+            <EmptyState 
+              title={"Nuk ka ende pergjigjje/koment"}
+              subtitle={"Filloni komentimin/pergjigjjen mbi kete diskutim"}
+              isSearchPage={true}
+              showButton={false}
+            />
           </View>
         )}
       />

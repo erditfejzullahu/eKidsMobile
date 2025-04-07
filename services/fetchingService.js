@@ -894,3 +894,22 @@ export const handleDiscussionAnswerVoteFunc = async (payload) => {
         return null;
     }
 }
+
+export const createDiscussionAnswerAsync = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Discussions/CreateDiscussionAnswer`, payload)
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const getDiscussionsAnswers = async (id) => {
+    try {
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/Discussions/GetDiscussionsComments/${id}?userId=${userId}`)
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}

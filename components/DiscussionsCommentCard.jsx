@@ -3,6 +3,7 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { icons } from '../constants'
 import _ from 'lodash'
+import DiscussionAnswerVotesComponent from './DiscussionAnswerVotesComponent'
 
 const DiscussionsCommentCard = ({item}) => {
     const flatReplies = _.flattenDeep(item.replies)
@@ -17,21 +18,9 @@ const DiscussionsCommentCard = ({item}) => {
     <>
     <View className="bg-oBlack p-4 border-t border-b border-black-200 gap-4" style={styles.box}>
         <View className="flex-row gap-2" >
-        <View className="flex-col items-center gap-4">
-            <Image 
-                source={icons.upArrow}
-                className="h-10 w-10 border border-black-200 rounded-md p-2"
-                resizeMode='contain'
-                tintColor={"#fff"}
-            />
-            <Text className="text-white font-psemibold">{item.upvotes}</Text>
-            <Image 
-                source={icons.downArrow}
-                className="h-10 w-10 border border-black-200 rounded-md p-2"
-                resizeMode='contain'
-                tintColor={"#fff"}
-            />
-        </View>
+
+        <DiscussionAnswerVotesComponent />
+
         <ScrollView className="max-h-[200px] h-full">
             <Text className="text-white text-sm font-plight">{item.content}</Text>
         </ScrollView>
