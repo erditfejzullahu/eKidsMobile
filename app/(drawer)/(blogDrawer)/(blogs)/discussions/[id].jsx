@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react'
 import { FlatList, Image, KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import useFetchFunction from '../../../../../hooks/useFetchFunction';
-import { getDiscussionById } from '../../../../../services/fetchingService';
+import { getDiscussionById, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
 import Loading from "../../../../../components/Loading"
 import { Platform } from 'react-native';
 import { icons } from '../../../../../constants';
@@ -13,6 +13,7 @@ import { CoreBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEdit
 import Placeholder from '@tiptap/extension-placeholder';
 import DiscussionCommentsSort from '../../../../../components/DiscussionCommentsSort';
 import DiscussionsCommentCard from '../../../../../components/DiscussionsCommentCard';
+import { currentUserID } from '../../../../../services/authService';
 const discussionComments = [
   {
     id: 1,
@@ -124,6 +125,32 @@ const discussion = () => {
       setDiscussionRefreshing(false)
     }
 
+    const handleDiscussionVote = async (voteType) => {
+      // voteType as 0(voteup) or 1(votedown)
+      const userId = await currentUserID();
+      const payload = {
+        userId: userId,
+        discussionId: id,
+        discussionVoteType: voteType
+      }
+      const response = await handleDiscussionVoteFunc(payload)
+      if(response){
+        if(response.voteResponse === 0){
+          if(discussionData.voteDetails){
+            //to remove vote that is made (decrease by 2) //check this logic in backend too
+          }else{
+            //to add one vote(increase by 1)
+          }
+        }else if(response.voteResponse === 1){
+          if(discussionData.voteDetails){
+            //to remove vote that is made(increase)
+          }else{
+            //to add one vote(decrase)
+          }
+        }
+      }
+    }
+
     useEffect(() => {
       editorContent && setDiscussionCommentMade(editorContent)
     }, [editorContent])
@@ -179,9 +206,9 @@ const discussion = () => {
             </TouchableOpacity>
             </View>
           </View>
-          <View className="">
+          <View className="border-b-8 border-black-200 pb-8">
             <View className="flex-row items-center justify-between p-4">
-              <TouchableOpacity className="bg-oBlack border border-black-200 p-2 rounded-md" style={styles.box}>
+              <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(discussionData?.voteDetails === null || !discussionData?.voteDetails?.isVotedUp) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
                 <Image 
                   source={icons.upArrow}
                    className="h-8 w-8"
@@ -190,9 +217,9 @@ const discussion = () => {
                 />
               </TouchableOpacity>
 
-              <Text className="text-xl font-psemibold text-white">{discussionData?.votes} <Text className="text-gray-400 text-sm font-plight">Vota</Text></Text>
+              <Text className="text-xl font-psemibold text-white">{discussionData?.votes} <Text className="text-gray-400 text-sm font-plight">{discussionData?.votes === 0 || discussionData?.votes > 1 ? "Vota" : "Vote"}</Text></Text>
 
-              <TouchableOpacity className="bg-oBlack border border-black-200 p-2 rounded-md" style={styles.box}>
+              <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(discussionData?.voteDetails === null || !discussionData?.voteDetails?.isVotedDown) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
                 <Image 
                   source={icons.downArrow}
                    className="h-8 w-8"
@@ -263,7 +290,7 @@ const discussion = () => {
           </View>
 
           {/* comments and sorting comments */}
-          <View className="flex-row items-center justify-between px-4 mt-8">
+          <View className="flex-row items-center justify-between px-4 mt-4">
             <View>
               <Text className="text-secondary font-psemibold text-base">10 <Text className="text-white">pergjigjje/komente</Text></Text>
             </View>

@@ -867,8 +867,29 @@ export const getUserCreatedBlogsOrDiscussions = async (type, userId) => {
 
 export const getDiscussionById = async (id) => {
     try {
-        const response = await apiClient.get(`/api/Discussions/${id}`)
+        const userId = await currentUserID();
+        const response = await apiClient.get(`/api/Discussions/${id}?userId=${userId}`)
         return response && response.data
+    } catch (error) {
+        return null;
+    }
+}
+
+export const handleDiscussionVoteFunc = async (payload) => {
+    try {
+        // const userId = await currentUserID();
+        const response = await apiClient.patch(`/api/Discussions/HandleDiscussionVotes`, payload)
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const handleDiscussionAnswerVoteFunc = async (payload) => {
+    try {
+        // const userId = await currentUserID();
+        const response = await apiClient.patch(`/api/Discussions/HandleAnswerVotes`, payload);
+        return response && response.data;
     } catch (error) {
         return null;
     }
