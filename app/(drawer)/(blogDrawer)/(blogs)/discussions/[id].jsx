@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react'
-import { FlatList, Image, KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { FlatList, Image, KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
 import useFetchFunction from '../../../../../hooks/useFetchFunction';
-import { getDiscussionById, getDiscussionsAnswers, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
+import { createDiscussionAnswerAsync, getDiscussionById, getDiscussionsAnswers, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
 import Loading from "../../../../../components/Loading"
 import { Platform } from 'react-native';
 import { icons } from '../../../../../constants';
@@ -16,6 +16,9 @@ import DiscussionsCommentCard from '../../../../../components/DiscussionsComment
 import { currentUserID } from '../../../../../services/authService';
 import DiscussionVotesComponent from '../../../../../components/DiscussionVotesComponent';
 import EmptyState from "../../../../../components/EmptyState"
+import NotifierComponent from '../../../../../components/NotifierComponent';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import CreateDiscussionAnswer from '../../../../../components/CreateDiscussionAnswer';
 const discussionComments = [
   {
     id: 1,
@@ -106,33 +109,15 @@ const discussion = () => {
       year: "2-digit"
     })
 
-    const editor = useEditorBridge({
-        bridgeExtensions: [
-            ...TenTapStartKit,
-            CoreBridge.configureCSS(`
-                * {
-                    font-family: 'Arial';
-                }
-            `),
-            Placeholder.configure({
-                placeholder: "Mbusheni pyetjen/diskutimin tuaj ketu"
-            }),
-        ],
-        autofocus: true,
-        avoidIosKeyboard: true,
-    });
-     const editorContent = useEditorContent(editor, {type: "html"});
+    
+    
     
     const onRefresh = async () => {
       setDiscussionRefreshing(true)
       await refetch();
       await answersRefetch();
       setDiscussionRefreshing(false)
-    }
-
-    useEffect(() => {
-      editorContent && setDiscussionCommentMade(editorContent)
-    }, [editorContent])
+    }    
 
     useEffect(() => {
       if(data){
@@ -148,7 +133,6 @@ const discussion = () => {
 
     useEffect(() => {
       if(answersData){
-        
         setDiscussionAnswerData(answersData);
       }else{
         setDiscussionAnswerData([])
@@ -166,12 +150,12 @@ const discussion = () => {
     
   return (
     <View className="flex-1 h-full bg-primary">
-      <FlatList
+      <KeyboardAwareFlatList
       className="h-full flex-1"
         // contentContainerStyle={{paddingLeft: 16, paddingRight: 16}}
         refreshControl={<RefreshControl refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
         contentContainerStyle={{gap:24}}
-        data={discussionAnswerData}
+        data={discussionAnswerData?.data}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
           <DiscussionsCommentCard item={item}/>
@@ -297,17 +281,7 @@ const discussion = () => {
           </>
         )}
         ListFooterComponent={() => (
-          <View className="border-t flex-1 border-b min-h-full  bg-primary border-black-200 overflow-hidden p-2 px-4">
-              <Text className="text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
-              <Text className="text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
-              <RichText editor={editor} style={[{backgroundColor: "#13131a", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: "#232533"}, styles.box]}/>
-              <KeyboardAvoidingView style={{position: "absolute", width: "100%", bottom: 0}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                  <Toolbar editor={editor} />
-              </KeyboardAvoidingView>
-              <TouchableOpacity className="bg-secondary py-2 px-4 self-start ml-auto rounded-md my-2">
-                <Text className="text-white font-psemibold text-sm">Pergjigju/Komento</Text>
-              </TouchableOpacity>
-          </View>
+          <CreateDiscussionAnswer id={id} sentSuccessResponse={(newComment) => setDiscussionAnswerData((prevData) => [newComment, ...prevData])}/>
         )}
         ListEmptyComponent={() => (
           <View className="border-t pb-4 border-b border-black-200 bg-oBlack" style={styles.box}>

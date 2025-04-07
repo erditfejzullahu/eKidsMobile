@@ -8,21 +8,21 @@ import DiscussionAnswerVotesComponent from './DiscussionAnswerVotesComponent'
 const DiscussionsCommentCard = ({item}) => {
     const flatReplies = _.flattenDeep(item.replies)
     console.log(flatReplies);
-    const date = new Date(flatReplies.createdAt).toLocaleDateString("sq-AL", {
-        day: "numeric",
+    const date = new Date(item?.createdAt).toLocaleDateString("sq-AL", {
+        day: "2-digit",
         month: "short",
         year: "2-digit"
-    })
+    }) 
     
   return (
     <>
     <View className="bg-oBlack p-4 border-t border-b border-black-200 gap-4" style={styles.box}>
         <View className="flex-row gap-2" >
 
-        <DiscussionAnswerVotesComponent />
+        <DiscussionAnswerVotesComponent discussionAnswerData={item}/>
 
         <ScrollView className="max-h-[200px] h-full">
-            <Text className="text-white text-sm font-plight">{item.content}</Text>
+            <Text className="text-white text-sm font-plight">{item.discussionAnswerContent}</Text>
         </ScrollView>
         </View>
         <View className="flex-row items-end justify-between">
@@ -44,8 +44,8 @@ const DiscussionsCommentCard = ({item}) => {
                     />
                 </View>
                 <View className="flex-col">
-                    <Text className="text-white font-psemibold text-sm text-right">Erdit Fejzullahu</Text>
-                    <Text className="text-gray-400 text-xs font-plight text-right">21 Jan 2000</Text>
+                    <Text className="text-white font-psemibold text-sm text-right">{item.userName}</Text>
+                    <Text className="text-gray-400 text-xs font-plight text-right">{date}</Text>
                 </View>
             </View>
         </View>

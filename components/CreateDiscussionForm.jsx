@@ -30,20 +30,20 @@ const CreateDiscussionForm = () => {
         avoidIosKeyboard: true,
     });
 
-    const editorContent = useEditorContent(editor, {type: "html"});
-
+    
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
     const [tags, setTags] = useState([])
     const [tagInput, setTagInput] = useState("")
     const [showAnonimityInformation, setShowAnonimityInformation] = useState(false)
-
+    
     const [isLoading, setIsLoading] = useState(false)
-
+    
     const [preferAnonimity, setPreferAnonimity] = useState(false)
-
+    
     const [tagsResponse, setTagsResponse] = useState([])
-
+    
+    const editorContent = useEditorContent(editor, {type: "html"});
     const removeTag = (tag) => {
         setTags((prevData) => prevData.filter((itm) => itm !== tag))
         setTagInput((prevInput) => prevInput.split(" ").filter((word) => word !== tag).join(" "))

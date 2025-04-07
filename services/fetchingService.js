@@ -907,7 +907,7 @@ export const createDiscussionAnswerAsync = async (payload) => {
 export const getDiscussionsAnswers = async (id) => {
     try {
         const userId = await currentUserID();
-        const response = await apiClient.get(`/api/Discussions/GetDiscussionsComments/${id}?userId=${userId}`)
+        const response = await apiClient.get(`/api/Discussions/GetDiscussionComments/${id}?userId=${userId}`)
         return response && response.data;
     } catch (error) {
         return null;
