@@ -66,7 +66,8 @@ const dummyDiscussions = [
 
 const allDiscussions = () => {
     const router = useRouter();
-    const {data, isLoading, refetch} = useFetchFunction(getDiscussions)
+    const [sortBy, setSortBy] = useState(0)
+    const {data, isLoading, refetch} = useFetchFunction(() => getDiscussions(null, sortBy))
     
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [discussionData, setDiscussionData] = useState([])
@@ -86,6 +87,11 @@ const allDiscussions = () => {
         setDiscussionData([])
       }
     }, [data])
+
+    useEffect(() => {
+      refetch();
+    }, [sortBy])
+    
     
 if(isLoading) return <Loading />
   return (
@@ -129,7 +135,7 @@ if(isLoading) return <Loading />
                 </View>
             </View>
 
-            <DiscussionsFilter />
+            <DiscussionsFilter sendData={(param) => setSortBy(param)}/>
 
             <View className="mt-2">
                 <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>

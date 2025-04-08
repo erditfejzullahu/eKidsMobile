@@ -842,9 +842,14 @@ export const getTagsByTitle = async (title) => {
     }
 }
 
-export const getDiscussions = async (userId) => {
+export const getDiscussions = async (userId, sortBy) => {
     try {
-        const response = await apiClient.get(`/api/Discussions`)
+        // const response = await apiClient.get(`/api/Discussions`, {
+        //     params: { //param makes it queryable link // ex: ?userId=45&sortBy=0 etc
+        //         sortBy: JSON.stringify(sortBy)
+        //     }
+        // })
+        const response = await apiClient.get(`/api/Discussions?sortBy${sortBy}`)
         return response && response.data
     } catch (error) {
         return null;

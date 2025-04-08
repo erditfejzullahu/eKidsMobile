@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
 
 const initialDiscussionsSort = [
-    { label: "Te rejat", icon: icons.latest, focused: true },
-    { label: "Aktive", icon: icons.completedProgress, focused: false },
-    { label: "Urgjente", icon: icons.star, focused: false },
-    { label: "Pa pergjigjje", icon: icons.waiting, focused: false },
+    { label: "Te rejat", icon: icons.latest, focused: true, param: 0 },
+    { label: "Aktive", icon: icons.completedProgress, focused: false, param: 1 },
+    { label: "Urgjente", icon: icons.star, focused: false, param: 2 },
+    { label: "Pa pergjigjje", icon: icons.waiting, focused: false, param: 3 },
 ];
 
-const DiscussionsFilter = () => {
+const DiscussionsFilter = ({sendData}) => {
     const [discussionsSort, setDiscussionsSort] = useState(initialDiscussionsSort)
 
     const handleDiscussionsFilter = (selectedItem, index) => {
@@ -19,6 +19,7 @@ const DiscussionsFilter = () => {
                 focused: item.label === selectedItem.label
             }))
         ]))
+        sendData(selectedItem.param)
     }
 
     useEffect(() => {
