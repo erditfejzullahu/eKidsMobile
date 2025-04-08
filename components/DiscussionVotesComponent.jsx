@@ -8,7 +8,8 @@ import { handleDiscussionVoteFunc } from '../services/fetchingService'
 const DiscussionVotesComponent = ({discussionData}) => {
     const [voteDetails, setVoteDetails] = useState(null)
     const [actualVotes, setActualVotes] = useState(null)
-
+    console.log(discussionData, ' discussionvotescomponent');
+    
 
     const handleDiscussionVote = async (voteType) => {
         // voteType as 0(voteup) or 1(votedown)
@@ -21,17 +22,74 @@ const DiscussionVotesComponent = ({discussionData}) => {
         const response = await handleDiscussionVoteFunc(payload)
         if(response){
             if(response.voteResponse === 0){
-            if(voteDetails){
-                //to remove vote that is made (decrease by 2) //check this logic in backend too
-            }else{
-                //to add one vote(increase by 1)
-            }
+                if(voteDetails){
+                    if(voteDetails?.isVotedUp && !voteDetails?.isVotedDown){
+                        //answer is voted up it has to be removed and vote numbers to be updated
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedUp: false,
+                            isVotedDown: false,
+                        }))
+                        setActualVotes(prevValues => prevValues - 1)
+                    }else if(!voteDetails?.isVotedUp && voteDetails?.isVotedDown){
+                    //answer is not voted up it has to be added and number votes to be updated
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedUp: true,
+                            isVotedDown: false,
+                        }))
+                        setActualVotes(prevValues => prevValues + 2)
+                    }else if(!voteDetails?.isVotedUp && !voteDetails?.isVotedDown){
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedDown: false,
+                            isVotedUp: true,
+                        }))
+                        setActualVotes(prevValues => prevValues + 1)
+                    }
+                    //to remove vote that is made (decrease by 2) //check this logic in backend too
+                }else{
+                    setVoteDetails({
+                        isVotedUp: true,
+                        isVotedDown: false,
+                    })
+                    setActualVotes(prevValues => prevValues + 1)
+                    //to add one vote(increase by 1)
+                }
             }else if(response.voteResponse === 1){
-            if(voteDetails){
-                //to remove vote that is made(increase)
-            }else{
-                //to add one vote(decrase)
-            }
+                if(voteDetails){
+                    if(voteDetails?.isVotedUp && !voteDetails?.isVotedDown){
+                        //answer is voted up it has to be removed and vote numbers to be updated
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedUp: false,
+                            isVotedDown: true,
+                        }))
+                        setActualVotes(prevValues => prevValues - 2)
+                    }else if(!voteDetails?.isVotedUp && voteDetails?.isVotedDown){
+                    //answer is not voted up it has to be added and number votes to be updated
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedUp: false,
+                            isVotedDown: false,
+                        }))
+                        setActualVotes(prevValues => prevValues + 1)
+                    }else if(!voteDetails?.isVotedUp && !voteDetails?.isVotedDown){
+                        setVoteDetails((prevData) => ({
+                            ...prevData,
+                            isVotedDown: true,
+                            isVotedUp: false,
+                        }))
+                        setActualVotes(prevValues => prevValues - 1)
+                    }
+                }else{
+                    setVoteDetails({
+                        isVotedUp: false,
+                        isVotedDown: true,
+                    })
+                    setActualVotes(prevValues => prevValues - 1)
+                    //to add one vote(decrase)
+                }
             }
         }
     }

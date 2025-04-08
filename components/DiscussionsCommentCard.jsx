@@ -7,7 +7,7 @@ import DiscussionAnswerVotesComponent from './DiscussionAnswerVotesComponent'
 
 const DiscussionsCommentCard = ({item}) => {
     const flatReplies = _.flattenDeep(item.replies)
-    console.log(flatReplies);
+    // console.log(flatReplies);
     const date = new Date(item?.createdAt).toLocaleDateString("sq-AL", {
         day: "2-digit",
         month: "short",

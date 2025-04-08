@@ -145,6 +145,15 @@ const discussion = () => {
       refetch();
       answersRefetch();
     }, [id])
+
+
+    //to go up
+    const GoToTopHandler = () => {
+      flatListRef.scrollToOffset({offset: 0, animated: true})
+    }
+    //to go up
+
+    let flatListRef;
     
     if(isLoading || discussionRefreshing || answersLoading) return <Loading />
     
@@ -160,6 +169,9 @@ const discussion = () => {
         renderItem={({item}) => (
           <DiscussionsCommentCard item={item}/>
         )}
+        ref={(ref) => {
+          flatListRef = ref
+        }}
         ListHeaderComponent={() => (
           <>
           <View className="flex-1">
@@ -242,7 +254,7 @@ const discussion = () => {
                     tintColor={"#ff9c01"}
                   />
               </TouchableOpacity>
-              <TouchableOpacity className="absolute -bottom-3 right-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
+              <TouchableOpacity onPress={() => {flatListRef.scrollToEnd({animated:true}); /* open editor req */}} className="absolute -bottom-3 right-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
                   <Text className="font-psemibold text-sm text-white">Komento</Text>
                   <Image
                     source={icons.chat}

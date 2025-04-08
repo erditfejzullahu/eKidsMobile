@@ -8,7 +8,7 @@ import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
 
 const CreateDiscussionAnswer = ({id, sentSuccessResponse}) => {
-    console.log(id, ' idja');
+    // console.log(id, ' idja');
     
     const [commentSendLoading, setCommentSendLoading] = useState(false)
     const [answerContent, setAnswerContent] = useState("")
@@ -99,7 +99,7 @@ const CreateDiscussionAnswer = ({id, sentSuccessResponse}) => {
         </View>
         {/* </KeyboardAvoidingView> */}
         </View>
-        <TouchableOpacity className="bg-secondary py-2 px-4 self-start ml-auto rounded-md my-2" onPress={createAnswer} >
+        <TouchableOpacity className={`bg-secondary py-2 px-4 self-start ml-auto rounded-md my-2 ${commentSendLoading ? "opacity-50" : ""}`} onPress={createAnswer} disabled={commentSendLoading}>
         <Text className="text-white font-psemibold text-sm">Pergjigju/Komento</Text>
         </TouchableOpacity>
     </View>
