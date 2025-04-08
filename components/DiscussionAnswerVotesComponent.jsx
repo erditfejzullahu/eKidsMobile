@@ -81,7 +81,7 @@ const DiscussionAnswerVotesComponent = ({discussionAnswerData}) => {
   
   return (
     <View className="flex-col items-center gap-4">
-      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedUp ? "bg-secondary" : "bg-oBlack"}`} onPress={() => handleAnswerVote(0)}>
+      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedUp ? "bg-secondary !border-0" : "bg-oBlack"}`} onPress={() => handleAnswerVote(0)}>
         <Image
             source={icons.upArrow}
             className={`h-6 w-6 `}
@@ -90,7 +90,7 @@ const DiscussionAnswerVotesComponent = ({discussionAnswerData}) => {
         />
       </TouchableOpacity>
         <Text className="text-white font-psemibold">{discussionAnswerDetails?.votes}</Text>
-      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedDown ? "bg-secondary" : "bg-oBlack"}`} onPress={() => handleAnswerVote(1)}>
+      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedDown ? "bg-secondary !border-0" : "bg-oBlack"}`} onPress={() => handleAnswerVote(1)}>
         <Image 
             source={icons.downArrow}
             className={`h-6 w-6`}

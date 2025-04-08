@@ -101,7 +101,7 @@ const DiscussionVotesComponent = ({discussionData}) => {
     
   return (
     <View className="flex-row items-center justify-between p-4">
-        <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(voteDetails === null || !voteDetails?.isVotedUp) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
+        <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(voteDetails === null || !voteDetails?.isVotedUp) ? "bg-oBlack" : "bg-secondary !border-0"} border border-black-200 p-2 rounded-md`} style={styles.box}>
         <Image 
             source={icons.upArrow}
             className="h-8 w-8"
@@ -112,7 +112,7 @@ const DiscussionVotesComponent = ({discussionData}) => {
 
         <Text className="text-xl font-psemibold text-white">{actualVotes} <Text className="text-gray-400 text-sm font-plight">{actualVotes === 0 || actualVotes > 1 ? "Vota" : "Vote"}</Text></Text>
 
-        <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(voteDetails === null || !voteDetails?.isVotedDown) ? "bg-oBlack" : "bg-secondary"} border border-black-200 p-2 rounded-md`} style={styles.box}>
+        <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(voteDetails === null || !voteDetails?.isVotedDown) ? "bg-oBlack" : "bg-secondary !border-0"} border border-black-200 p-2 rounded-md`} style={styles.box}>
         <Image 
             source={icons.downArrow}
             className="h-8 w-8"
