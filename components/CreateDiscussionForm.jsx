@@ -36,10 +36,12 @@ const CreateDiscussionForm = () => {
     const [tags, setTags] = useState([])
     const [tagInput, setTagInput] = useState("")
     const [showAnonimityInformation, setShowAnonimityInformation] = useState(false)
+    const [showUrgentInformation, setShowUrgentInformation] = useState(true)
     
     const [isLoading, setIsLoading] = useState(false)
     
     const [preferAnonimity, setPreferAnonimity] = useState(false)
+    const [isUrgent, setIsUrgent] = useState(false)
     
     const [tagsResponse, setTagsResponse] = useState([])
     
@@ -79,14 +81,25 @@ const CreateDiscussionForm = () => {
     useEffect(() => {
       let timer;
       if(showAnonimityInformation){
+        if(showUrgentInformation){
+            setShowUrgentInformation(false)
+        }
         timer = setTimeout(() => {
             setShowAnonimityInformation(false)
+        }, 4000);
+      }
+      if(showUrgentInformation){
+        if(showAnonimityInformation){
+            setShowAnonimityInformation(false)
+        }
+        timer = setTimeout(() => {
+            setShowUrgentInformation(false)
         }, 4000);
       }
       return () => (
         clearTimeout(timer)
       )
-    }, [showAnonimityInformation])
+    }, [showAnonimityInformation, showUrgentInformation])
 
     useEffect(() => {
       editorContent && setContent(editorContent)
@@ -112,6 +125,7 @@ const CreateDiscussionForm = () => {
             "title": title,
             "content": content,
             "userId": userId,
+            "isUrgent": isUrgent,
             "preferAnonimity": preferAnonimity ? 1 : 0,
             "tags": tags.map((tag) => ({"title": tag}))
         }
@@ -134,6 +148,10 @@ const CreateDiscussionForm = () => {
             <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
             <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Mos shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit nuk mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
         </Animatable.View>}
+        {showUrgentInformation && <Animatable.View animation="bounceIn" className="bg-oBlack rounded-md border border-black-200 p-4 absolute top-4 left-0 right-0 mx-4 z-50" style={styles.box}>
+            <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Urgjente: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te filtrojne mbi diskutimet qe jane urgjente(Keni me shume shance per interaksione ne diskutimin tuaj).</Text>
+            <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Normale: </Text>Pasi te behet publikimi i diskutimit, perdoruesit do mund te filtrojne mbi diskutimet me ane te opsioneve tjera perveq <Text className="text-secondary">Urgjente</Text>.</Text>
+        </Animatable.View>}
         <TouchableOpacity onPress={() => setShowAnonimityInformation(true)} className="absolute -top-2 -right-2 z-20">
             <Animatable.Image animation="pulse" duration={1000} iterationCount="infinite" 
                 source={icons.infoFilled}
@@ -145,7 +163,19 @@ const CreateDiscussionForm = () => {
         <TouchableOpacity onPress={() => setPreferAnonimity((prevData) => !prevData)} className="absolute top-0 right-0 bg-secondary px-2 py-1 border-l border-black-200 border-b" style={styles.box}>
             <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-white font-psemibold text-sm">{preferAnonimity === false ? "Shfaq Profilin" : "Mos shfaq profilin"}</Animatable.Text>
         </TouchableOpacity>
-        <View>
+
+        <TouchableOpacity onPress={() => setShowUrgentInformation(true)} className="absolute -top-2 -left-2 z-20">
+            <Animatable.Image animation="pulse" duration={1000} iterationCount="infinite" 
+                source={icons.infoFilled}
+                className="h-5 w-5"
+                tintColor={"#fff"}
+                resizeMode='contain'
+            />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setIsUrgent(!isUrgent)} className="absolute top-0 left-0 bg-secondary px-2 py-1 border-l border-black-200 border-b" style={styles.box}>
+            <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-white font-psemibold text-sm">{isUrgent ? "Urgjente" : "Normale"}</Animatable.Text>
+        </TouchableOpacity>
+        <View className="mt-6">
             <FormField 
                 title={"Titulli"}
                 placeholder={"Shkruani titullin e diskutimit ketu..."}
