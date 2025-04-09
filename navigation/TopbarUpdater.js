@@ -12,9 +12,18 @@ const TopbarUpdaterProvider = ({children}) => {
     const [shareOpened, setShareOpened] = useState(false)
     const [showDiscussionSearcher, setShowDiscussionSearcher] = useState(false)
 
+    const [discussionSection, setDiscussionSection] = useState(false)
+
     const pathname = usePathname();
     
     useEffect(() => {
+
+        if(pathname.includes("discussions")){
+            setDiscussionSection(true)
+        }else{
+            setDiscussionSection(false)
+        }
+
         if(pathname === '/all-messages'){
             setShowSearcher(true)
             setShowBlogSearcher(false)
@@ -45,7 +54,7 @@ const TopbarUpdaterProvider = ({children}) => {
     }, [pathname])
     
     return(
-        <TopbarUpdaterContext.Provider value={{showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened}} >
+        <TopbarUpdaterContext.Provider value={{discussionSection, showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened}} >
             {children}
         </TopbarUpdaterContext.Provider>
     )

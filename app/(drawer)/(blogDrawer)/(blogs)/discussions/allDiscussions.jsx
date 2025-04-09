@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import useFetchFunction from '../../../../../hooks/useFetchFunction'
 import { getDiscussions } from '../../../../../services/fetchingService'
 import Loading from "../../../../../components/Loading"
+import EmptyState from '../../../../../components/EmptyState'
 
 const dummyDiscussions = [
     {
@@ -74,14 +75,17 @@ const allDiscussions = () => {
 
     const onRefresh = async () => {
         setIsRefreshing(true)
-        await refetch();
+        setSortBy(0)
+        if(sortBy === 0){
+            await refetch();
+        }
         setIsRefreshing(false)
     }
 
     useEffect(() => {
       if(data){
         setDiscussionData(data)
-        console.log(discussionData);
+        console.log(discussionData,  ' asdasdasdasd');
         
       }else{
         setDiscussionData([])
@@ -135,16 +139,27 @@ if(isLoading) return <Loading />
                 </View>
             </View>
 
-            <DiscussionsFilter sendData={(param) => setSortBy(param)}/>
+            <DiscussionsFilter sendData={(param) => setSortBy(param)} sortBy={sortBy}/>
 
-            <View className="mt-2">
+            {(discussionData.length > 0 && discussionData?.discussionsCount > 0) && <View className="mt-2">
                 <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
-            </View>
+            </View>}
             </>
         )}
         ListFooterComponent={() => (
             <View className="mb-4">
                 {discussionData?.hasMore && <Loading />}
+            </View>
+        )}
+        ListEmptyComponent={() => (
+            <View className="bg-oBlack border border-black-200" style={styles.box}>
+                <EmptyState 
+                    title={"Nuk ka diskutime"}
+                    subtitle={"Nese mendoni qe eshte gabim, rifreskoni dritaren ose kontaktoni Panelin e Ndihmes. Per te krijuar nje diskutim shtypni butonin me poshte"}
+                    isSearchPage={true}
+                    buttonTitle={"Krijoni nje diskutim"}
+                    buttonFunction={() => router.push('/discussions/addDiscussion')}
+                />
             </View>
         )}
     />

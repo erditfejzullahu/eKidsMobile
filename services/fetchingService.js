@@ -849,7 +849,9 @@ export const getDiscussions = async (userId, sortBy) => {
         //         sortBy: JSON.stringify(sortBy)
         //     }
         // })
-        const response = await apiClient.get(`/api/Discussions?sortBy${sortBy}`)
+        console.log(sortBy);
+        
+        const response = await apiClient.get(`/api/Discussions?SortBy=${sortBy}`)
         return response && response.data
     } catch (error) {
         return null;

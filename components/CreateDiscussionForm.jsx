@@ -36,7 +36,7 @@ const CreateDiscussionForm = () => {
     const [tags, setTags] = useState([])
     const [tagInput, setTagInput] = useState("")
     const [showAnonimityInformation, setShowAnonimityInformation] = useState(false)
-    const [showUrgentInformation, setShowUrgentInformation] = useState(true)
+    const [showUrgentInformation, setShowUrgentInformation] = useState(false)
     
     const [isLoading, setIsLoading] = useState(false)
     

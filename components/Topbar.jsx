@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons, images } from '../constants'
@@ -56,8 +56,8 @@ const Topbar = () => {
     }, [queryText])
     
 
-    const debounceFetchData = _.debounce(fetchUsers, 500);
-    const debounceFetchBlogData = _.debounce(fetchBlogs, 500);
+    const debounceFetchData = useCallback(_.debounce(fetchUsers, 500), [])
+    const debounceFetchBlogData = useCallback(_.debounce(fetchBlogs, 500), [])
 
     const handleInput = () => {        
         if(showSearcher){
@@ -66,6 +66,15 @@ const Topbar = () => {
             if(queryText.length > 2) debounceFetchBlogData(queryText)
         }
     }
+
+    useEffect(() => {
+    
+      return () => {
+        debounceFetchBlogData.cancel();
+        debounceFetchData.cancel();
+      }
+    }, [])
+    
     
   return (
     <SafeAreaView className="relative h-[90px]" style={{backgroundColor: "#13131a", borderBottomColor: "#232533", borderBottomWidth: 1}}>

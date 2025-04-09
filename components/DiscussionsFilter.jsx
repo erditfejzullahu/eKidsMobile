@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
 
 const initialDiscussionsSort = [
-    { label: "Te rejat", icon: icons.latest, focused: true, param: 0 },
+    { label: "Te rejat", icon: icons.latest, focused: false, param: 0 },
     { label: "Aktive", icon: icons.completedProgress, focused: false, param: 1 },
     { label: "Urgjente", icon: icons.star, focused: false, param: 2 },
     { label: "Pa pergjigjje", icon: icons.waiting, focused: false, param: 3 },
 ];
 
-const DiscussionsFilter = ({sendData}) => {
+const DiscussionsFilter = ({sendData, sortBy}) => {
     const [discussionsSort, setDiscussionsSort] = useState(initialDiscussionsSort)
 
     const handleDiscussionsFilter = (selectedItem, index) => {
@@ -20,11 +20,16 @@ const DiscussionsFilter = ({sendData}) => {
             }))
         ]))
         sendData(selectedItem.param)
-    }
+    } 
 
     useEffect(() => {
-        setDiscussionsSort(initialDiscussionsSort);
-    }, []);
+        setDiscussionsSort((prevData) => ([
+            ...prevData.map((item) => ({
+                ...item,
+                focused: item.param === sortBy
+            }))
+        ]))
+    }, [sortBy]);
 
   return (
     <View className="flex-row flex-wrap justify-end mt-2">
