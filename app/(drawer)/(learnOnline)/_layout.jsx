@@ -91,9 +91,17 @@ const _layout = () => {
             }}
         />
         <Tabs.Screen 
-                name="[blogs]"
-                options={{tabBarVisible: false, href: null, headerShown: false}}
-            />
+            name="onlineClass/[id]"
+            options={{tabBarVisible: false, href: null, headerShown: false}}
+        />
+        <Tabs.Screen 
+            name="tutor/[id]"
+            options={{tabBarVisible: false, href: null, headerShown: false}}
+        />
+        <Tabs.Screen 
+            name="upcomingMeetings/[id]"
+            options={{tabBarVisible: false, href: null, headerShown: false}}
+        />
     </Tabs>
     </>
   )
