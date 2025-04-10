@@ -4,6 +4,7 @@ import { images } from '../../../constants'
 import SorterComponent from "../../../components/SorterComponent"
 import OnlineClassesCard from '../../../components/OnlineClassesCard';
 import { Platform } from 'react-native';
+import LearnOnlineHeader from '../../../components/LearnOnlineHeader';
 
 const onlineClasses = [
     {
@@ -105,17 +106,7 @@ const allOnlineClasses = () => {
             )}
             ListHeaderComponent={() => (
                 <View className="border-b border-black-200 pb-4 overflow-hidden -mb-2">
-                <View className="my-4">
-                    <Text className="text-2xl text-white font-pmedium">Klaset Online
-                        <View>
-                        <Image
-                            source={images.path}
-                            className="h-auto w-[100px] absolute -bottom-8 -left-12"
-                            resizeMode='contain'
-                        />
-                        </View>
-                    </Text>
-                </View>
+                <LearnOnlineHeader headerTitle={"Klaset online"} sentInput={(data) => console.log(data)}/>
                 <SorterComponent showSorter={true}/>
                 </View>
             )}

@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Platform } from 'react-native'
 import { icons, images } from '../constants'
 
 const OnlineClassesCard = ({classes}) => {
   return (
-    <View className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={styles.box}>
+    <TouchableOpacity className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={styles.box}>
         {/* absolute */}
         <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
             <Text className="text-white font-psemibold text-sm">{classes.category}</Text>
@@ -40,7 +40,7 @@ const OnlineClassesCard = ({classes}) => {
         <View className="absolute -bottom-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
             <Text className="text-white font-psemibold text-xs"><Text className="text-secondary">{classes.enrolledStudents}</Text> Studente duke shfletuar</Text>
         </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

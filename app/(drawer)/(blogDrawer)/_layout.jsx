@@ -79,7 +79,6 @@ const TagsHeader = () => {
     <FlatList
       className="flex-1 bg-oBlack p-4 border-r border-black-200"
       contentContainerStyle={{flexGrow: 1, gap: 6}}
-      numColumns={isDiscussionSection ? 4 : undefined}
       data={isDiscussionSection ? discussionTagData : userCategories}
       keyExtractor={(item) => isDiscussionSection ? item.id : 'kategoria-' + item?.CategoryID}
       renderItem={({item}) => (
