@@ -9,12 +9,12 @@ export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
 
 const defaultMenuItems = [
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
-    { label: 'Mesoni Online', icon: icons.parents, path: '(learnOnline)/allOnlineClasses' },
+    { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineClasses' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
-    { label: 'Statistikat studentore', icon: icons.students, path: '(userStatistics)/all-students' },
+    { label: 'Statistikat studentore', icon: icons.students, path: '/all-students' },
     { label: 'Shto një kuiz', icon: icons.plus, path: '/add-quiz' },
     { label: 'Kuizet e mia', icon: icons.quiz, path: '/my-quizzes'},
-    { label: 'Statistikat e mia', icon: icons.statistics, path: '(userStatistics)/statistics/1' },
+    { label: 'Statistikat e mia', icon: icons.statistics, path: '/statistics/1' },
     { label: 'Perfundo kuize', icon: icons.closure, path: '/all-quizzes' },
 ];
 

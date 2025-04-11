@@ -45,12 +45,10 @@ const CustomHeader = (props) => {
 
     const { user, setIsLoggedIn, isLoggedIn, setUser, setIsLoading } = useGlobalContext();
     
-    const userData = user?.data?.userData;
-    // console.log(userData);
-    
+    const userData = user?.data?.userData;    
 
     const changeIconColor = (path) => {
-        // console.log(path);
+        console.log(path);
         
         return path === pathname ? "#FFA001" : "#fff";
     }
