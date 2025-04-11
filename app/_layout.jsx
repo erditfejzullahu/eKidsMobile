@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Slot, SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import GlobalProvider from '../context/GlobalProvider'
 import { NotifierWrapper } from 'react-native-notifier';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -13,11 +13,15 @@ import TopbarUpdaterProvider from '../navigation/TopbarUpdater';
 import NotificationProvider from '../context/NotificationState';
 import BlogsDrawerProvider from '../context/BlogsDrawerProvider';
 import LessonCommentsProvider from '../context/LessonCommentsProvider';
+
+
+import DonationModal from '../components/DonationModal'; 
 // enableScreens();
 
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+    const [modalOpen, setModalOpen] = useState(false);
     const [fontsLoaded, error] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
         "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -30,6 +34,12 @@ const RootLayout = () => {
         "Poppins-Thin": require('../assets/fonts/Poppins-Thin.ttf'),
     });
 
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setModalOpen(true)
+      }, 3600000); // 1 ore
+      return () => clearInterval(interval)
+    }, [])
     
 
     useEffect(() => {
@@ -63,6 +73,7 @@ const RootLayout = () => {
                     </NotificationProvider>
                 </NotifierWrapper>
             </GlobalProvider>
+            <DonationModal open={modalOpen} setOpen={setModalOpen}/>
         </GestureHandlerRootView>
     )
 }
