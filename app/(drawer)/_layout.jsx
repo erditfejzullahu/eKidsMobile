@@ -10,7 +10,6 @@ import { logout, refresh } from '../../services/authService'
 import { useGlobalContext } from '../../context/GlobalProvider'
 import { getMetaValue } from '../../services/fetchingService'
 import Topbar from '../../components/Topbar'
-import { useLocalSearchParams } from 'expo-router'
 import { useDrawerUpdater } from '../../navigation/DrawerUpdater'
 import { ScrollView } from 'react-native-gesture-handler'
 import CustomModal from '../../components/Modal'
@@ -48,8 +47,6 @@ const CustomHeader = (props) => {
     const userData = user?.data?.userData;    
 
     const changeIconColor = (path) => {
-        console.log(path);
-        
         return path === pathname ? "#FFA001" : "#fff";
     }
 

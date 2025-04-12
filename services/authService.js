@@ -30,6 +30,7 @@ export const login = async (username, password) => {
         // console.log(response.data.token);
         const { accessToken, refreshToken } = response.data.token;
         await storeTokens(accessToken, refreshToken)
+        
         if(accessToken && refreshToken){
             
             router.replace('/home');
@@ -102,6 +103,21 @@ export const currentUserID = async () => {
             return userID;
         } catch (error) {
             console.error("Error decoding token:", error);
+            return null;
+        }
+    }
+    return null;
+}
+
+export const getRole = async () => {
+    const token = await getAccessToken()
+    if(token){
+        try {
+            const decodedToken = jwtDecode(token);
+            return decodedToken.Role;
+        } catch (error) {
+            console.error("error getting role", error);
+            
             return null;
         }
     }

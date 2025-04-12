@@ -3,11 +3,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { icons } from "../constants";
 import { getUserCourseStatus } from "../services/fetchingService";
 import { currentUserID } from "../services/authService";
+import { getRole } from "../services/authService";
 const DrawerUpdaterContext = createContext();
 
 export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
 
 const defaultMenuItems = [
+    {label: "instruktor", icon: icons.tutor, path: "/instructor/instructorHome"},
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
     { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineClasses' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
@@ -19,6 +21,7 @@ const defaultMenuItems = [
 ];
 
 const DrawerUpdaterProvider = ({children}) => {
+    
     const pathName = usePathname();
     useEffect(() => {
         if(pathName.includes('/categories/course/lesson/')){

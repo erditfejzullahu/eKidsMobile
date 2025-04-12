@@ -16,6 +16,7 @@ import LessonCommentsProvider from '../context/LessonCommentsProvider';
 
 
 import DonationModal from '../components/DonationModal'; 
+import { RoleProvider } from '../navigation/RoleProvider';
 // enableScreens();
 
 SplashScreen.preventAutoHideAsync();
@@ -52,6 +53,7 @@ const RootLayout = () => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            <RoleProvider>
             <GlobalProvider>
                 <NotifierWrapper>
                     <NotificationProvider>
@@ -73,6 +75,7 @@ const RootLayout = () => {
                     </NotificationProvider>
                 </NotifierWrapper>
             </GlobalProvider>
+            </RoleProvider>
             <DonationModal open={modalOpen} setOpen={setModalOpen}/>
         </GestureHandlerRootView>
     )
