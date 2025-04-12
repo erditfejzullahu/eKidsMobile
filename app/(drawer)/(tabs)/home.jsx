@@ -95,9 +95,11 @@ const Home = () => {
     if(courses){
       if(showLoadMore){
         setAllCourses((prevData) => {
-          const existingIds = new Set(prevData.map((course) => course.id))
-          const newCourses = courses.filter((course) => !existingIds.has(course.id))
-          return[...prevData, ...newCourses]
+          if(prevData){
+            const existingIds = new Set(prevData.map((course) => course.id))
+            const newCourses = courses.filter((course) => !existingIds.has(course.id))
+            return[...prevData, ...newCourses]
+          }
         })
       }else{
         setAllCourses(courses)

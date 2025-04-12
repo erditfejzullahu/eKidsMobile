@@ -18,6 +18,7 @@ import { useNotificationContext } from '../../context/NotificationState'
 import { getAccessToken, getRefreshToken } from '../../services/secureStorage'
 import * as SignalR from '@microsoft/signalr';
 import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
+import { useRole } from '../../navigation/RoleProvider'
 
 
 const showIcons = (icon, size, color) => {
@@ -31,7 +32,7 @@ const showIcons = (icon, size, color) => {
 }
 
 const CustomHeader = (props) => {
-    
+    const {role} = useRole();
     
     const pathname = usePathname();
     const router = useRouter();
@@ -65,7 +66,7 @@ const CustomHeader = (props) => {
 
 
     const DrawerItems = ({ pathname, routerProps }) => {
-
+        
         const routerToSpecificFix = (drawerProps, path, iconType) => {
             if(path.includes('/course/lesson/')){
                 if(iconType === 48 || iconType === 49){
@@ -119,7 +120,8 @@ const CustomHeader = (props) => {
                         <View className="mt-4 mb-3">
                             <Text className="text-white text-xl font-psemibold text-center">{userData?.firstname} {userData?.lastname}</Text>
                             <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{userData?.email}</Text>
-                            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(userData?.userMeta, "UserRole")}</Text>
+                            {/* <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(userData?.userMeta, "UserRole")}</Text> */}
+                            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{role === "Instructor" ? "Instruktor" : role === "Student" ? "Student" : "Administrator"}</Text>
                         </View>
                     </View>
 

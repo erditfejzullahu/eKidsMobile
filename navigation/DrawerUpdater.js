@@ -4,12 +4,21 @@ import { icons } from "../constants";
 import { getUserCourseStatus } from "../services/fetchingService";
 import { currentUserID } from "../services/authService";
 import { getRole } from "../services/authService";
+import { useRole } from "./RoleProvider";
 const DrawerUpdaterContext = createContext();
 
 export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
 
+const instructorMenuItems = [
+    {label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome"},
+    { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile"},
+    { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents"},
+    { label: "Lajmetari IN", icon: icons.messenger, path: "/all-messages"},
+    { label: "Menagjimi IN", icon: icons.instructorManage, path: "/instructor/instructorManage"},
+    { label: "Drejtohuni tek paneli IN", icon: icons.redirect, path: "/instructor/redirect"}
+]
+
 const defaultMenuItems = [
-    {label: "instruktor", icon: icons.tutor, path: "/instructor/instructorHome"},
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
     { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineClasses' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
@@ -21,6 +30,8 @@ const defaultMenuItems = [
 ];
 
 const DrawerUpdaterProvider = ({children}) => {
+
+    const {role} = useRole();
     
     const pathName = usePathname();
     useEffect(() => {
@@ -44,37 +55,45 @@ const DrawerUpdaterProvider = ({children}) => {
     }
 
     useEffect(() => {
-        if (courseId) {
-            // console.log(courseId, '?? a ka');
-            
-            const fetchCourseLessons = async () => {
-                try {
-                    const userId = await currentUserID();
-                    const response = await getUserCourseStatus(userId, courseId)
-                    if (response.data) {
-                        const lessonDrawerItems = response.data?.userProgress.map((item) => {
-                            return{
-                            label: item.progressLessonName,
-                            icon: (!item.progressLessonCompleted && item.progressLessonStarted) ? icons.completedProgress : (item.progressLessonCompleted && item.progressLessonStarted) ? icons.completed : icons.lock,
-                            path: `/categories/course/lesson/${item.progressLessonId}`
-                            }
-                        })               
-                        setDrawerItems(lessonDrawerItems)
-                        setDrawerItemsUpdated(true)
+        if(role === "Admin"){
+            setDrawerItemsUpdated(true)
+            setDrawerItems([...instructorMenuItems, ...defaultMenuItems])
+        } else if(role !== "Instructor"){
+            if (courseId) {
+                // console.log(courseId, '?? a ka');
+                
+                const fetchCourseLessons = async () => {
+                    try {
+                        const userId = await currentUserID();
+                        const response = await getUserCourseStatus(userId, courseId)
+                        if (response.data) {
+                            const lessonDrawerItems = response.data?.userProgress.map((item) => {
+                                return{
+                                label: item.progressLessonName,
+                                icon: (!item.progressLessonCompleted && item.progressLessonStarted) ? icons.completedProgress : (item.progressLessonCompleted && item.progressLessonStarted) ? icons.completed : icons.lock,
+                                path: `/categories/course/lesson/${item.progressLessonId}`
+                                }
+                            })               
+                            setDrawerItems(lessonDrawerItems)
+                            setDrawerItemsUpdated(true)
+                        }
+                    } catch (error) {
+                        setLoading(false)
+                        console.error(error, 'at drawerupdater');
+                    } finally {
+                        setLoading(false)
                     }
-                } catch (error) {
-                    setLoading(false)
-                    console.error(error, 'at drawerupdater');
-                } finally {
-                    setLoading(false)
                 }
+                fetchCourseLessons()
+            } else {
+                // console.log('????????asdasdasdasdasdasdasdasdasd');
+                setDrawerItemsUpdated(false)
+                setDrawerItems(defaultMenuItems)
+                // setLoading(false);
             }
-            fetchCourseLessons()
-        } else {
-            // console.log('????????asdasdasdasdasdasdasdasdasd');
+        }else{
             setDrawerItemsUpdated(false)
-            setDrawerItems(defaultMenuItems)
-            // setLoading(false);
+            setDrawerItems(instructorMenuItems)
         }
     }, [courseId])
 

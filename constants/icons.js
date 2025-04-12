@@ -84,8 +84,12 @@ import plusnotfilled from "../assets/icons/plusnotfilled.png"
 import upcoming from "../assets/icons/upcoming.png"
 import tutor from "../assets/icons/tutor.png"
 import onlineclasses from "../assets/icons/onlineclasses.png"
+import redirect from "../assets/icons/redirect.png"
+import instructorManage from "../assets/icons/instructor-manage.png"
 
 export default {
+  redirect,
+  instructorManage,
   tutor,
   onlineclasses,
   upcoming,
