@@ -10,12 +10,12 @@ const DrawerUpdaterContext = createContext();
 export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
 
 const instructorMenuItems = [
-    {label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome"},
-    { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile"},
-    { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents"},
-    { label: "Lajmetari IN", icon: icons.messenger, path: "/all-messages"},
-    { label: "Menagjimi IN", icon: icons.instructorManage, path: "/instructor/instructorManage"},
-    { label: "Drejtohuni tek paneli IN", icon: icons.redirect, path: "/instructor/redirect"}
+    { label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome" },
+    { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile" },
+    { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents" },
+    { label: "Lajmetari IN", icon: icons.messenger, path: "/all-messages" },
+    { label: "Menagjimi IN", icon: icons.instructorManage, path: "/instructor/instructorManage" },
+    { label: "Drejtohuni tek paneli IN", icon: icons.redirect, path: "/instructor/redirect" }
 ]
 
 const defaultMenuItems = [
@@ -53,47 +53,50 @@ const DrawerUpdaterProvider = ({children}) => {
     const updateCourseData = (id) => {
         setCourseId(id);
     }
+    
 
     useEffect(() => {
-        if(role === "Admin"){
-            setDrawerItemsUpdated(true)
-            setDrawerItems([...instructorMenuItems, ...defaultMenuItems])
-        } else if(role !== "Instructor"){
-            if (courseId) {
-                // console.log(courseId, '?? a ka');
-                
-                const fetchCourseLessons = async () => {
-                    try {
-                        const userId = await currentUserID();
-                        const response = await getUserCourseStatus(userId, courseId)
-                        if (response.data) {
-                            const lessonDrawerItems = response.data?.userProgress.map((item) => {
-                                return{
-                                label: item.progressLessonName,
-                                icon: (!item.progressLessonCompleted && item.progressLessonStarted) ? icons.completedProgress : (item.progressLessonCompleted && item.progressLessonStarted) ? icons.completed : icons.lock,
-                                path: `/categories/course/lesson/${item.progressLessonId}`
-                                }
-                            })               
-                            setDrawerItems(lessonDrawerItems)
-                            setDrawerItemsUpdated(true)
-                        }
-                    } catch (error) {
-                        setLoading(false)
-                        console.error(error, 'at drawerupdater');
-                    } finally {
-                        setLoading(false)
+        if (courseId) {
+            // console.log(courseId, '?? a ka');
+            
+            const fetchCourseLessons = async () => {
+                try {
+                    const userId = await currentUserID();
+                    const response = await getUserCourseStatus(userId, courseId)
+                    if (response.data) {
+                        const lessonDrawerItems = response.data?.userProgress.map((item) => {
+                            return{
+                            label: item.progressLessonName,
+                            icon: (!item.progressLessonCompleted && item.progressLessonStarted) ? icons.completedProgress : (item.progressLessonCompleted && item.progressLessonStarted) ? icons.completed : icons.lock,
+                            path: `/categories/course/lesson/${item.progressLessonId}`
+                            }
+                        })               
+                        setDrawerItems(lessonDrawerItems)
+                        setDrawerItemsUpdated(true)
                     }
+                } catch (error) {
+                    setLoading(false)
+                    console.error(error, 'at drawerupdater');
+                } finally {
+                    setLoading(false)
                 }
-                fetchCourseLessons()
-            } else {
-                // console.log('????????asdasdasdasdasdasdasdasdasd');
+            }
+            fetchCourseLessons()
+        } else {
+            // console.log('????????asdasdasdasdasdasdasdasdasd');
+            // setDrawerItemsUpdated(false)
+            // setDrawerItems(defaultMenuItems)
+            if(role === "Admin"){
+                setDrawerItemsUpdated(true)
+                setDrawerItems([...instructorMenuItems, ...defaultMenuItems])
+            }else if(role === "Instructor"){
+                setDrawerItemsUpdated(false)
+                setDrawerItems(instructorMenuItems)
+            }else if(role === "Student"){
                 setDrawerItemsUpdated(false)
                 setDrawerItems(defaultMenuItems)
-                // setLoading(false);
             }
-        }else{
-            setDrawerItemsUpdated(false)
-            setDrawerItems(instructorMenuItems)
+            // setLoading(false);
         }
     }, [courseId])
 
