@@ -171,6 +171,10 @@ const TabsLayout = () => {
               name="completed"
               options={{tabBarVisible: false, href: null, headerShown: false}}
             />
+            <Tabs.Screen 
+              name="become-instructor"
+              options={{tabBarVisible: false, href: null, headerShown: false}}
+            />
         </Tabs>
         
     </>

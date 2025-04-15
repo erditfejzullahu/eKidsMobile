@@ -91,8 +91,8 @@ const INProfileFirstSection = ({data}) => {
     }, [data])
     
   return (
-    <View className="relative items-center justify-center">
-        <View className="gap-4 mt-14">
+    <View className="relative items-center justify-center mt-20">
+        <View className="gap-4">
             <TouchableOpacity onPress={uploadPicture} className="rounded-lg p-2 bg-secondary self-start mx-auto">
                 <Image 
                     source={{uri: userData?.profilePictureUrl}}

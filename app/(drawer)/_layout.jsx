@@ -181,7 +181,7 @@ const CustomHeader = (props) => {
                         }}
                     /> */}
 
-                <ScrollView className={`${drawerItemsUpdated ? 'h-[300px]' : ''}`}>
+                <ScrollView className={`${drawerItemsUpdated ? 'h-[300px]' : 'h-[350px]'}`}>
                     <DrawerItems pathname={pathname} routerProps={props.navigation} />
                 </ScrollView>
                 </View>

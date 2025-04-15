@@ -32,8 +32,12 @@ export const login = async (username, password) => {
         await storeTokens(accessToken, refreshToken)
         
         if(accessToken && refreshToken){
-            
-            router.replace('/home');
+            const role = await getRole();
+            if(role === "Admin" || role === "Student"){
+                router.replace('/home');
+            }else{
+                router.replace('/instructor/instructorHome')
+            }
             return true;
         }
         return false;
@@ -42,6 +46,7 @@ export const login = async (username, password) => {
         console.error(error);
         
         Alert.alert("Login failed!");
+        return false
     }
 };
 

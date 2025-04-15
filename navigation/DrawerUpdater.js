@@ -28,12 +28,13 @@ const defaultMenuItems = [
     { label: 'Kuizet e mia', icon: icons.quiz, path: '/my-quizzes'},
     { label: 'Statistikat e mia', icon: icons.statistics, path: '/statistics/1' },
     { label: 'Perfundo kuize', icon: icons.closure, path: '/all-quizzes' },
+    { label: 'Behuni instruktor', icon: icons.tutor, path: '/become-instructor'}
 ];
 
 const DrawerUpdaterProvider = ({children}) => {
 
     const {role} = useRole();
-    console.log(role);
+    // console.log(role);
     
     const pathName = usePathname();
     useEffect(() => {
