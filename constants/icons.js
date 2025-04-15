@@ -86,8 +86,30 @@ import tutor from "../assets/icons/tutor.png"
 import onlineclasses from "../assets/icons/onlineclasses.png"
 import redirect from "../assets/icons/redirect.png"
 import instructorManage from "../assets/icons/instructor-manage.png"
+import githubIcon from "../assets/icons/github.png";
+import metaIcon from "../assets/icons/meta.png";
+import instagramIcon from "../assets/icons/instagram.png";
+import twitterIcon from "../assets/icons/twitter.png";
+import linkedinIcon from "../assets/icons/linkedin.png";
+import tiktokIcon from "../assets/icons/tik-tok.png";
+import youtubeIcon from "../assets/icons/youtube.png";
+import redditIcon from "../assets/icons/reddit.png";
+import snapchatIcon from "../assets/icons/snapchat.png";
+import discordIcon from "../assets/icons/discord.png";
+import telegramIcon from "../assets/icons/telegram.png";
 
 export default {
+  githubIcon,
+  metaIcon,
+  instagramIcon,
+  twitterIcon,
+  linkedinIcon,
+  tiktokIcon,
+  youtubeIcon,
+  redditIcon,
+  snapchatIcon,
+  discordIcon,
+  telegramIcon,
   redirect,
   instructorManage,
   tutor,
