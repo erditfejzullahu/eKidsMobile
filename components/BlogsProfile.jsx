@@ -5,6 +5,7 @@ import * as Animatable from "react-native-animatable"
 import Loading from './Loading'
 import BlogCardComponent from './BlogCardComponent'
 import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
+import EmptyState from './EmptyState'
 
 const BlogsProfile = ({userData}) => {
     const [openModal, setOpenModal] = useState(false)
@@ -70,6 +71,14 @@ const BlogsProfile = ({userData}) => {
                         )}
                         renderItem={({ item }) => (
                             <BlogCardComponent blog={item} userData={userData}/>
+                        )}
+                        ListEmptyComponent={() => (
+                            <EmptyState 
+                                title={"Nuk keni postuar ende blogs"}
+                                subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
+                                showButton={false}
+                                isSearchPage={true}
+                            />
                         )}
                     />
                 </View>

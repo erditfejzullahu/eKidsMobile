@@ -6,6 +6,7 @@ import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
 import DiscussionsCard from './DiscussionsCard'
 import Loading from './Loading'
 import { RefreshControl } from 'react-native'
+import EmptyState from './EmptyState'
 
 const DiscussionsProfile = ({userData}) => {
     const [openModal, setOpenModal] = useState(false)
@@ -69,6 +70,14 @@ const DiscussionsProfile = ({userData}) => {
                             )}
                             renderItem={({ item }) => (
                                 <DiscussionsCard discussion={item}/>
+                            )}
+                            ListFooterComponent={() => (
+                                <EmptyState
+                                    title={"Nuk keni bere ende diskutime"}
+                                    subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
+                                    showButton={false}
+                                    isSearchPage={true}
+                                />
                             )}
                         />
                     </View>

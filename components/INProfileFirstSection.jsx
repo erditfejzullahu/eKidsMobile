@@ -16,11 +16,22 @@ const INProfileFirstSection = ({data}) => {
         file: null
     })
 
+    const {showNotification: requestPermission} = NotifierComponent({
+        tite: "Dicka shkoi gabim!",
+        description: "Na nevojitet akses ne librarine e fotove tuaja.",
+        alertType: "warning"
+      })
+
     const uploadPicture = async () => {
-        await ImagePicker.getCameraPermissionsAsync()
-        let image = await ImagePicker.launchCameraAsync({
-            mediaTypes: ["images"],
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if(permission.granted === false){
+            requestPermission()
+            return;
+        }
+        let image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
             quality: 0,
+            aspect: [4,3],
             allowsEditing: true,
             base64: true
         })
@@ -30,7 +41,7 @@ const INProfileFirstSection = ({data}) => {
                 ...prevData,
                 type: `data:${image.assets[0].mimeType};base64,`,
                 base64: image.assets[0].base64,
-                file: image.assets[0].file
+                file: image.assets[0].uri
             }))
         }
     }
