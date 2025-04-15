@@ -13,6 +13,7 @@ const instructorMenuItems = [
     { label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome" },
     { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile" },
     { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents" },
+    { label: "Lajmet tona", icon: icons.blogs, path: "(blogDrawer)/(blogs)/blogAll" },
     { label: "Lajmetari IN", icon: icons.messenger, path: "/all-messages" },
     { label: "Menagjimi IN", icon: icons.instructorManage, path: "/instructor/instructorManage" },
     { label: "Drejtohuni tek paneli IN", icon: icons.redirect, path: "/instructor/redirect" }
@@ -32,6 +33,7 @@ const defaultMenuItems = [
 const DrawerUpdaterProvider = ({children}) => {
 
     const {role} = useRole();
+    console.log(role);
     
     const pathName = usePathname();
     useEffect(() => {
@@ -42,6 +44,11 @@ const DrawerUpdaterProvider = ({children}) => {
             setCourseId(null);
         }
     }, [pathName])
+
+    useEffect(() => {
+      setCourseId(null)
+    }, [role])
+    
     
     const [drawerItemsUpdated, setDrawerItemsUpdated] = useState(false)
     const [courseId, setCourseId] = useState(null)
@@ -98,7 +105,7 @@ const DrawerUpdaterProvider = ({children}) => {
             }
             // setLoading(false);
         }
-    }, [courseId])
+    }, [courseId, role])
 
     
     

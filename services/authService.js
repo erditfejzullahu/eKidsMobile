@@ -114,6 +114,8 @@ export const getRole = async () => {
     if(token){
         try {
             const decodedToken = jwtDecode(token);
+            console.log(decodedToken.Role,  " GETROLE FUNCTION");
+            
             return decodedToken.Role;
         } catch (error) {
             console.error("error getting role", error);

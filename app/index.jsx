@@ -8,9 +8,11 @@ import { Redirect, router } from 'expo-router';
 import CustomButton from '../components/CustomButton';
 import { useGlobalContext } from '../context/GlobalProvider';
 import 'react-native-gesture-handler'
+import { useRole } from '../navigation/RoleProvider';
 
 export default function App() {
-
+  const {role, refreshRole} = useRole();
+  refreshRole();
   const {isLoading, isLoggedIn} = useGlobalContext();
   
   if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
