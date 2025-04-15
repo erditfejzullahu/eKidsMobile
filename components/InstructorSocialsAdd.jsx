@@ -2,11 +2,15 @@ import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
 import FormField from './FormField'
+import { currentUserID, logout } from '../services/authService'
+import { becomeInstructor } from '../services/fetchingService'
+import NotifierComponent from './NotifierComponent'
+import CustomButton from './CustomButton'
 
-const InstructorSocialsAdd = () => {
-    const [socialsCount, setSocialsCount] = useState([1])
-    const [socialsData, setSocialsData] = useState([])
+const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
+    const [socialsData, setSocialsData] = useState([{}])
     const [socialsError, setSocialsError] = useState([]);
+    const [isLoading, setIsLoading] = useState(false)
 
 
     const isValidUrl = (url) => {
@@ -24,32 +28,35 @@ const InstructorSocialsAdd = () => {
       };
 
     const getSocialIcon = (link) => {
-        if (!link) return icons.info;
+        if (!link) return {icon: icons.info, label: "Other"};
       
         const lowercase = link.toLowerCase();
       
-        if (lowercase.includes("github")) return icons.githubIcon;                           // GitHub
-        if (lowercase.includes("meta") || lowercase.includes("facebook")) return icons.metaIcon; // Facebook
-        if (lowercase.includes("insta") || lowercase.includes("instagram")) return icons.instagramIcon; // Instagram
-        if (lowercase.includes("twitter") || lowercase.includes("x.com")) return icons.twitterIcon;  // Twitter/X
-        if (lowercase.includes("linkedin")) return icons.linkedinIcon;                      // LinkedIn
-        if (lowercase.includes("tiktok")) return icons.tiktokIcon;                          // TikTok
-        if (lowercase.includes("youtube") || lowercase.includes("youtu.be")) return icons.youtubeIcon; // YouTube
-        if (lowercase.includes("reddit")) return icons.redditIcon;                          // Reddit
-        if (lowercase.includes("snapchat")) return icons.snapchatIcon;                      // Snapchat
-        if (lowercase.includes("discord")) return icons.discordIcon;                        // Discord
-        if (lowercase.includes("t.me") || lowercase.includes("telegram")) return icons.telegramIcon; // Telegram
+        if (lowercase.includes("github")) return {icon: icons.githubIcon, label: "Github"};                           // GitHub
+        if (lowercase.includes("meta") || lowercase.includes("facebook")) return {icon: icons.metaIcon, label: "Facebook"}; // Facebook
+        if (lowercase.includes("insta") || lowercase.includes("instagram")) return {icon: icons.instagramIcon, label: "Instagram"}; // Instagram
+        if (lowercase.includes("twitter") || lowercase.includes("x.com")) return {icon: icons.twitterIcon, label: "Twitter"};  // Twitter/X
+        if (lowercase.includes("linkedin")) return {icon: icons.linkedinIcon, label: "Linkedin"};                      // LinkedIn
+        if (lowercase.includes("tiktok")) return {icon: icons.tiktokIcon, label: "Tiktok"};                          // TikTok
+        if (lowercase.includes("youtube") || lowercase.includes("youtu.be")) return {icon: icons.youtubeIcon, label: "Youtube"}; // YouTube
+        if (lowercase.includes("reddit")) return {icon: icons.redditIcon, label: "Reddit"};                          // Reddit
+        if (lowercase.includes("snapchat")) return {icon: icons.snapchatIcon, label: "Snapchat"};                      // Snapchat
+        if (lowercase.includes("discord")) return {icon: icons.discordIcon, label: "Discord"};                        // Discord
+        if (lowercase.includes("t.me") || lowercase.includes("telegram")) return {icon: icons.telegramIcon, label: "Telegram"}; // Telegram
       
-        return icons.info; // Fallback icon if no match found
+        return {icon: icons.info, label: "Other"}; // Fallback icon if no match found
       };
       
-
+      useEffect(() => {
+        console.log(socialsData)
+      }, [socialsData])
+      
     const updateSocialsData = (idx, link) => {
         const isValid = isValidUrl(link);
         const icon = isValid ? getSocialIcon(link) : icons.info;
         setSocialsData(prev => {
             const newData = [...prev];
-            newData[idx] = { link, icon };
+            newData[idx] = { link, icon: icon.icon, label: icon.label };
             return newData;
         });
 
@@ -66,10 +73,51 @@ const InstructorSocialsAdd = () => {
         })
     }
 
+    const {showNotification: success} = NotifierComponent({
+        title: "Sukses!",
+        description: "Ne vazhdim do behen disa kontrollime. Deri atehere mund te veproni ne fushen tuaj perkatese. Kycuni perseri per te vazhduar me tutje!"
+    })
+    const {showNotification: unsuccess} = NotifierComponent({
+        title: "Gabim",
+        description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+        alertType: "warning"
+    })
+    const {showNotification: fillfields} = NotifierComponent({
+        title: "Gabim",
+        description: "Ju lutem mbushini te gjitha fushat e kerkuara.",
+        alertType: "warning"
+    })
+
+    const submit = async () => {
+        if(expertise === "" || bio === "" || socialsError.length !== 0){
+            fillfields()
+            return;
+        }
+        setIsLoading(true)
+        const userId = await currentUserID();
+        const payload = {
+            userId,
+            "expertise": expertise,
+            "bio": bio,
+            "socials": socialsData
+        }
+        const response = await becomeInstructor(payload)
+        if(response === 200){
+            success()
+            await logout()
+        }else{
+            unsuccess()
+        }
+        setIsLoading(false)
+    }
+
     useEffect(() => {
-      console.log(socialsData);
-      
-    }, [socialsData])
+      if(isRefreshing){
+        setSocialsData([{}])
+        setSocialsError([])
+      }
+    }, [isRefreshing])
+    
     
   return (
     <>
@@ -119,6 +167,14 @@ const InstructorSocialsAdd = () => {
             </View>
         )
     })}
+    <View className="mt-4 pb-6">
+        <CustomButton
+                title={"Paraqitni aplikimin"}
+                containerStyles={"!min-h-[60px]"}
+                handlePress={submit}
+                isLoading={isLoading}
+            />
+    </View>
     </>
   )
 }

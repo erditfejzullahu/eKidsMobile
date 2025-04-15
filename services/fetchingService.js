@@ -920,3 +920,12 @@ export const getDiscussionsAnswers = async (id) => {
         return null;
     }
 }
+
+export const becomeInstructor = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Instructors/BecomeInstructor`, payload)
+        return response && response.status;
+    } catch (error) {
+        return null;
+    }
+}
