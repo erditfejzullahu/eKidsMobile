@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, Platform, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, Platform, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import React, { useState } from 'react'
 import EmptyState from './EmptyState'
 import { Dimensions } from 'react-native'
 import { useRouter } from 'expo-router'
+import { icons } from '../constants'
 
 const INProfileCaruselSection = ({statistics}) => {
   const router = useRouter();
@@ -10,35 +11,47 @@ const INProfileCaruselSection = ({statistics}) => {
   const [courses, setCourses] = useState([])
   const [friends, setFriends] = useState([])
 
-    const { width: screenWidth } = Dimensions.get('window');
+  const [showSections, setShowSections] = useState(true)
+  //TODO: modals for each one of them in click
 
   return (
-    <ScrollView horizontal className="flex-row p-4 mt-3">
+    <>
+    <TouchableOpacity 
+      className="rounded-md border border-black-200 h-10 w-10 items-center justify-center bg-primary absolute z-20 left-2 top-0" style={styles.box}
+      onPress={() => setShowSections(!showSections)}
+    >
+      <Image 
+        source={showSections ? icons.downArrow : icons.upArrow}
+        className="w-6 h-6"
+        resizeMode='contain'
+        tintColor={"#ff9c01"}
+      />
+    </TouchableOpacity>
+    {!showSections && <View className="h-16"></View>}
+    {showSections && <ScrollView horizontal className="flex-row p-4 mt-1 relative">
       <View className="flex-row gap-6 flex-1 relative pb-2 pr-4" style={styles.box}>
         {students.length > 0 ? (
-          students.map((item, idx) => (
-            <View key={idx} className="p-4 bg-oBlack">
-              <Text>test</Text>
-            </View>
-          ))
+          <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+            <Text className="text-base text-center font-psemibold text-white">Studentet tuaj</Text>
+            <Text className="text-center text-secondary font-pblack text-lg">{students.length}</Text>
+          </TouchableOpacity>
         ) : (
-          <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+          <View className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <EmptyState 
               title={"Nuk keni ende studente"}
               titleStyle={"!text-base"}
               subtitleStyle={"!font-plight !text-xs"}
-              subtitle={"Mund te shtoni studente duke krijuar kurse/leksione atraktive ose duke shperndare brenda apo jashte apliacionit"}
+              subtitle={"Mund te terheqni studente duke krijuar kurse/leksione atraktive ose duke shperndare brenda apo jashte apliacionit"}
               showButton={false}
             />
           </View>
         )} 
 
         {courses.length > 0 ? (
-          students.map((item, idx) => (
-            <View key={idx} className="p-4 bg-oBlack">
-              <Text>test</Text>
-            </View>
-          ))
+          <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+            <Text className="text-base text-center font-psemibold text-white">Kurset tuaja</Text>
+            <Text className="text-center text-secondary font-pblack text-lg">{courses.length}</Text>
+          </TouchableOpacity>
         ) : (
           <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <EmptyState 
@@ -55,11 +68,10 @@ const INProfileCaruselSection = ({statistics}) => {
         )}
 
         {friends.length > 0 ? (
-          students.map((item, idx) => (
-            <View key={idx} className="p-4 bg-oBlack">
-              <Text>test</Text>
-            </View>
-          ))
+          <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+            <Text className="text-base text-center font-psemibold text-white">Miqte tuaj</Text>
+            <Text className="text-center text-secondary font-pblack text-lg">{friends.length}</Text>
+          </TouchableOpacity>
         ) : (
           <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <EmptyState 
@@ -74,7 +86,8 @@ const INProfileCaruselSection = ({statistics}) => {
           </View>
         )}
         </View>
-    </ScrollView>
+    </ScrollView>}
+    </>
   )
 }
 

@@ -8,6 +8,7 @@ import DiscussionsProfile from '../../../components/DiscussionsProfile'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getInstructor } from '../../../services/fetchingService'
 import INProfileCaruselSection from '../../../components/INProfileCaruselSection'
+import INProfileDetails from '../../../components/INProfileDetails'
 
 const instructorProfile = () => {
   const {user, isLoading} = useGlobalContext();
@@ -30,7 +31,10 @@ const instructorProfile = () => {
         <BlogsProfile userData={user}/>
         <DiscussionsProfile userData={user}/>
         <INProfileFirstSection data={user.data.userData}/>
+        <View className="relative">
         <INProfileCaruselSection statistics={instructorProfile}/>
+        </View>
+        <INProfileDetails user={user.data.userData}/>
       </View>
     </ScrollView>
   )
