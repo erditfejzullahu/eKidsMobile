@@ -13,6 +13,7 @@ const INProfileDetails = ({user}) => {
     const [socialsError, setSocialsError] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
     const [openSocialsModal, setOpenSocialsModal] = useState(false)
+    
 
     useEffect(() => {
       if(user){
@@ -61,7 +62,7 @@ const INProfileDetails = ({user}) => {
     </View>
 
     {showDetails ? (
-        <View className="px-4 my-4 gap-3">
+        <View className="px-4 my-4 gap-3" style={styles.box}>
             <View>
                 <FormField 
                     title={"Emri i plote"}
@@ -107,7 +108,7 @@ const INProfileDetails = ({user}) => {
             </View>
         </View>
     ) : (
-        <View className="px-4 my-4 gap-3">
+        <View className="px-4 my-4 gap-3" style={styles.box}>
             <View>
                 <FormField 
                     title={"Ekspertiza"}
@@ -126,6 +127,16 @@ const INProfileDetails = ({user}) => {
                     handleChangeText={(e) => setUserData((prevData) => ({...prevData, bio: e}))}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Pjesa e biografise mund te terheqe me shume studente. Shfaqet poashtu ne profil/kurse.</Text>
+            </View>
+            <View>
+                <FormField 
+                    title={"Mosha juaj"}
+                    placeholder={"Paraqitni moshen tuaj"}
+                    value={userData?.age?.toString()}
+                    keyboardType="number-pad"
+                    handleChangeText={(e) => setUserData((prevData) => ({...prevData, age: e}))}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni moshen korrekte, pasi qe ne baze te moshes do zhvillohen aktivitete kohe pas kohe.</Text>
             </View>
             <View>
                 <View className="flex-row items-center justify-between">

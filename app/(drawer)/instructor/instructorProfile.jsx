@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import INProfileFirstSection from '../../../components/INProfileFirstSection'
 import {useGlobalContext} from "../../../context/GlobalProvider"
@@ -9,6 +9,7 @@ import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getInstructor } from '../../../services/fetchingService'
 import INProfileCaruselSection from '../../../components/INProfileCaruselSection'
 import INProfileDetails from '../../../components/INProfileDetails'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const instructorProfile = () => {
   const {user, isLoading} = useGlobalContext();
@@ -23,7 +24,7 @@ const instructorProfile = () => {
   }
 
   useEffect(() => {
-    if(data){
+    if(data){      
       setInstructorProfile(data)
     }else{
       setInstructorProfile(null)
@@ -33,7 +34,7 @@ const instructorProfile = () => {
   
   if(isLoading || instructorLoading) return <Loading />
   return (
-    <ScrollView className="h-full bg-primary"
+    <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary"
     refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
       <View className="relative">
@@ -45,7 +46,7 @@ const instructorProfile = () => {
         </View>
         <INProfileDetails user={data}/>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   )
 }
 

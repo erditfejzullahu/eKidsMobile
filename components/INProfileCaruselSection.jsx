@@ -28,7 +28,7 @@ const INProfileCaruselSection = ({statistics}) => {
       />
     </TouchableOpacity>
     {!showSections && <View className="h-16"></View>}
-    {showSections && <ScrollView horizontal className="flex-row p-4 mt-1 relative">
+    {showSections && <ScrollView horizontal className="flex-row p-4 mt-1 relative" showsHorizontalScrollIndicator={false}>
       <View className="flex-row gap-6 flex-1 relative pb-2 pr-4" style={styles.box}>
         {students.length > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
