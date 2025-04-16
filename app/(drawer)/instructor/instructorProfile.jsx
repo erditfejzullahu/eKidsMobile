@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import INProfileFirstSection from '../../../components/INProfileFirstSection'
 import {useGlobalContext} from "../../../context/GlobalProvider"
@@ -14,6 +14,13 @@ const instructorProfile = () => {
   const {user, isLoading} = useGlobalContext();
   const {data, isLoading: instructorLoading, refetch} = useFetchFunction(() => getInstructor(user?.data?.userData?.id))
   const [instructorProfile, setInstructorProfile] = useState(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+    setIsRefreshing(true)
+    await refetch();
+    setIsRefreshing(false)
+  }
 
   useEffect(() => {
     if(data){
@@ -26,7 +33,9 @@ const instructorProfile = () => {
   
   if(isLoading || instructorLoading) return <Loading />
   return (
-    <ScrollView className="h-full bg-primary">
+    <ScrollView className="h-full bg-primary"
+    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+    >
       <View className="relative">
         <BlogsProfile userData={user}/>
         <DiscussionsProfile userData={user}/>
@@ -34,7 +43,7 @@ const instructorProfile = () => {
         <View className="relative">
         <INProfileCaruselSection statistics={instructorProfile}/>
         </View>
-        <INProfileDetails user={user.data.userData}/>
+        <INProfileDetails user={data}/>
       </View>
     </ScrollView>
   )

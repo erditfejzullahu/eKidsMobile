@@ -7,16 +7,22 @@ import CustomButton from './CustomButton'
 
 const INProfileDetails = ({user}) => {
     const [userData, setUserData] = useState(user)
+    const [userSocials, setUserSocials] = useState(null)
     const [showDetails, setShowDetails] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
+    console.log(userData);
+    
 
     useEffect(() => {
       if(user){
         setUserData(user)
+        setUserSocials(JSON.parse(user.socials))
       }else{
         setUserData(null)
+        setUserSocials(null)
       }
     }, [user])
+    
     
   return (
     <>
@@ -59,6 +65,7 @@ const INProfileDetails = ({user}) => {
                 <FormField 
                     title={"Emri i plote"}
                     placeholder={"Shkruani emrin e plote"}
+                    value={userData?.name}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Ky emer do paraqitet kudo ne aplikacion.</Text>
             </View>
@@ -66,6 +73,7 @@ const INProfileDetails = ({user}) => {
                 <FormField 
                     title={"Nofka juaj"}
                     placeholder={"Shkruani nofken tuaj"}
+                    value={userData?.username}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Ne baze te kesaj nofke ju mund te identifoheni me vone.</Text>
             </View>
@@ -73,6 +81,7 @@ const INProfileDetails = ({user}) => {
                 <FormField 
                     title={"Emaili juaj"}
                     placeholder={"Shkruani emailin tuaj"}
+                    value={userData?.email}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Emaili juaj elektronik personal. Verifikimi i veprimeve ne aplikacion behet permes ketij emaili.</Text>
             </View>
@@ -98,6 +107,7 @@ const INProfileDetails = ({user}) => {
                 <FormField 
                     title={"Ekspertiza"}
                     placeholder={"Shkruani ekspertizen tuaj ketu"}
+                    value={userData?.expertise}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Kjo ekspertize shfaqet ne profil/kurse.</Text>
             </View>
@@ -105,6 +115,8 @@ const INProfileDetails = ({user}) => {
                 <FormField 
                     title={"Biografia juaj"}
                     placeholder={"Shkruani pjese nga jeta juaj profesionale"}
+                    multiline
+                    value={userData?.bio}
                 />
                 <Text className="text-xs text-gray-400 font-plight mt-1">Pjesa e biografise mund te terheqe me shume studente. Shfaqet poashtu ne profil/kurse.</Text>
             </View>
@@ -116,7 +128,7 @@ const INProfileDetails = ({user}) => {
                     </TouchableOpacity>
                 </View>
                 <View className="flex-row flex-wrap gap-2">
-                {dummyData.map((item, idx) => {
+                {userSocials.map((item, idx) => {
                     const getIconAndLabelFromText = (iconText) => {
                         const lowercase = iconText.toLowerCase();
                       
@@ -132,9 +144,9 @@ const INProfileDetails = ({user}) => {
                         if (lowercase === "discord") return { icon: icons.discordIcon, label: "Discord" };
                         if (lowercase === "telegram") return { icon: icons.telegramIcon, label: "Telegram" };
                       
-                        return { icon: icons.info, label: iconText }; // fallback
+                        return { icon: icons.info, label: "Other" }; // fallback
                       };
-                      const {icon } = getIconAndLabelFromText(item.icon)
+                      const { icon } = getIconAndLabelFromText(item.Label)
                     return (
                         <View key={idx} className="border border-black-200 rounded-md items-center justify-center p-1.5">
                             <Image 
