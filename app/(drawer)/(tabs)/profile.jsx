@@ -17,14 +17,17 @@ import * as ImagePicker from 'expo-image-picker';
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getCompletedLessons } from '../../../services/fetchingService'
 import * as Animatable from 'react-native-animatable'
-import { Link } from 'expo-router'
+import { Link, Redirect } from 'expo-router'
 import EmptyState from '../../../components/EmptyState'
 import { useRouter } from 'expo-router'
 import ShowOtherDetailsProfile from '../../../components/ShowOtherDetailsProfile'
 import DiscussionsProfile from '../../../components/DiscussionsProfile'
 import BlogsProfile from '../../../components/BlogsProfile'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const profile = () => {
+  const {role} = useRole()
+  if(role === "Instructor") return <Redirect href={'/instructor/instructorProfile'}/>
 const router = useRouter();
   const { user, isLoading, setUser } = useGlobalContext();
   // console.log(isLoading, 'loading');

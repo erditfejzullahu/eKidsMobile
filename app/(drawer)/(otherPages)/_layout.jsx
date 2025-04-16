@@ -1,9 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Redirect, Stack } from 'expo-router'
 import Topbar from '../../../components/Topbar'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const _layout = ({children}) => {
+  const {role} = useRole();
+  if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   return (
     <>
     {/* E para i specifikon krejt options jon per krejt e edyta specifikim per secilin file... */}

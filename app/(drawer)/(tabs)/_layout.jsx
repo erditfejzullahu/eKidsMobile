@@ -7,6 +7,7 @@ import Topbar from '../../../components/Topbar'
 import { usePathname } from 'expo-router'
 import { useEffect } from 'react'
 import * as Animatable from "react-native-animatable"
+import { useRole } from '../../../navigation/RoleProvider'
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
   return (
@@ -32,6 +33,8 @@ const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
 
 
 const TabsLayout = () => {
+  const {role} = useRole();
+  if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   const router = useRouter();
   const pathname = usePathname();
   const handleCategoryPress = () => {

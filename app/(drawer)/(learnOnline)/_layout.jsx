@@ -1,7 +1,8 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
-import { Stack, Tabs, Link } from 'expo-router';
+import { Stack, Tabs, Link, Redirect } from 'expo-router';
 import { icons } from '../../../constants';
+import { useRole } from '../../../navigation/RoleProvider';
 
 const TabIcon = ({icon, color, name, focused}) => {
     return (
@@ -22,6 +23,8 @@ const TabIcon = ({icon, color, name, focused}) => {
 }
 
 const _layout = () => {
+    const {role} = useRole();
+    if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   return (
     <>
     {/* <Text>asdasd</Text> */}
