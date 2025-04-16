@@ -33,7 +33,8 @@ const defaultMenuItems = [
 
 const DrawerUpdaterProvider = ({children}) => {
 
-    const {role} = useRole();
+    const {role, refreshRole} = useRole();
+    refreshRole();
     // console.log(role);
     
     const pathName = usePathname();

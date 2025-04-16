@@ -11,7 +11,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
     const [socialsData, setSocialsData] = useState([{}])
     const [socialsError, setSocialsError] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
-
+    
 
     const isValidUrl = (url) => {
         const pattern = new RegExp(
@@ -46,10 +46,6 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
       
         return {icon: icons.info, label: "Other"}; // Fallback icon if no match found
       };
-      
-      useEffect(() => {
-        console.log(socialsData)
-      }, [socialsData])
       
     const updateSocialsData = (idx, link) => {
         const isValid = isValidUrl(link);
@@ -89,7 +85,8 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
     })
 
     const submit = async () => {
-        if(expertise === "" || bio === "" || socialsError.length !== 0){
+        if(expertise === "" || bio === "" || socialsError.some((item => item !== null))){
+            
             fillfields()
             return;
         }
@@ -102,6 +99,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
             "socials": socialsData
         }
         const response = await becomeInstructor(payload)
+        
         if(response === 200){
             success()
             await logout()
@@ -115,6 +113,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
       if(isRefreshing){
         setSocialsData([{}])
         setSocialsError([])
+        setIsLoading(false)
       }
     }, [isRefreshing])
     

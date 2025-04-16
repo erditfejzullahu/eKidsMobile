@@ -929,3 +929,12 @@ export const becomeInstructor = async (payload) => {
         return null;
     }
 }
+
+export const getInstructor = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/${id}`)
+        return response && response.data
+    } catch (error) {
+        return null;
+    }
+}

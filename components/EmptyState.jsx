@@ -3,7 +3,7 @@ import React from 'react'
 import { images } from '../constants'
 import CustomButton from './CustomButton'
 
-const EmptyState = ({title, titleStyle, subtitle, buttonTitle, buttonFunction, isSearchPage, isBookMarkPage = false, showButton = true}) => {
+const EmptyState = ({title, titleStyle, subtitle, subtitleStyle, buttonTitle, buttonFunction, buttonStyle, isSearchPage, isBookMarkPage = false, showButton = true}) => {
   return (
     <View className="justify-center items-center px-4 mb-4">
       {isSearchPage ? (<Image 
@@ -12,7 +12,7 @@ const EmptyState = ({title, titleStyle, subtitle, buttonTitle, buttonFunction, i
         resizeMode="contain"
       />) : null}
       <Text className={`text-2xl font-psemibold text-white text-center ${titleStyle}`}>{title}</Text>
-      <Text className="font-pmedium text-sm text-gray-100 text-center mt-2">{subtitle}</Text>
+      <Text className={`font-pmedium text-sm text-gray-100 text-center mt-2 ${subtitleStyle}`}>{subtitle}</Text>
       {isBookMarkPage ? (<View className="my-6">
         <Image
         source={images.breakHeart}
@@ -24,7 +24,7 @@ const EmptyState = ({title, titleStyle, subtitle, buttonTitle, buttonFunction, i
       {showButton && <CustomButton 
         title={buttonTitle}
         handlePress={buttonFunction}
-        containerStyles={"w-full mt-4"}
+        containerStyles={`w-full mt-4 ${buttonStyle}`}
       />}
     </View>
   )

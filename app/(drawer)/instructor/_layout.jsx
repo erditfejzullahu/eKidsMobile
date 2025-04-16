@@ -29,8 +29,8 @@ const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
 
 
 const InstructorLayout = () => {
-    const {role} = useRole();
-    console.log(role);
+    const {role, refreshRole} = useRole();
+    refreshRole()
     
     if(role !== "Instructor" && role !== "Admin") return <Redirect href="/home"/>
     

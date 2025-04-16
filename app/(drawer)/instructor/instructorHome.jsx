@@ -98,7 +98,7 @@ const instructorHome = () => {
   const {user, isLoading} = useGlobalContext();
   const [openSorter, setOpenSorter] = useState(false)
   if(isLoading) return <Loading />
-  const userData = user.data.userData;
+  const userData = user?.data?.userData;
   console.log(userData);
   
   return (
@@ -115,7 +115,7 @@ const instructorHome = () => {
           <>
           <View className="flex-row items-center gap-2 border-b border-black-200">
             <View className="flex-1">
-              <DefaultHeader showBorderBottom={false} headerTitle={`${userData.firstname + " " + userData.lastname}`} topSubtitle={"Miresevjen perseri,"} bottomSubtitle={"Ju jeni duke vepruar ne baze te rolit te instruktorit. Per cdo pakjartesi mund te kontaktoni Panelin e Ndihmes!"}/>
+              <DefaultHeader showBorderBottom={false} headerTitle={`${userData?.firstname + " " + userData?.lastname}`} topSubtitle={"Miresevjen perseri,"} bottomSubtitle={"Ju jeni duke vepruar ne baze te rolit te instruktorit. Per cdo pakjartesi mund te kontaktoni Panelin e Ndihmes!"}/>
             </View>
             <View className="flex-[0.30] items-end">
               <Image 
