@@ -28,6 +28,10 @@ const addCourse = () => {
 
         reset();
         setTopic("");
+        setSections("")
+        setSectionLessons([])
+        setSectionLessonsTouched([])
+        setStep(1)
 
         setTimeout(() => {
             setIsRefreshing(false)
@@ -51,6 +55,8 @@ const addCourse = () => {
             const isNameValid = await trigger("name");
             const isDescriptionValid = await trigger("description");
             const isTopicsValid = await trigger("topicsCovered");
+            console.log(isTopicsValid);
+            
             if(isNameValid && isDescriptionValid && isTopicsValid){
                 setStep((prev) => Math.min(prev + 1, maxSteps));
             }
@@ -68,8 +74,8 @@ const addCourse = () => {
         setStep((prev) => Math.min(prev - 1, maxSteps));
     }
 
-    const onSubmit = () => {
-
+    const onSubmit = (data) => {
+        console.log(data)
     }
 
 if(isRefreshing) return <Loading />
@@ -137,7 +143,7 @@ if(isRefreshing) return <Loading />
                         value={topic}
                         handleChangeText={(e) => setTopic(e)}
                     />
-                    <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani se cka perfshihet ne kete kurs. Cilat tematika do permenden/mesohen etj.</Text>
+                    <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani se cka do jete i afte te beje studenti ne fund.</Text>
                     {errors.topicsCovered && (
                     <Text className="text-red-500 text-xs font-plight -mt-2">
                         {errors.topicsCovered.message}
@@ -245,7 +251,7 @@ if(isRefreshing) return <Loading />
             <View className="gap-3 my-4" style={styles.box}>
                 <View className="gap-4 ">
                     {watch("sectionTitles").map((section, index) => (
-                        <View key={index} className="gap-3">
+                        <View key={index} className={`gap-3 border-b border-black-200 ${sectionLessonsTouched.includes(index) ? "pb-5" : "pb-2"}`}>
                             <TouchableOpacity 
                                 className="flex-row justify-between flex-1 w-full relative items-center bg-oBlack border border-black-200 px-3 py-2 rounded-md mt-2"
                                 onPress={() => setSectionLessonsTouched((prevData) => {
@@ -306,7 +312,7 @@ if(isRefreshing) return <Loading />
                                                 <FormField 
                                                     title={`Titulli i leksionit per seksionin ${index + 1}`}
                                                     placeholder={"P.sh. Leksioni i pare i ketij seksioni"}
-                                                    value={sectionLessons?.[index]}
+                                                    value={sectionLessons?.[index] || ""}
                                                     handleChangeText={(e) => setSectionLessons(prevData => {
                                                         const newData = [...prevData];
                                                         newData[index] = e;
@@ -314,21 +320,24 @@ if(isRefreshing) return <Loading />
                                                     })}
                                                 />
                                                 <Text className="text-xs text-gray-400 font-plight mt-1">Keto leksione do paraqiten si lloj planprogrami se cka do i informoni studentet tuaj potencial.</Text>
-                                                {errors.sectionLessons?.[index] && (
-                                                    <Text className="text-red-500 text-xs font-plight -mt-2">
-                                                        {errors.sectionLessons[index].message}
+                                                {errors.sectionLessons && (
+                                                    <Text className="text-red-500 text-xs font-plight mt-1">
+                                                        {errors.sectionLessons[index]?.message}
                                                     </Text>
                                                 )}
                                                 <TouchableOpacity 
                                                     onPress={() => {
-                                                        if (sectionLessons?.[index].trim() !== "") {
+                                                        if ( sectionLessons?.[index]?.trim() !== undefined) {                                                            
                                                           const updated = [...field.value];
                                                           if (!updated[index]) {
                                                             updated[index] = [];
                                                           }
-                                                          updated[index] = [...updated[index], sectionLessons?.[index].trim()];
+                                                          updated[index] = [...updated[index], sectionLessons?.[index]?.trim()];
                                                           field.onChange(updated);
-                                                          setSectionLessons((prevData) => prevData.filter((_, indx) => indx !== index));
+                                                          
+                                                          const newSectionLessons = [...sectionLessons]
+                                                          newSectionLessons[index] = ""
+                                                          setSectionLessons(newSectionLessons)
                                                         }
                                                     }}
                                                     className="bg-secondary rounded-md items-center self-start px-4 py-2 mx-auto mt-3"
@@ -358,7 +367,7 @@ if(isRefreshing) return <Loading />
             </View>}
             <View className="flex-1" style={styles.box}>
                 <CustomButton 
-                    title={`${step === 1 ? "Kalo tek hapi 2" : step === 2 ? "Kalo tek hapi 3" : "Krijoni kursin"}`}
+                    title={`${step === 1 ? "Vazhdo tek hapi 2" : step === 2 ? "Vazhdo tek hapi 3" : "Krijoni kursin"}`}
                     containerStyles={"!min-h-[55px]"}
                     isLoading={isSubmitting}
                     handlePress={step === 3 ? handleSubmit(onSubmit) : nextStep}
