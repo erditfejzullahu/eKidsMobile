@@ -55,7 +55,6 @@ const addCourse = () => {
             const isNameValid = await trigger("name");
             const isDescriptionValid = await trigger("description");
             const isTopicsValid = await trigger("topicsCovered");
-            console.log(isTopicsValid);
             
             if(isNameValid && isDescriptionValid && isTopicsValid){
                 setStep((prev) => Math.min(prev + 1, maxSteps));
@@ -65,8 +64,6 @@ const addCourse = () => {
             if(areSectionsValid){
                 setStep((prev) => Math.min(prev + 1, maxSteps));
             }
-        }else if(step === 3){
-
         }
     }
 

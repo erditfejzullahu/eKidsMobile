@@ -8,6 +8,9 @@ import { now } from 'lodash'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import CustomButton from '../../../components/CustomButton'
 import Checkbox from 'expo-checkbox'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { meetingSchema } from '../../../schemas/addMeetingSchema'
 
 const addScheduleMeeting = () => {
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -23,22 +26,40 @@ const addScheduleMeeting = () => {
     setIsRefreshing(true)
   }
 
-  const handleChangeDate = (event, date) => {
-    if(date){
-        setScheduleDate(date)
-    }
-}
+  const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
+    resolver: zodResolver(meetingSchema),
+    defaultValues: {
+      title: "",
+      scheduledDate: new Date()
+    },
+    mode: "onTouched"
+  })
+
+  const onSubmit = (data) => {
+    
+  }
 
   return (
     <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
       <DefaultHeader headerTitle={"Shto nje kohe mesimi"} showBorderBottom={true} bottomSubtitle={"Me ane te ketij seksioni ju mund te shtoni kohe te ndryshme te mesimeve Online. Nga te gjithe kurset ose leksionet egzistuese ju mund te zgjidhni kohen dhe daten e caktuar se kur do mbahet ligjerata. Te gjithe studentet tuaj do njoftohen permes dritareve te tyre perkatese."}/>
       <View className="gap-3 mb-4" style={styles.box}>
         <View>
-          <FormField 
-            title={"Titulli i takimit online"}
-            placeholder={"P.sh. Emri i leksionit, arsya e takimit etj."}
+          <Controller 
+            control={control}
+            name="title"
+            render={({field: {onChange, value}}) => (
+              <FormField 
+                title={"Titulli i takimit online"}
+                placeholder={"P.sh. Emri i leksionit, arsya e takimit etj."}
+                value={value}
+                handleChangeText={onChange}
+              />
+            )}
           />
           <Text className="text-xs text-gray-400 font-plight mt-1">Ne baze te ketij emri studentet tuaj mund te identifikojne ligjeraten tuaj.</Text>
+          {errors.title && (
+            <Text className="text-red-500 text-xs font-plight">{errors.title.message}</Text>
+          )}
         </View>
         <View>
           <FormField 
@@ -49,14 +70,27 @@ const addScheduleMeeting = () => {
         </View>
         <View>
           <Text className="text-base text-gray-100 font-pmedium mb-1.5">Data e takimit</Text>
-          <RNDateTimePicker
-              style={{marginLeft: -10}}
-              display="default"
-              onChange={handleChangeDate}
-              value={scheduleDate}
-              // maximumDate={new Date()}
+          <Controller 
+            control={control}
+            name="scheduledDate"
+            render={({field: {onChange, value}}) => (
+              <RNDateTimePicker
+                  style={{marginLeft: -10}}
+                  display="default"
+                  value={value}
+                  onChange={(event, selectedDate) => {
+                    if(selectedDate){
+                      onChange(selectedDate)
+                    }
+                  }}
+                  // maximumDate={new Date()}
+              />
+            )}
           />
           <Text className="text-xs text-gray-400 font-plight mt-1">Ky seksion tregon daten se kur do mbahet takimi (tregohuni konsistent).</Text>
+          {errors.scheduledDate && (
+            <Text className="text-red-500 text-xs font-plight">{errors.scheduledDate.message}</Text>
+          )}
         </View>
         <View>
           <FormField
@@ -101,7 +135,8 @@ const addScheduleMeeting = () => {
       <View className="mb-4" style={styles.box}>
         <CustomButton 
           title={"Paraqitni takimin online"}
-          isLoading={buttonLoading}
+          isLoading={isSubmitting}
+          handlePress={handleSubmit(onSubmit)}
         />
       </View>
     </KeyboardAwareScrollView>
