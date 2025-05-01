@@ -11,14 +11,13 @@ import Checkbox from 'expo-checkbox'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { meetingSchema } from '../../../schemas/addMeetingSchema'
+import NotifierComponent from '../../../components/NotifierComponent'
 
 const addScheduleMeeting = () => {
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [scheduleDate, setScheduleDate] = useState(new Date())
 
   const [nonCourseChecked, setNonCourseChecked] = useState(false)
-
-  const [buttonLoading, setButtonLoading] = useState(false)
+  const [courseSelected, setCourseSelected] = useState(null)
   
   const onRefresh = () => {
     setIsRefreshing(false)
@@ -34,9 +33,19 @@ const addScheduleMeeting = () => {
     },
     mode: "onTouched"
   })
-
+  const {showNotification: pickCourse} = NotifierComponent({
+    title: "Gabim",
+    description: "Duhet te zgjidhni nje kurs",
+    alertType: "warning"
+  })
   const onSubmit = (data) => {
-    
+    if(!nonCourseChecked && courseSelected === null){
+      pickCourse();
+      return;
+    }else{
+
+    }
+    console.log(data)
   }
 
   return (
