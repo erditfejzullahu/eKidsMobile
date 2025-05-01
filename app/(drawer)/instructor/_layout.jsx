@@ -102,6 +102,10 @@ const InstructorLayout = () => {
                 )
               }}
             />
+            <Tabs.Screen
+              name="addCourse"
+              options={{href: null, headerShown: false}}
+            />
         </Tabs>
         
     </>

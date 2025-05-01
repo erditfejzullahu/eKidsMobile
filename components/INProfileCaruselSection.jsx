@@ -62,7 +62,7 @@ const INProfileCaruselSection = ({statistics}) => {
               showButton={true}
               buttonTitle={"Krijoni kurs"}
               buttonStyle={"!min-h-[45px]"}
-              buttonFunction={() => router.replace('/instructor/addScheduleMeeting')}
+              buttonFunction={() => router.replace('/instructor/addCourse')}
             />
           </View>
         )}
@@ -85,6 +85,26 @@ const INProfileCaruselSection = ({statistics}) => {
             />
           </View>
         )}
+
+        {friends.length > 0 ? (
+          <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+            <Text className="text-base text-center font-psemibold text-white">Takimet e krijuara</Text>
+            <Text className="text-center text-secondary font-pblack text-lg">{friends.length}</Text>
+          </TouchableOpacity>
+        ) : (
+          <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
+            <EmptyState 
+              title={"Nuk keni krijuar ende takime"}
+              titleStyle={"!text-base"}
+              subtitleStyle={"!font-plight !text-xs"}
+              subtitle={"Mund te krijoni takime duke klikuar ne ikonen e (+) ose duke klikuar tek butoni me poshte"}
+              buttonTitle={"Krijoni"}
+              buttonStyle={"!min-h-[45px]"}
+              buttonFunction={() => router.replace('/instructor/addScheduleMeeting')}
+            />
+          </View>
+        )}
+
         </View>
     </ScrollView>}
     </>
