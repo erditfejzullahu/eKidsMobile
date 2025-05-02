@@ -1,5 +1,5 @@
-import { View, Text, RefreshControl, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, RefreshControl, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Platform } from 'react-native'
 import DefaultHeader from '../../../components/DefaultHeader'
@@ -12,18 +12,46 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { meetingSchema } from '../../../schemas/addMeetingSchema'
 import NotifierComponent from '../../../components/NotifierComponent'
+import { icons, images } from '../../../constants'
+import { useRouter } from 'expo-router'
+import * as Animatable from "react-native-animatable"
+import useFetchFunction from "../../../hooks/useFetchFunction"
+import { InstructorCreatedCourses } from '../../../services/fetchingService'
+import Loading from '../../../components/Loading'
 
-const addScheduleMeeting = () => {
+const AddScheduleMeeting = () => {
+  const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const {data, isLoading, refetch} = useFetchFunction(InstructorCreatedCourses);
 
   const [nonCourseChecked, setNonCourseChecked] = useState(false)
   const [courseSelected, setCourseSelected] = useState(null)
+
+  const [coursesData, setCoursesData] = useState([])
   
   const onRefresh = () => {
     setIsRefreshing(false)
 
+    setCourseSelected(null)
+    setNonCourseChecked(false)
+    reset();
+    refetch()
     setIsRefreshing(true)
   }
+
+  useEffect(() => {
+    if(nonCourseChecked){
+      setCourseSelected(null)
+    }
+  }, [nonCourseChecked])
+  
+
+  useEffect(() => {
+    console.log(data);
+    
+    setCoursesData(data || [])
+  }, [data])
+  
 
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(meetingSchema),
@@ -33,11 +61,19 @@ const addScheduleMeeting = () => {
     },
     mode: "onTouched"
   })
+
   const {showNotification: pickCourse} = NotifierComponent({
     title: "Gabim",
     description: "Duhet te zgjidhni nje kurs",
     alertType: "warning"
   })
+
+  const {showNotification: errorMeeting} = NotifierComponent({
+    title: "Gabim",
+    description: "Dicka shkoi gabim ne krijimin e mledhjes online. Ju lutem provoni perseri!",
+    alertType: "warning"
+  })
+
   const onSubmit = (data) => {
     if(!nonCourseChecked && courseSelected === null){
       pickCourse();
@@ -47,7 +83,7 @@ const addScheduleMeeting = () => {
     }
     console.log(data)
   }
-
+if(isLoading || isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
       <DefaultHeader headerTitle={"Shto nje kohe mesimi"} showBorderBottom={true} bottomSubtitle={"Me ane te ketij seksioni ju mund te shtoni kohe te ndryshme te mesimeve Online. Nga te gjithe kurset ose leksionet egzistuese ju mund te zgjidhni kohen dhe daten e caktuar se kur do mbahet ligjerata. Te gjithe studentet tuaj do njoftohen permes dritareve te tyre perkatese."}/>
@@ -123,21 +159,35 @@ const addScheduleMeeting = () => {
             </TouchableOpacity>
           </View>
           <ScrollView className={`h-[100px] border-2 border-black-200 rounded-xl ${nonCourseChecked ? "pointer-events-none opacity-30" : ""}`}>
-            <TouchableOpacity className="p-3 bg-oBlack border-b border-black-200 rounded-md">
-              <Text className="text-white font-psemibold">Kursi 1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="p-2 bg-oBlack border-b border-black-200 rounded-md">
-              <Text className="text-white font-psemibold">Kursi 2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="p-2 bg-oBlack border-b border-black-200 rounded-md">
-              <Text className="text-white font-psemibold">Kursi 3</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="p-2 bg-oBlack border-b border-black-200 rounded-md">
-              <Text className="text-white font-psemibold">Kursi 4</Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="p-2 bg-oBlack border-b border-black-200 rounded-md">
-              <Text className="text-white font-psemibold">Kursi 5</Text>
-            </TouchableOpacity>
+            {coursesData.length > 0 ? (
+              (coursesData.map((item) => (
+                <TouchableOpacity onPress={() => setCourseSelected(item.id)} key={item.id} className={`p-3 bg-oBlack border-b border-black-200 rounded-md ${courseSelected === item.id ? "flex-row items-center justify-between" : ""}`}>
+                  <Text className={`font-psemibold ${courseSelected === item.id ? "text-secondary" : "text-white"}`}>{item.name}</Text>
+                  {courseSelected === item.id && (
+                    <Image 
+                      source={icons.tick}
+                      className="size-6"
+                      tintColor={"#FF9C01"}
+                      resizeMode='contain'
+                    />
+                  )}
+                </TouchableOpacity>
+              )))
+              ) : (
+                <TouchableOpacity onPress={() => router.replace('/instructor/addCourse')}>
+                  <Animatable.View 
+                    className="flex-col gap-2 items-center justify-center h-[95px] m-auto"
+                    animation="pulse" iterationCount="infinite" duration={1000}>
+                    <Image
+                      source={images.breakHeart}
+                      className="size-10"
+                      resizeMode='contain'
+                      tintColor={"#ff9c01"}
+                    />
+                    <Text className="text-white font-psemibold text-sm">Ju nuk keni kurse ende</Text>
+                  </Animatable.View>
+                </TouchableOpacity>
+              )}
           </ScrollView>
         </View>
       </View>
@@ -152,7 +202,7 @@ const addScheduleMeeting = () => {
   )
 }
 
-export default addScheduleMeeting
+export default AddScheduleMeeting
 
 const styles = StyleSheet.create({
     box: {

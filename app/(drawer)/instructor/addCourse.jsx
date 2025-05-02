@@ -12,9 +12,13 @@ import { courseSchema } from '../../../schemas/addCourseSchema'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Loading from '../../../components/Loading'
 import CustomButton from '../../../components/CustomButton'
+import { InstructorCreateCourse } from '../../../services/fetchingService'
+import NotifierComponent from '../../../components/NotifierComponent'
+import { useRouter } from 'expo-router'
 
-const addCourse = () => {
-    const [step, setStep] = useState(2)
+const AddCourse = () => {
+    const router = useRouter();
+    const [step, setStep] = useState(1)
     const maxSteps = 3;
     const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -71,8 +75,28 @@ const addCourse = () => {
         setStep((prev) => Math.min(prev - 1, maxSteps));
     }
 
-    const onSubmit = (data) => {
+    const {showNotification: error} = NotifierComponent({
+        title: "Gabim!",
+        description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+        alertType: "warning"
+    })
+
+    const {showNotification: success} = NotifierComponent({
+        title: "Sukses!",
+        description: "Sapo shtuat nje kurs me planprogram te detajizuar! Tani mund te krijoni kohe te takimeve online! Do ridrejtoheni pas pak.",
+    })
+
+    const onSubmit = async (data) => {
         console.log(data)
+        const response = await InstructorCreateCourse(data);
+        if(response){
+            success()
+            setTimeout(() => {
+                router.replace('/instructors/addScheduleMeeting')
+            }, 1500);
+        }else{
+            error()
+        }
     }
 
 if(isRefreshing) return <Loading />
@@ -135,8 +159,8 @@ if(isRefreshing) return <Loading />
                 render={({ field }) => (
                     <View className="gap-2">
                     <FormField
-                        title="Çka është përfshirë"
-                        placeholder="P.sh. Temë e re"
+                        title="Cka aftesohet studenti?"
+                        placeholder="P.sh. Aftesohet ne kete pjese..."
                         value={topic}
                         handleChangeText={(e) => setTopic(e)}
                     />
@@ -375,7 +399,7 @@ if(isRefreshing) return <Loading />
   )
 }
 
-export default addCourse
+export default AddCourse
 
 const styles = StyleSheet.create({
     box: {

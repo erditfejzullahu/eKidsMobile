@@ -938,3 +938,25 @@ export const getInstructor = async (id) => {
         return null;
     }
 }
+
+export const InstructorCreateCourse = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Instructors/CreateCourse`, payload)
+        if(response.status === 200){
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error(error.response.data)
+        return false;
+    }
+}
+
+export const InstructorCreatedCourses = async () => {
+    try {
+        const response = await apiClient.get('/api/Instructors/GetInstructorCoursesForMeetingAdd')
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}

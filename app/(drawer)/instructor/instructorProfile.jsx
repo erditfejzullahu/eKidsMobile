@@ -11,7 +11,7 @@ import INProfileCaruselSection from '../../../components/INProfileCaruselSection
 import INProfileDetails from '../../../components/INProfileDetails'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const instructorProfile = () => {
+const InstructorProfile = () => {
   const {user, isLoading} = useGlobalContext();
   const {data, isLoading: instructorLoading, refetch} = useFetchFunction(() => getInstructor(user?.data?.userData?.id))
   const [instructorProfile, setInstructorProfile] = useState(null)
@@ -50,4 +50,4 @@ const instructorProfile = () => {
   )
 }
 
-export default instructorProfile
+export default InstructorProfile

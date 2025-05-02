@@ -94,7 +94,7 @@ const onlineClasses = [
   },
 ];  
 
-const instructorHome = () => {
+const InstructorHome = () => {
   const {user, isLoading} = useGlobalContext();
   const [openSorter, setOpenSorter] = useState(false)
   if(isLoading) return <Loading />
@@ -153,4 +153,4 @@ const instructorHome = () => {
   )
 }
 
-export default instructorHome
+export default InstructorHome
