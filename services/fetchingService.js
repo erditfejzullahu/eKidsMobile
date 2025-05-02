@@ -960,3 +960,23 @@ export const InstructorCreatedCourses = async () => {
         return null;
     }
 }
+
+export const InstructorCreateOnlineMeeting = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/OnlineMeetings/CreateMeeting`, payload)
+        return response && true;
+    } catch (error) {
+        console.log(error.response.data)
+        return false;
+    }
+}
+
+export const InstructorLessonsBasedOfCourse = async (courseId) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorLessonsBasedOfCoursesMeetingAdd?courseId=${courseId}`)
+        return response && response.data;
+    } catch (error) {
+        console.log(error.response.data)
+        return [];
+    }
+}

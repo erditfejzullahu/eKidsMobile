@@ -16,7 +16,7 @@ import { icons, images } from '../../../constants'
 import { useRouter } from 'expo-router'
 import * as Animatable from "react-native-animatable"
 import useFetchFunction from "../../../hooks/useFetchFunction"
-import { InstructorCreatedCourses } from '../../../services/fetchingService'
+import { InstructorCreatedCourses, InstructorCreateOnlineMeeting, InstructorLessonsBasedOfCourse } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
 
 const AddScheduleMeeting = () => {
@@ -25,19 +25,49 @@ const AddScheduleMeeting = () => {
   const {data, isLoading, refetch} = useFetchFunction(InstructorCreatedCourses);
 
   const [nonCourseChecked, setNonCourseChecked] = useState(false)
+  const [nonLessonChecked, setNonLessonChecked] = useState(false)
+
   const [courseSelected, setCourseSelected] = useState(null)
+  const [lessonSelected, setLessonSelected] = useState(null)
+
+  const [description, setDescription] = useState("")
+  const [durationTime, setDurationTime] = useState("")
 
   const [coursesData, setCoursesData] = useState([])
+  const [lessonsData, setLessonsData] = useState([])
   
-  const onRefresh = () => {
-    setIsRefreshing(false)
-
+  const onRefresh = async () => {
+    setIsRefreshing(true)
     setCourseSelected(null)
     setNonCourseChecked(false)
+    setDescription("")
+    setDurationTime("")
     reset();
-    refetch()
-    setIsRefreshing(true)
+    await refetch()
+    setIsRefreshing(false)
   }
+
+  const getLessonsBasedOfCourse = async () => {
+    const response = await InstructorLessonsBasedOfCourse(courseSelected)
+    console.log(response);
+    setLessonsData(response)
+  }
+
+  useEffect(() => {
+    if(courseSelected !== null){
+      getLessonsBasedOfCourse()
+    }else{
+      setLessonsData([])
+      setLessonSelected(null)
+    }
+  }, [courseSelected])
+  
+  useEffect(() => {
+    if(nonLessonChecked){
+      setLessonSelected(null)
+    }
+  }, [nonLessonChecked])
+  
 
   useEffect(() => {
     if(nonCourseChecked){
@@ -46,9 +76,8 @@ const AddScheduleMeeting = () => {
   }, [nonCourseChecked])
   
 
-  useEffect(() => {
-    console.log(data);
-    
+  useEffect(() => {    
+    console.log(data)
     setCoursesData(data || [])
   }, [data])
   
@@ -64,7 +93,13 @@ const AddScheduleMeeting = () => {
 
   const {showNotification: pickCourse} = NotifierComponent({
     title: "Gabim",
-    description: "Duhet te zgjidhni nje kurs",
+    description: "Zgjidhni takim pa permbajtje nese deshironi te mos selektoni kurs!",
+    alertType: "warning"
+  })
+
+  const {showNotification: pickLesson} = NotifierComponent({
+    title: "Gabim",
+    description: "Zgjidhni leksion i lire nese deshironi te mos selektoni leksion!",
     alertType: "warning"
   })
 
@@ -74,15 +109,40 @@ const AddScheduleMeeting = () => {
     alertType: "warning"
   })
 
-  const onSubmit = (data) => {
+  const {showNotification: success} = NotifierComponent({
+    title: "Sukses",
+    description: "Sapo krijuat takimin online me sukses. Per te shikuar informacionet e takimeve tuaja online, drejtohuni tek Profili!",
+  })
+
+  const onSubmit = async (data) => {
+    if(!nonLessonChecked && lessonSelected === null){
+      pickLesson();
+      return;
+    }
     if(!nonCourseChecked && courseSelected === null){
       pickCourse();
       return;
     }else{
-
+      const payload = {
+        courseId: nonCourseChecked ? null : courseSelected,
+        lessonId: nonLessonChecked ? null : lessonSelected,
+        title: data.title,
+        description: description === "" ? null : description,
+        scheduledDateTime: data.scheduledDate,
+        durationTime: durationTime === "" || durationTime === 0 ? null : parseInt(durationTime)
+      }
+      const response = await InstructorCreateOnlineMeeting(payload)
+      if(response){
+        success()
+        setTimeout(() => {
+          onRefresh();
+        }, 1000);
+      }else{
+        errorMeeting();
+      }
     }
-    console.log(data)
   }
+
 if(isLoading || isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
@@ -110,6 +170,8 @@ if(isLoading || isRefreshing) return <Loading />
           <FormField 
             title={"Pershkrimi i takimit /Opsional"}
             placeholder={"Shkruani ketu pershkrimin e takimit..."}
+            value={description}
+            handleChangeText={(e) => setDescription(e)}
           />
           <Text className="text-xs text-gray-400 font-plight mt-1">Pershkrim mund te jete, arsya e takimit, permbajtja e takimit, permbajtje mesimore etj.</Text>
         </View>
@@ -142,6 +204,8 @@ if(isLoading || isRefreshing) return <Loading />
             title={"Kohezgjatja /Opsionale"}
             placeholder={"Paraqitni kohezgjatjen me minuta..."}
             keyboardType="number-pad"
+            value={durationTime}
+            handleChangeText={(e) => setDurationTime(e)}
           />
           <Text className="text-xs text-gray-400 font-plight mt-1">Mund te caktoni cfaredo kohezgjatje qe deshironi. Mjafton te jete me minuta. P.sh 1.5ore = 90min.</Text>
         </View>
@@ -189,6 +253,56 @@ if(isLoading || isRefreshing) return <Loading />
                 </TouchableOpacity>
               )}
           </ScrollView>
+
+
+          {(courseSelected && lessonsData.length > 0) && (
+            <>
+            <View className="flex-row justify-between items-center mt-4">
+            <Text className="text-base text-gray-100 font-pmedium mb-1.5">Zgjidhni leksionin</Text>
+            <TouchableOpacity className="flex-row items-center justify-center gap-1 mb-2" onPress={() => setNonLessonChecked(!nonLessonChecked)}>
+              <Checkbox
+                value={nonCourseChecked}
+                onValueChange={() => setNonLessonChecked(!nonLessonChecked)}
+                color={nonCourseChecked ? "#ff9c01" : "#232533"}
+                className="mr-2"
+                />
+                <Text className="text-gray-100 font-pmedium">Leksion i lire</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView className={`h-[100px] border-2 border-black-200 rounded-xl ${nonLessonChecked ? "pointer-events-none opacity-30" : ""}`}>
+            {lessonsData.length > 0 ? (
+              (lessonsData.map((item) => (
+                <TouchableOpacity onPress={() => setLessonSelected(item.lessonId)} key={item.lessonId} className={`p-3 bg-oBlack border-b border-black-200 rounded-md ${lessonSelected === item.lessonId ? "flex-row items-center justify-between" : ""}`}>
+                  <Text className={`font-psemibold ${lessonSelected === item.lessonId ? "text-secondary" : "text-white"}`}>{item.title}</Text>
+                  {lessonSelected === item.lessonId && (
+                    <Image 
+                      source={icons.tick}
+                      className="size-6"
+                      tintColor={"#FF9C01"}
+                      resizeMode='contain'
+                    />
+                  )}
+                </TouchableOpacity>
+              )))
+              ) : (
+                <TouchableOpacity onPress={() => router.replace('/instructor/addCourse')}>
+                  <Animatable.View 
+                    className="flex-col gap-2 items-center justify-center h-[95px] m-auto"
+                    animation="pulse" iterationCount="infinite" duration={1000}>
+                    <Image
+                      source={images.breakHeart}
+                      className="size-10"
+                      resizeMode='contain'
+                      tintColor={"#ff9c01"}
+                    />
+                    <Text className="text-white font-psemibold text-sm">Ky kurs nuk ka permbajtje te leksioneve</Text>
+                  </Animatable.View>
+                </TouchableOpacity>
+              )}
+          </ScrollView>
+          </>
+          )}
+
         </View>
       </View>
       <View className="mb-4" style={styles.box}>
