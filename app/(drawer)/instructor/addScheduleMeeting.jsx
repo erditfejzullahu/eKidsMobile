@@ -86,7 +86,7 @@ const AddScheduleMeeting = () => {
     resolver: zodResolver(meetingSchema),
     defaultValues: {
       title: "",
-      scheduledDate: new Date()
+      scheduledDate: new Date(),
     },
     mode: "onTouched"
   })
@@ -115,20 +115,29 @@ const AddScheduleMeeting = () => {
   })
 
   const onSubmit = async (data) => {
+    console.log("qitu?");
     if(!nonLessonChecked && lessonSelected === null){
+      console.log("qitu?");
+      
       pickLesson();
       return;
     }
     if(!nonCourseChecked && courseSelected === null){
+      console.log("qitu?");
       pickCourse();
       return;
-    }else{
+    }
+      const {scheduledDate} = data
+      
+      const isoString = scheduledDate.toISOString();
+      console.log(isoString);
+      
       const payload = {
         courseId: nonCourseChecked ? null : courseSelected,
         lessonId: nonLessonChecked ? null : lessonSelected,
         title: data.title,
         description: description === "" ? null : description,
-        scheduledDateTime: data.scheduledDate,
+        scheduleDateTime: isoString,
         durationTime: durationTime === "" || durationTime === 0 ? null : parseInt(durationTime)
       }
       const response = await InstructorCreateOnlineMeeting(payload)
@@ -140,7 +149,6 @@ const AddScheduleMeeting = () => {
       }else{
         errorMeeting();
       }
-    }
   }
 
 if(isLoading || isRefreshing) return <Loading />
@@ -184,9 +192,10 @@ if(isLoading || isRefreshing) return <Loading />
               <RNDateTimePicker
                   style={{marginLeft: -10}}
                   display="default"
+                  mode="datetime"
                   value={value}
                   onChange={(event, selectedDate) => {
-                    if(selectedDate){
+                    if (event?.type !== 'dismissed' && selectedDate) {
                       onChange(selectedDate)
                     }
                   }}

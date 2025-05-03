@@ -6,14 +6,14 @@ import { useRouter } from 'expo-router'
 import { icons } from '../constants'
 
 const INProfileCaruselSection = ({statistics}) => {
+  console.log(statistics, ' statistikat');
+  
+  const {friends, courses, meetings, students} = statistics
   const router = useRouter();
-  const [students, setStudents] = useState([])
-  const [courses, setCourses] = useState([])
-  const [friends, setFriends] = useState([])
 
   const [showSections, setShowSections] = useState(true)
   //TODO: modals for each one of them in click
-
+  if(!statistics) return;
   return (
     <>
     <TouchableOpacity 
@@ -30,10 +30,10 @@ const INProfileCaruselSection = ({statistics}) => {
     {!showSections && <View className="h-16"></View>}
     {showSections && <ScrollView horizontal className="flex-row p-4 mt-1 relative" showsHorizontalScrollIndicator={false}>
       <View className="flex-row gap-6 flex-1 relative pb-2 pr-4" style={styles.box}>
-        {students.length > 0 ? (
+        {students > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <Text className="text-base text-center font-psemibold text-white">Studentet tuaj</Text>
-            <Text className="text-center text-secondary font-pblack text-lg">{students.length}</Text>
+            <Text className="text-center text-secondary font-pblack text-lg">{students}</Text>
           </TouchableOpacity>
         ) : (
           <View className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
@@ -47,10 +47,11 @@ const INProfileCaruselSection = ({statistics}) => {
           </View>
         )} 
 
-        {courses.length > 0 ? (
+        {courses > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <Text className="text-base text-center font-psemibold text-white">Kurset tuaja</Text>
-            <Text className="text-center text-secondary font-pblack text-lg">{courses.length}</Text>
+            <Text className="text-center text-secondary font-pblack text-lg mt-1">{courses} <Text className="text-gray-100 text-sm">{courses === 1 ? "I krijuar" : "Te krijuar"}</Text></Text>
+            <Text className="text-gray-100 font-plight text-xs text-center mt-1">Per detaje klikoni mbi dialogun</Text>
           </TouchableOpacity>
         ) : (
           <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
@@ -67,10 +68,11 @@ const INProfileCaruselSection = ({statistics}) => {
           </View>
         )}
 
-        {friends.length > 0 ? (
+        {friends?.length > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <Text className="text-base text-center font-psemibold text-white">Miqte tuaj</Text>
-            <Text className="text-center text-secondary font-pblack text-lg">{friends.length}</Text>
+            <Text className="text-center text-secondary font-pblack text-lg mt-1">{friends.length} <Text className="text-gray-100 text-sm">{friends.length === 1 ? "Mik" : "Miq"}</Text></Text>
+            <Text className="text-gray-100 font-plight text-xs text-center mt-1">Klikoni mbi dialog per te pare listen</Text>
           </TouchableOpacity>
         ) : (
           <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
@@ -86,10 +88,11 @@ const INProfileCaruselSection = ({statistics}) => {
           </View>
         )}
 
-        {friends.length > 0 ? (
+        {meetings > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <Text className="text-base text-center font-psemibold text-white">Takimet e krijuara</Text>
-            <Text className="text-center text-secondary font-pblack text-lg">{friends.length}</Text>
+            <Text className="text-center text-secondary font-pblack text-lg mt-1">{meetings} <Text className="text-gray-100 text-sm">{meetings === 1 ? "I krijuar" : "Te krijuar"}</Text></Text>
+            <Text className="text-gray-100 font-plight text-xs text-center mt-1">Per detaje klikoni mbi dialogun</Text>
           </TouchableOpacity>
         ) : (
           <View className=" bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">

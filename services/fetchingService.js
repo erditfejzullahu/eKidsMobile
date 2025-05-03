@@ -932,9 +932,13 @@ export const becomeInstructor = async (payload) => {
 
 export const getInstructor = async (id) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/${id}`)
+        const response = await apiClient.get(`/api/Instructors`)
+        console.log(response.data, ' dataA??');
+        
         return response && response.data
     } catch (error) {
+        console.error(error.response.data);
+        
         return null;
     }
 }
@@ -962,6 +966,7 @@ export const InstructorCreatedCourses = async () => {
 }
 
 export const InstructorCreateOnlineMeeting = async (payload) => {
+    console.log(payload, " payload")
     try {
         const response = await apiClient.post(`/api/OnlineMeetings/CreateMeeting`, payload)
         return response && true;

@@ -7,7 +7,9 @@ import CustomButton from './CustomButton'
 import { Platform } from 'react-native'
 
 const INProfileDetails = ({user}) => {
-    const [userData, setUserData] = useState(user)
+    // console.log(user.instructor.socials, " USERII");
+    // if(user === null || user.length === 0) return;
+    const [userData, setUserData] = useState(user.instructor)
     const [userSocials, setUserSocials] = useState(null)
     const [showDetails, setShowDetails] = useState(true)
     const [socialsError, setSocialsError] = useState([]);
@@ -17,8 +19,8 @@ const INProfileDetails = ({user}) => {
 
     useEffect(() => {
       if(user){
-        setUserData(user)
-        setUserSocials(JSON.parse(user.socials))
+        setUserData(user.instructor)
+        setUserSocials(JSON.parse(user.instructor.socials))
       }else{
         setUserData(null)
         setUserSocials(null)

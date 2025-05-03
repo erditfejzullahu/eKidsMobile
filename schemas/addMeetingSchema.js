@@ -5,5 +5,5 @@ export const meetingSchema = z.object({
     scheduledDate: z.date({
         required_error: "Data eshte e detyrueshme",
         invalid_type_error: "Duhet te jete nje date valide"
-    })
+    }),
 })

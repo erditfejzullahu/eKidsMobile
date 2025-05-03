@@ -13,7 +13,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 const InstructorProfile = () => {
   const {user, isLoading} = useGlobalContext();
-  const {data, isLoading: instructorLoading, refetch} = useFetchFunction(() => getInstructor(user?.data?.userData?.id))
+  const {data, isLoading: instructorLoading, refetch} = useFetchFunction(() => getInstructor())
   const [instructorProfile, setInstructorProfile] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -24,7 +24,7 @@ const InstructorProfile = () => {
   }
 
   useEffect(() => {
-    if(data){      
+    if(data){
       setInstructorProfile(data)
     }else{
       setInstructorProfile(null)
@@ -42,9 +42,9 @@ const InstructorProfile = () => {
         <DiscussionsProfile userData={user}/>
         <INProfileFirstSection data={user.data.userData}/>
         <View className="relative">
-        <INProfileCaruselSection statistics={instructorProfile}/>
+          <INProfileCaruselSection statistics={instructorProfile}/>
         </View>
-        <INProfileDetails user={data}/>
+        <INProfileDetails user={instructorProfile}/>
       </View>
     </KeyboardAwareScrollView>
   )
