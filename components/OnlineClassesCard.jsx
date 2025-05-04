@@ -2,36 +2,43 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Platform } from 'react-native'
 import { icons, images } from '../constants'
+import { getCourseCategories } from '../services/fetchingService'
 
-const OnlineClassesCard = ({classes}) => {
+const OnlineClassesCard = ({classes, userCategories}) => {
   return (
     <TouchableOpacity className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={styles.box}>
         {/* absolute */}
         <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
-            <Text className="text-white font-psemibold text-sm">{classes.category}</Text>
+            <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes.categoryId)}</Text>
         </View>
         <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-black-200 items-center bg-primary z-20 max-w-[200px]" style={styles.box}>
             <Image 
-                source={icons.profile}
+                source={{uri: classes.profilePictureUrl}}
                 className="h-12 w-12 border border-black-200 rounded-sm p-2"
                 resizeMode='contain'
             />
-            <View>
-                <Text className="text-white font-psemibold text-md">{classes.instructor}</Text>
+            <View className="flex-1">
+                <Text className="text-white font-psemibold text-md break-words" numberOfLines={1}>{classes.instructorName}</Text>
                 <Text className="text-gray-400 text-xs font-plight">Instruktor</Text>
             </View>
         </View>
         {/* absolute */}
 
-        <View className="h-[120px] border border-black-200">
-            <Image 
-                source={images.testimage}
-                className="h-full w-full"
-                resizeMode='cover'
-            />
+        <View className="h-[120px] border border-black-200" style={styles.box}>
+            {!classes.image ? (<Image 
+                source={images.logoNew}
+                className="h-full w-full py-2 bg-primary"
+                resizeMode='contain'
+            />) : (
+                <Image 
+                    source={{uri: classes.image}}
+                    className="h-full w-full"
+                    resizeMode='cover'
+                />
+            )}
         </View>
         
-        <Text className="text-white font-psemibold text-xl mt-4">{classes.className}</Text>
+        <Text className="text-white font-psemibold text-xl mt-4">{classes.name}</Text>
         <Text numberOfLines={4} className="text-gray-400 text-xs font-plight">{classes.description}</Text>
         
         <View className="absolute -bottom-2 z-20 -left-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>

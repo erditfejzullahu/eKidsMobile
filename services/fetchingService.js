@@ -956,6 +956,15 @@ export const InstructorCreateCourse = async (payload) => {
     }
 }
 
+export const GetInstructorsCourses = async () => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorsCourses`)
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}
+ 
 export const InstructorCreatedCourses = async () => {
     try {
         const response = await apiClient.get('/api/Instructors/GetInstructorCoursesForMeetingAdd')

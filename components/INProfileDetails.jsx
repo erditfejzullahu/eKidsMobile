@@ -19,15 +19,17 @@ const INProfileDetails = ({user}) => {
 
     useEffect(() => {
       if(user){
-        setUserData(user.instructor)
-        setUserSocials(JSON.parse(user.instructor.socials))
+        setUserData(user?.instructor)
+        if(user?.instructor?.socials){
+            setUserSocials(JSON.parse(user.instructor.socials))
+        }
       }else{
         setUserData(null)
         setUserSocials(null)
       }
     }, [user])
     
-    
+    if(!user) return;
   return (
     <>
     <View className="w-full border-t border-black-200 ">
