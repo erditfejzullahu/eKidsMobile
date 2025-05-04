@@ -15,6 +15,7 @@ import CustomButton from '../../../components/CustomButton'
 import { InstructorCreateCourse } from '../../../services/fetchingService'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useRouter } from 'expo-router'
+import * as ImagePicker from "expo-image-picker"
 
 const AddCourse = () => {
     const router = useRouter();
@@ -49,7 +50,8 @@ const AddCourse = () => {
             description: "",
             topicsCovered: [],
             sectionTitles: [],
-            sectionLessons: []
+            sectionLessons: [],
+            image: ""
         },
         mode: "onTouched"
     }) 
@@ -85,6 +87,32 @@ const AddCourse = () => {
         title: "Sukses!",
         description: "Sapo shtuat nje kurs me planprogram te detajizuar! Tani mund te krijoni kohe te takimeve online! Do ridrejtoheni pas pak.",
     })
+
+    const {showNotification: requestPermission} = NotifierComponent({
+            tite: "Dicka shkoi gabim!",
+            description: "Na nevojitet akses ne librarine e fotove tuaja.",
+            alertType: "warning"
+          })
+
+    const pickImage = async (onChange) => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if(permission.granted === false){
+            requestPermission();
+            return;
+        }
+        let image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: 0,
+            aspect: [4,3],
+            allowsEditing: true,
+            base64: true
+        })
+
+        if(!image.canceled){
+            let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
+            onChange(base64)
+        }
+    }
 
     const onSubmit = async (data) => {
         console.log(data)
@@ -151,6 +179,28 @@ if(isRefreshing) return <Loading />
                 {errors.description && (
                     <Text className="text-red-500 text-xs font-plight">{errors.description.message}</Text>
                 )}
+            </View>
+            <View>
+                <Controller 
+                    control={control}
+                    name="image"
+                    render={({field: {value, onChange}}) => (
+                        <>
+                            <TouchableOpacity className="bg-secondary rounded-xl py-3" onPress={() => pickImage(onChange)}>
+                                <Text className="text-oBlack text-center font-psemibold ">{value ? "Ndrysho foton" : "Zgjidh foton"}</Text>
+                            </TouchableOpacity>
+                            {value ? (
+                                <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>
+                                    <Image 
+                                        source={{uri: value}}
+                                        className="w-full h-full"
+                                        resizeMode='contain'
+                                    />
+                                </View>
+                            ) : null}
+                        </>
+                    )}
+                />
             </View>
             <View>
             <Controller

@@ -30,7 +30,7 @@ const OnlineClassesCard = ({classes, userCategories}) => {
                 className="h-full w-full py-2 bg-primary"
                 resizeMode='contain'
             />) : (
-                <Image 
+                <Image
                     source={{uri: classes.image}}
                     className="h-full w-full"
                     resizeMode='cover'
@@ -45,7 +45,16 @@ const OnlineClassesCard = ({classes, userCategories}) => {
             <Text className="text-white font-psemibold text-xs">Niveli <Text className="text-secondary">Fillestar</Text></Text>
         </View>
         <View className="absolute -bottom-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
-            <Text className="text-white font-psemibold text-xs"><Text className="text-secondary">{classes.enrolledStudents}</Text> Studente duke shfletuar</Text>
+        <Text className="text-white font-psemibold text-xs">
+            {classes.enrolledStudents === 0 ? (
+                <Text className="text-secondary">Nuk ka shfletime ende</Text>
+            ) : (
+                <>
+                <Text className="text-secondary">{classes.enrolledStudents}</Text>
+                {' '}Studente duke shfletuar
+                </>
+            )}
+            </Text>
         </View>
     </TouchableOpacity>
   )

@@ -45,7 +45,7 @@ const InstructorHome = () => {
         className="h-full bg-primary"
         contentContainerStyle={{paddingLeft: 16, paddingRight: 16, gap:24}}
         keyExtractor={(item) => item.id}
-        data={[]}
+        data={coursesData}
         renderItem={({item}) => (
           <OnlineClassesCard classes={item} userCategories={user?.data?.categories}/>
         )}
