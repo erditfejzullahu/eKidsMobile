@@ -78,7 +78,9 @@ const AddScheduleMeeting = () => {
 
   useEffect(() => {    
     console.log(data)
-    setCoursesData(data || [])
+    if(data){
+      setCoursesData(data)
+    }
   }, [data])
   
 

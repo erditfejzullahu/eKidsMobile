@@ -3,11 +3,22 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { icons, images } from '../constants'
 import { getCourseCategories } from '../services/fetchingService'
+import * as Animatable from "react-native-animatable"
 
-const OnlineClassesCard = ({classes, userCategories}) => {
+const OnlineClassesCard = ({classes, userCategories, managePlace = false}) => {
   return (
     <TouchableOpacity className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={styles.box}>
         {/* absolute */}
+        {managePlace && (<Animatable.View animation="pulse" duration={1000} iterationCount="infinite" className="absolute right-0 left-0 top-8 items-center justify-center z-50">
+            <TouchableOpacity className="z-50  mx-auto items-center justify-center bg-oBlack px-4 py-2 border border-black-200 w-[80%]" style={styles.box}>
+                <Image 
+                    source={icons.edit}
+                    className="size-5"
+                    resizeMode='contain'
+                    tintColor={"#ff9c01"}
+                />
+            </TouchableOpacity>
+        </Animatable.View>)}
         <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
             <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes.categoryId)}</Text>
         </View>

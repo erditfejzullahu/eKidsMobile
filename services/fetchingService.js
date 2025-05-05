@@ -994,3 +994,13 @@ export const InstructorLessonsBasedOfCourse = async (courseId) => {
         return [];
     }
 }
+
+export const GetInstructorManageTypeData = async (manageType) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorManageContentData?manageType=${manageType}`)
+        return response && response.data
+    } catch (error) {
+        console.error(error.response.data);
+        return [];
+    }
+}
