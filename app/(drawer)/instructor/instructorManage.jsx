@@ -11,6 +11,7 @@ import Loading from '../../../components/Loading'
 import EmptyState from '../../../components/EmptyState'
 import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { useGlobalContext } from '../../../context/GlobalProvider'
+import MeetingCardComponent from '../../../components/MeetingCardComponent'
 
 const InstructorManage = () => {
     const {user, isLoading} = useGlobalContext();
@@ -37,7 +38,7 @@ const InstructorManage = () => {
     
 
     useEffect(() => {
-      refetch()
+      refetch()      
     }, [manageType])
 
     if(isLoading || isRefreshing || manageLoading) return <Loading />
@@ -58,14 +59,14 @@ const InstructorManage = () => {
 
                     break;
                 case "Takimeve":
-
+                    return <MeetingCardComponent item={item}/>
                     break;
                 default:
                     break;
             }
         }}
         ListEmptyComponent={() => (
-            <View className="border border-black-200 bg-oBlack -mt-4" style={styles.box}>
+            <View className="border border-black-200 bg-oBlack " style={styles.box}>
                 <EmptyState 
                     title={`Nuk u gjet asnje ${manageType === "Kurseve" ? "e dhene e ndonje Kursi" : manageType === "Studenteve" ? "e dhene Studentore" : manageType === "Takimeve" ? "e dhene e Takimeve" : "e dhene"}`}
                     subtitle={"Nese mendoni qe eshte gabim, rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}

@@ -24,7 +24,7 @@ const ManageTypesDialog = ({manageType, sendManageType}) => {
                     tintColor={"#000"}
                 />
             </TouchableOpacity>
-            {dialogOpened && (<Animatable.View animation="bounceIn" className="absolute right-8 -bottom-6 bg-oBlack border border-black-200 rounded-md" style={styles.box}>
+            {dialogOpened && (<Animatable.View animation="bounceIn" className="absolute !z-50 right-8 -bottom-6 bg-oBlack border border-black-200 rounded-md" style={styles.box}>
                 {manageTypes.map((item, idx) => (
                     <TouchableOpacity 
                         onPress={() => {sendManageType(item.label); setDialogOpened(false)}}
