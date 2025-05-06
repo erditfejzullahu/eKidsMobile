@@ -1,10 +1,12 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Platform } from 'react-native'
-import { images } from '../constants';
+import { icons, images } from '../constants';
 import * as Animatable from "react-native-animatable"
 
 const MeetingCardComponent = ({item}) => {
+    const [showDetails, setShowDetails] = useState(false)
+
     if(item === null) return;
 
     const getStatus = () => {
@@ -24,7 +26,7 @@ const MeetingCardComponent = ({item}) => {
 
     const formatDuration = () => {
         if(!item.durationTime){
-            return "Takim i lire"
+            return "Takim pa limit kohor"
         }
         if(item.durationTime < 60){
             return (
@@ -54,8 +56,8 @@ const MeetingCardComponent = ({item}) => {
         {item.status === 0 && <Animatable.Text animation="pulse" iterationCount="infinite" className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>Njoftohuni</Animatable.Text>}
         <Text className="absolute -bottom-2 -left-2 border border-black-200 bg-primary px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>{date}</Text>
         <Text className="absolute -bottom-2 -right-2 border border-black-200 bg-primary px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>{formatDuration()}</Text>
-        <View className="h-[120px] border border-black-200" style={styles.box}>
-            {item.course.image ? (
+        <View className="h-[120px] border border-black-200 relative" style={styles.box}>
+            {item.course?.image ? (
                 <Image 
                     source={{uri: item.course.image}}
                     className="h-full w-full"
@@ -68,10 +70,70 @@ const MeetingCardComponent = ({item}) => {
                     resizeMode='contain'
                 />
             )}
+
+            <Animatable.View animation="pulse" iterationCount="infinite" className="absolute right-0 left-0 -bottom-3 items-center">
+                <TouchableOpacity className="bg-oBlack border border-black-200 px-3 py-1" style={styles.box} onPress={() => setShowDetails(!showDetails)}>
+                    <Image 
+                        source={showDetails ? icons.upArrow : icons.downArrow}
+                        className="size-5"
+                        resizeMode='contain'
+                        tintColor={"#FF9C01"}
+                    />
+                    {/* <Text className="text-white font-psemibold text-sm">Shfaq detaje</Text> */}
+                </TouchableOpacity>
+            </Animatable.View>
         </View>
         <View className="mt-3 mb-6">
-            <Text className="text-white font-pmedium text-xl">{item.title}</Text>
-            {item.description ? <Text className="text-gray-100 font-plight text-xs mt-1">{item.description}</Text> : <Text className="text-gray-100 italic text-xs mt-1">Pa pershkrim...</Text>}
+            <View>
+                <Text className="text-white font-pmedium text-xl">{item.title}</Text>
+                {item.description ? <Text className="text-gray-100 font-plight text-xs mt-1">{item.description}</Text> : <Text className="text-gray-100 italic text-xs mt-1">Pa pershkrim...</Text>}
+            </View>
+
+            {showDetails && <Animatable.View animation="bounceIn" className="border p-2 flex-row flex-wrap gap-4 items-center justify-between border-black-200 bg-primary mt-2 relative" style={styles.box}>
+                <Text className="text-white font-psemibold text-sm absolute z-50 -top-4 -right-4 bg-oBlack border border-black-200 px-2 py-1 rotate-12" style={styles.box}>
+                    Detajet e takimit
+                </Text>
+                <Image 
+                    source={icons.onlineMeeting}
+                    className="absolute right-4 top-8 rotate-[30deg] opacity-30"
+                    resizeMode='contain'
+                    tintColor={"#FF9C01"}
+                />
+                <Image 
+                    source={icons.videoConference}
+                    className="absolute left-4 bottom-8 opacity-30"
+                    resizeMode='contain'
+                    tintColor={"#FF9C01"}
+                />
+                <View className="flex-col justify-between min-w-[200px] gap-4">
+                    <View className="border border-black-200 bg-oBlack p-2 w-full" style={styles.box}>
+                        <Text className="text-white font-plight text-sm">Temat diskutuese</Text>
+                        <Text className="text-gray-400 text-sm font-plight ml-2">- {item.course ? item.course.name : "Nuk ka kurs te zgjedhur"}</Text>
+                        <Text className="text-gray-400 text-sm font-plight ml-4">- {item.lesson ? item.lesson.title : "Nuk ka leksion te zgjedhur"}</Text>
+                    </View>
+                    <Animatable.View animation="pulse" iterationCount="infinite">
+                        <TouchableOpacity className="bg-oBlack border border-black-200 p-2" style={styles.box}>
+                            <Text className="text-secondary font-psemibold text-sm text-center">Ndiq takimin</Text>
+                        </TouchableOpacity>
+                    </Animatable.View>
+                </View>
+                <View className="flex-none min-w-[200px] ml-auto">
+                    <View className="flex-col gap-2 items-center bg-oBlack border border-black-200 p-2" style={styles.box}>
+                        <View className="border border-black-200" style={styles.box}>
+                            <Image 
+                                source={{uri: item.instructor?.profilePictureUrl}}
+                                className="size-14"
+                                resizeMode='contain'
+                            />
+                        </View>
+                        <View>
+                            <Text className="text-white font-psemibold text-base text-center" numberOfLines={1}>{item.instructor?.name}</Text>
+                            <Text className="text-gray-400 text-xs font-plight text-center">{item.instructor?.email}</Text>
+                            <Text className="text-gray-400 text-xs font-plight text-center">{item.instructor?.username}</Text>
+                        </View>
+                    </View>
+                </View>
+            </Animatable.View>}
         </View>
 
     </TouchableOpacity>

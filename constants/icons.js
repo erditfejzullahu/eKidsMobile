@@ -97,8 +97,12 @@ import redditIcon from "../assets/icons/reddit.png";
 import snapchatIcon from "../assets/icons/snapchat.png";
 import discordIcon from "../assets/icons/discord.png";
 import telegramIcon from "../assets/icons/telegram.png";
+import onlineMeeting from "../assets/icons/meeting1.png"
+import videoConference from "../assets/icons/video-conference.png"
 
 export default {
+  onlineMeeting,
+  videoConference,
   githubIcon,
   metaIcon,
   instagramIcon,
