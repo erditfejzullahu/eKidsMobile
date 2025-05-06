@@ -5,8 +5,11 @@ import { icons, images } from '../constants'
 import { getCourseCategories } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router'
+import {useRole} from "../navigation/RoleProvider"
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false}) => {
+    const {role} = useRole();
+
     const navigation = useNavigation();
     const editCardPress = () => {
         navigation.navigate('addCourse', {
@@ -31,6 +34,14 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false}) => {
         <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
             <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes.categoryId)}</Text>
         </View>
+        {role !== "Instructor" && <View className="absolute top-5 z-20 -right-2 bg-primary border border-black-200 p-2 rounded-bl-lg rounded-tr-lg" style={styles.box}>
+            <Image
+                className="size-6"
+                source={classes.enrolled ? icons.heart : icons.play2}
+                tintColor={"#ff9c01"}
+                resizeMode='contain'
+            />
+        </View>}
         <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-black-200 items-center bg-primary z-20 max-w-[200px]" style={styles.box}>
             <Image 
                 source={{uri: classes.profilePictureUrl}}

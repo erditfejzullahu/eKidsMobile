@@ -26,7 +26,7 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
         <View className="mt-4">
             <Search 
                 valueData={searchInput}
-                placeholder={pathname === "/allTutors" ? "Kerkoni tutorin ose ekspertizen/lenden..." : pathname === "/allOnlineClasses" ? "Kerkoni klasen online te preferuar..." : "Kerkoni klaset qe jane caktuar..."}
+                placeholder={pathname === "/allTutors" ? "Kerkoni tutorin ose ekspertizen/lenden..." : pathname === "/allOnlineClasses" ? "Kerkoni kursin online te preferuar..." : "Kerkoni klaset qe jane caktuar..."}
                 searchFunc={(data) => setSearchInput(data)}
             />
         </View>

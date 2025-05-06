@@ -1,112 +1,46 @@
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, Image, FlatList, StyleSheet, RefreshControl } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { images } from '../../../constants'
 import SorterComponent from "../../../components/SorterComponent"
 import OnlineClassesCard from '../../../components/OnlineClassesCard';
 import { Platform } from 'react-native';
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader';
-
-const onlineClasses = [
-    {
-      id: 1,
-      className: "Introduction to Programming",
-      description: "Learn the basics of programming using Python. Perfect for beginners.",
-      instructor: "John Doe",
-      startTime: "2025-04-10T10:00:00Z", // ISO string format
-      endTime: "2025-04-10T12:00:00Z",   // ISO string format
-      price: 50, // Price in USD
-      category: "Programming",
-      level: "Beginner",
-      availableSeats: 30,
-      enrolledStudents: 12,
-      imageUrl: "https://example.com/images/programming.jpg",
-    },
-    {
-      id: 2,
-      className: "Advanced JavaScript",
-      description: "Dive deep into JavaScript with advanced topics like closures, async programming, and more.",
-      instructor: "Jane Smith",
-      startTime: "2025-04-12T14:00:00Z",
-      endTime: "2025-04-12T16:00:00Z",
-      price: 75,
-      category: "Programming",
-      level: "Advanced",
-      availableSeats: 20,
-      enrolledStudents: 15,
-      imageUrl: "https://example.com/images/javascript.jpg",
-    },
-    {
-      id: 3,
-      className: "Web Design Basics",
-      description: "Learn the fundamentals of web design, including HTML, CSS, and responsive design.",
-      instructor: "Mary Johnson",
-      startTime: "2025-04-15T09:00:00Z",
-      endTime: "2025-04-15T11:00:00Z",
-      price: 40,
-      category: "Design",
-      level: "Beginner",
-      availableSeats: 25,
-      enrolledStudents: 10,
-      imageUrl: "https://example.com/images/web-design.jpg",
-    },
-    {
-      id: 4,
-      className: "Machine Learning Fundamentals",
-      description: "Introduction to machine learning concepts, algorithms, and data analysis using Python.",
-      instructor: "David Lee",
-      startTime: "2025-04-20T13:00:00Z",
-      endTime: "2025-04-20T15:00:00Z",
-      price: 120,
-      category: "Data Science",
-      level: "Intermediate",
-      availableSeats: 15,
-      enrolledStudents: 8,
-      imageUrl: "https://example.com/images/machine-learning.jpg",
-    },
-    {
-      id: 5,
-      className: "Digital Marketing Essentials",
-      description: "Learn the basics of digital marketing, including SEO, social media, and content strategy.",
-      instructor: "Emily Davis",
-      startTime: "2025-04-25T17:00:00Z",
-      endTime: "2025-04-25T19:00:00Z",
-      price: 65,
-      category: "Marketing",
-      level: "Beginner",
-      availableSeats: 40,
-      enrolledStudents: 22,
-      imageUrl: "https://example.com/images/digital-marketing.jpg",
-    },
-    {
-      id: 6,
-      className: "Advanced Data Structures and Algorithms",
-      description: "Master advanced data structures like trees, graphs, and algorithms like dynamic programming.",
-      instructor: "Michael Wilson",
-      startTime: "2025-04-30T18:00:00Z",
-      endTime: "2025-04-30T20:00:00Z",
-      price: 100,
-      category: "Computer Science",
-      level: "Advanced",
-      availableSeats: 12,
-      enrolledStudents: 5,
-      imageUrl: "https://example.com/images/data-structures.jpg",
-    },
-  ];  
+import useFetchFunction from '../../../hooks/useFetchFunction';
+import { GetInstructorsCourses } from '../../../services/fetchingService';
+import Loading from '../../../components/Loading';
+import { useGlobalContext } from '../../../context/GlobalProvider';
 
 
-const allOnlineClasses = () => {
+const AllOnlineClasses = () => {
+  const {data, isLoading, refetch} = useFetchFunction(() => GetInstructorsCourses())
+  const {user, isLoading: userLoading} = useGlobalContext();
+  const [coursesData, setCoursesData] = useState([])
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+    setIsRefreshing(true)
+    await refetch();
+    setIsRefreshing(false)
+  }
+  useEffect(() => {
+    console.log(data)
+    setCoursesData(data || [])
+  }, [data])
+  
+  if(isLoading || isRefreshing || userLoading) return <Loading />
   return (
     <View className="flex-1 bg-primary">
         <FlatList
-            data={onlineClasses}
+            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            data={coursesData}
             contentContainerStyle={{gap:24, paddingLeft: 16, paddingRight: 16}}
             keyExtractor={(item) => item.id}
             renderItem={({item}) => (
-                <OnlineClassesCard classes={item}/>
+                <OnlineClassesCard classes={item} userCategories={user?.data?.categories}/>
             )}
             ListHeaderComponent={() => (
                 <View className="border-b border-black-200 pb-4 overflow-hidden -mb-2">
-                <LearnOnlineHeader headerTitle={"Klaset online"} sentInput={(data) => console.log(data)}/>
+                <LearnOnlineHeader headerTitle={"Kurset Online"} sentInput={(data) => console.log(data)}/>
                 <SorterComponent showSorter={true}/>
                 </View>
             )}
@@ -120,7 +54,7 @@ const allOnlineClasses = () => {
   )
 }
 
-export default allOnlineClasses
+export default AllOnlineClasses
 
 const styles = StyleSheet.create({
   box: {
