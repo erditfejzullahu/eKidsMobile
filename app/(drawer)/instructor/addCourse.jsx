@@ -16,8 +16,13 @@ import { InstructorCreateCourse } from '../../../services/fetchingService'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useRouter } from 'expo-router'
 import * as ImagePicker from "expo-image-picker"
+import { useRoute } from '@react-navigation/native'
 
 const AddCourse = () => {
+    const route = useRoute();
+    const {courseData, updateData} = route.params || {};
+    const isUpdateMode = updateData === true;
+
     const router = useRouter();
     const [step, setStep] = useState(1)
     const maxSteps = 3;
@@ -45,7 +50,14 @@ const AddCourse = () => {
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(courseSchema),
-        defaultValues: {
+        defaultValues: isUpdateMode ? {
+            name: courseData.name || "",
+            description: courseData.description || "",
+            topicsCovered: JSON.parse(courseData.topicsCovered) || [],
+            sectionTitles: courseData.sectionTitles || [],
+            sectionLessons: courseData.sectionLessons || [],
+            image: courseData.image || ""
+        } : {
             name: "",
             description: "",
             topicsCovered: [],
@@ -130,7 +142,7 @@ const AddCourse = () => {
 if(isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView className="h-full px-4 bg-primary" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>} >
-        <DefaultHeader headerTitle={"Shto nje kurs"} showBorderBottom={true} bottomSubtitle={"Nga kjo forme mund te shtoni kurse te cilat do shfaqen me pas si planprogram se si do kete ecurine kursi juaj! Kjo shfaqet tek shfletimi nga studentet tek seksioni i intruktoreve."}/>
+        <DefaultHeader headerTitle={ isUpdateMode ? "Perditesoni kursin" : "Shto nje kurs"} showBorderBottom={true} bottomSubtitle={"Nga kjo forme mund te shtoni kurse te cilat do shfaqen me pas si planprogram se si do kete ecurine kursi juaj! Kjo shfaqet tek shfletimi nga studentet tek seksioni i intruktoreve."}/>
         <Text className="absolute top-0 -right-4 font-psemibold text-gray-400 bg-oBlack text-xs rounded-md px-2 py-1 border border-black-200" style={styles.box}>Hapi <Text className="text-secondary">{step}</Text> nga <Text className="text-secondary">{maxSteps}</Text></Text>
         <Animatable.View animation="pulse" iterationCount="infinite" duration={1000} className="ml-auto">
             <TouchableOpacity className="flex-row items-center gap-1.5">
@@ -438,7 +450,7 @@ if(isRefreshing) return <Loading />
             </View>}
             <View className="flex-1" style={styles.box}>
                 <CustomButton 
-                    title={`${step === 1 ? "Vazhdo tek hapi 2" : step === 2 ? "Vazhdo tek hapi 3" : "Krijoni kursin"}`}
+                    title={`${step === 1 ? "Vazhdo tek hapi 2" : step === 2 ? "Vazhdo tek hapi 3" : `${isUpdateMode ? "Perditesoni kursin" : "Krijoni kursin"}`}`}
                     containerStyles={"!min-h-[55px]"}
                     isLoading={isSubmitting}
                     handlePress={step === 3 ? handleSubmit(onSubmit) : nextStep}

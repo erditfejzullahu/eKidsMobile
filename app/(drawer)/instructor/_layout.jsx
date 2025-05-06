@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
-import { Tabs, Redirect, Link } from 'expo-router'
+import { Tabs, Redirect, Link, Stack } from 'expo-router'
 import { icons, images } from '../../../constants'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native'
 import { useEffect } from 'react'
 import { useRole } from '../../../navigation/RoleProvider'
 
@@ -111,7 +111,6 @@ const InstructorLayout = () => {
               options={{href: null, headerShown: false}}
             />
         </Tabs>
-        
     </>
   )
 }

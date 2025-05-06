@@ -4,13 +4,22 @@ import { Platform } from 'react-native'
 import { icons, images } from '../constants'
 import { getCourseCategories } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
+import { useNavigation } from 'expo-router'
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false}) => {
+    const navigation = useNavigation();
+    const editCardPress = () => {
+        navigation.navigate('addCourse', {
+            courseData: classes,
+            updateData: true
+        })
+    }
+
   return (
     <TouchableOpacity className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={styles.box}>
         {/* absolute */}
         {managePlace && (<Animatable.View animation="pulse" duration={1000} iterationCount="infinite" className="absolute right-0 left-0 top-8 items-center justify-center z-50">
-            <TouchableOpacity className="z-50  mx-auto items-center justify-center bg-oBlack px-4 py-2 border border-black-200 w-[80%]" style={styles.box}>
+            <TouchableOpacity onPress={editCardPress} className="z-50  mx-auto items-center justify-center bg-oBlack px-4 py-2 border border-black-200 w-[80%]" style={styles.box}>
                 <Image 
                     source={icons.edit}
                     className="size-5"
