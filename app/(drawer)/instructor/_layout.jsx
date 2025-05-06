@@ -7,7 +7,7 @@ import { useRole } from '../../../navigation/RoleProvider'
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
   return (
-      <TouchableOpacity onPress={onPress}>
+      <View onPress={onPress}>
         <View className="flex-col gap-1 h-full">
           <View className="items-center justify-center">
             <Image 
@@ -23,7 +23,7 @@ const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
             </Text>
           </View>}
         </View>
-    </TouchableOpacity>
+    </View>
   )
 }
 
@@ -71,6 +71,7 @@ const InstructorLayout = () => {
             />
             <Tabs.Screen
               name="addScheduleMeeting"
+              initialParams={undefined}
               options={{
                 title:"addScheduleMeeting",
                 headerShown: false,

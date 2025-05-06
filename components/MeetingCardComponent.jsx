@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import { Platform } from 'react-native'
 import { icons, images } from '../constants';
 import * as Animatable from "react-native-animatable"
+import { useNavigation } from 'expo-router';
 
-const MeetingCardComponent = ({item}) => {
+const MeetingCardComponent = ({item, managePlace = false}) => {
+    const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)
 
     if(item === null) return;
@@ -49,8 +51,28 @@ const MeetingCardComponent = ({item}) => {
         month: "short",
         year: "numeric"
     })
+
+    const editPress = () => {
+        navigation.navigate("addScheduleMeeting", {
+            meetingData: item,
+            updateData: true
+        })
+    }
+
   return (
     <TouchableOpacity className="bg-oBlack border border-black-200 relative p-2" style={styles.box}>
+
+        {managePlace && (<Animatable.View animation="pulse" duration={1000} iterationCount="infinite" className="absolute right-0 left-0 top-8 items-center justify-center z-50">
+            <TouchableOpacity onPress={editPress} className="z-50  mx-auto items-center justify-center bg-oBlack px-4 py-2 border border-black-200 w-[80%]" style={styles.box}>
+                <Image 
+                    source={icons.edit}
+                    className="size-5"
+                    resizeMode='contain'
+                    tintColor={"#ff9c01"}
+                />
+            </TouchableOpacity>
+        </Animatable.View>)}
+
         <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}>{getStatus()}</Text>
         {item.status !== 0 && <Text className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}><Text className="text-secondary">{item.participants}</Text> Pjesemarres</Text>}
         {item.status === 0 && <Animatable.Text animation="pulse" iterationCount="infinite" className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>Njoftohuni</Animatable.Text>}

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Button, RefreshControl } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import DefaultHeader from '../../../components/DefaultHeader'
 import { Platform } from 'react-native'
 import FormField from '../../../components/FormField'
@@ -14,14 +14,18 @@ import Loading from '../../../components/Loading'
 import CustomButton from '../../../components/CustomButton'
 import { InstructorCreateCourse } from '../../../services/fetchingService'
 import NotifierComponent from '../../../components/NotifierComponent'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import * as ImagePicker from "expo-image-picker"
 import { useRoute } from '@react-navigation/native'
+import { useNavigation } from 'expo-router'
 
 const AddCourse = () => {
     const route = useRoute();
+    const navigation = useNavigation();
     const {courseData, updateData} = route.params || {};
     const isUpdateMode = updateData === true;
+    console.log(courseData, " moda");
+    
 
     const router = useRouter();
     const [step, setStep] = useState(1)
@@ -50,14 +54,7 @@ const AddCourse = () => {
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(courseSchema),
-        defaultValues: isUpdateMode ? {
-            name: courseData.name || "",
-            description: courseData.description || "",
-            topicsCovered: JSON.parse(courseData.topicsCovered) || [],
-            sectionTitles: courseData.sectionTitles || [],
-            sectionLessons: courseData.sectionLessons || [],
-            image: courseData.image || ""
-        } : {
+        defaultValues: {
             name: "",
             description: "",
             topicsCovered: [],
@@ -67,6 +64,20 @@ const AddCourse = () => {
         },
         mode: "onTouched"
     }) 
+
+    useEffect(() => {
+        if (isUpdateMode && courseData) {
+            reset({
+                name: courseData.name || "",
+                description: courseData.description || "",
+                topicsCovered: JSON.parse(courseData.topicsCovered) || [],
+                sectionTitles: courseData.sectionTitles || [],
+                sectionLessons: courseData.sectionLessons || [],
+                image: courseData.image || ""
+            });
+            
+        }
+    }, [isUpdateMode, courseData, reset]);
 
     const nextStep = async () => {
         if(step === 1){
@@ -138,6 +149,27 @@ const AddCourse = () => {
             error()
         }
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            
+            return () => {
+                console.log("po thirret qitu")
+                reset({
+                    name: "",
+                    description: "",
+                    topicsCovered: [],
+                    sectionTitles: [],
+                    sectionLessons: [],
+                    image: ""
+                });
+                setTimeout(() => {
+                    navigation.setParams({ courseData: undefined, updateData: undefined });
+                }, 100);
+            }
+        }, [navigation])
+    )
+    
 
 if(isRefreshing) return <Loading />
   return (

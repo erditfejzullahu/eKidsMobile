@@ -59,7 +59,7 @@ const InstructorManage = () => {
 
                     break;
                 case "Takimeve":
-                    return <MeetingCardComponent item={item}/>
+                    return <MeetingCardComponent item={item} managePlace={true}/>
                     break;
                 default:
                     break;

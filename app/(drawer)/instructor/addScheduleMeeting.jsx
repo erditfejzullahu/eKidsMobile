@@ -1,5 +1,5 @@
 import { View, Text, RefreshControl, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Platform } from 'react-native'
 import DefaultHeader from '../../../components/DefaultHeader'
@@ -13,14 +13,43 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { meetingSchema } from '../../../schemas/addMeetingSchema'
 import NotifierComponent from '../../../components/NotifierComponent'
 import { icons, images } from '../../../constants'
-import { useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router'
 import * as Animatable from "react-native-animatable"
 import useFetchFunction from "../../../hooks/useFetchFunction"
 import { InstructorCreatedCourses, InstructorCreateOnlineMeeting, InstructorLessonsBasedOfCourse } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
+import { useRoute } from '@react-navigation/native'
+import { useNavigation } from 'expo-router'
 
 const AddScheduleMeeting = () => {
   const router = useRouter();
+  const route = useRoute();
+  const navigation = useNavigation();
+  const {updateData, meetingData} = route.params || {};
+  console.log(meetingData, ' meeting data');
+
+  useEffect(() => {
+    if(meetingData && isUpdateMode){
+      if(meetingData.course){
+        setNonCourseChecked(false)
+        setCourseSelected(meetingData.course.id)
+      }
+      if(meetingData.lesson){
+        setNonLessonChecked(false)
+        setLessonSelected(meetingData.lesson.id)
+      }
+      setDescription(meetingData?.description || "")
+      setDurationTime(meetingData?.durationTime?.toString() || "")
+      reset({
+        title: meetingData.title,
+        scheduledDate: new Date(meetingData.scheduleDateTime)
+      })
+    }
+  }, [meetingData, reset, isUpdateMode])
+  
+  
+  const isUpdateMode = updateData === true;
+
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {data, isLoading, refetch} = useFetchFunction(InstructorCreatedCourses);
 
@@ -68,6 +97,23 @@ const AddScheduleMeeting = () => {
     }
   }, [nonLessonChecked])
   
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        console.log("[po thirret")
+        reset({
+          title: "",
+          scheduledDate: new Date()
+        })
+        setCourseSelected(null)
+        setNonCourseChecked(false)
+        setDescription("")
+        setDurationTime("")
+        navigation.setParams({meetingData: null, updateData: null})
+      }
+    }, [navigation])
+  )
+  
 
   useEffect(() => {
     if(nonCourseChecked){
@@ -77,7 +123,6 @@ const AddScheduleMeeting = () => {
   
 
   useEffect(() => {    
-    console.log(data)
     if(data){
       setCoursesData(data)
     }
@@ -92,6 +137,8 @@ const AddScheduleMeeting = () => {
     },
     mode: "onTouched"
   })
+
+  
 
   const {showNotification: pickCourse} = NotifierComponent({
     title: "Gabim",
@@ -156,7 +203,7 @@ const AddScheduleMeeting = () => {
 if(isLoading || isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
-      <DefaultHeader headerTitle={"Shto nje kohe mesimi"} showBorderBottom={true} bottomSubtitle={"Me ane te ketij seksioni ju mund te shtoni kohe te ndryshme te mesimeve Online. Nga te gjithe kurset ose leksionet egzistuese ju mund te zgjidhni kohen dhe daten e caktuar se kur do mbahet ligjerata. Te gjithe studentet tuaj do njoftohen permes dritareve te tyre perkatese."}/>
+      <DefaultHeader headerTitle={ isUpdateMode ? "Perditeso takimin tuaj" : "Shto nje takim mesimi"} showBorderBottom={true} bottomSubtitle={"Me ane te ketij seksioni ju mund te shtoni kohe te ndryshme te mesimeve Online. Nga te gjithe kurset ose leksionet egzistuese ju mund te zgjidhni kohen dhe daten e caktuar se kur do mbahet ligjerata. Te gjithe studentet tuaj do njoftohen permes dritareve te tyre perkatese."}/>
       <View className="gap-3 mb-4" style={styles.box}>
         <View>
           <Controller 
@@ -318,7 +365,7 @@ if(isLoading || isRefreshing) return <Loading />
       </View>
       <View className="mb-4" style={styles.box}>
         <CustomButton 
-          title={"Paraqitni takimin online"}
+          title={isUpdateMode ? "Perditesoni takimin tuaj online" : "Paraqitni takimin online"}
           isLoading={isSubmitting}
           handlePress={handleSubmit(onSubmit)}
         />
