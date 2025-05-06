@@ -60,8 +60,9 @@ const DiscussionsProfile = ({userData}) => {
                         <FlatList
                             refreshControl={<RefreshControl refreshing={discussionsLoading} onRefresh={async () => await getDiscussions()}/>}
                             scrollEnabled={true}
+                            showsVerticalScrollIndicator={false}
                             contentContainerStyle={{gap: 24, paddingLeft: 16, paddingRight: 16}}
-                            data={discussionsData?.discussions}
+                            data={discussionsData.discussions || []}
                             keyExtractor={(item) => item.id}
                             ListHeaderComponent={() => (
                                 <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={styles.box}>
@@ -71,7 +72,7 @@ const DiscussionsProfile = ({userData}) => {
                             renderItem={({ item }) => (
                                 <DiscussionsCard discussion={item}/>
                             )}
-                            ListFooterComponent={() => (
+                            ListEmptyComponent={() => (
                                 <EmptyState
                                     title={"Nuk keni bere ende diskutime"}
                                     subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}

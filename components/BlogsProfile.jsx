@@ -61,8 +61,9 @@ const BlogsProfile = ({userData}) => {
                     <FlatList 
                         refreshControl={<RefreshControl refreshing={blogsLoading} onRefresh={onRefresh}/>}
                         scrollEnabled={true}
+                        showsVerticalScrollIndicator={false}
                         contentContainerStyle={{gap: 24}}
-                        data={blogsData?.data}
+                        data={blogsData.data || []}
                         keyExtractor={(item) => item.id}
                         ListHeaderComponent={() => (
                             <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={styles.box}>
