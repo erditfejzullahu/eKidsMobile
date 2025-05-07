@@ -75,7 +75,15 @@ const MeetingCardComponent = ({item, managePlace = false}) => {
 
         <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}>{getStatus()}</Text>
         {item.status !== 0 && <Text className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}><Text className="text-secondary">{item.participants}</Text> Pjesemarres</Text>}
-        {item.status === 0 && <Animatable.Text animation="pulse" iterationCount="infinite" className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>Njoftohuni</Animatable.Text>}
+
+        {/* logic to make when it starts notification and stuff */}
+        {item.status === 0 && 
+            <TouchableOpacity className="absolute -top-2 -right-2 z-50 bg-oBlack" style={styles.box}>
+            <Animatable.Text animation="pulse" iterationCount="infinite" className=" border border-black-200 px-3 py-1 font-psemibold text-sm text-white">Njoftohuni</Animatable.Text>
+            </TouchableOpacity>
+        }
+        {/* logic to make when it starts notification and stuff */}
+        
         <Text className="absolute -bottom-2 -left-2 border border-black-200 bg-primary px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>{date}</Text>
         <Text className="absolute -bottom-2 -right-2 border border-black-200 bg-primary px-3 py-1 font-psemibold text-sm text-white" style={styles.box}>{formatDuration()}</Text>
         <View className="h-[120px] border border-black-200 relative" style={styles.box}>

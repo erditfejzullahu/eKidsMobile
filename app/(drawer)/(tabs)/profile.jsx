@@ -24,8 +24,9 @@ import ShowOtherDetailsProfile from '../../../components/ShowOtherDetailsProfile
 import DiscussionsProfile from '../../../components/DiscussionsProfile'
 import BlogsProfile from '../../../components/BlogsProfile'
 import { useRole } from '../../../navigation/RoleProvider'
+import OnlineClassesCard from '../../../components/OnlineClassesCard'
 
-const profile = () => {
+const Profile = () => {
   const {role} = useRole()
   if(role === "Instructor") return <Redirect href={'/instructor/instructorProfile'}/>
 const router = useRouter();
@@ -60,6 +61,9 @@ const router = useRouter();
   const [showCompletedQuizzes, setShowCompletedQuizzes] = useState(false)
   const [completedQuizzesData, setCompletedQuizzesData] = useState(null)
   const [showMoreInQuizzes, setShowMoreInQuizzes] = useState([])
+
+  const [showOnlineCoursesProgress, setShowOnlineCoursesProgress] = useState(false)
+  const [onlineCoursesData, setOnlineCoursesData] = useState([])
 
   const [showImportantDetails, setShowImportantDetails] = useState(true)
   const [showOtherDetails, setShowOtherDetails] = useState(false)
@@ -462,9 +466,9 @@ const router = useRouter();
           {showOtherDetails && <ShowOtherDetailsProfile userId={userData?.id} />}
         </> : 
             <>
-              <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
-                <View className={` ${completedCourses ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200`}>
-                  <TouchableOpacity onPress={() => {setCompletedCourses(!completedCourses), setShowCompletedQuizzes(false)}} className="items-center gap-2 flex-row justify-center">
+              <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 mb-4 relative" style={styles.box}>
+                <View className={` ${completedCourses ? "bg-oBlack" : ""}  w-1/2 border-r border-black-200`}>
+                  <TouchableOpacity onPress={() => {setCompletedCourses(!completedCourses), setShowCompletedQuizzes(false), setShowOnlineCoursesProgress(false)}} className="items-center gap-2 p-2 flex-row justify-center">
                     <View>
                       <Image 
                         source={images.mortarBoard} 
@@ -476,8 +480,25 @@ const router = useRouter();
                     <Text className="text-sm text-center text-white font-pregular">Kurse te perfunduara</Text>
                   </TouchableOpacity>
                 </View>
-                <View className={`${showCompletedQuizzes ? "bg-oBlack" : ""} w-1/2 p-2`}>
-                  <TouchableOpacity onPress={() => {setShowCompletedQuizzes(!showCompletedQuizzes), setCompletedCourses(false)}} className="items-center gap-2 flex-row justify-center">
+
+
+                <View className="absolute right-0 left-0 -bottom-6 items-center z-50 justify-center mx-auto">
+                  <Animatable.View animation="pulse" iterationCount="infinite">
+                    <TouchableOpacity onPress={() => {setShowCompletedQuizzes(false), setCompletedCourses(false), setShowOnlineCoursesProgress(!showOnlineCoursesProgress)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-oBlack" : "bg-primary"} border border-black-200 rounded-md p-2 py-1`} style={styles.box}>
+                      <Image 
+                        source={icons.parents} 
+                        style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : "#fff"}} 
+                        className="w-6 h-6"
+                        resizeMode='contain'
+                        />
+                      <Text className="text-sm text-center text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
+                    </TouchableOpacity>
+                  </Animatable.View>
+                </View>
+
+
+                <View className={`${showCompletedQuizzes ? "bg-oBlack" : ""} w-1/2 `}>
+                  <TouchableOpacity onPress={() => {setShowCompletedQuizzes(!showCompletedQuizzes), setCompletedCourses(false), setShowOnlineCoursesProgress(false)}} className="items-center gap-2 p-2 flex-row justify-center">
                     <View>
                       <Image 
                         source={icons.quiz} 
@@ -589,7 +610,7 @@ const router = useRouter();
                       buttonFunction={() => router.replace('/categories')}
                   />
                 </View>)}
-              {!completedCourses && !showCompletedQuizzes &&
+              {(!completedCourses && !showCompletedQuizzes && !showOnlineCoursesProgress) &&
               <UserProgressComponent
                 userDataId={userData?.id}
               />}
@@ -693,6 +714,26 @@ const router = useRouter();
                   />
                 </View> )}
 
+                {showOnlineCoursesProgress && (
+                  (onlineCoursesData.length > 0 ? (
+                    (onlineCoursesData.map((item) => (
+                      <View key={item.id}>
+                        <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true}/>
+                      </View>
+                    )))
+                  ) : (
+                    <View style={styles.box} className=" mx-4 my-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                      <EmptyState
+                        title={"Nuk u gjet asnje progress i Takimeve Online"}
+                        titleStyle={"!font-pregular mb-2"}
+                        subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo filloni shfletimin e ndonje Kursi Online duke klikuar ne butonin e meposhtem!"}
+                        buttonTitle={"Shfletoni Kurse Online"}
+                        buttonFunction={() => router.replace('/all-quizzes')}
+                      />
+                    </View>
+                  ))
+                )}
+
             </>
         }
         {/* user details */}
@@ -726,4 +767,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default profile
+export default Profile

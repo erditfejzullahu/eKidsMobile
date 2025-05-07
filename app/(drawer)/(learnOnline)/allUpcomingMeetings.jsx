@@ -24,6 +24,8 @@ const AllUpcomingMeetings = () => {
   }
 
   useEffect(() => {
+    console.log(data);
+    
     setMeetingsData(data || [])
   }, [data])
   

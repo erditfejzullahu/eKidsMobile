@@ -1010,6 +1010,7 @@ export const GetAllMeetings = async () => {
         const response = await apiClient.get(`/api/OnlineMeetings/AllMeetings`)
         return response && response.data;
     } catch (error) {
+        console.error(error.response.data)
         return []
     }
 }

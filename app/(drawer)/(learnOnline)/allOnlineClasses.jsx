@@ -24,7 +24,7 @@ const AllOnlineClasses = () => {
     setIsRefreshing(false)
   }
   useEffect(() => {
-    console.log(data)
+    console.log(data, '  data')
     setCoursesData(data || [])
   }, [data])
   
