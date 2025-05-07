@@ -90,7 +90,7 @@ const InstructorHome = () => {
           <View className="bg-oBlack border border-black-200" style={styles.box}>
             <EmptyState 
               title={"Nuk ka kurse ende!"}
-              subtitle={"Nese medoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
+              subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
               isSearchPage={true}
               buttonTitle={"Krijo kurse"}
               buttonFunction={() => router.replace('/instructor/addCourse')}

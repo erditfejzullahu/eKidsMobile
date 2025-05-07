@@ -1004,3 +1004,12 @@ export const GetInstructorManageTypeData = async (manageType) => {
         return [];
     }
 }
+
+export const GetAllMeetings = async () => {
+    try {
+        const response = await apiClient.get(`/api/OnlineMeetings/AllMeetings`)
+        return response && response.data;
+    } catch (error) {
+        return []
+    }
+}

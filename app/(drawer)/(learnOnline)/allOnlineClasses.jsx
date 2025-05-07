@@ -9,6 +9,7 @@ import useFetchFunction from '../../../hooks/useFetchFunction';
 import { GetInstructorsCourses } from '../../../services/fetchingService';
 import Loading from '../../../components/Loading';
 import { useGlobalContext } from '../../../context/GlobalProvider';
+import EmptyState from '../../../components/EmptyState';
 
 
 const AllOnlineClasses = () => {
@@ -46,6 +47,17 @@ const AllOnlineClasses = () => {
             )}
             ListFooterComponent={() => (
               <View className="mb-4"></View>
+            )}
+            ListEmptyComponent={() => (
+              <View className="bg-oBlack border border-black-200" style={styles.box}>
+                <EmptyState
+                  title={"Nuk ka kurse ende!"}
+                  subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
+                  isSearchPage={true}
+                  buttonTitle={"Krijo kurse"}
+                  buttonFunction={() => router.replace('/instructor/addCourse')}
+                />
+              </View>
             )}
         />
 
