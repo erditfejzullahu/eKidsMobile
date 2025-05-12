@@ -3,13 +3,17 @@ import React, { useEffect, useState } from 'react'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { useLocalSearchParams } from 'expo-router'
 import Loading from '../../../../components/Loading'
-import { GetCourseById } from '../../../../services/fetchingService'
+import { GetCourseById, StartOnlineCourse } from '../../../../services/fetchingService'
 import { Platform } from 'react-native'
 import { icons, images } from '../../../../constants'
 import * as Animatable from "react-native-animatable"
 import OnlineCourseSectionExpander from '../../../../components/OnlineCourseSectionExpander'
+import { useRouter } from 'expo-router'
+import NotifierComponent from '../../../../components/NotifierComponent'
+import { currentUserID } from '../../../../services/authService'
 
 const OnlineClass = () => {
+  const router = useRouter();
   const {id} = useLocalSearchParams()
   
   const {data, isLoading, refetch} = useFetchFunction(() => GetCourseById(id))
@@ -22,6 +26,36 @@ const OnlineClass = () => {
     setIsRefreshing(false)
   }
 
+  const {showNotification: success} = NotifierComponent({
+    title: "Sukses",
+    description: `Sapo filluat kursin ${courseData?.courseName}. Tani do te ridrejtoheni tek leksionet vijuese`
+  })
+
+  const {showNotification: failed} = NotifierComponent({
+    title: "Gabim",
+    description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+    alertType: "warning"
+  })
+
+  const handleCourseStart = async () => {
+    if(enrolled){
+      router.replace(`/`)
+    }else{
+      const userId = await currentUserID();
+      const payload = {
+        userId,
+        courseId: courseData?.id,
+
+      }
+      const response = await StartOnlineCourse(payload)
+      if(response === 200){
+        success();
+      }else{
+        failed();
+      }
+    }
+  }
+
   useEffect(() => {
     console.log(data);
     
@@ -32,7 +66,7 @@ const OnlineClass = () => {
     refetch()
   }, [id])
 
-  if(isLoading || isRefreshing) return <Loading />
+  if(isLoading || isRefreshing || !courseData) return <Loading />
   return (
     <ScrollView
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
@@ -83,7 +117,9 @@ const OnlineClass = () => {
       </View>
       <View className="border-b relative border-l border-r border-black-200 bg-oBlack p-4 flex-row items-center justify-between" style={styles.box}>
         <Text className="text-white font-psemibold text-xl">{courseData.courseName}</Text>
-        <TouchableOpacity className="bg-primary p-2 border items-center justify-between gap-2 border-black-200 rounded-md" style={styles.box}>
+        <TouchableOpacity className="bg-primary p-2 border items-center justify-between gap-2 border-black-200 rounded-md" style={styles.box}
+          onPress={handleCourseStart}
+        >
           <Animatable.Image 
             animation="pulse"
             iterationCount="infinite"
@@ -91,9 +127,9 @@ const OnlineClass = () => {
             className="size-5"
             resizeMode='contain'
             tintColor={"#ff9c01"}
-          /> 
+          />
         </TouchableOpacity>
-        <Text className="text-gray-400 text-xs font-plight absolute -top-3.5 right-4 bg-primary border border-black-200 rounded-md px-2 py-1" style={styles.box}>Vazhdoni</Text>
+        <Text className="text-gray-400 text-xs font-plight absolute -top-3.5 right-4 bg-primary border border-black-200 rounded-md px-2 py-1" style={styles.box}>{courseData.enrolled ? "Vazhdoni" : "Filloni"}</Text>
       </View>
       <View className="p-4">
         <Text className="text-white font-psemibold">Permbajtja</Text>
@@ -122,7 +158,7 @@ const OnlineClass = () => {
 
       <View className="relative">
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
-        <OnlineCourseSectionExpander sections={courseData.sections} />
+        <OnlineCourseSectionExpander sections={courseData?.sections} />
       </View>
     </ScrollView>
   )

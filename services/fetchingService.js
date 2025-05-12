@@ -1025,9 +1025,9 @@ export const GetInstructorsUserProfileProgresses = async () => {
     }
 }
 
-export const StartOnlineCourse = async () => {
+export const StartOnlineCourse = async (payload) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/StartCourse`)
+        const response = await apiClient.post(`/api/Instructors/StartCourse`, payload)
         return response && response.status
     } catch (error) {
         console.error(error.response.data)
@@ -1044,3 +1044,4 @@ export const GetCourseById = async (id) => {
         return null;
     }
 }
+
