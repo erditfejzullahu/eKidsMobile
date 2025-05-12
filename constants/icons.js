@@ -99,8 +99,10 @@ import discordIcon from "../assets/icons/discord.png";
 import telegramIcon from "../assets/icons/telegram.png";
 import onlineMeeting from "../assets/icons/meeting1.png"
 import videoConference from "../assets/icons/video-conference.png"
+import available from "../assets/icons/available.png"
 
 export default {
+  available,
   onlineMeeting,
   videoConference,
   githubIcon,

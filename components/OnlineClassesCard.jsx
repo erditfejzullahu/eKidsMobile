@@ -8,10 +8,12 @@ import { useNavigation } from 'expo-router'
 import {useRole} from "../navigation/RoleProvider"
 import { useRouter } from 'expo-router'
 import * as Progress from 'react-native-progress';
+import Modal from "../components/Modal"
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false}) => {
     console.log(classes);
     const [showCourseLessons, setShowCourseLessons] = useState(false)
+    const [showLessonInfoModal, setShowLessonInfoModal] = useState(false)
     
     const router = useRouter();
     const {role} = useRole();
@@ -24,6 +26,13 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
         })
     }
 
+    const handleLessonPress = (item) => {
+        if(item.routeTo){
+            router.replace();
+        }else{
+            setShowLessonInfoModal(true)
+        }
+    }
 
     const handleCoursePress = () => {
         router.push(`onlineClass/${classes.id}`)
@@ -31,6 +40,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
 
     if(profilePlace){
         return(
+            <>
             <TouchableOpacity onPress={() => setShowCourseLessons(!showCourseLessons)} className="bg-oBlack p-4 border rounded-md border-black-200" style={styles.box}>
                 <Text className="bg-primary text-white font-psemibold text-sm absolute top-0 right-0 border-b border-l border-black-200 rounded-bl-md rounded-tr-md px-2 py-0.5" style={styles.box}>{getCourseCategories(userCategories, classes.course.categoryId)}</Text>
                 <Text className="text-white font-psemibold text-lg">{classes.course.name}</Text>
@@ -51,21 +61,45 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
 
                 {showCourseLessons && <View className="gap-2.5">
                     {classes?.lessons?.map((item) => (
-                        <TouchableOpacity key={item.id} className="flex-row items-center justify-between bg-primary rounded-md border border-black-200 p-3" style={styles.box}>
+                        <TouchableOpacity onPress={() => handleLessonPress(item)} key={item.id} className="flex-row items-center justify-between bg-primary rounded-md border border-black-200 p-3" style={styles.box}>
                             <Text className="font-psemibold text-sm text-white">{item.title}</Text>
-                            <Animatable.Image 
-                                animation="pulse"
-                                iterationCount="infinite"
-                                duration={2000}
-                                easing="ease-in-out"
-                                source={item.isCompleted ? icons.completed : icons.completedProgress}
-                                className="size-6"
-                                resizeMode='contain'
-                                tintColor={"#ff9c01"}
+                            <View className="flex-row items-center gap-2">
+                                {item.routeTo && (<Animatable.Image 
+                                    animation="pulse"
+                                    iterationCount="infinite"
+                                    duration={2000}
+                                    easing="ease-in-out"
+                                    source={icons.available}
+                                    className="size-8"
+                                    resizeMode='contain'
+                                    tintColor={"#ff9c01"}
+                                />)}
+                                <Animatable.Image 
+                                    animation="pulse"
+                                    iterationCount="infinite"
+                                    duration={2000}
+                                    easing="ease-in-out"
+                                    source={item.isCompleted ? icons.completed : icons.completedProgress}
+                                    className="size-6"
+                                    resizeMode='contain'
+                                    tintColor={"#ff9c01"}
                                 />
+                            </View>
                         </TouchableOpacity>))} 
                 </View>}
             </TouchableOpacity>
+
+            <Modal
+                visible={showLessonInfoModal}
+                onClose={() => setShowLessonInfoModal(false)}
+                onlyCancelButton={true}
+                title={"Njoftim mbi veprimin"}
+                cancelButtonText={"Largo dritaren"}
+
+            >
+                <Text className="text-gray-400 text-center text-xs mt-1 font-plight">Leksionet qe nuk kane imazhin e dispozicionit(Available) ende nuk kane ndodhur. Porsa te ndodhin do merrni njoftimin e posacshem.</Text>
+            </Modal>
+            </>
         )
     }else{
         return (
