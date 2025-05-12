@@ -38,18 +38,21 @@ const OnlineClass = () => {
   })
 
   const handleCourseStart = async () => {
-    if(enrolled){
+    if(courseData?.routes?.enrolled){
       router.replace(`/`)
     }else{
       const userId = await currentUserID();
+      
       const payload = {
         userId,
-        courseId: courseData?.id,
-
+        courseId: courseData?.courseId,
+        instructorId: courseData?.instructorId
       }
+
       const response = await StartOnlineCourse(payload)
       if(response === 200){
         success();
+        // router.replace();
       }else{
         failed();
       }
@@ -129,7 +132,7 @@ const OnlineClass = () => {
             tintColor={"#ff9c01"}
           />
         </TouchableOpacity>
-        <Text className="text-gray-400 text-xs font-plight absolute -top-3.5 right-4 bg-primary border border-black-200 rounded-md px-2 py-1" style={styles.box}>{courseData.enrolled ? "Vazhdoni" : "Filloni"}</Text>
+        <Text className="text-gray-400 text-xs font-plight absolute -top-3.5 right-4 bg-primary border border-black-200 rounded-md px-2 py-1" style={styles.box}>{courseData?.routes?.enrolled ? "Vazhdoni" : "Filloni"}</Text>
       </View>
       <View className="p-4">
         <Text className="text-white font-psemibold">Permbajtja</Text>
@@ -140,8 +143,7 @@ const OnlineClass = () => {
         {courseData?.topicsCovered && (
           <View className="flex-row flex-wrap justify-between gap-2 border border-black-200 p-4 mt-2 bg-oBlack" style={styles.box}>
             {JSON.parse(courseData.topicsCovered).map((item, idx) => (
-              <>
-              <View className={`flex-row items-center gap-1 w-[48%] ${JSON.parse(courseData.topicsCovered)?.length > 1 ? "pb-2 pr-1" : ""}`} key={idx}>
+              <View className={`flex-row items-center gap-1 w-[48%] ${JSON.parse(courseData.topicsCovered)?.length > 1 ? "pb-2 pr-1" : ""}`} key={`topics-${idx}`}>
                 <Image 
                   source={icons.tick}
                   tintColor={"#ff9c01"}
@@ -150,7 +152,6 @@ const OnlineClass = () => {
                 />
                 <Text className="text-gray-400 text-xs font-plight">{item}</Text>
               </View>
-          </>
             ))}
           </View>
         )}

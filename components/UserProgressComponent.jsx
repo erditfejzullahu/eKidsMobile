@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router'
 import EmptyState from "./EmptyState";
 
 const UserProgressComponent = ({userDataId}) => {
-    console.log(userDataId, ' ?');
+    // console.log(userDataId, ' ?');
     
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false)
@@ -118,10 +118,10 @@ const UserProgressComponent = ({userDataId}) => {
                                     const lessonProgressStarted = lessonItem?.progress[0]?.lessonProgressStarted;
                                     const lessonProgressCompleted = lessonItem?.progress[0].lessonProgressCompleted;
                                     return(
-                                        <TouchableOpacity onPress={() => navigateToLesson(lessonItem)}>
+                                        <TouchableOpacity onPress={() => navigateToLesson(lessonItem)} key={lessonIndex}>
                                             <View
                                                 className="w-full"
-                                                key={lessonIndex}
+                                                
                                             >
                                                 <View className="flex-row items-center w-full p-4 border border-black-200 rounded-[10px]">
                                                     <View className="flex-row w-[90%]">

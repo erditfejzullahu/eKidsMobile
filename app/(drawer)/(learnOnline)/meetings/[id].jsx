@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const upcomingMeeting = () => {
+const Meetings = () => {
   return (
     <View>
       <Text>upcomingMeeting</Text>
@@ -9,4 +9,4 @@ const upcomingMeeting = () => {
   )
 }
 
-export default upcomingMeeting
+export default Meetings
