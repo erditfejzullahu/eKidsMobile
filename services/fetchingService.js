@@ -1014,3 +1014,33 @@ export const GetAllMeetings = async () => {
         return []
     }
 }
+
+export const GetInstructorsUserProfileProgresses = async () => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorsCoursesUserProgress`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data);
+        return []
+    }
+}
+
+export const StartOnlineCourse = async () => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/StartCourse`)
+        return response && response.status
+    } catch (error) {
+        console.error(error.response.data)
+        return error.response.status;
+    }
+}
+
+export const GetCourseById = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/Course/${id}`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data)
+        return null;
+    }
+}

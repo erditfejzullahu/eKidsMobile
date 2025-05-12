@@ -718,7 +718,7 @@ const router = useRouter();
                   (onlineCoursesData.length > 0 ? (
                     (onlineCoursesData.map((item) => (
                       <View key={item.id}>
-                        <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true}/>
+                        <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true} />
                       </View>
                     )))
                   ) : (

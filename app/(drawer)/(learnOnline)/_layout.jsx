@@ -35,7 +35,7 @@ const _layout = () => {
         </Stack> */}
         {/* {children} */}
     <Tabs
-        backBehavior='history'
+        backBehavior="history"
         screenOptions={{
             tabBarShowLabel: false,
             tabBarActiveTintColor: '#FFA001',
