@@ -2,7 +2,7 @@ import { View, Text, Image, Alert, StyleSheet, RefreshControl, ActivityIndicator
 import React, {useState, useEffect} from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import { images, icons } from '../../../constants'
-import { getCompletedQuizzesByUser, getCourseCategories, getMetaValue, updateProfilePicture, updateUserDetails } from '../../../services/fetchingService'
+import { getCompletedQuizzesByUser, getCourseCategories, GetInstructorsUserProfileProgresses, getMetaValue, updateProfilePicture, updateUserDetails } from '../../../services/fetchingService'
 import { TouchableOpacity } from 'react-native'
 import FormField from '../../../components/FormField'
 import { ScrollView } from 'react-native'
@@ -102,6 +102,22 @@ const router = useRouter();
       setCompletedQuizzesData(null)
     }
   }, [completedQuizzes])
+  
+
+  const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
+  const showOnlineCoursesProgresses = async () => {
+    setOnlineCoursesLoading(true)
+    const response = await GetInstructorsUserProfileProgresses()
+    
+    setOnlineCoursesData(response)
+    setOnlineCoursesLoading(false)
+  }
+
+  useEffect(() => {
+    if(showOnlineCoursesProgress){
+      showOnlineCoursesProgresses()
+    }
+  }, [showOnlineCoursesProgress])
   
 
   useEffect(() => {
@@ -715,9 +731,10 @@ const router = useRouter();
                 </View> )}
 
                 {showOnlineCoursesProgress && (
-                  (onlineCoursesData.length > 0 ? (
-                    (onlineCoursesData.map((item) => (
-                      <View key={item.id}>
+                  (onlineCoursesLoading ? <View className="mt-10"><Loading /></View> : 
+                    (onlineCoursesData.length > 0 ? (
+                      (onlineCoursesData.map((item) => (
+                        <View key={item.id} className="mx-4 mt-8 mb-6">
                         <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true} />
                       </View>
                     )))
@@ -729,9 +746,10 @@ const router = useRouter();
                         subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo filloni shfletimin e ndonje Kursi Online duke klikuar ne butonin e meposhtem!"}
                         buttonTitle={"Shfletoni Kurse Online"}
                         buttonFunction={() => router.replace('/all-quizzes')}
-                      />
+                        />
                     </View>
                   ))
+                )
                 )}
 
             </>

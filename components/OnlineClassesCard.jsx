@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Platform } from 'react-native'
 import { icons, images } from '../constants'
 import { getCourseCategories } from '../services/fetchingService'
@@ -7,8 +7,12 @@ import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router'
 import {useRole} from "../navigation/RoleProvider"
 import { useRouter } from 'expo-router'
+import * as Progress from 'react-native-progress';
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false}) => {
+    console.log(classes);
+    const [showCourseLessons, setShowCourseLessons] = useState(false)
+    
     const router = useRouter();
     const {role} = useRole();
 
@@ -27,7 +31,41 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
 
     if(profilePlace){
         return(
-            <View></View>
+            <TouchableOpacity onPress={() => setShowCourseLessons(!showCourseLessons)} className="bg-oBlack p-4 border rounded-md border-black-200" style={styles.box}>
+                <Text className="bg-primary text-white font-psemibold text-sm absolute top-0 right-0 border-b border-l border-black-200 rounded-bl-md rounded-tr-md px-2 py-0.5" style={styles.box}>{getCourseCategories(userCategories, classes.course.categoryId)}</Text>
+                <Text className="text-white font-psemibold text-lg">{classes.course.name}</Text>
+                <View className={`relative flex-row items-center justify-between gap-2 ${showCourseLessons ? "border-b pb-3 border-black-200 mb-3" : ""}`}>
+                    <View className="flex-1">
+                        <Progress.Bar progress={classes.completionPercentage / 100} unfilledColor='#d9d9d9' color="#ff9c01" borderWidth={0} height={12}  width={null} />
+                        <Text className="text-oBlock absolute -bottom-[1.5px] items-center justify-center w-full right-0 left-0 m-auto text-center font-psemibold text-xs">{classes.completionPercentage}%</Text>
+                    </View>
+                    <View className="-mt-1">
+                        <Image 
+                            source={showCourseLessons ? icons.upArrow : icons.downArrow}
+                            className="size-6"
+                            resizeMode='contain'
+                            tintColor={"#ff9c01"}
+                        />
+                    </View>
+                </View>
+
+                {showCourseLessons && <View className="gap-2.5">
+                    {classes?.lessons?.map((item) => (
+                        <TouchableOpacity key={item.id} className="flex-row items-center justify-between bg-primary rounded-md border border-black-200 p-3" style={styles.box}>
+                            <Text className="font-psemibold text-sm text-white">{item.title}</Text>
+                            <Animatable.Image 
+                                animation="pulse"
+                                iterationCount="infinite"
+                                duration={2000}
+                                easing="ease-in-out"
+                                source={item.isCompleted ? icons.completed : icons.completedProgress}
+                                className="size-6"
+                                resizeMode='contain'
+                                tintColor={"#ff9c01"}
+                                />
+                        </TouchableOpacity>))} 
+                </View>}
+            </TouchableOpacity>
         )
     }else{
         return (
