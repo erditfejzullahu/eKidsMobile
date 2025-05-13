@@ -9,6 +9,7 @@ import { TouchableOpacity } from 'react-native'
 import { icons } from '../../../../constants'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
 import * as Animatable from "react-native-animatable"
+import CountdownTimer from '../../../../components/CountdownTimer'
 
 const Meetings = () => {
   const {id} = useLocalSearchParams();
@@ -31,6 +32,70 @@ const Meetings = () => {
     setIsRefreshing(false)
   }
 
+  const outputText = () => {
+    if(meetingData?.status === "Nuk eshte mbajtur(Mungese Instruktori)"){
+      return (
+        <>
+          <Text className="text-white font-psemibold uppercase">Paraqisni ankese</Text>
+          <Image 
+            source={icons.chat}
+            tintColor={"#ff9c01"}
+            className="size-6"
+            resizeMode='contain'
+          />
+        </>
+      )
+    }else if(meetingData?.status === "Eshte anuluar"){
+      return (
+        <>
+          <Text className="text-white font-psemibold uppercase">Paraqisni ankese</Text>
+          <Image 
+            source={icons.chat}
+            tintColor={"#ff9c01"}
+            className="size-6"
+            resizeMode='contain'
+          />
+        </>
+      )
+    }else if(meetingData?.status === "Nuk ka filluar ende"){
+      return (
+        <>
+          <CountdownTimer meetingData={meetingData}/>
+          <Image 
+            source={icons.clock}
+            tintColor={"#ff9c01"}
+            className="size-6"
+            resizeMode='contain'
+          />
+        </>
+      )
+    }else if(meetingData?.status === "Ka filluar"){
+      return (
+      <>
+        <Text className="text-white font-psemibold uppercase">Filloni tani</Text>
+        <Image 
+          source={icons.play2}
+          tintColor={"#ff9c01"}
+          className="size-6"
+          resizeMode='contain'
+        />
+      </>
+      )
+    }else if(meetingData?.status === "Ka perfunduar"){
+      return (
+        <>
+          <Text className="text-white font-psemibold uppercase">Shiko materialin</Text>
+        <Image 
+          source={icons.videoConference}
+          tintColor={"#ff9c01"}
+          className="size-6"
+          resizeMode='contain'
+        />
+        </>
+      )
+    }
+  }
+
   useEffect(() => {
     console.log(data);
     
@@ -45,14 +110,9 @@ const Meetings = () => {
       className="h-full bg-primary"
       >
         <View className="h-[140px] bg-oBlack border-b border-l border-r items-center justify-center relative border-black-200" style={styles.box}>
+          <Text className="text-white font-psemibold text-xs  bg-primary absolute top-0 left-0 border-b border-r border-black-200 rounded-br-md px-2 py-1" style={styles.box}>{meetingData?.status}</Text>
           <TouchableOpacity className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
-            <Text className="text-white font-psemibold uppercase">Filloni tani</Text>
-            <Image 
-              source={icons.play2}
-              tintColor={"#ff9c01"}
-              className="size-6"
-              resizeMode='contain'
-            />
+            {outputText()}
           </TouchableOpacity>
         </View>
         <View className="bg-primary border-b border-l border-r border-black-200 p-4" style={styles.box}>

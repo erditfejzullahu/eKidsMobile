@@ -100,8 +100,10 @@ import telegramIcon from "../assets/icons/telegram.png";
 import onlineMeeting from "../assets/icons/meeting1.png"
 import videoConference from "../assets/icons/video-conference.png"
 import available from "../assets/icons/available.png"
+import clock from "../assets/icons/clock.png"
 
 export default {
+  clock,
   available,
   onlineMeeting,
   videoConference,
