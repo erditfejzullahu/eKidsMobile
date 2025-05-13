@@ -733,10 +733,10 @@ const router = useRouter();
                 {showOnlineCoursesProgress && (
                   (onlineCoursesLoading ? <View className="mt-10"><Loading /></View> : 
                     (onlineCoursesData.length > 0 ? (
-                      (onlineCoursesData.map((item) => (
-                        <View key={item.id} className="mx-4 mt-8 mb-6">
-                        <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true} />
-                      </View>
+                      (onlineCoursesData.map((item, idx) => (
+                        <View key={`onlineprogress-${idx}`} className="mx-4 mt-8 mb-6">
+                          <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true} />
+                        </View>
                     )))
                   ) : (
                     <View style={styles.box} className=" mx-4 my-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">

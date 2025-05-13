@@ -12,6 +12,7 @@ import Modal from "../components/Modal"
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false}) => {
     console.log(classes);
+    
     const [showCourseLessons, setShowCourseLessons] = useState(false)
     const [showLessonInfoModal, setShowLessonInfoModal] = useState(false)
     
@@ -28,7 +29,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
 
     const handleLessonPress = (item) => {
         if(item.routeTo){
-            router.replace();
+            router.replace(`/meetings/${item.routeTo.id}`);
         }else{
             setShowLessonInfoModal(true)
         }
@@ -41,9 +42,10 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
     if(profilePlace){
         return(
             <>
-            <TouchableOpacity onPress={() => setShowCourseLessons(!showCourseLessons)} className="bg-oBlack p-4 border rounded-md border-black-200" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowCourseLessons(!showCourseLessons)} className="bg-oBlack p-4 border rounded-md border-black-200 relative" style={styles.box}>
+                {classes.course.endrolledStudents && <Text className="text-white font-psemibold text-sm absolute left-0 top-0 bg-primary border-r border-b border-black-200 rounded-br-md rounded-tl-md px-2 py-0.5"><Text className="text-secondary">{classes.course.endrolledStudents}</Text> here i shfletuar</Text>}
                 <Text className="bg-primary text-white font-psemibold text-sm absolute top-0 right-0 border-b border-l border-black-200 rounded-bl-md rounded-tr-md px-2 py-0.5" style={styles.box}>{getCourseCategories(userCategories, classes.course.categoryId)}</Text>
-                <Text className="text-white font-psemibold text-lg">{classes.course.name}</Text>
+                <Text className="text-white font-psemibold text-lg pt-3">{classes.course.name}</Text>
                 <View className={`relative flex-row items-center justify-between gap-2 ${showCourseLessons ? "border-b pb-3 border-black-200 mb-3" : ""}`}>
                     <View className="flex-1">
                         <Progress.Bar progress={classes.completionPercentage / 100} unfilledColor='#d9d9d9' color="#ff9c01" borderWidth={0} height={12}  width={null} />

@@ -1045,3 +1045,13 @@ export const GetCourseById = async (id) => {
     }
 }
 
+export const GetMeetingInformation = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/OnlineMeetings/GetMobileMeetingInformations/${id}`)
+        return response && response.data
+    } catch (error) {
+        console.error(error.response.data)
+        return null;
+    }
+}
+
