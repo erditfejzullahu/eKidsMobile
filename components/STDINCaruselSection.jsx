@@ -1,12 +1,16 @@
-import { View, Text, ScrollView, Image, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Platform } from 'react-native';
 import OnlineClassesCard from './OnlineClassesCard';
 import EmptyState from './EmptyState';
 import MeetingCardComponent from './MeetingCardComponent';
+import { icons } from '../constants';
+import { navigateToMessenger } from '../hooks/useFetchFunction';
+import { useRouter } from 'expo-router';
 
-const STDINCaruselSection = ({data, sectionType, userData}) => {
-
+const STDINCaruselSection = ({data, sectionType, userData}) => {    
+    const router = useRouter();
+    
   // Return empty view if no data
   if (!data || data?.length === 0) {
     return (
@@ -22,6 +26,17 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
         </View>
         </>
     ); // or you could return <View /> or a message like <Text>No items to display</Text>
+  }
+
+  const handleContactUser = (item) => {
+    console.log(item, ' itemi')
+    const otherUserData = {
+        firstname: item.name.split(" ")[0],
+        lastname: item.name.split(" ")[1],
+        username: item.username,
+        profilePictureUrl: item.profilePictureUrl
+    }
+    navigateToMessenger(router, otherUserData, userData.data.userData)
   }
 
   return (
@@ -43,7 +58,7 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
                 <OnlineClassesCard classes={item} userCategories={userData?.data?.categories} viewProfilePlace/>
             )}
             {sectionType === "students" && (
-                <View className="bg-oBlack border border-black-200 rounded-md p-4" style={styles.box}>
+                <View className="bg-oBlack border border-black-200 rounded-md p-4 relative" style={styles.box}>
                     <View className="flex-row gap-2 items-center" style={styles.box}>
                         <View>
                             <Image 
@@ -58,6 +73,16 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
                             <Text className="text-xs font-plight text-gray-400" numberOfLines={1}>{item?.username}</Text>
                         </View>
                     </View>
+                    {userData?.data?.userData?.id === item.id && <Text className="bg-secondary text-white px-2 py-0.5 absolute right-0 top-0 rounded-bl-md rounded-tr-md border border-white text-xs font-psemibold">Ju</Text>}
+                    {userData?.data?.userData?.id !== item.id && <TouchableOpacity onPress={() => handleContactUser(item)} className="mt-2 -mb-1 bg-primary px-2 ml-auto py-1.5 border border-black-200 rounded-md  flex-row items-center gap-2">
+                        <Text className="text-white font-psemibold text-sm">Kontakto</Text>
+                        <Image 
+                            source={icons.chat}
+                            className="size-4"
+                            tintColor={"#ff9c01"}
+                            resizeMode='contain'
+                        />
+                    </TouchableOpacity>}
                 </View>
             )}
             {sectionType === "onlineMeetings" && (
