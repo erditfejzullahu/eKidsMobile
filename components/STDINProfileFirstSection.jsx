@@ -22,6 +22,12 @@ const STDINProfileFirstSection = ({data, userData}) => {
         setCoursesLoading(false)
     }
 
+    const date = new Date(data?.whenBecameInstructor).toLocaleDateString("sq-AL", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    })
+
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
         description: `Sapo filluat kursin e zgjedhur. Mund te drejtoheni tek kursi duke naviguar tek Profili juaj/Progresi ose tek seksioni Mesoni Online`
@@ -80,19 +86,21 @@ const STDINProfileFirstSection = ({data, userData}) => {
             </View>
             <View>
                 <Text className="text-xl font-psemibold text-white text-center mb-1">{data?.instructorName}</Text>
-                <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{data?.email}</Text>
-                <Text className="text-gray-200 text-sm font-pregular text-center mt-2">Instruktor</Text>
+                <Text className="text-gray-400 text-sm font-plight text-center mt-1">{data?.email}</Text>
+                <Text className="text-secondary text-sm font-psemibold text-center mt-1">{data?.expertise}</Text>
             </View>
         </View>
-        {!data?.isYourInstructor ? (
+        {data?.isYourInstructor ? (
             <View>
-                <Text className="text-white font-psemibold text-sm uppercase bg-secondary border border-white rounded-md px-2 py-1 mt-2" style={styles.box}>Tutori Juaj</Text>
+                <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={styles.box}>Tutori Juaj</Text>
             </View>
         ) : (
-            <TouchableOpacity onPress={() => setCourseModal(true)} className="py-1 px-3 border border-white bg-secondary rounded-md mt-2" style={styles.box}>
+            <TouchableOpacity onPress={() => setCourseModal(true)} className="py-1 px-3 border border-white bg-secondary rounded-md mt-4" style={styles.box}>
                 <Animatable.Text animation="pulse" iterationCount="infinite" className="text-white font-psemibold text-sm">Behuni student</Animatable.Text>
             </TouchableOpacity>
         )}
+
+        <Text className="text-white font-psemibold text-sm mt-3 border bg-oBlack border-black-200 rounded-md px-2 py-1 absolute -top-10 left-12" style={[styles.box, {transform: [{rotate: "-30deg"}]}]}>Qe nga <Text className="text-secondary">{date}</Text></Text>
     </View>
 
     <Modal

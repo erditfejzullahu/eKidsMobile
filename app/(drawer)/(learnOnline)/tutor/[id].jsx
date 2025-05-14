@@ -9,6 +9,7 @@ import DiscussionsProfile from '../../../../components/DiscussionsProfile';
 import BlogsProfile from '../../../../components/BlogsProfile';
 import { useGlobalContext } from '../../../../context/GlobalProvider';
 import { Platform } from 'react-native';
+import STDINCaruselSection from '../../../../components/STDINCaruselSection';
 
 const Tutor = () => {
   const {id} = useLocalSearchParams();
@@ -42,6 +43,11 @@ const Tutor = () => {
       <DiscussionsProfile userData={instructorData} otherSection={true}/>
       <BlogsProfile userData={user} otherSection={true} otherData={instructorData}/>
       <STDINProfileFirstSection data={instructorData} userData={user}/>
+      <View className="mb-4" />
+      <STDINCaruselSection data={instructorData?.instructorCourses} sectionType={"courses"} userData={user}/>
+      <STDINCaruselSection data={instructorData?.instructorStudents} sectionType={"students"} userData={user}/>
+      <STDINCaruselSection data={instructorData?.onlineMeetings} sectionType={"onlineMeetings"} userData={user}/>
+      
     </ScrollView>
   )
 }

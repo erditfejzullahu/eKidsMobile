@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router'
 import * as Progress from 'react-native-progress';
 import Modal from "../components/Modal"
 
-const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false}) => {
+const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false, viewProfilePlace = false}) => {
     console.log(classes);
     
     const [showCourseLessons, setShowCourseLessons] = useState(false)
@@ -43,7 +43,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
         return(
             <>
             <TouchableOpacity onPress={() => setShowCourseLessons(!showCourseLessons)} className="bg-oBlack p-4 border rounded-md border-black-200 relative" style={styles.box}>
-                {classes.course.endrolledStudents && <Text className="text-white font-psemibold text-sm absolute left-0 top-0 bg-primary border-r border-b border-black-200 rounded-br-md rounded-tl-md px-2 py-0.5"><Text className="text-secondary">{classes.course.endrolledStudents}</Text> here i shfletuar</Text>}
+                {classes?.course?.endrolledStudents && <Text className="text-white font-psemibold text-sm absolute left-0 top-0 bg-primary border-r border-b border-black-200 rounded-br-md rounded-tl-md px-2 py-0.5"><Text className="text-secondary">{classes.course.endrolledStudents}</Text> here i shfletuar</Text>}
                 <Text className="bg-primary text-white font-psemibold text-sm absolute top-0 right-0 border-b border-l border-black-200 rounded-bl-md rounded-tr-md px-2 py-0.5" style={styles.box}>{getCourseCategories(userCategories, classes.course.categoryId)}</Text>
                 <Text className="text-white font-psemibold text-lg pt-3">{classes.course.name}</Text>
                 <View className={`relative flex-row items-center justify-between gap-2 ${showCourseLessons ? "border-b pb-3 border-black-200 mb-3" : ""}`}>
@@ -118,9 +118,9 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                   </TouchableOpacity>
               </Animatable.View>)}
               <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
-                  <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes.categoryId)}</Text>
+                  <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes?.categoryId)}</Text>
               </View>
-              {role !== "Instructor" && <View className="absolute top-5 z-20 -right-2 bg-primary border border-black-200 p-2 rounded-bl-lg rounded-tr-lg" style={styles.box}>
+              {(role !== "Instructor" && !viewProfilePlace) && <View className="absolute top-5 z-20 -right-2 bg-primary border border-black-200 p-2 rounded-bl-lg rounded-tr-lg" style={styles.box}>
                   <Image
                       className="size-6"
                       source={classes.enrolled ? icons.heart : icons.play2}
@@ -128,7 +128,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                       resizeMode='contain'
                   />
               </View>}
-              <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-black-200 items-center bg-primary z-20 max-w-[200px]" style={styles.box}>
+              {!viewProfilePlace && <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-black-200 items-center bg-primary z-20 max-w-[200px]" style={styles.box}>
                   <Image 
                       source={{uri: classes.profilePictureUrl}}
                       className="h-12 w-12 border border-black-200 rounded-sm p-2"
@@ -138,7 +138,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                       <Text className="text-white font-psemibold text-md break-words" numberOfLines={1}>{classes.instructorName}</Text>
                       <Text className="text-gray-400 text-xs font-plight">Instruktor</Text>
                   </View>
-              </View>
+              </View>}
               {/* absolute */}
       
               <View className="h-[120px] border border-black-200" style={styles.box}>
@@ -158,9 +158,9 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
               <Text className="text-white font-psemibold text-xl mt-4">{classes.name}</Text>
               <Text numberOfLines={4} className="text-gray-400 text-xs font-plight">{classes.description}</Text>
               
-              <View className="absolute -bottom-2 z-20 -left-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
+              {!viewProfilePlace && <View className="absolute -bottom-2 z-20 -left-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
                   <Text className="text-white font-psemibold text-xs">Niveli <Text className="text-secondary">Fillestar</Text></Text>
-              </View>
+              </View>}
               <View className="absolute -bottom-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
               <Text className="text-white font-psemibold text-xs">
                   {classes.enrolledStudents === 0 ? (

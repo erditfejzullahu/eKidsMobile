@@ -6,7 +6,7 @@ import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router';
 import { useRouter } from 'expo-router';
 
-const MeetingCardComponent = ({item, managePlace = false}) => {
+const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false}) => {
     const router = useRouter();
     const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)
@@ -79,7 +79,7 @@ const MeetingCardComponent = ({item, managePlace = false}) => {
             </TouchableOpacity>
         </Animatable.View>)}
 
-        <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white max-w-[130px]" style={styles.box}>{item?.status}</Text>
+        {!viewProfilePlace && <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white max-w-[130px]" style={styles.box}>{item?.status}</Text>}
         {item.status !== 0 && <Text className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}><Text className="text-secondary">{item.participants}</Text> Pjesemarres</Text>}
 
         {/* logic to make when it starts notification and stuff */}
@@ -141,19 +141,19 @@ const MeetingCardComponent = ({item, managePlace = false}) => {
                     resizeMode='contain'
                     tintColor={"#FF9C01"}
                 />
-                <View className="flex-col justify-between min-w-[200px] gap-4">
+                <View className={`flex-col justify-between ${viewProfilePlace ? "w-full" : "min-w-[200px]"} gap-4`}>
                     <View className="border border-black-200 bg-oBlack p-2 w-full" style={styles.box}>
                         <Text className="text-white font-plight text-sm">Temat diskutuese</Text>
                         <Text className="text-gray-400 text-sm font-plight ml-2">- {item.course ? item.course.name : "Nuk ka kurs te zgjedhur"}</Text>
                         <Text className="text-gray-400 text-sm font-plight ml-4">- {item.lesson ? item.lesson.title : "Nuk ka leksion te zgjedhur"}</Text>
                     </View>
                     <Animatable.View animation="pulse" iterationCount="infinite">
-                        <TouchableOpacity className="bg-oBlack border border-black-200 p-2" style={styles.box}>
+                        <TouchableOpacity onPress={() => router.push(`meetings/${item.id}`)} className="bg-oBlack border border-black-200 p-2" style={styles.box}>
                             <Text className="text-secondary font-psemibold text-sm text-center">Ndiq takimin</Text>
                         </TouchableOpacity>
                     </Animatable.View>
                 </View>
-                <View className="flex-none min-w-[200px] ml-auto">
+                {!viewProfilePlace && (<View className="flex-none min-w-[200px] ml-auto">
                     <View className="flex-col gap-2 items-center bg-oBlack border border-black-200 p-2" style={styles.box}>
                         <View className="border border-black-200" style={styles.box}>
                             <Image 
@@ -168,7 +168,7 @@ const MeetingCardComponent = ({item, managePlace = false}) => {
                             <Text className="text-gray-400 text-xs font-plight text-center">{item.instructor?.username}</Text>
                         </View>
                     </View>
-                </View>
+                </View>)}
             </Animatable.View>}
         </View>
 
