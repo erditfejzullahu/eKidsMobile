@@ -8,14 +8,14 @@ import Loading from './Loading'
 import { RefreshControl } from 'react-native'
 import EmptyState from './EmptyState'
 
-const DiscussionsProfile = ({userData}) => {
+const DiscussionsProfile = ({userData, otherSection = false}) => {
     const [openModal, setOpenModal] = useState(false)
     const [discussionsLoading, setDiscussionsLoading] = useState(false)
     const [discussionsData, setDiscussionsData] = useState([])
     
     const getDiscussions = async () => {
         setDiscussionsLoading(true)
-        const response = await getUserCreatedBlogsOrDiscussions("discussions", userData?.data?.userData?.id)
+        const response = await getUserCreatedBlogsOrDiscussions("discussions", userData?.data?.userData?.id || userData?.userId)
         
         if(response){
             setDiscussionsData(response)
@@ -66,7 +66,7 @@ const DiscussionsProfile = ({userData}) => {
                             keyExtractor={(item) => item.id}
                             ListHeaderComponent={() => (
                                 <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={styles.box}>
-                                    <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Diskutimet tua</Text>
+                                    <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherSection ? `Diskutimet e ${userData?.instructorName?.split(" ")[0]}` : "Diskutimet tua"}</Text>
                                 </View>
                             )}
                             renderItem={({ item }) => (
@@ -74,7 +74,7 @@ const DiscussionsProfile = ({userData}) => {
                             )}
                             ListEmptyComponent={() => (
                                 <EmptyState
-                                    title={"Nuk keni bere ende diskutime"}
+                                    title={`${otherSection ? `${userData?.instructorName?.split(" ")[0]} nuk ka bere ende diskutime` : "Nuk keni bere ende diskutime"}`}
                                     subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
                                     showButton={false}
                                     isSearchPage={true}

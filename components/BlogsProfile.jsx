@@ -7,7 +7,7 @@ import BlogCardComponent from './BlogCardComponent'
 import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
 import EmptyState from './EmptyState'
 
-const BlogsProfile = ({userData}) => {
+const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
     const [openModal, setOpenModal] = useState(false)
     const [blogsLoading, setBlogsLoading] = useState(false)
     const [blogsData, setBlogsData] = useState([])
@@ -18,7 +18,7 @@ const BlogsProfile = ({userData}) => {
 
     const getBlogs = async () => {
         setBlogsLoading(true)
-        const response = await getUserCreatedBlogsOrDiscussions("blogs", userData?.data?.userData?.id)
+        const response = await getUserCreatedBlogsOrDiscussions("blogs", otherSection ? otherData?.userId : userData?.data?.userData?.id)
         if(response){
             setBlogsData(response)
         }else{
@@ -67,7 +67,7 @@ const BlogsProfile = ({userData}) => {
                         keyExtractor={(item) => item.id}
                         ListHeaderComponent={() => (
                             <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={styles.box}>
-                                <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Blogjet tua</Text>
+                                <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherSection ? `Blogjet e ${otherData?.instructorName?.split(" ")[0]}` : "Blogjet tua"}</Text>
                             </View>
                         )}
                         renderItem={({ item }) => (
@@ -75,7 +75,7 @@ const BlogsProfile = ({userData}) => {
                         )}
                         ListEmptyComponent={() => (
                             <EmptyState 
-                                title={"Nuk keni postuar ende blogs"}
+                                title={`${otherSection ? `${otherData?.instructorName?.split(" ")[0]} nuk ka postuar ende` : "Nuk keni postuar ende blogs"}`}
                                 subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
                                 showButton={false}
                                 isSearchPage={true}
