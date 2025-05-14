@@ -39,7 +39,7 @@ const OnlineClass = () => {
 
   const handleCourseStart = async () => {
     if(courseData?.routes?.enrolled){
-      router.replace(`/`)
+      router.replace(`meetings/${courseData?.routes?.routeTo?.id}`)
     }else{
       const userId = await currentUserID();
       

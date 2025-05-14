@@ -1055,3 +1055,22 @@ export const GetMeetingInformation = async (id) => {
     }
 }
 
+export const GetAllInstructors = async () => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetAllInstructors`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data)
+        return [];
+    }
+}
+
+export const GetSingleInstructorDetailsFromStudentSide = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorData/${id}`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data);
+        return null;
+    }
+}

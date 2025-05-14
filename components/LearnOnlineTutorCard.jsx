@@ -2,15 +2,27 @@ import { View, Text, Platform, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import { icons } from '../constants'
+import { useRouter } from 'expo-router'
 
 const LearnOnlineTutorCard = ({item}) => {
+    const router = useRouter();
+    const date = new Date(item?.whenBecameInstructor).toLocaleDateString("sq-AL", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    })
+
+    const handleCardPress = () => {
+        router.push(`tutor/${item?.instructorId}`)
+    }
   return (
-    <TouchableOpacity className="bg-oBlack border border-black-200 p-4" style={styles.box}>
-        <Text className="text-white font-psemibold text-lg">{item.name}</Text>
-        <Text className="text-gray-400 font-plight text-sm">{item.expertise}</Text>
+    <TouchableOpacity onPress={handleCardPress} className="bg-oBlack relative border border-black-200 p-4" style={styles.box}>
+        <Text className="absolute top-0 right-0 px-2 py-0.5 rounded-bl-md border-b border-l border-black-200 bg-primary text-white font-psemibold text-xs" style={styles.box}>Qe nga <Text className="text-secondary">{date}</Text></Text>
+        <Text className="text-white font-psemibold text-lg">{item?.instructorName}</Text>
+        <Text className="text-gray-400 font-plight text-sm">{item?.expertise}</Text>
         <View className="flex-row items-center gap-4 mt-4">
             <Image 
-                source={{uri: item.image}}
+                source={{uri: item?.profilePictureUrl}}
                 className="h-20 w-20 rounded-md"
                 resizeMode='contain'
             />
@@ -24,7 +36,7 @@ const LearnOnlineTutorCard = ({item}) => {
                         />
                     </View>                
                     <View>
-                        <Text className="text-gray-400 font-plight text-sm">{item.rating} Vleresime instruktori</Text>
+                        <Text className="text-gray-400 font-plight text-sm">3.2 Vleresime instruktori</Text>
                     </View>
                 </View>
                 <View className="flex-row items-center gap-2">
@@ -36,7 +48,7 @@ const LearnOnlineTutorCard = ({item}) => {
                         />
                     </View>                
                     <View>
-                        <Text className="text-gray-400 font-plight text-sm">{item.rating} Vleresime gjenerale</Text>
+                        <Text className="text-gray-400 font-plight text-sm">3.8 Vleresime gjenerale</Text>
                     </View>
                 </View>
                 <View className="flex-row items-center gap-2">
@@ -48,7 +60,7 @@ const LearnOnlineTutorCard = ({item}) => {
                         />
                     </View>                
                     <View>
-                        <Text className="text-gray-400 font-plight text-sm">{item.totalStudents} Studente</Text>
+                        <Text className="text-gray-400 font-plight text-sm">{item?.instructorStudents} Studente</Text>
                     </View>
                 </View>
                 <View className="flex-row items-center gap-2">
@@ -60,7 +72,7 @@ const LearnOnlineTutorCard = ({item}) => {
                         />
                     </View>                
                     <View>
-                        <Text className="text-gray-400 font-plight text-sm">{item.courses} Kurse</Text>
+                        <Text className="text-gray-400 font-plight text-sm">{item?.instructorCourses} Kurse</Text>
                     </View>
                 </View>
             </View>
