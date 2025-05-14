@@ -974,6 +974,16 @@ export const InstructorCreatedCourses = async () => {
     }
 }
 
+export const InstructorCreatedCoursesById = async (instructorId) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/GetInstructorCoursesCreatedById/${instructorId}`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data);
+        return [];
+    }
+}
+
 export const InstructorCreateOnlineMeeting = async (payload) => {
     console.log(payload, " payload")
     try {

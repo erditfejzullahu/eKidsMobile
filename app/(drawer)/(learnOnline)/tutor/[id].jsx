@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../../hooks/useFetchFunction';
@@ -8,6 +8,7 @@ import STDINProfileFirstSection from '../../../../components/STDINProfileFirstSe
 import DiscussionsProfile from '../../../../components/DiscussionsProfile';
 import BlogsProfile from '../../../../components/BlogsProfile';
 import { useGlobalContext } from '../../../../context/GlobalProvider';
+import { Platform } from 'react-native';
 
 const Tutor = () => {
   const {id} = useLocalSearchParams();
@@ -40,9 +41,25 @@ const Tutor = () => {
     >
       <DiscussionsProfile userData={instructorData} otherSection={true}/>
       <BlogsProfile userData={user} otherSection={true} otherData={instructorData}/>
-      <STDINProfileFirstSection data={instructorData}/>
+      <STDINProfileFirstSection data={instructorData} userData={user}/>
     </ScrollView>
   )
 }
 
 export default Tutor
+
+const styles = StyleSheet.create({
+  box: {
+      ...Platform.select({
+          ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.6,
+              shadowRadius: 10,
+            },
+            android: {
+              elevation: 8,
+            },
+      })
+  },
+})
