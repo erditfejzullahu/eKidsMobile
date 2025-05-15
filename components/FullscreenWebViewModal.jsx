@@ -1,16 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { icons } from '../constants';
 import apiClient from '../services/apiClient';
 import Loading from './Loading';
+import { getAccessToken, getRefreshToken } from '../services/secureStorage';
 
 const FullscreenWebViewModal = ({ visible, onClose, url }) => {
   const [connectionReady, setConnectionReady] = useState(false)
+  const [tokens, setTokens] = useState({
+    accessToken: null,
+    refreshToken: null
+  })
+  const webViewRef = useRef(null);
   useEffect(() => {
+    const controller = new AbortController();
     const checkAuthorization = async () => {
       try {
-        await apiClient.get(`/api/Users/Check-Authorization`)        
+        await apiClient.get(`/api/Users/Check-Authorization`, {
+          signal: controller.signal
+        })        
+        const accessTkn = await getAccessToken();
+        const refreshTkn = await getRefreshToken();
+        setTokens({
+          accessToken: accessTkn,
+          refreshToken: refreshTkn
+        })
         setConnectionReady(true)
       } catch (error) {
         console.error(error.response.data);
@@ -18,8 +33,15 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
         setConnectionReady(true)
       }
     }
-    checkAuthorization();
-  }, [])
+    if(visible){
+      setConnectionReady(false)
+      checkAuthorization();
+    }
+
+    return () => {
+      controller.abort();
+    }
+  }, [visible])
   
   return (
     <Modal
@@ -41,10 +63,11 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
         <Loading />
       ) : (
         <WebView
+          ref={webViewRef}
           source={{ 
             uri: url,
             headers: {
-              Cookie: 'your_cookie_key=your_cookie_value' // Set your cookies here
+              // Cookie: 'your_cookie_key=your_cookie_value' // Set your cookies here
             }
           }}
             style={styles.webview}
@@ -58,21 +81,47 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
             androidLayerType="hardware" // Better rendering performance
             androidHardwareAccelerationDisabled={false} // Enable hardware acceleration
             mixedContentMode="always" // Allow mixed content (HTTP/HTTPS)
+            // onMessage={(event) => {
+            //   // Handle messages from the web page
+            //   if (event.nativeEvent.data === 'CLOSE_MODAL') {
+            //     onClose();
+            //   }
+            // }}
+            // injectedJavaScript={`
+            //   // Example: Listen for messages from the web page
+            //   window.addEventListener('message', function(event) {
+            //     if (event.data === 'CLOSE_MODAL') {
+            //       window.ReactNativeWebView.postMessage('CLOSE_MODAL');
+            //     }
+            //   });
+            //   true;
+            // `}
+            onLoadEnd={() => {
+              const message = JSON.stringify({
+                type: "SET_TOKENS",
+                accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken
+              })
+
+              webViewRef.current.injectJavaScript(`
+                window.dispatchEvent(new MessageEvent('message', {
+                  data: ${JSON.stringify(message)}
+                }));
+                true;
+                `)
+            }}
             onMessage={(event) => {
-              // Handle messages from the web page
-              if (event.nativeEvent.data === 'CLOSE_MODAL') {
-                onClose();
+              try {
+                const data = JSON.parse(event.nativeEvent.data);
+                if(data.type === "ERROR"){
+                  console.log("Webview error:", data.message);
+                } else if(data.type === "SUCCESS"){
+                  console.log("webview success:", data.message);
+                }
+              } catch (error) {
+                console.error("invalid message from webview:", error);
               }
             }}
-            injectedJavaScript={`
-              // Example: Listen for messages from the web page
-              window.addEventListener('message', function(event) {
-                if (event.data === 'CLOSE_MODAL') {
-                  window.ReactNativeWebView.postMessage('CLOSE_MODAL');
-                }
-              });
-              true;
-            `}
         />
       )}
     </Modal>
