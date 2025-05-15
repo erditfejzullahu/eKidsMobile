@@ -10,13 +10,14 @@ import BlogsProfile from '../../../../components/BlogsProfile';
 import { useGlobalContext } from '../../../../context/GlobalProvider';
 import { Platform } from 'react-native';
 import STDINCaruselSection from '../../../../components/STDINCaruselSection';
-
+import { Redirect } from 'expo-router';
 const Tutor = () => {
   const {id} = useLocalSearchParams();
   const {data, isLoading, refetch} = useFetchFunction(() => GetSingleInstructorDetailsFromStudentSide(id))
   const [instructorData, setInstructorData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {user, isLoading: userLoading} = useGlobalContext();
+  if(user?.data?.userData?.id === data?.userId) return <Redirect href={"instructor/instructorProfile"} />
 
   const onRefresh = async () => {
     setIsRefreshing(true)
@@ -25,8 +26,6 @@ const Tutor = () => {
   }
 
   useEffect(() => {
-    console.log(data);
-    
     setInstructorData(data || null)
   }, [data])
 
@@ -34,7 +33,7 @@ const Tutor = () => {
     refetch();
   }, [id])
   
-  if(isLoading || isRefreshing) return <Loading />
+  if(isLoading || isRefreshing || userLoading) return <Loading />
   return (
     <ScrollView
       className="h-full bg-primary"

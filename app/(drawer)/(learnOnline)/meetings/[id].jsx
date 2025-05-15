@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, RefreshControl, Image } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, RefreshControl, Image, Modal } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
@@ -13,6 +13,7 @@ import CountdownTimer from '../../../../components/CountdownTimer'
 import { currentUserID } from '../../../../services/authService'
 import NotifierComponent from '../../../../components/NotifierComponent'
 import * as Linking from "expo-linking"
+import FullscreenWebViewModal from '../../../../components/FullscreenWebViewModal'
 
 const Meetings = () => {
   const {id} = useLocalSearchParams();
@@ -21,6 +22,7 @@ const Meetings = () => {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {data, isLoading, refetch} = useFetchFunction(() => GetMeetingInformation(id))
   const [meetingData, setMeetingData] = useState(null)
+  const [showMeetingModal, setShowMeetingModal] = useState(false)
 
   //LOGJIKA NESE KA VIDEO QE U BA UPLOAD E SENE (dmth u kry online meetingu po me pas mundsin me kqyr online meetingun qe u kry)
   const startingDate = new Date(meetingData?.scheduleDateTime).toLocaleTimeString("sq-AL", {
@@ -150,13 +152,14 @@ const Meetings = () => {
 
   if(isLoading || isRefreshing) return <Loading />
   return (
+    <>
     <ScrollView 
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       className="h-full bg-primary"
       >
         <View className="h-[140px] bg-oBlack border-b border-l border-r items-center justify-center relative border-black-200" style={styles.box}>
           <Text className="text-white font-psemibold text-xs  bg-primary absolute top-0 left-0 border-b border-r border-black-200 rounded-br-md px-2 py-1" style={styles.box}>{meetingData?.status}</Text>
-          <TouchableOpacity className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
+          <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
             {outputText()}
           </TouchableOpacity>
         </View>
@@ -212,8 +215,10 @@ const Meetings = () => {
             <Text className="text-white font-plight text-xs">Ju nuk jeni student te instruktorit <Text className="text-secondary">{meetingData?.instructor}</Text>. Per te vazhduar me tutje ne ndjekjen e ligjeratave te instruktorit ne fjale, ju duhet te beheni studente te tij/saj. <Text className="text-secondary">Kikoni ketu per te proceduar kerkesen.</Text></Text>
           </TouchableOpacity>
         </Animatable.View>}
-
     </ScrollView>
+
+    <FullscreenWebViewModal visible={showMeetingModal} onClose={() => setShowMeetingModal(false)} url={`https://2xd0xqpd-3000.euw.devtunnels.ms/room/${meetingData?.meetingUrl}`}/>
+    </>
   )
 }
 
