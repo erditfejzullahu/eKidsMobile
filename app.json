@@ -19,7 +19,14 @@
       "supportsTablet": true,
       "supportsPictureInPicture": true,
       "supportsBackgroundPlayback": true,
-      "bundleIdentifier": "com.anonymous.ekidsMobapp"
+      "bundleIdentifier": "com.anonymous.ekidsMobapp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs camera access for video calls.",
+        "NSMicrophoneUsageDescription": "This app needs microphone access for audio calls.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +36,9 @@
       "supportsPictureInPicture": true,
       "supportsBackgroundPlayback": true,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "package": "com.anonymous.ekidsMobapp"
     },
