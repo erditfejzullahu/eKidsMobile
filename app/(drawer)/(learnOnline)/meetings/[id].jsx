@@ -6,7 +6,7 @@ import { getCourseCategories, GetMeetingInformation, StartOnlineCourse } from '.
 import { useLocalSearchParams } from 'expo-router'
 import Loading from '../../../../components/Loading'
 import { TouchableOpacity } from 'react-native'
-import { icons } from '../../../../constants'
+import { icons, images } from '../../../../constants'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
 import * as Animatable from "react-native-animatable"
 import CountdownTimer from '../../../../components/CountdownTimer'
@@ -203,7 +203,24 @@ const Meetings = () => {
       className="h-full bg-primary"
       >
         <View className="h-[140px] bg-oBlack border-b border-l border-r items-center justify-center relative border-black-200" style={styles.box}>
-          <Text className="text-white font-psemibold text-xs  bg-primary absolute top-0 left-0 border-b border-r border-black-200 rounded-br-md px-2 py-1" style={styles.box}>{meetingData?.status}</Text>
+          <Image 
+            source={images.logoNew}
+            className="absolute w-full h-full p-2 left-0 right-0 top-0 bottom-0 z-0 opacity-30"
+            resizeMode='contain'
+          />
+          <Image 
+            source={icons.videoConference}
+            className="absolute right-2 top-2 size-10 z-0 opacity-30"
+            resizeMode='contain'
+            tintColor={"#ff9c01"}
+          />
+          <Image 
+            source={icons.videoCamera}
+            className="absolute left-2 bottom-2 size-10 z-0 opacity-30"
+            resizeMode='contain'
+            tintColor={"#ff9c01"}
+          />
+          <Text className="text-white font-psemibold text-xs bg-primary absolute z-50 top-0 left-0 border-b border-r border-black-200 rounded-br-md px-2 py-1" style={styles.box}>{meetingData?.status}</Text>
           <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
             {outputText()}
           </TouchableOpacity>
@@ -241,8 +258,10 @@ const Meetings = () => {
 
         <View className="mx-4">
           <View className="border border-black-200 p-4 bg-oBlack" style={styles.box}>
-            <Text className="text-white font-psemibold mb-2">Detaje te kursit:</Text>
-            <Text className="text-white font-plight text-sm">Titulli: <Text className="font-psemibold text-secondary">{meetingData?.course?.name}</Text></Text>
+            {meetingData?.course && <View>
+              <Text className="text-white font-psemibold mb-2">Detaje te kursit:</Text>
+              <Text className="text-white font-plight text-sm">Titulli: <Text className="font-psemibold text-secondary">{meetingData?.course?.name}</Text></Text>
+            </View>}
             <Text className="text-white font-plight text-sm">Kategoria: <Text className="font-psemibold text-secondary">{getCourseCategories(user?.data?.categories, meetingData?.course?.categoryId)}</Text></Text>
 
             <TouchableOpacity>
@@ -261,13 +280,14 @@ const Meetings = () => {
           </View> 
         </View>
 
-        <View className="mx-4 mt-4">
+      <View className="mb-4">
+        {meetingData?.lesson && <View className="mx-4 mt-4">
           <View className="border border-black-200 p-4 bg-oBlack" style={styles.box}>
             <Text className="text-white font-psemibold mb-2">Detaje te leksionit:</Text>
             <Text className="text-white font-plight text-sm">Titulli: <Text className="font-psemibold text-secondary">{meetingData?.lesson?.title}</Text></Text>
             {meetingData?.lesson?.content && <Text className="text-gray-400 font-plight text-sm">{meetingData?.lesson?.content}</Text>}
           </View> 
-        </View>
+        </View>}
 
         {!meetingData?.isAllowed && <Animatable.View animation={{from: {scale: 1}, to: {scale: 1.02}}} direction="alternate" iterationCount="infinite" easing="ease-in-out" duration={1000}>
           <TouchableOpacity onPress={becomeStudentOfInstructor} className="mt-4 bg-primary border border-black-200 p-4" style={styles.box}>
@@ -275,6 +295,7 @@ const Meetings = () => {
             <Text className="text-white font-plight text-xs">Ju nuk jeni student te instruktorit <Text className="text-secondary">{meetingData?.instructor}</Text>. Per te vazhduar me tutje ne ndjekjen e ligjeratave te instruktorit ne fjale, ju duhet te beheni studente te tij/saj. <Text className="text-secondary">Kikoni ketu per te proceduar kerkesen.</Text></Text>
           </TouchableOpacity>
         </Animatable.View>}
+      </View>
     </ScrollView>
 
     <FullscreenWebViewModal visible={showMeetingModal} onClose={() => setShowMeetingModal(false)} url={`https://2xd0xqpd-3000.euw.devtunnels.ms/room/${meetingData?.meetingUrl}`}/>
