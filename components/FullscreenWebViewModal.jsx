@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { icons } from '../constants';
 import apiClient from '../services/apiClient';
@@ -50,7 +50,8 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
       transparent={false}
       onRequestClose={onClose}
     >
-      <TouchableOpacity onPress={onClose} className="absolute z-50 items-center justify-center top-10 right-4 bg-oBlack rounded-md border border-black-200 p-2">
+      <View className="absolute left-0 top-10 right-0 z-50 items-center justify-center">
+      <TouchableOpacity onPress={onClose} className="bg-oBlack rounded-md border border-black-200 p-2">
         <Image 
           source={icons.close}
           className="size-5"
@@ -58,6 +59,7 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
           tintColor={"#ff9c01"}
         />
       </TouchableOpacity>
+      </View>
 
       {!connectionReady ? (
         <Loading />
@@ -142,7 +144,7 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
 const styles = StyleSheet.create({
   webview: {
     flex: 1,
-    marginTop: 0 // Adjust if you have status bar issues
+    marginTop: 0,
   }
 });
 

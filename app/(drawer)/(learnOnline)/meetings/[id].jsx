@@ -116,6 +116,51 @@ const Meetings = () => {
     }
   }
 
+  const outputMeetingTimeOutput = () => {
+    
+    if(meetingData?.status === "Nuk eshte mbajtur(Mungese Instruktori)"){
+      return (
+        <>
+          <Text className="text-white font-psemibold">Ka pase te mbahet me: <Text className="text-secondary">{startingDate}</Text></Text>
+        </>
+      )
+    }else if(meetingData?.status === "Ka perfunduar"){
+      const date = new Date(meetingData?.scheduleDateTime);
+      date.setMinutes(date.getMinutes() + meetingData?.durationTime)
+      const finalDate = date.toLocaleTimeString("sq-AL", {
+        day: "numeric",
+        month: "short",
+        year: "2-digit"
+      })
+      return (
+        <>
+          <Text className="text-white font-psemibold">Ka mbaruar takimi me: <Text className="text-secondary">{finalDate}</Text></Text>
+        </>
+      )
+    }else if(meetingData?.status === "Ka filluar"){
+      return (
+        <Text className="text-white font-psemibold">Takimi eshte duke u mbajtur momentalisht</Text>
+      )
+    }else if(meetingData?.status === "Nuk ka filluar ende"){
+      return (
+        <>
+          <Text className="text-white font-psemibold">Mbajtja e takimit: <Text className="text-secondary">{startingDate}</Text></Text>
+        </>
+      )
+    }else if(meetingData?.status === "Ka perfunduar"){
+      const date = new Date(meetingData?.scheduleDateTime);
+      date.setMinutes(date.getMinutes() + meetingData?.durationTime)
+      const finalDate = date.toLocaleTimeString("sq-AL", {
+        day: "numeric",
+        month: "short",
+        year: "2-digit"
+      })
+      return (
+        <Text className="text-white font-psemibold">Eshte mbaruar me: <Text className="text-secondary">{finalDate}</Text></Text>
+      )
+    }
+  }
+
   const {showNotification: success} = NotifierComponent({
     title: "Sukses",
     description: `Ju tani mund te kyceni ne te gjithe permbajtjen e instruktorit ${meetingData?.instructor}`
@@ -164,16 +209,31 @@ const Meetings = () => {
           </TouchableOpacity>
         </View>
         <View className="bg-primary border-b border-l border-r border-black-200 p-4" style={styles.box}>
-          <Text className="text-white font-psemibold">Mbajtja e takimit: <Text className="text-secondary">{startingDate}</Text></Text>
+          {outputMeetingTimeOutput()}
         </View>
 
 
-        <View className="p-4">
-          <View className="bg-oBlack p-2 mb-1 rounded-md border border-black-200">
+        <View className="p-4 pb-2">
+          <View className="bg-oBlack p-2 mb-1 rounded-md border border-black-200 relative" style={styles.box}>
+            <Image 
+              source={icons.infoFilled}
+              tintColor={"#ff9c01"}
+              className="size-4 absolute -right-2 -top-2"
+              resizeMode='contain'
+            />
             <Text className="text-gray-400 font-plight text-xs">Vegeza ne rast se deshironi te ridrejtoheni tek shfletuesi:</Text>
             <TouchableOpacity onPress={() => Linking.openURL(`https://2xd0xqpd-3000.euw.devtunnels.ms/room/${meetingData?.meetingUrl}`)}>
               <Animatable.Text animation={{from: {transform: [{scale: 1}, {translateX: 0}]}, to: {transform: [{scale: 1.03}, {translateX: 5}]}}} duration={3000} direction="alternate" iterationCount="infinite" className="text-secondary font-psemibold text-xs">https://2xd0xqpd-3000.euw.devtunnels.ms/room/{meetingData?.meetingUrl}</Animatable.Text>
             </TouchableOpacity>
+          </View>
+          <View className="bg-oBlack p-2 mb-3 rounded-md border border-black-200 relative" style={styles.box}>
+            <Image 
+              source={icons.infoFilled}
+              tintColor={"#ff9c01"}
+              className="size-4 absolute -right-2 -top-2"
+              resizeMode='contain'
+            />
+            <Text className="text-gray-400 font-plight text-xs">Ne klikim te vegezes, ju duheni te kyceni me llogarine e njejte qe jeni ne perdorim aktual</Text>
           </View>
           <Text className="text-white font-psemibold">Pershkrimi i takimit</Text>
           <Text className="text-gray-400 font-plight text-sm mt-1">{meetingData?.description}</Text>
