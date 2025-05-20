@@ -9,6 +9,8 @@ import { Platform } from 'react-native'
 import FormField from './FormField'
 import { Picker } from '@react-native-picker/picker'
 import CustomButton from './CustomButton'
+import * as Animatable from "react-native-animatable"
+
 const SupportForm = ({onSuccess}) => {
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
@@ -16,10 +18,13 @@ const SupportForm = ({onSuccess}) => {
         defaultValues: {
             subject: '',
             description: '',
-            topicType: "Ndihme_Navigimi"
+            topicType: "Ndihme_Navigimi",
+            otherTopic: ''
         },
         mode: "onTouched"
     })
+
+    const selectedTopic = watch("topicType");
 
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
@@ -110,6 +115,26 @@ const SupportForm = ({onSuccess}) => {
                 <Text className="text-red-500 font-plight text-xs">{errors.topicType.message}</Text>
             )}
         </View>
+
+        {selectedTopic === "tjeter" && (<Animatable.View animation={"fadeInLeft"}>
+            <Controller 
+                control={control}
+                name="otherTopic"
+                render={({field: {onChange, value}}) => (
+                    <FormField 
+                        title={"Zgjidhni temen tjeter"}
+                        value={value}
+                        handleChangeText={onChange}
+                        placeholder={"P.sh. Ndihme ne ..."}
+                    />
+                )}
+            />
+            <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani tematiken tjeter.</Text>
+            {errors.otherTopic && (
+                <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
+            )}
+        </Animatable.View>)}
+        
         <View>
             <CustomButton 
                 title={`${isSubmitting ? "Duke u derguar" : "Dergoni"}`}
