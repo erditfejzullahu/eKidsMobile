@@ -1,9 +1,11 @@
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { View, Text, RefreshControl, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import React, { useState } from 'react'
 import DefaultHeader from "../../../components/DefaultHeader"
 import { Platform } from 'react-native'
 import { icons } from '../../../constants'
 import SupportForm from '../../../components/SupportForm'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import ReportForm from '../../../components/ReportForm'
 
 const Support = () => {
     const [refreshKey, setRefreshKey] = useState(0)
@@ -15,8 +17,10 @@ const Support = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const onRefresh = () => {
         setIsRefreshing(true)
-
-        setIsRefreshing(false)
+        setRefreshKey(prev => prev + 1)
+        setTimeout(() => {
+            setIsRefreshing(false)
+        }, 1000);
     }
 
     const handleSectionPress = (section) => {
@@ -32,9 +36,10 @@ const Support = () => {
     }
 
   return (
-    <ScrollView
+    <KeyboardAwareScrollView
         key={refreshKey}
         className="h-full bg-primary px-4"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
         <DefaultHeader 
@@ -74,9 +79,10 @@ const Support = () => {
         </View>
 
         <View className="my-4">
-        <SupportForm onSuccess={handleSuccessForm}/>
+            {sectionEnabled.supportSection && <SupportForm onSuccess={handleSuccessForm}/>}
+            {sectionEnabled.reportSection && <ReportForm onSuccess={handleSuccessForm}/>}
         </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   )
 }
 

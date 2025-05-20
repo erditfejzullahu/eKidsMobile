@@ -7,4 +7,13 @@ export const reportSectionSchema = z.object({
       .string()
       .regex(/^data:image\/(png|jpeg|jpg|gif);base64,/, "Formati i imazhit nuk është i vlefshëm")
       .optional(),
-})
+    otherTopic: z.string().optional(),
+    }).superRefine((data, ctx) => {
+    if (data.topicType === "tjeter" && (!data.otherTopic || data.otherTopic.trim() === "")) {
+        ctx.addIssue({
+        path: ["otherTopic"],
+        code: z.ZodIssueCode.custom,
+        message: "Ju lutem shpjegoni temën tjetër",
+        });
+    }
+});

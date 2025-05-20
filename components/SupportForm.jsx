@@ -24,6 +24,8 @@ const SupportForm = ({onSuccess}) => {
         mode: "onTouched"
     })
 
+
+
     const selectedTopic = watch("topicType");
 
     const {showNotification: success} = NotifierComponent({
@@ -91,7 +93,7 @@ const SupportForm = ({onSuccess}) => {
                     <Picker
                         selectedValue={value}
                         onValueChange={onChange}
-                        placeholder={{ label: "Zgjidhni ne cilen kategori futet kuizi juaj", value: '' }}
+                        placeholder={{ label: "Zgjidhni kategorine e ndihmes", value: '' }}
                         style={pickerSelectStyles}
                         itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
                     >
