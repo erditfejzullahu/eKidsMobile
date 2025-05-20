@@ -2,7 +2,7 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import { Tabs, Redirect, Link } from 'expo-router'
 import { icons, images } from '../../../constants'
 import { useRouter } from 'expo-router'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native'
 import Topbar from '../../../components/Topbar'
 import { usePathname } from 'expo-router'
 import { useEffect } from 'react'
@@ -10,8 +10,10 @@ import * as Animatable from "react-native-animatable"
 import { useRole } from '../../../navigation/RoleProvider'
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
+  const isPressable = typeof onPress === 'function';
+  
   return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} disabled={!isPressable}>
         <View className="flex-col gap-1 h-full">
           <View className="items-center justify-center">
             <Image 
@@ -37,9 +39,12 @@ const TabsLayout = () => {
   if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   const router = useRouter();
   const pathname = usePathname();
+  
   const handleCategoryPress = () => {
-    
     if((pathname.includes('categories') && pathname !== '/categories/all')){
+      console.log("te e para")
+      router.back();
+    }else{
       router.replace('/categories/all')
     }
   };

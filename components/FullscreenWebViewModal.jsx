@@ -92,7 +92,7 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
             allowsAirPlayForMediaPlayback={true}
             allowsFullscreenVideo={true}
             webviewDebuggingEnabled={true}
-            lackPermissionToDownloadMessage='testtest'
+            // lackPermissionToDownloadMessage='testtest'
             mixedContentMode="always" // Allow mixed content (HTTP/HTTPS)
             originWhitelist={['*']}
             // onMessage={(event) => {
@@ -110,19 +110,19 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
             //   });
             //   true;
             // `}
-            onLoadEnd={() => {
-              const message = JSON.stringify({
-                type: "SET_TOKENS",
-                accessToken: tokens.accessToken,
-                refreshToken: tokens.refreshToken
-              })
-              console.log('Message being sent:', message);
-              webViewRef.current.injectJavaScript(`
-                console.log('About to post message from WebView');
-                window.postMessage(${JSON.stringify(message)}, '*');
-                true;
-                `)
-            }}
+            // onLoadEnd={() => {
+            //   const message = JSON.stringify({
+            //     type: "SET_TOKENS",
+            //     accessToken: tokens.accessToken,
+            //     refreshToken: tokens.refreshToken
+            //   })
+            //   console.log('Message being sent:', message);
+            //   webViewRef.current.injectJavaScript(`
+            //     console.log('About to post message from WebView');
+            //     window.postMessage(${JSON.stringify(message)}, '*');
+            //     true;
+            //     `)
+            // }}
             onMessage={(event) => {
               try {
                 const data = JSON.parse(event.nativeEvent.data);
@@ -130,6 +130,8 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
                   console.log("Webview error:", data.message);
                 } else if(data.type === "SUCCESS"){
                   console.log("webview success:", data.message);
+                } else if(data.type === "FINISHED"){
+                  console.log("webview meeting finished");
                 }
               } catch (error) {
                 console.error("invalid message from webview:", error);

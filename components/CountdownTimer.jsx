@@ -12,10 +12,10 @@ const CountdownTimer = ({ meetingData }) => {
   useEffect(() => {
     if (!meetingData?.scheduleDateTime) return;
 
-    const targetDate = new Date(meetingData.scheduleDateTime);
+    const targetDate = new Date(meetingData.scheduleDateTime).getTime();
     
     const updateCountdown = () => {
-      const now = new Date();
+      const now = new Date().getTime();
       const difference = targetDate - now;
 
       if (difference <= 0) {
