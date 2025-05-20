@@ -101,8 +101,10 @@ import onlineMeeting from "../assets/icons/meeting1.png"
 import videoConference from "../assets/icons/video-conference.png"
 import available from "../assets/icons/available.png"
 import clock from "../assets/icons/clock.png"
+import customerSupport from "../assets/icons/customer-support.png"
 
 export default {
+  customerSupport,
   clock,
   available,
   onlineMeeting,

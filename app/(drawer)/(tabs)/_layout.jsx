@@ -183,6 +183,10 @@ const TabsLayout = () => {
               name="become-instructor"
               options={{tabBarVisible: false, href: null, headerShown: false}}
             />
+            <Tabs.Screen 
+              name="support"
+              options={{tabBarVisible: false, href: null, headerShown: false}}
+            />
         </Tabs>
         
     </>

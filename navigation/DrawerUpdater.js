@@ -10,6 +10,7 @@ const DrawerUpdaterContext = createContext();
 export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
 
 const instructorMenuItems = [
+    { label: "Support(working)", icon: icons.customerSupport, path: "/support" },
     { label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome" },
     { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile" },
     { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents" },
