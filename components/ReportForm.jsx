@@ -150,8 +150,8 @@ const ReportForm = ({onSuccess}) => {
                 render={({field: {value, onChange}}) => (
                     <>
                         <Text className={`text-base text-gray-100 font-pmedium mb-2`}>Paraqitni imazhin /Opsionale</Text>
-                        <TouchableOpacity className="bg-secondary rounded-xl py-3" onPress={() => pickImage(onChange)}>
-                            <Text className="text-oBlack text-center font-psemibold ">{value ? "Ndrysho imazhin" : "Zgjidh imazhin"}</Text>
+                        <TouchableOpacity className="bg-oBlack border-2 border-black-200 rounded-xl py-3" onPress={() => pickImage(onChange)}>
+                            <Text className="text-white text-center font-psemibold ">{value ? "Ndrysho imazhin" : "Zgjidh imazhin"}</Text>
                         </TouchableOpacity>
                         {value ? (
                             <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>

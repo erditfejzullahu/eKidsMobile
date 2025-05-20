@@ -1,4 +1,4 @@
-import { View, Text, RefreshControl, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { View, Text, RefreshControl, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native'
 import React, { useState } from 'react'
 import DefaultHeader from "../../../components/DefaultHeader"
 import { Platform } from 'react-native'
@@ -6,6 +6,7 @@ import { icons } from '../../../constants'
 import SupportForm from '../../../components/SupportForm'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import ReportForm from '../../../components/ReportForm'
+import SupportChatForm from '../../../components/SupportChatForm'
 
 const Support = () => {
     const [refreshKey, setRefreshKey] = useState(0)
@@ -43,7 +44,7 @@ const Support = () => {
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
         <DefaultHeader 
-            headerTitle={"Mbeshtetja teknike"}
+            headerTitle={"Paneli ndihmes"}
             bottomSubtitle={"Nga navigimi mes opsioneve te dhena me poshte mund te identifikoni/rregulloni problemin, te krijoni ankesa/raportime etj. tesksti tofix"}
             showBorderBottom={true}
             topSubtitle={"Identifikoni apo Raportoni problemin"}
@@ -81,6 +82,7 @@ const Support = () => {
         <View className="my-4">
             {sectionEnabled.supportSection && <SupportForm onSuccess={handleSuccessForm}/>}
             {sectionEnabled.reportSection && <ReportForm onSuccess={handleSuccessForm}/>}
+            {sectionEnabled.chatSupportSection && <SupportChatForm />}
         </View>
     </KeyboardAwareScrollView>
   )
