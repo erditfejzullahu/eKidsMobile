@@ -2,7 +2,7 @@ import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../../hooks/useFetchFunction';
-import { GetSingleInstructorDetailsFromStudentSide } from '../../../../services/fetchingService';
+import { GetSingleInstructorDetailsFromStudentSide, getUserRelationStatus } from '../../../../services/fetchingService';
 import Loading from '../../../../components/Loading';
 import STDINProfileFirstSection from '../../../../components/STDINProfileFirstSection';
 import DiscussionsProfile from '../../../../components/DiscussionsProfile';
@@ -17,11 +17,14 @@ const Tutor = () => {
   const [instructorData, setInstructorData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {user, isLoading: userLoading} = useGlobalContext();
+  const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(user?.data?.userData?.id, instructorData?.userId));
+  const [relationStatus, setRelationStatus] = useState(null)
   if(user?.data?.userData?.id === data?.userId) return <Redirect href={"instructor/instructorProfile"} />
 
   const onRefresh = async () => {
     setIsRefreshing(true)
     await refetch();
+    await relationRefetch();
     setIsRefreshing(false);
   }
 
@@ -30,10 +33,15 @@ const Tutor = () => {
   }, [data])
 
   useEffect(() => {
+    setRelationStatus(relationData || null)
+  }, [relationData])
+  
+
+  useEffect(() => {
     refetch();
   }, [id])
   
-  if(isLoading || isRefreshing || userLoading) return <Loading />
+  if(isLoading || isRefreshing || userLoading || relationReloading) return <Loading />
   return (
     <ScrollView
       className="h-full bg-primary"
@@ -41,7 +49,7 @@ const Tutor = () => {
     >
       <DiscussionsProfile userData={instructorData} otherSection={true}/>
       <BlogsProfile userData={user} otherSection={true} otherData={instructorData}/>
-      <STDINProfileFirstSection data={instructorData} userData={user}/>
+      <STDINProfileFirstSection data={instructorData} userData={user} relationStatus={relationStatus} relationRefetch={onRefresh}/>
       <View className="mb-4" />
       <STDINCaruselSection data={instructorData?.instructorCourses} sectionType={"courses"} userData={user}/>
       <STDINCaruselSection data={instructorData?.instructorStudents} sectionType={"students"} userData={user}/>

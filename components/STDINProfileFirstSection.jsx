@@ -4,15 +4,21 @@ import { StyleSheet } from 'react-native'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
 import Modal from "../components/Modal"
-import { getCourseCategories, InstructorCreatedCoursesById, StartOnlineCourse } from '../services/fetchingService'
+import { acceptFriendRequest, getCourseCategories, InstructorCreatedCoursesById, makeUserFriendReq, removeFriendReq, removeFriendRequestReq, StartOnlineCourse } from '../services/fetchingService'
 import EmptyState from './EmptyState'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
 import Loading from './Loading'
+import { icons } from '../constants'
+import { navigateToMessenger } from '../hooks/useFetchFunction'
+import { useRouter } from 'expo-router'
+import CustomModal from '../components/Modal'
 
-const STDINProfileFirstSection = ({data, userData}) => {
+const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefetch}) => {
+    const router = useRouter();
     const [courseModal, setCourseModal] = useState(false)
     const [coursesData, setCoursesData] = useState([])
+    const [removeFriendModal, setRemoveFriendModal] = useState(false)
 
     const [coursesLoading, setCoursesLoading] = useState(false)
     const getCourses = async () => {
@@ -53,6 +59,94 @@ const STDINProfileFirstSection = ({data, userData}) => {
         }else{
             failed()
         }
+    }
+
+    const outputRelation = () => {
+        if(relationStatus === null){
+          return 0 // Shto miqesine 0
+        }else{
+          if((relationStatus?.senderId !== userData.data?.userData?.id) && relationStatus?.status === 1){
+            return 1 //ma ka qu aj mu // 1 //Shoqerohu!
+          }else if((relationStatus?.senderId === userData.data?.userData?.id) && relationStatus?.status === 1){
+            return 2 // ja kom qu un atij // 2 //Ne pritje
+          }else if((relationStatus?.receiverId !== userData.data?.userData?.id) && relationStatus?.status === 1){
+            return 1;
+          }else if((relationStatus?.receiverId === userData.data?.userData?.id) && relationStatus?.status === 1){
+            return 2;
+          }else{
+            return 3 //shoqerohu
+          }
+        }
+    }
+
+    const { showNotification: successFriendReq } = NotifierComponent({
+        title: "Kerkesa shkoi me sukes!",
+        description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
+    })
+
+    const {showNotification: successFriendDeletion} = NotifierComponent({
+    title: "Kerkesa shkoi me sukses!",
+    description: `Sapo e larguat ${data?.instructorName} nga statusi juaj miqesor me perdorues!`
+    })
+
+    const { showNotification: failedReq } = NotifierComponent({
+    title: "Dicka shkoi gabim!",
+    description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+    alertType: "warning"
+    })
+
+    const makeFriend = async () => {
+        console.log(userData.data?.userData?.id);
+        const payload = {
+            userId: userData.data?.userData?.id,
+            receiverId: data?.userId,
+            information: "user req",
+            type: 4
+        };
+        const response = await makeUserFriendReq(payload)
+        if(response === 200){
+            successFriendReq()
+        await relationRefetch();
+        }else{
+            failedReq()
+        }
+    }
+
+    const acceptFriend = async () => {
+        const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
+        if(response === 200){
+            await refreshData();
+        }else{
+            failedReq()
+        }
+    }
+
+    const removeOnWaitingFriend = async () => {
+        const response = await removeFriendRequestReq(userData.data?.userData?.id, data?.userId);
+        if(response === 200){
+            await relationRefetch();
+        }else{
+            failedReq();
+        }
+    }
+
+    const removeFriend = async () => {
+        const response = await removeFriendReq(userData.data?.userData?.id, data?.userId)
+        if(response === 200){
+            successFriendDeletion()
+            setRemoveFriendModal(false);
+            await refreshData()
+        }else{
+            setRemoveFriendModal(false);
+            failedReq()
+        }
+    }
+
+    const contactInstructor = () => {
+        const instructorData = {
+            
+        }
+        navigateToMessenger(router, data, userData.data?.userData);
     }
 
     useEffect(() => {
@@ -100,8 +194,41 @@ const STDINProfileFirstSection = ({data, userData}) => {
             </TouchableOpacity>
         )}
 
+        <View className="max-w-[350px] flex-row flex-1 mx-auto gap-4 mt-6" style={styles.box}>
+            <TouchableOpacity onPress={outputRelation() === 0 ? makeFriend : outputRelation() === 1 ? acceptFriend : outputRelation() === 2 ? removeOnWaitingFriend : outputRelation() === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
+                <Text className="text-white font-psemibold text-base text-center">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : "default"}</Text>
+                <Image 
+                source={icons.friends}
+                className="w-6 h-6"
+                resizeMode='contain'
+                tintColor={"#fff"}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={contactInstructor} className="bg-oBlack py-3 w-[150px] rounded-[10px] border border-black-200 flex-row items-center justify-center gap-2">
+                <Text className="text-white font-psemibold text-base text-center">Kontakto</Text>
+                <Image 
+                source={icons.report}
+                className="w-6 h-6"
+                resizeMode='contain'
+                tintColor={"#fff"}
+                />
+            </TouchableOpacity>
+        </View>
+
         <Text className="text-white font-psemibold text-sm mt-3 border bg-oBlack border-black-200 rounded-md px-2 py-1 absolute -top-10 left-12" style={[styles.box, {transform: [{rotate: "-30deg"}]}]}>Qe nga <Text className="text-secondary">{date}</Text></Text>
     </View>
+
+    <CustomModal
+      visible={removeFriendModal}
+      showButtons={true}
+      title={"Njoftim mbi veprimin"}
+      onClose={() => setRemoveFriendModal(false)}
+      onProcced={removeFriend}
+      cancelButtonText={"Largoni dritaren!"}
+      proceedButtonText={"Largo miqesine!"}
+    >
+        <Text className="text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{data?.instructorName}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
+    </CustomModal>
 
     <Modal
         visible={courseModal}

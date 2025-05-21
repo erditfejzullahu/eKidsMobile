@@ -232,6 +232,8 @@ const profiles = () => {
 
     useEffect(() => {
       if(data){
+        console.log(data);
+        
         setProfileData(data)        
         setSoftSkills((prevData) => {
           const currentData = prevData || [];
