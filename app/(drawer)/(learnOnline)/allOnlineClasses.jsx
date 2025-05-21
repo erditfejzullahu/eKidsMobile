@@ -23,6 +23,12 @@ const AllOnlineClasses = () => {
     await refetch();
     setIsRefreshing(false)
   }
+
+  const handleSorter = async (data) => {
+    console.log(data)
+    await onRefresh();
+  }
+
   useEffect(() => {
     console.log(data, '  data')
     setCoursesData(data || [])
@@ -42,7 +48,7 @@ const AllOnlineClasses = () => {
             ListHeaderComponent={() => (
                 <View className="border-b border-black-200 pb-4 overflow-hidden -mb-2">
                 <LearnOnlineHeader headerTitle={"Kurset Online"} sentInput={(data) => console.log(data)}/>
-                <SorterComponent showSorter={true}/>
+                <SorterComponent showSorter={true} sortButton={handleSorter}/>
                 </View>
             )}
             ListFooterComponent={() => (

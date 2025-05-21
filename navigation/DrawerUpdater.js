@@ -14,7 +14,7 @@ const instructorMenuItems = [
     { label: "Instrukorhome IN", icon: icons.tutor, path: "/instructor/instructorHome" },
     { label: "Profili IN", icon: icons.profile, path: "/instructor/instructorProfile" },
     { label: "Studentet tuaj IN", icon: icons.students, path: "/instructor/instructorStudents" },
-    { label: "Lajmet tona", icon: icons.blogs, path: "(blogDrawer)/(blogs)/blogAll" },
+    { label: "Lajmet tona", icon: icons.blogs, path: "/blogAll" },
     { label: "Lajmetari IN", icon: icons.messenger, path: "/all-messages" },
     { label: "Shtoni kurse IN", icon: icons.courses, path: "/instructor/addCourse"},
     { label: "Menagjimi IN", icon: icons.instructorManage, path: "/instructor/instructorManage" },

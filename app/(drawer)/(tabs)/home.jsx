@@ -172,26 +172,15 @@ const Home = () => {
                 />
               </View>
   
-              <View className={`w-full flex-row justify-between ${showSorter ? "mb-2" : ""}`}>
+              <View className={`w-full flex-row justify-between mb-2`}>
                 <Text className="text-gray-100 text-lg font-pregular">
                   Kurset mësimore të fundit
                 </Text>
-                <TouchableOpacity 
-                  className="relative"
-                  onPress={() => setShowSorter(prev => !prev)}
-                  >
-                  <Image 
-                    resizeMode='contain'
-                    className="h-8 w-8  "
-                    source={icons.sort}
-                    style={{tintColor: "#ff9c01"}}
-                  />
-                </TouchableOpacity>
               </View>
 
               {/* filter */}
                 <SorterComponent
-                  showSorter={showSorter}
+                  showSorter={true}
                   sortButton={updateFilterData}
                 />
               {/* filter  */}

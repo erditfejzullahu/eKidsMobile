@@ -133,20 +133,30 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                     } : option
             )
         )
-        setActiveSubOptionId(subId)        
+        setActiveSubOptionId(prev => {
+            if(prev === subId){
+                return null
+            }else{
+                return subId
+            }
+        })        
     }
-    
+
     useEffect(() => {
-        updateShowButton();
+        // Check if any sub-option in any option is ticked
+        const anySubTicked = sortableOptions.some(option => 
+            option.underObj.some(subOption => subOption.ticked)
+        );
+        setShowButton(anySubTicked);
     }, [sortableOptions]);
 
     
-    const updateShowButton = () => {
-        const anySubTicked = sortableOptions.some(option =>
-            option.underObj.some(subOption => subOption.ticked)
-        );
-        setShowButton(anySubTicked)
-    }
+    // const updateShowButton = () => {
+    //     const anySubTicked = sortableOptions.some(option =>
+    //         option.underObj.some(subOption => subOption.ticked)
+    //     );
+    //     setShowButton(!anySubTicked)
+    // }
 
     const sendSortData = () => {
         sortButton(sendData);
@@ -172,7 +182,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                             >
                                 <TouchableOpacity
                                     className="flex-row items-center gap-2"
-                                    onPress={() => setActiveButton(option.id)}
+                                    onPress={() => {setActiveButton(option.id)}}
                                 >
                                     <Text className="text-white text-sm font-plight">
                                         {option.name}
@@ -223,15 +233,15 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                     ))}
                     
                 </View>
-                {showButton &&
-                <CustomButton 
-                    title={"Ruaj të dhënat"}
-                    containerStyles={"!min-h-[30px] !rounded-none !border-l !border-b !border-r !border-black-200"}
-                    textStyles={"!text-white !text-sm !font-plight"}
-                    handlePress={sendSortData}
-                />}
                 </>
             )}
+            {showButton && 
+            <CustomButton 
+                title={"Ruaj të dhënat"}
+                containerStyles={"!min-h-[30px] !rounded-none !border-l !border-b !border-r !border-black-200"}
+                textStyles={"!text-white !text-sm !font-plight"}
+                handlePress={sendSortData}
+            />}
         </Animatable.View>
         </>
     )
