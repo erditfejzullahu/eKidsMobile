@@ -11,6 +11,7 @@ import { useGlobalContext } from '../../../../context/GlobalProvider';
 import { Platform } from 'react-native';
 import STDINCaruselSection from '../../../../components/STDINCaruselSection';
 import { Redirect } from 'expo-router';
+
 const Tutor = () => {
   const {id} = useLocalSearchParams();
   const {data, isLoading, refetch} = useFetchFunction(() => GetSingleInstructorDetailsFromStudentSide(id))

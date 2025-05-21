@@ -290,10 +290,10 @@ const profiles = () => {
     }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes])
     
     useEffect(() => {
-      if(data?.role === "Instructor"){
+      if (data?.role === "Instructor" && !isLoading) {
         router.replace(`/tutor/${data?.instructorId}`);
       }
-    }, [data, profile, isLoading, router])
+    }, [data, isLoading]);
     
 
 
