@@ -23,7 +23,7 @@ import EmptyState from '../../../components/EmptyState'
 import BlogsProfile from '../../../components/BlogsProfile'
 import DiscussionsProfile from '../../../components/DiscussionsProfile'
 
-const profiles = () => {
+const Profiles = () => {
     const {profile} = useLocalSearchParams();
     
     const {user, isLoading: userLoading} = useGlobalContext();
@@ -213,11 +213,8 @@ const profiles = () => {
 
     useEffect(() => {
       if(relationData){
-        setRelationStatus(relationData);
-        console.log(relationData, ' asdasdasd');
-        
+        setRelationStatus(relationData);        
       }else{        
-        console.log(relationData, ' asdasdasd123');
         setRelationStatus(null);
       }
       // console.log(relationStatus === null);
@@ -236,9 +233,7 @@ const profiles = () => {
    
 
     useEffect(() => {
-      if(data){
-        console.log(data);
-        
+      if(data){        
         setProfileData(data)        
         setSoftSkills((prevData) => {
           const currentData = prevData || [];
@@ -306,16 +301,14 @@ const profiles = () => {
     >
       {/* profile part */}
       <View className="w-full items-center justify-center pb-4 mb-4 relative" style={styles.box}>
-        <BlogsProfile userData={profileData}/> {/* to fix */}
-        <DiscussionsProfile userData={profileData}/> {/* to fix */}
+        <BlogsProfile userData={profileData}/> 
+        <DiscussionsProfile userData={profileData}/> 
           <View className="h-16 w-16 bg-secondary rounded-[15px] justify-center items-center mt-10">
             <TouchableOpacity onPress={profileImage}>
               <Image 
-                // source={userData?.profilePictureUrl ? userData?.profilePictureUrl : icons.userProfile}
                 source={{uri: profileData?.profilePictureUrl || icons.userProfile}}
                 className="h-12 w-12 rounded-[10px]"
                 resizeMode='contain'
-                // style={{tintColor:"#fff"}}
               />
             </TouchableOpacity>
           </View>
@@ -718,4 +711,4 @@ const styles = StyleSheet.create({
 },
 });
 
-export default profiles
+export default Profiles
