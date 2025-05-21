@@ -14,6 +14,7 @@ import { useFocusEffect } from 'expo-router';
 import {useGlobalContext} from '../../../../context/GlobalProvider'
 import SorterComponent from '../../../../components/SorterComponent'
 import { initialFilterData } from '../../../../services/filterConfig';
+import { useNavigateToSupport } from '../../../../hooks/goToSupportType';
 
 const categories = () => {
   const { categories } = useLocalSearchParams();
@@ -199,6 +200,7 @@ const categories = () => {
                   title={"Nuk është gjetur ndonjë kategori"}
                   subtitle={"Nëse problemi vazhdon të shfaqet, bëni paraqitjen e rastit tek Seksioni i Ndihmës"}
                   buttonTitle={"Vazhdoni me veprimin!"}
+                  buttonFunction={() => useNavigateToSupport("report")}
                   isSearchPage={false}
                 />
               </View>
@@ -231,6 +233,7 @@ const categories = () => {
                 title={"Nuk është gjetur ndonje kurs mesimor"}
                 subtitle={"Nëse problemi vazhdon të shfaqet, bëni paraqitjen e rastit tek Seksioni i Ndihmës"}
                 buttonTitle={"Vazhdoni me veprimin!"}
+                buttonFunction={() => useNavigateToSupport("report")}
                 isSearchPage={false}
               />
               </View>

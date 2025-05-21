@@ -1,5 +1,5 @@
 import { View, Text, RefreshControl, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import DefaultHeader from "../../../components/DefaultHeader"
 import { Platform } from 'react-native'
 import { icons } from '../../../constants'
@@ -7,8 +7,13 @@ import SupportForm from '../../../components/SupportForm'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import ReportForm from '../../../components/ReportForm'
 import SupportChatForm from '../../../components/SupportChatForm'
+import { useRoute } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from 'expo-router'
 
 const Support = () => {
+    const route = useRoute();
+    const navigation = useNavigation();
+    const {type} = route.params || {} //accept support, report, chatSupport
     const [refreshKey, setRefreshKey] = useState(0)
     const [sectionEnabled, setSectionEnabled] = useState({
         supportSection: true,
@@ -23,6 +28,38 @@ const Support = () => {
             setIsRefreshing(false)
         }, 1000);
     }
+
+    useEffect(() => {
+        if(type){
+            switch (type) {
+                case "support":
+                    handleSectionPress("supportSection")
+                    break;
+                case "report":
+                    handleSectionPress("reportSection")
+                    break;
+                case "chatSupportSection":
+                    handleSectionPress("chatSupportSection")
+                    break;
+                default:
+                    break;
+            }
+        }
+    }, [type])
+
+    useFocusEffect(
+        useCallback(() => {
+          // Focused — no action needed now
+      
+          // Cleanup on blur/unfocus
+          return () => {
+            setTimeout(() => {
+              navigation.setParams({ type: undefined });
+            }, 100);
+          };
+        }, [navigation])
+      )
+    
 
     const handleSectionPress = (section) => {
         setSectionEnabled({

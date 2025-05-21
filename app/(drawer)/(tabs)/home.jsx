@@ -14,6 +14,7 @@ import CustomButton from '../../../components/CustomButton'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
+import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 
 const Home = () => {
 
@@ -202,6 +203,7 @@ const Home = () => {
               subtitle={"Ju lutem kontaktoni Seksionin e Ndihmës apo bëni kërkesën e krijimit të një materiali të ri mësimor të specifikuar!"}
               buttonTitle={"Vazhdoni me veprimin!"}
               isSearchPage={false}
+              buttonFunction={() => useNavigateToSupport("report")}
             />
           )}
           refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}

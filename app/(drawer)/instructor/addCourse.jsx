@@ -24,7 +24,6 @@ const AddCourse = () => {
     const navigation = useNavigation();
     const {courseData, updateData} = route.params || {};
     const isUpdateMode = updateData === true;
-    console.log(courseData, " moda");
     
 
     const router = useRouter();

@@ -16,6 +16,7 @@ import useFetchFunction from '../../../hooks/useFetchFunction';
 import DiscussionTagsLayout from '../../../components/DiscussionTagsLayout';
 import Loading from '../../../components/Loading';
 import EmptyState from '../../../components/EmptyState';
+import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 
 const TagsHeader = () => {
   const {user, isLoading} = useGlobalContext();
@@ -102,7 +103,7 @@ const TagsHeader = () => {
             subtitle={"Nese mendoni qe eshte gabim kontaktoni Panelin e Ndihmes"}
             isSearchPage={true}
             buttonTitle={"Paraqitni ankese"}
-            buttonFunction={() => {}}
+            buttonFunction={() => useNavigateToSupport("report")}
           />
         </View>
       )}

@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
 import * as Animatable from "react-native-animatable"
 import NotifierComponent from '../../../components/NotifierComponent'
+import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 
 const bookmark = () => {
   const router = useRouter();
@@ -273,10 +274,10 @@ const bookmark = () => {
             <EmptyState 
               title={"Nuk keni ndonje favorit aktual!"}
               titleStyle={"font-pmedium text-xl"}
-              subtitle={"Per te shtuar favorite tek ky seksion, shtypni butonin e meposhtem!"}
+              subtitle={"Nese mendoni qe ka ndodhur nje gabim ju lutem klikoni butonin e meposhtem!"}
               isBookMarkPage={true}
-              buttonTitle={"Vazhdo me veprimin"}
-              buttonFunction={navigateCourses}
+              buttonTitle={"Vazhdo tek Paneli Ndihmes"}
+              buttonFunction={() => useNavigateToSupport("report")}
             /> 
         </View>)
         }

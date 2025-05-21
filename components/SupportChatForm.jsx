@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import uuid from 'react-native-uuid';
 import FormField from './FormField';
 
+//TODO: create chat system
+
 export default function SupportChatForm() {
   const [messages, setMessages] = useState([
     { id: uuid.v4(), text: "Hi there! Ask me anything about your app.", sender: "bot" },
@@ -53,7 +55,7 @@ export default function SupportChatForm() {
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={{ padding: 10 }}
-          className="flex-1 max-h-[350px]"
+          className="flex-1 max-h-[350px] min-h-[300px]"
         >
           {renderMessages()}
         </ScrollView>
@@ -71,7 +73,7 @@ export default function SupportChatForm() {
             className="ml-2 bg-secondary px-4 py-3 mt-1.5 rounded-xl h-16 items-center justify-center"
             onPress={sendMessage}
           >
-            <Text className="text-white font-psemibold">Send</Text>
+            <Text className="text-white font-psemibold">Dergo</Text>
           </TouchableOpacity>
         </View>
     </View>

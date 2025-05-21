@@ -12,6 +12,7 @@ import EmptyState from '../../../components/EmptyState'
 import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import MeetingCardComponent from '../../../components/MeetingCardComponent'
+import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 
 const InstructorManage = () => {
     const {user, isLoading} = useGlobalContext();
@@ -73,7 +74,7 @@ const InstructorManage = () => {
                     showButton={true}
                     isSearchPage={true}
                     buttonTitle={"Drejtohuni tek Paneli Ndihmes"}
-                    buttonFunction={() => console.log("Drejtohu tek paneli ndihmes")}
+                    buttonFunction={() => useNavigateToSupport("report")}
                 />
             </View>
         )}
