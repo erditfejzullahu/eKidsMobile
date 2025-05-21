@@ -21,6 +21,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     const [courseModal, setCourseModal] = useState(false)
     const [coursesData, setCoursesData] = useState([])
     const [removeFriendModal, setRemoveFriendModal] = useState(false)
+    const [showbio, setShowbio] = useState(false)
 
     const [coursesLoading, setCoursesLoading] = useState(false)
     const getCourses = async () => {
@@ -188,6 +189,12 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
                 <Text className="text-xl font-psemibold text-white text-center mb-1">{data?.instructorName}</Text>
                 <Text className="text-gray-400 text-sm font-plight text-center mt-1">{data?.email}</Text>
                 <Text className="text-secondary text-sm font-psemibold text-center mt-1">{data?.expertise}</Text>
+                {!showbio && <Animatable.View animation="pulse" iterationCount="infinite" duration={2000}>
+                    <TouchableOpacity className="self-start mx-auto" onPress={() => setShowbio(true)}>
+                        <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={styles.box}>Shfaq biografine</Text>
+                    </TouchableOpacity>
+                </Animatable.View>}
+                {showbio && <Animatable.Text animation="fadeInLeft" className="text-gray-400 text-xs font-light italic px-2 text-center mt-1">{data?.bio}</Animatable.Text>}
             </View>
         </View>
         {data?.isYourInstructor ? (

@@ -6,6 +6,7 @@ import LearnOnlineTutorCard from '../../../components/LearnOnlineTutorCard';
 import useFetchFunction from '../../../hooks/useFetchFunction';
 import { GetAllInstructors } from '../../../services/fetchingService';
 import Loading from '../../../components/Loading';
+import SorterComponent from '../../../components/SorterComponent';
 
 
 const AllTutors = () => {
@@ -28,6 +29,11 @@ const AllTutors = () => {
   const inputData = (data) => {
     console.log(data)
   }
+  
+  const handleSorter = (data) => {
+    console.log(data)
+  }
+
   if(isRefreshing || isLoading) return <Loading />
   return (
     <View className="flex-1">
@@ -41,7 +47,10 @@ const AllTutors = () => {
             <LearnOnlineTutorCard item={item}/>
           )}
           ListHeaderComponent={() => (
-            <LearnOnlineHeader headerTitle={"Te gjithe tutoret"} sentInput={inputData}/>
+            <View className="gap-2">
+              <LearnOnlineHeader headerTitle={"Te gjithe tutoret"} sentInput={inputData}/>
+              <SorterComponent showSorter={true} sortButton={handleSorter}/>
+            </View>
           )}
           ListFooterComponent={() => (
             <View className="my-2"></View>

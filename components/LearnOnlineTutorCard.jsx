@@ -1,10 +1,12 @@
 import { View, Text, Platform, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { icons } from '../constants'
 import { useRouter } from 'expo-router'
+import * as Animatable from "react-native-animatable"
 
 const LearnOnlineTutorCard = ({item}) => {
+    const [showAllData, setShowAllData] = useState(false)
     const router = useRouter();
     const date = new Date(item?.whenBecameInstructor).toLocaleDateString("sq-AL", {
         day: "2-digit",
@@ -78,9 +80,15 @@ const LearnOnlineTutorCard = ({item}) => {
             </View>
         </View>
 
-        <View className="mt-2">
-            <Text numberOfLines={3} className="text-white text-sm font-plight">{item.bio}</Text>
-        </View>
+        {showAllData && <View className="mt-2 overflow-hidden">
+            <Animatable.Text animation="fadeInLeft" numberOfLines={3} className="text-white text-sm font-plight">{item.bio}</Animatable.Text>
+        </View>}
+
+        {!showAllData && (<View className="absolute left-0 items-center right-0 -bottom-3" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowAllData(true)} className="bg-secondary px-2 py-0.5 rounded-md border border-white">
+                <Animatable.Text animation="pulse" iterationCount="infinite" duration={3000} className="font-psemibold text-xs text-white">Shfaq pershkrimin</Animatable.Text>
+            </TouchableOpacity>
+        </View>)}
     </TouchableOpacity>
   )
 }

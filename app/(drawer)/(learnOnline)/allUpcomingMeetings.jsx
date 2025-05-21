@@ -8,6 +8,7 @@ import { GetAllMeetings } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
 import { Platform } from 'react-native'
 import EmptyState from '../../../components/EmptyState'
+import SorterComponent from '../../../components/SorterComponent'
 
 const testArray = [{id:1},{id:2},{id:3}]
 
@@ -34,6 +35,10 @@ const AllUpcomingMeetings = () => {
     console.log(data)
   }
 
+  const handleSorter = (data) => {
+    console.log(data)
+  }
+
   if(isLoading || isRefreshing) return <Loading />
   return (
     <View className="flex-1">
@@ -48,7 +53,10 @@ const AllUpcomingMeetings = () => {
             // e pasna bo edhe ni component po pak trash ListMeetingcomponent dicka 
           )}
           ListHeaderComponent={() => (
-            <LearnOnlineHeader headerTitle={"Klaset e pritura"} sentInput={inputData}/>
+            <View className="gap-2">
+              <LearnOnlineHeader headerTitle={"Klaset e pritura"} sentInput={inputData}/>
+              <SorterComponent showSorter={true} sortButton={handleSorter}/>
+            </View>
           )}
           ListFooterComponent={() => (
             <View className="my-2"></View>

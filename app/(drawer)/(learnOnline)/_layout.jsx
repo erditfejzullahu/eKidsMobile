@@ -57,7 +57,7 @@ const _layout = () => {
                     <TabIcon 
                         icon={icons.onlineclasses}
                         color={color}
-                        name="Klaset Online"
+                        name="Kurset online"
                         focused={focused}
                     />
                 )
@@ -87,7 +87,7 @@ const _layout = () => {
                     <TabIcon 
                         icon={icons.upcoming}
                         color={color}
-                        name="Klaset e ardhshme"
+                        name="Klaset online"
                         focused={focused}
                     />
                 )
