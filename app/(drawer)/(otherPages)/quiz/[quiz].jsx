@@ -261,7 +261,7 @@ const Quiz = () => {
                             </View>
                         </TouchableOpacity>
                         {openContactUser &&<Animatable.View animation="bounceIn" duration={500} className="absolute -bottom-5 right-0 bg-primary p-2 border border-black-200 rounded-[5px]" style={styles.box}>
-                            <TouchableOpacity onPress={() => router.replace(`(profiles)/${quizData?.user?.id}`)}>
+                            <TouchableOpacity onPress={() => router.replace(`/users/${quizData?.user?.id}`)}>
                                 <Text className="font-plight text-white text-sm p-1">Shikoni profilin</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => navigateToMessenger(quizData?.user, userData)}>

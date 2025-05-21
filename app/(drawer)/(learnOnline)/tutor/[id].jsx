@@ -38,7 +38,7 @@ const Tutor = () => {
   
 
   useEffect(() => {
-    refetch();
+    onRefresh()
   }, [id])
   
   if(isLoading || isRefreshing || userLoading || relationReloading) return <Loading />

@@ -32,10 +32,11 @@ const profiles = () => {
     
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
+    
     const router = useRouter();
     const [profileData, setProfileData] = useState(null)
     const [softSkills, setSoftSkills] = useState([])
-    const [isRefreshing, setIsRefreshing] = useState(false)
+    const [isRefreshing, setIsRefreshing] = useState(true)
 
     const currentYear = new Date().getFullYear();
     const startDate = new Date(`${currentYear}-01-01`); // January 1st
@@ -66,6 +67,7 @@ const profiles = () => {
       barPercentage: 0.5,
       useShadowColorFromDataset: false // optional
     };
+    
     const [showQuizzes, setShowQuizzes] = useState(false)
     const [showCourses, setShowCourses] = useState(false)
     const [showCreatedQuizzes, setShowCreatedQuizzes] = useState(false)
@@ -225,10 +227,13 @@ const profiles = () => {
       setProfileData(null);
       setRelationStatus(null)
       setSoftSkills([])
-      refetch();
-      relationRefetch();
+      // refetch();
+      // relationRefetch();
+      refreshData();
     }, [profile])
     
+
+   
 
     useEffect(() => {
       if(data){
@@ -253,11 +258,13 @@ const profiles = () => {
         })
         // console.log(data);
         // console.log(softSkills);
-        
+        setIsRefreshing(false)
       }else {
         setProfileData(null)
+        setIsRefreshing(false)
       }
     }, [data])
+    
     
 
     const acceptFriend = async () => {
@@ -282,10 +289,17 @@ const profiles = () => {
       }
     }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes])
     
+    useEffect(() => {
+      if(data?.role === "Instructor"){
+        router.replace(`/tutor/${data?.instructorId}`);
+      }
+    }, [data, profile, isLoading, router])
     
 
-    if(isLoading || userLoading || relationReloading) return <Loading />
+
+    if(isLoading || userLoading || relationReloading || isRefreshing) return <Loading />
   return (
+    <View>
     <ScrollView
       refreshControl={< RefreshControl onRefresh={refreshData} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} />}
       className="h-full bg-primary"
@@ -676,6 +690,7 @@ const profiles = () => {
         </View>
       </Modal>
     </ScrollView>
+    </View>
   )
 }
 

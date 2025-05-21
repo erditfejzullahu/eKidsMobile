@@ -123,7 +123,7 @@ const Notifications = ({ onClose }) => {
     const handleNotificationClick = (notification) => {        
         if(notification.type === 6){ //friend accepted
             setIsOpened(false)
-            router.replace(`(profiles)/${notification.userId}`)
+            router.replace(`/users/${notification.userId}`)
         }
     }
 

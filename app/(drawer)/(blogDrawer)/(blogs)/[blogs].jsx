@@ -67,7 +67,7 @@ const Blogs = () => {
                         />
                     </View>
                     <View className="flex-[0.25] p-2 items-center">
-                        <TouchableOpacity onPress={() => router.replace(`(profiles)/${userId}`)}>
+                        <TouchableOpacity onPress={() => router.replace(`/users/${userId}`)}>
                             <Image 
                                 source={{ uri: userPhoto }}
                                 className="w-10 h-10 rounded-full border border-black-200"

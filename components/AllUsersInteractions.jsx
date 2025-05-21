@@ -93,7 +93,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
                 {showOptions && <View className="absolute self-start -left-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
                     <View className="border-b border-black-200">
-                        <TouchableOpacity onPress={() => {router.replace(`(profiles)/${usersData?.id}`), setShowOptions(false)}}>
+                        <TouchableOpacity onPress={() => {router.replace(`/users/${usersData?.id}`), setShowOptions(false)}}>
                             <Text className="font-plight text-white text-sm p-1">Vizitoni profilin</Text>
                         </TouchableOpacity>
                     </View>

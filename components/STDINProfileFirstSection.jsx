@@ -15,6 +15,8 @@ import { useRouter } from 'expo-router'
 import CustomModal from '../components/Modal'
 
 const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefetch}) => {
+    console.log(data);
+    
     const router = useRouter();
     const [courseModal, setCourseModal] = useState(false)
     const [coursesData, setCoursesData] = useState([])
@@ -65,13 +67,13 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         if(relationStatus === null){
           return 0 // Shto miqesine 0
         }else{
-          if((relationStatus?.senderId !== userData.data?.userData?.id) && relationStatus?.status === 1){
+          if((relationStatus?.senderId !== userData?.data?.userData?.id) && relationStatus?.status === 1){
             return 1 //ma ka qu aj mu // 1 //Shoqerohu!
-          }else if((relationStatus?.senderId === userData.data?.userData?.id) && relationStatus?.status === 1){
+          }else if((relationStatus?.senderId === userData?.data?.userData?.id) && relationStatus?.status === 1){
             return 2 // ja kom qu un atij // 2 //Ne pritje
-          }else if((relationStatus?.receiverId !== userData.data?.userData?.id) && relationStatus?.status === 1){
+          }else if((relationStatus?.receiverId !== userData?.data?.userData?.id) && relationStatus?.status === 1){
             return 1;
-          }else if((relationStatus?.receiverId === userData.data?.userData?.id) && relationStatus?.status === 1){
+          }else if((relationStatus?.receiverId === userData?.data?.userData?.id) && relationStatus?.status === 1){
             return 2;
           }else{
             return 3 //shoqerohu
@@ -96,9 +98,9 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     })
 
     const makeFriend = async () => {
-        console.log(userData.data?.userData?.id);
+        
         const payload = {
-            userId: userData.data?.userData?.id,
+            userId: userData?.data?.userData?.id,
             receiverId: data?.userId,
             information: "user req",
             type: 4
@@ -122,7 +124,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     }
 
     const removeOnWaitingFriend = async () => {
-        const response = await removeFriendRequestReq(userData.data?.userData?.id, data?.userId);
+        const response = await removeFriendRequestReq(userData?.data?.userData?.id, data?.userId);
         if(response === 200){
             await relationRefetch();
         }else{
@@ -131,7 +133,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     }
 
     const removeFriend = async () => {
-        const response = await removeFriendReq(userData.data?.userData?.id, data?.userId)
+        const response = await removeFriendReq(userData?.data?.userData?.id, data?.userId)
         if(response === 200){
             successFriendDeletion()
             setRemoveFriendModal(false);
@@ -144,9 +146,13 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
 
     const contactInstructor = () => {
         const instructorData = {
-            
+            receiverFirstname: data?.instructorName.split(" ")[0],
+            receiverLastname: data?.instructorName.split(" ")[0],
+            receiverUsername: data?.instructorUsername,
+            receiverProfilePic: data?.profilePictureUrl,
         }
-        navigateToMessenger(router, data, userData.data?.userData);
+        
+        navigateToMessenger(router, instructorData, userData?.data?.userData);
     }
 
     useEffect(() => {
