@@ -16,7 +16,7 @@ import SorterComponent from '../../../../components/SorterComponent'
 import { initialFilterData } from '../../../../services/filterConfig';
 import { useNavigateToSupport } from '../../../../hooks/goToSupportType';
 
-const categories = () => {
+const Categories = () => {
   const { categories } = useLocalSearchParams();
   const [showAllCategories, setShowAllCategories] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -65,7 +65,7 @@ const categories = () => {
       sortDateOrder: '',
       sortByPopular: '',
       sortPopularOrder: '',
-      categoryId: '',
+      categoryId: categories || "",
       searchParam: ''
     }))
     await getCategories()
@@ -101,14 +101,15 @@ const categories = () => {
   }
 
   const sortCategories = (data) => {
-    if(categories === 'all' || categories === undefined){
-      if(data.emri !== null) setSortingData((prevData) => ({...prevData, sortByName: "CategoryName", sortNameOrder: data.emri}));
-    }else{
-      if(data.emri !== null) setSortingData((prevData) => ({...prevData, sortByName: "CourseName", sortNameOrder: data.emri}));
-    }
-    
-    if(data.data !== null) setSortingData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
-    if(data.shikime !== null) setSortingData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: (categories === "all" || categories === undefined) ? data.emri != null && "CategoryName" : data.emri != null && "CourseName",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "CreatedAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "ViewCount",
+      sortPopularOrder: data.shikime
+    }))
   }
 
 
@@ -252,4 +253,4 @@ const categories = () => {
   }
 }
 
-export default categories
+export default Categories

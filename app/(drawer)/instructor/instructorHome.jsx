@@ -10,11 +10,15 @@ import useFetchFunction from '../../../hooks/useFetchFunction';
 import { GetInstructorsCourses } from '../../../services/fetchingService';
 import EmptyState from "../../../components/EmptyState"
 import { useRouter } from 'expo-router';
+import { initialFilterData } from '../../../services/filterConfig';
 
 const InstructorHome = () => {
   const router = useRouter();
   const {user, isLoading} = useGlobalContext();
-  const {data, isLoading: coursesLoading, refetch} = useFetchFunction(() => GetInstructorsCourses())
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData
+  })
+  const {data, isLoading: coursesLoading, refetch} = useFetchFunction(() => GetInstructorsCourses(filterData))
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [coursesData, setCoursesData] = useState([])
   const [openSorter, setOpenSorter] = useState(false)
@@ -23,9 +27,27 @@ const InstructorHome = () => {
 
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
+
+  const handleSorter = (data) => {
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "Name",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "CreatedAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "ViewCount",
+      sortPopularOrder: data.shikime
+    }))
+  }
+
+  useEffect(() => {
+    refetch();
+  }, [filterData])
+  
 
   useEffect(() => {
     console.log(data, ' data');
@@ -66,19 +88,11 @@ const InstructorHome = () => {
 
           <View className="mt-2 flex-row items-center justify-between">
             <Text className="font-pregular text-gray-100 text-lg">Kurse nga koleget tuaj</Text>
-            <TouchableOpacity onPress={() => setOpenSorter(!openSorter)}>
-              <Image 
-                source={icons.sort}
-                className="h-8 w-8"
-                resizeMode='contain'
-                tintColor={"#FF9C01"}
-              />
-            </TouchableOpacity>
           </View>
 
-          {openSorter && <View className="mt-2">
-            <SorterComponent showSorter={openSorter}/>
-          </View>}
+          <View className="mt-2">
+            <SorterComponent showSorter={true} sortButton={handleSorter}/>
+          </View>
           </>
         )}
         ListFooterComponent={() => (

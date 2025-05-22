@@ -10,24 +10,41 @@ import { GetInstructorsCourses } from '../../../services/fetchingService';
 import Loading from '../../../components/Loading';
 import { useGlobalContext } from '../../../context/GlobalProvider';
 import EmptyState from '../../../components/EmptyState';
+import { initialFilterData } from '../../../services/filterConfig';
 
 
 const AllOnlineClasses = () => {
-  const {data, isLoading, refetch} = useFetchFunction(() => GetInstructorsCourses())
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData
+  })
+  const {data, isLoading, refetch} = useFetchFunction(() => GetInstructorsCourses(filterData)) // TODO: add pagination
   const {user, isLoading: userLoading} = useGlobalContext();
   const [coursesData, setCoursesData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
 
   const handleSorter = async (data) => {
-    console.log(data)
-    await onRefresh();
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "Name",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "CreatedAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "ViewCount",
+      sortPopularOrder: data.shikime
+    }))
   }
+
+  useEffect(() => {
+    refetch()
+  }, [filterData])
+  
 
   useEffect(() => {
     console.log(data, '  data')

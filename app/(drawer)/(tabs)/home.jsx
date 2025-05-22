@@ -25,8 +25,6 @@ const Home = () => {
   const [allCourses, setAllCourses] = useState([])
   const [showLoadMore, setShowLoadMore] = useState(false)
 
-  const [showSorter, setShowSorter] = useState(false)
-  // const showSorter = useRef(false)
   const [filterData, setFilterData] = useState({
     ...initialFilterData,
     searchParam: ''
@@ -76,9 +74,15 @@ const Home = () => {
   }
 
   const updateFilterData = (data) => {
-    if(data.emri !== null) setFilterData((prevData) => ({...prevData, sortByName: "courseName", sortNameOrder: data.emri}));
-    if(data.data !== null) setFilterData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
-    if(data.shikime !== null) setFilterData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "CourseName",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "CreatedAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "ViewCount",
+      sortPopularOrder: data.shikime
+    }))
   }
 
   const searchFunction = (data) => {

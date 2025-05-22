@@ -13,10 +13,15 @@ import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import MeetingCardComponent from '../../../components/MeetingCardComponent'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
+import SorterComponent from '../../../components/SorterComponent'
+import { initialFilterData } from '../../../services/filterConfig'
 
 const InstructorManage = () => {
     const {user, isLoading} = useGlobalContext();
     const [manageType, setManageType] = useState("Kurseve") //Courses = 0, Students = 1, Meetings = 2
+    const [filterData, setFilterData] = useState({
+        ...initialFilterData
+    })
     const {data, isLoading: manageLoading, refetch} = useFetchFunction(() => GetInstructorManageTypeData(manageType === "Kurseve" ? 0 : manageType === "Studenteve" ? 1 : manageType === "Takimeve" ? 2 : {}))
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [manageData, setManageData] = useState([])
@@ -25,6 +30,10 @@ const InstructorManage = () => {
         setIsRefreshing(true)
         await refetch();
         setIsRefreshing(false)
+    }
+
+    const handleSorter = (data) => {
+        //TODO 
     }
 
     useEffect(() => {
@@ -87,7 +96,7 @@ const InstructorManage = () => {
                     bottomSubtitle={"Ketu mund te menaxhoni te gjithe materialin e paraqitur. Filtroni nga pulsari ne te djathte. Per cdo pakjartesi, na kontaktoni tek Paneli i Ndihmes."}
                 />
                 <ManageTypesDialog manageType={manageType} sendManageType={(data) => setManageType(data)}/>
-                
+                <SorterComponent showSorter={true} sortButton={handleSorter}/>
             </View>
             </>
         )}

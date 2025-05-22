@@ -31,9 +31,15 @@ const AllQuizzes = () => {
   const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(filterData))
 
   const sortQuizes = (data) => {
-    if(data.emri !== null) setFilterData((prevData) => ({...prevData, sortByName: "QuizName", sortNameOrder: data.emri}));
-    if(data.data !== null) setFilterData((prevData) => ({...prevData, sortByDate: "createdAt", sortDateOrder: data.data}));
-    if(data.shikime !== null) setFilterData((prevData) => ({...prevData, sortByPopular: "viewCount", sortPopularOrder: data.shikime}));
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "QuizName",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "createdAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "viewCount",
+      sortPopularOrder: data.shikime
+    }))
   }
 
   

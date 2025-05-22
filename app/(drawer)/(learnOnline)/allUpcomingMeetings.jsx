@@ -9,17 +9,22 @@ import Loading from '../../../components/Loading'
 import { Platform } from 'react-native'
 import EmptyState from '../../../components/EmptyState'
 import SorterComponent from '../../../components/SorterComponent'
+import { initialFilterData } from '../../../services/filterConfig'
 
 const testArray = [{id:1},{id:2},{id:3}]
 
 const AllUpcomingMeetings = () => {
-  const {data, isLoading, refetch} = useFetchFunction(() => GetAllMeetings())
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData
+  })
+  const {data, isLoading, refetch} = useFetchFunction(() => GetAllMeetings(filterData))
 
   const [meetingsData, setMeetingsData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
@@ -36,7 +41,15 @@ const AllUpcomingMeetings = () => {
   }
 
   const handleSorter = (data) => {
-    console.log(data)
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "Title",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "CreatedAt",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "Participants",
+      sortPopularOrder: data.shikime
+    }))
   }
 
   if(isLoading || isRefreshing) return <Loading />

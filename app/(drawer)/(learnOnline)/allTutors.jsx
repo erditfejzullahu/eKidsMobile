@@ -7,31 +7,47 @@ import useFetchFunction from '../../../hooks/useFetchFunction';
 import { GetAllInstructors } from '../../../services/fetchingService';
 import Loading from '../../../components/Loading';
 import SorterComponent from '../../../components/SorterComponent';
+import { initialFilterData } from '../../../services/filterConfig';
 
 
 const AllTutors = () => {
-  const {data, isLoading, refetch} = useFetchFunction(() => GetAllInstructors())
+  const [filterData, setFilterData] = useState({
+    ...initialFilterData
+  })
+  const {data, isLoading, refetch} = useFetchFunction(() => GetAllInstructors(filterData))
   const [instructorsData, setInstructorsData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
 
   useEffect(() => {
-    console.log(data);
-    
     setInstructorsData(data || [])  
   }, [data])
+
+  useEffect(() => {
+    refetch();
+  }, [filterData])
+  
 
   const inputData = (data) => {
     console.log(data)
   }
   
   const handleSorter = (data) => {
-    console.log(data)
+    setFilterData((prev) => ({
+      ...prev,
+      sortByName: data.emri != null && "InstructorName",
+      sortNameOrder: data.emri,
+      sortByDate: data.data != null && "WhenBecameInstructor",
+      sortDateOrder: data.data,
+      sortByPopular: data.shikime != null && "InstructorStudents",
+      sortPopularOrder: data.shikime
+    }))
   }
 
   if(isRefreshing || isLoading) return <Loading />

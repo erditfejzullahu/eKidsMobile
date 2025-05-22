@@ -9,9 +9,7 @@ export const fetchCourses = async (filters) => {
                 queryParams[key] = filters[key];
             }
         })
-        const queryString = new URLSearchParams(queryParams).toString()
-        console.log(queryString);
-        
+        const queryString = new URLSearchParams(queryParams).toString()        
         const response = await apiClient.get(`/getCoursesP?${queryString}`)
         return response.data;
     } catch (error) {
@@ -648,7 +646,7 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (userId, tagId, pagination) => {        
+export const getAllBlogsByTag = async (userId, tagId, pagination, forYouOrFriends) => {        
     try {
         const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}`)
         return response ? response.data : null
@@ -657,7 +655,7 @@ export const getAllBlogsByTag = async (userId, tagId, pagination) => {
     }
 }
 
-export const getAllBlogs = async (userId, pagination) => {
+export const getAllBlogs = async (userId, pagination, forYouOrFriends) => {
     try {
         let queryParams = {}
         if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
@@ -956,9 +954,19 @@ export const InstructorCreateCourse = async (payload) => {
     }
 }
 
-export const GetInstructorsCourses = async () => {
+export const GetInstructorsCourses = async (filters) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/GetInstructorsCourses`)
+        const queryParams = {}
+
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key];
+            }
+        })
+
+        const queryString = new URLSearchParams(queryParams).toString();
+
+        const response = await apiClient.get(`/api/Instructors/GetInstructorsCourses?${queryString}`)
         return response && response.data;
     } catch (error) {
         return null;
@@ -1015,9 +1023,19 @@ export const GetInstructorManageTypeData = async (manageType) => {
     }
 }
 
-export const GetAllMeetings = async () => {
+export const GetAllMeetings = async (filters) => {
     try {
-        const response = await apiClient.get(`/api/OnlineMeetings/AllMeetings`)
+        const queryParams = {}
+
+        Object.keys(filters).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key]
+            }
+        })
+
+        const queryString = new URLSearchParams(queryParams);
+
+        const response = await apiClient.get(`/api/OnlineMeetings/AllMeetings?${queryString}`)
         return response && response.data;
     } catch (error) {
         console.error(error.response.data)
@@ -1065,9 +1083,19 @@ export const GetMeetingInformation = async (id) => {
     }
 }
 
-export const GetAllInstructors = async () => {
+export const GetAllInstructors = async (filters) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/GetAllInstructors`)
+        const queryParams = {}
+
+        Object.keys(queryParams).forEach((key) => {
+            if(filters[key]){
+                queryParams[key] = filters[key]
+            }
+        })
+
+        const queryString = new URLSearchParams(queryParams).toString();
+
+        const response = await apiClient.get(`/api/Instructors/GetAllInstructors?${queryString}`)
         return response && response.data;
     } catch (error) {
         console.error(error.response.data)

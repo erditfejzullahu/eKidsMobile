@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, RefreshControl, StyleSheet } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import AddBlogComponent from '../../../../components/AddBlogComponent'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
@@ -6,15 +6,15 @@ import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { getAllBlogs, getAllBlogsByTag } from '../../../../services/fetchingService'
 import Loading from '../../../../components/Loading'
 import BlogCardComponent from '../../../../components/BlogCardComponent'
-import { usePathname } from 'expo-router'
 
-const blog = () => {
+const Blog = () => {
   
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
-        blogTagId === null ? getAllBlogs(user?.data?.userData?.id, pagination)
-        : getAllBlogsByTag(user?.data?.userData?.id, blogTagId?.tagId, pagination)
-  );  
+        blogTagId === null ? getAllBlogs(user?.data?.userData?.id, pagination, forYouToggle)
+        : getAllBlogsByTag(user?.data?.userData?.id, blogTagId?.tagId, pagination, forYouToggle)
+  );
+
   const [passUserOutside, setPassUserOutside] = useState(false)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -28,6 +28,8 @@ const blog = () => {
     pageSize: 15
   })
 
+  const [forYouToggle, setForYouToggle] = useState(true)
+
   useEffect(() => {
     setIsRefreshing(true)
     setAllBlogs([])
@@ -39,6 +41,11 @@ const blog = () => {
   useEffect(() => {
     blogRefetch()
   }, [pagination])
+
+  useEffect(() => {
+    blogRefetch()
+  }, [forYouToggle])
+  
   
 
   const userOutsidePostCreation = () => {
@@ -107,6 +114,18 @@ const blog = () => {
           ListHeaderComponent={() => (
             <>
             <View className={`${blogTagId === null ? "-mb-2" : ""} border-b border-black-200 pb-4`}>
+
+              <View className="absolute z-10 left-0 right-0 -top-2.5 items-center">
+                <View className="flex-row items-center gap-4" style={styles.box}>
+                  <TouchableOpacity onPress={() => setForYouToggle(false)} className={`bg-primary py-0.5 px-3 items-center border border-black-200 rounded-md ${!forYouToggle ? "bg-oBlack" : "bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${!forYouToggle ? "text-secondary" : "text-white"}`}>Miqte tuaj</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setForYouToggle(true)} className={`py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle ? "bg-oBlack" : "bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${forYouToggle ? "text-secondary" : "text-white"}`}>Per ty</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               <AddBlogComponent userData={user} getUserOutside={passUserOutside} />
             </View>
             {blogTagId !== null && 
@@ -137,4 +156,20 @@ const blog = () => {
   )
 }
 
-export default blog
+export default Blog
+
+const styles = StyleSheet.create({
+  box: {
+      ...Platform.select({
+          ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.6,
+              shadowRadius: 10,
+            },
+            android: {
+              elevation: 8,
+            },
+      })
+  },
+})
