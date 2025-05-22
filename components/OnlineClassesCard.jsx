@@ -159,7 +159,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
               <Text numberOfLines={4} className="text-gray-400 text-xs font-plight">{classes.description}</Text>
               
               {!viewProfilePlace && <View className="absolute -bottom-2 z-20 -left-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
-                  <Text className="text-white font-psemibold text-xs">Niveli <Text className="text-secondary">Fillestar</Text></Text>
+                  <Text className="text-white font-psemibold text-xs">Niveli <Text className="text-secondary">{classes.level === 0 ? "Fillestar" : classes.level === 1 ? "Mesatar" : classes.level === 2 ? "i Larte" : classes.level === 3 ? "i Avancuar" : "i Panjohur"}</Text></Text>
               </View>}
               <View className="absolute -bottom-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={styles.box}>
               <Text className="text-white font-psemibold text-xs">

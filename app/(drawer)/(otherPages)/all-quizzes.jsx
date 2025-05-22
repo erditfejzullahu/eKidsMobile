@@ -189,6 +189,7 @@ const AllQuizzes = () => {
       onClose={() => setShowModal(false)}
     >
       <ScrollView className="max-h-[300px] my-4" style={styles.box}>
+        <Text className="text-secondary font-psemibold text-center mb-2 text-lg">(Se shpejti)</Text>
         <Text className="text-white text-sm font-plight">Miresevini në pjesën e kuizeve ku mund të zhvilloni diturinë tuaj duke plotësuar kuizet e kategorive të ndryshme!</Text>
         <Text className="text-white text-xl font-psemibold mt-4 mb-1">Kompeticioni</Text>
         <Text className="text-white text-sm font-plight">Pjesëmarrësit do të kenë mundësinë të garojnë me njëri-tjetrin në një kompeticion emocionues. Çdo javë, do të shpallen fituesit përkatës të çdo kategorie, dhe ata do të marrin çmime të veçanta.</Text>
