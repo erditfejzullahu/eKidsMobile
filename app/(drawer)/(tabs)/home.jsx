@@ -34,19 +34,20 @@ const Home = () => {
   const userData = user?.data?.userData;
   const categories = user?.data?.categories
 
-  const [buttonLoading, setButtonLoading] = useState(false)  
-
   const { data: courses, refetch, isLoading } = useFetchFunction(() => fetchCourses(filterData))
+
+  const [loadedFirst, setLoadedFirst] = useState(false)
 
   const onRefresh = async () => {
     setRefreshing(true)
     setCurrentPage(1);
+    setLoadedFirst(false)
     setAllCourses([]);
 
     setFilterData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 15,
+      pageSize: 3,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -61,17 +62,14 @@ const Home = () => {
     setRefreshing(false)
   }
 
-  const loadMoreCourses = () => {
-    // setDontRefresh(true);
-    if(!showLoadMore){
-      return;
-    }
-    setFilterData((prevData) => ({
-      ...prevData,
-      pageNumber: parseInt(prevData.pageNumber) + 1
-    }))
-    console.log(filterData.pageNumber);
-  }
+  const loadMoreCourses = useCallback(() => {
+    if(!allCourses.hasMore || showLoadMore) return;
+      setShowLoadMore(true)
+      setFilterData((prev) => ({
+        ...prev,
+        pageNumber: prev.pageNumber + 1
+      }))
+  }, [allCourses.courses, showLoadMore])
 
   const updateFilterData = (data) => {
     setFilterData((prev) => ({
@@ -91,31 +89,33 @@ const Home = () => {
       searchParam: data
     }))
   }
+  
 
   useEffect(() => {
     refetch();    
   }, [filterData])
+  
 
-  useEffect(() => {
+  useEffect(() => {    
     if(courses){
-      if(showLoadMore){
-        setAllCourses((prevData) => {
-          if(prevData){
-            const existingIds = new Set(prevData.map((course) => course.id))
-            const newCourses = courses.filter((course) => !existingIds.has(course.id))
-            return[...prevData, ...newCourses]
-          }
-        })
+      setLoadedFirst(true)
+      if(filterData.pageNumber > 1){
+        setAllCourses(prev => ({
+          ...courses,
+          courses: [...prev.courses, ...courses.courses],
+          hasMore: courses.hasMore
+        }))
       }else{
         setAllCourses(courses)
       }
+      setShowLoadMore(false)
     }else{
       setAllCourses([])
       setShowLoadMore(false)
     }
   }, [courses])
   
-  if ((isLoading || userDataLoading)) {
+  if (((isLoading || userDataLoading) && !loadedFirst)) {
     return (
       <Loading />
     );
@@ -123,7 +123,7 @@ const Home = () => {
     return (
       <View className="bg-primary h-full">
         <FlatList 
-          data={allCourses}
+          data={allCourses.courses}
           keyExtractor={(item) => "courses-" + item?.id}
           renderItem={({ item }) => (
             <Courses 
@@ -131,7 +131,7 @@ const Home = () => {
             />
           )}
           onEndReached={loadMoreCourses}
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={0.1}
           ListHeaderComponent={() => (
             <View className="my-6 px-4 space-y-6">
               <View className="justify-between items-start flex-row mb-6">
@@ -202,13 +202,9 @@ const Home = () => {
           refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
           ListFooterComponent={() =>
             showLoadMore ? (
-              <View className="px-4">
-                <CustomButton
-                  title={"Më shumë material"}
-                  containerStyles={"mb-5"}
-                  handlePress={loadMoreCourses}
-                  isLoading={buttonLoading}
-                />
+              <View className="px-4 justify-center pb-4 -mt-5 flex-row items-center gap-2">
+                <Text className="text-secondary font-psemibold text-sm">Ju lutem prisni...</Text>
+                <ActivityIndicator color={"#FF9C01"} size={24} />
               </View>
             ) : null
           }
