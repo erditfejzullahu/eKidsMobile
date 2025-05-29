@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, RefreshControl, FlatList } from 'react-native'
+import { View, Text, Image, ScrollView, RefreshControl, FlatList, ActivityIndicator } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useGlobalSearchParams, useLocalSearchParams } from 'expo-router'
 import { getCourseCategories } from '../../../../services/fetchingService';
@@ -26,26 +26,10 @@ const Categories = () => {
     categoryId: categories,
     searchParam: '',
   })
+  const [loadedFirst, setLoadedFirst] = useState(false)
+  const [showLoadingMore, setShowLoadingMore] = useState(false)
 
   const {user} = useGlobalContext(); //show category information no matter what
-  
-  const searchFunction = async (searchData, sortData) => {
-    
-    setSortingData({...sortingData, searchData: searchData})
-    setRefreshing(true)
-    try {
-      
-      const response = (categories === 'all' || categories === undefined)
-        ? await fetchCategories(searchData || sortingData.searchData, sortData)
-        : await fetchCategory(categories, searchData || sortingData.searchData, sortData)
-      setAllData(response)
-    } catch (error) {
-      console.error(error);
-      setAllData([])
-    } finally {
-      setRefreshing(false)
-    }
-  }
   
   const updateSearchData = (data) => {
     setSortingData((prevData) => ({
@@ -55,10 +39,12 @@ const Categories = () => {
   }
   
   const onRefresh = async () => {
+    setLoadedFirst(false)
+    setAllData([])
     setSortingData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 15,
+      pageSize: 3,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -72,36 +58,57 @@ const Categories = () => {
   }
 
   const getCategories = async () => {
-    // console.log(categories, 'asdasdasd');
-    
     setRefreshing(true)
     try {
       const response = (categories === 'all' || categories === undefined)
         ? await fetchCategories(sortingData)
         : await fetchCategory(sortingData)
         
-        if(categories === 'all' || categories === undefined){
-          setAllData((prevData) => {
-            const existingIds = new Set(prevData.map((categories) => categories.CategoryID))
-            const removeDups = response.filter((category) => !existingIds.has(category.CategoryID))
-            return [...prevData, ...removeDups]
-          });
+        setLoadedFirst(true)
+        console.log(response, ' asdasdasd');
+        console.log(sortingData, ' sorting');
+        
+        if(sortingData.pageNumber > 1){
+          setAllData((prev) => {
+            if(showAllCategories){
+              return {
+                ...prev,
+                categories: [...prev.categories, ...response.categories],
+                hasMore: response.hasMore
+              }
+            }else{
+              return {
+                ...prev,
+                courses: [...prev.courses, ...response.courses],
+                hasMore: response.hasMore
+              }
+            }
+          })
         }else{
-          setAllData(response);
-          console.log(response);
-          
+          setAllData(response)
         }
         
     } catch (error) {
       console.error(error);
       setAllData([])
     } finally {
+      setShowLoadingMore(false)
       setRefreshing(false)
     }
   }
 
+  const loadMore = () => {
+    if(!allData.hasMore || showLoadingMore) return;
+    setShowLoadingMore(true)
+    setSortingData((prev) => ({
+      ...prev,
+      pageNumber: prev.pageNumber + 1
+    }))
+  }
+
   const sortCategories = (data) => {
-    setFilterData((prev) => ({
+    setLoadedFirst(false)
+    setSortingData((prev) => ({
       ...prev,
       sortByName: (categories === "all" || categories === undefined) ? data.emri != null && "CategoryName" : data.emri != null && "CourseName",
       sortNameOrder: data.emri,
@@ -116,14 +123,6 @@ const Categories = () => {
   useEffect(() => {
     getCategories();
   }, [sortingData])
-  
-
-  // useEffect(() => {
-  //   console.log(categories, " categorieseasd");
-    
-  //   getCategories()
-  // }, [])
-  
 
   useFocusEffect(
     useCallback(() => {
@@ -173,7 +172,7 @@ const Categories = () => {
     )
   }
   
-  if(refreshing){
+  if(refreshing && !loadedFirst){
     return (
       <Loading />
     )
@@ -183,15 +182,16 @@ const Categories = () => {
         <View>
           {showAllCategories ? 
           <FlatList 
-          className="h-full"
-            data={allData}
+            className="h-full"
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.1}
+            data={allData.categories}
             keyExtractor={(item) => item?.CategoryID?.toString()}
             renderItem={({ item }) => (
               <AllCategories
                 userCategories={item}
               />
             )}
-            
             ListHeaderComponent={() => (
               catHeader()
             )}
@@ -207,18 +207,24 @@ const Categories = () => {
               </View>
             )}
             ListFooterComponent={() => (
-              <View className="mb-4"></View>
-              // <CustomButton 
-              //   title={"Më shumë kategori"}
-              //   containerStyles={"mt-5 mb-5 mx-4"}
-              // />
+              <>
+              {!showLoadingMore && <View className="my-4" />}
+              {showLoadingMore && (
+                <View className="px-4 justify-center py-4 flex-row items-center gap-2">
+                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <ActivityIndicator color={"#FF9C01"} size={24} />
+                </View>
+              )}
+              </>
             )}
             refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
           />
           :
           <FlatList 
-          className="h-full"
-            data={allData || []}
+            className="h-full"
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.1}
+            data={allData.courses || []}
             keyExtractor={(item) => item?.id.toString() || ''}
             renderItem={({item}) => (
               <FilteredCourses 
@@ -240,12 +246,18 @@ const Categories = () => {
               </View>
             )}
             ListFooterComponent={() => (
-              <View className="mb-4"></View>
+              <>
+              {!showLoadingMore && <View className="my-4" />}
+              {showLoadingMore && (
+                <View className="px-4 justify-center py-4 flex-row items-center gap-2">
+                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <ActivityIndicator color={"#FF9C01"} size={24} />
+                </View>
+              )}
+              </>
             )}
             refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
-
           />
-            
           }
         </View>
       </View>

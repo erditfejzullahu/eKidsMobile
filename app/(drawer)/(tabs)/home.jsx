@@ -47,7 +47,7 @@ const Home = () => {
     setFilterData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 3,
+      pageSize: 15,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -72,6 +72,7 @@ const Home = () => {
   }, [allCourses.courses, showLoadMore])
 
   const updateFilterData = (data) => {
+    setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
       sortByName: data.emri != null && "CourseName",
@@ -84,30 +85,36 @@ const Home = () => {
   }
 
   const searchFunction = (data) => {
+    setLoadedFirst(false)
     setFilterData((prevData) => ({
       ...prevData,
       searchParam: data
     }))
   }
   
-
   useEffect(() => {
     refetch();    
   }, [filterData])
   
+  useEffect(() => {
+    if(allCourses.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [allCourses])
+  
 
   useEffect(() => {    
     if(courses){
-      setLoadedFirst(true)
       if(filterData.pageNumber > 1){
         setAllCourses(prev => ({
-          ...courses,
+          ...prev,
           courses: [...prev.courses, ...courses.courses],
           hasMore: courses.hasMore
         }))
       }else{
         setAllCourses(courses)
       }
+      // setLoadedFirst(true)
       setShowLoadMore(false)
     }else{
       setAllCourses([])
@@ -203,7 +210,7 @@ const Home = () => {
           ListFooterComponent={() =>
             showLoadMore ? (
               <View className="px-4 justify-center pb-4 -mt-5 flex-row items-center gap-2">
-                <Text className="text-secondary font-psemibold text-sm">Ju lutem prisni...</Text>
+                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                 <ActivityIndicator color={"#FF9C01"} size={24} />
               </View>
             ) : null
