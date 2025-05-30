@@ -654,7 +654,7 @@ export const getAllBlogsByTag = async (userId, tagId, pagination, forYouOrFriend
         if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
         if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}?friendsBlogsOrAll=${forYouOrFriends}?${queryString}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}&friendsBlogsOrAll=${forYouOrFriends}?${queryString}`)
         return response ? response.data : null
     } catch (error) {
         return null;
@@ -662,12 +662,14 @@ export const getAllBlogsByTag = async (userId, tagId, pagination, forYouOrFriend
 }
 
 export const getAllBlogs = async (userId, pagination, forYouOrFriends) => {
+    console.log("po vjen??");
+    
     try {
         let queryParams = {}
         if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
         if (pagination.pageSize) queryParams.pagesize = pagination.pageSize
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}?friendsBlogsOrAll=${forYouOrFriends}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}&friendsBlogsOrAll=${forYouOrFriends}`)
         return response ? response.data : null
     } catch (error) {
         return null
