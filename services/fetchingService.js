@@ -650,7 +650,11 @@ export const getAllTagsWithChilds = async (categoryId) => {
 
 export const getAllBlogsByTag = async (userId, tagId, pagination, forYouOrFriends) => {        
     try {
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}`)
+        let queryParams = {}
+        if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
+        if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
+        const queryString = new URLSearchParams(queryParams).toString();
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}?friendsBlogsOrAll=${forYouOrFriends}?${queryString}`)
         return response ? response.data : null
     } catch (error) {
         return null;
@@ -663,7 +667,7 @@ export const getAllBlogs = async (userId, pagination, forYouOrFriends) => {
         if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
         if (pagination.pageSize) queryParams.pagesize = pagination.pageSize
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}?friendsBlogsOrAll=${forYouOrFriends}`)
         return response ? response.data : null
     } catch (error) {
         return null

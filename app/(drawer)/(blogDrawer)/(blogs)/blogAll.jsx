@@ -28,7 +28,7 @@ const Blog = () => {
     pageSize: 15
   })
 
-  const [forYouToggle, setForYouToggle] = useState(true)
+  const [forYouToggle, setForYouToggle] = useState(1) //1 all 2 friends
 
   useEffect(() => {
     setIsRefreshing(true)
@@ -117,11 +117,11 @@ const Blog = () => {
 
               <View className="absolute z-10 left-0 right-0 -top-2.5 items-center">
                 <View className="flex-row items-center gap-4" style={styles.box}>
-                  <TouchableOpacity onPress={() => setForYouToggle(false)} className={`bg-primary py-0.5 px-3 items-center border border-black-200 rounded-md ${!forYouToggle ? "bg-oBlack" : "bg-primary"}`}>
-                    <Text className={`font-psemibold text-sm ${!forYouToggle ? "text-secondary" : "text-white"}`}>Miqte tuaj</Text>
+                  <TouchableOpacity onPress={() => setForYouToggle(2)} className={`bg-primary py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle === 2 ? "bg-oBlack" : "bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${forYouToggle === 2 ? "text-secondary" : "text-white"}`}>Miqte tuaj</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setForYouToggle(true)} className={`py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle ? "bg-oBlack" : "bg-primary"}`}>
-                    <Text className={`font-psemibold text-sm ${forYouToggle ? "text-secondary" : "text-white"}`}>Per ty</Text>
+                  <TouchableOpacity onPress={() => setForYouToggle(1)} className={`py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle === 1 ? "bg-oBlack" : "bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${forYouToggle === 1 ? "text-secondary" : "text-white"}`}>Per ty</Text>
                   </TouchableOpacity>
                 </View>
               </View>
