@@ -55,8 +55,8 @@ const MyQuizzes = () => {
             sortNameOrder: data.emri,
             sortByDate: data.data != null && "createdAt",
             sortDateOrder: data.data,
-            sortByPopular: data.shikime != null && "viewCount",
-            sortPopularOrder: data.shikime
+            sortByViews: data.shikime != null && "viewCount",
+            sortViewOrder: data.shikime
         }))
     }
 
@@ -70,7 +70,7 @@ const MyQuizzes = () => {
                 sortNameOrder: '',
                 sortByDate: '',
                 sortDateOrder: '',
-                sortByPopular: '',
+                sortByViews: '',
                 sortPopularOrder: '',
                 categoryId: '',
             }))

@@ -45,8 +45,8 @@ const AllTutors = () => {
       sortNameOrder: data.emri,
       sortByDate: data.data != null && "WhenBecameInstructor",
       sortDateOrder: data.data,
-      sortByPopular: data.shikime != null && "InstructorStudents",
-      sortPopularOrder: data.shikime
+      sortByViews: data.shikime != null && "InstructorStudents",
+      sortViewOrder: data.shikime
     }))
   }
 

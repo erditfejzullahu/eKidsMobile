@@ -5,8 +5,8 @@ export const initialFilterData = {
     sortNameOrder: '',
     sortByDate: '',
     sortDateOrder: '',
-    sortByPopular: '',
-    sortPopularOrder: '',
+    sortByViews: '',
+    sortViewOrder: '',
     categoryId: '',
     userId: ''
 }

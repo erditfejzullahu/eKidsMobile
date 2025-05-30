@@ -52,8 +52,8 @@ const Home = () => {
       sortNameOrder: '',
       sortByDate: '',
       sortDateOrder: '',
-      sortByPopular: '',
-      sortPopularOrder: '',
+      sortByViews: '',
+      sortViewOrder: '',
       categoryId: '',
       searchParam: ''
     }))
@@ -79,8 +79,8 @@ const Home = () => {
       sortNameOrder: data.emri,
       sortByDate: data.data != null && "CreatedAt",
       sortDateOrder: data.data,
-      sortByPopular: data.shikime != null && "ViewCount",
-      sortPopularOrder: data.shikime
+      sortByViews: data.shikime != null && "ViewCount",
+      sortViewOrder: data.shikime
     }))
   }
 

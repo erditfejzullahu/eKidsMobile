@@ -47,8 +47,8 @@ const AllUpcomingMeetings = () => {
       sortNameOrder: data.emri,
       sortByDate: data.data != null && "CreatedAt",
       sortDateOrder: data.data,
-      sortByPopular: data.shikime != null && "Participants",
-      sortPopularOrder: data.shikime
+      sortByViews: data.shikime != null && "Participants",
+      sortViewOrder: data.shikime
     }))
   }
 
