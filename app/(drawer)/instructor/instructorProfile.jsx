@@ -10,8 +10,17 @@ import { getInstructor } from '../../../services/fetchingService'
 import INProfileCaruselSection from '../../../components/INProfileCaruselSection'
 import INProfileDetails from '../../../components/INProfileDetails'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { useRouter } from 'expo-router'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const InstructorProfile = () => {
+  const router = useRouter();
+  const {role, isLoading: roleLoading} = useRole();
+  useEffect(() => {
+    if(!roleLoading && !['Instructor', 'Admin'].includes(role)){
+      router.replace("/home")
+    }
+  }, [role])
   const {user, isLoading} = useGlobalContext();
   const {data, isLoading: instructorLoading, refetch} = useFetchFunction(() => getInstructor())
   const [instructorProfile, setInstructorProfile] = useState(null)

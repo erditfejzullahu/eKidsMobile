@@ -7,11 +7,14 @@ export const useRole = () => useContext(RoleContext);
 
 export const RoleProvider = ({children}) => {
     const [role, setRole] = useState(null); // can be Admin, Student, Instructor
+    const [isLoading, setIsLoading] = useState(false)
 
     const fetchRole = async () => {
+      setIsLoading(true)
       console.log("U thiss fetch rolic")
       const actualRole = await getRole();
       setRole(actualRole)
+      setIsLoading(false)
     }
 
     useEffect(() => {

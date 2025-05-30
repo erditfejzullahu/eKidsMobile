@@ -15,8 +15,17 @@ import MeetingCardComponent from '../../../components/MeetingCardComponent'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
+import { useRouter } from 'expo-router'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const InstructorManage = () => {
+    const router = useRouter();
+    const {role, isLoading: roleLoading} = useRole();
+    useEffect(() => {
+    if(!roleLoading && !['Instructor', 'Admin'].includes(role)){
+        router.replace("/home")
+    }
+    }, [role])
     const {user, isLoading} = useGlobalContext();
     const [manageType, setManageType] = useState("Kurseve") //Courses = 0, Students = 1, Meetings = 2
     const [filterData, setFilterData] = useState({

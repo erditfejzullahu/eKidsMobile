@@ -172,7 +172,7 @@ const Home = () => {
                 valueData={searchData}
               />
   
-              <View className="w-full flex-1 pt-6 pb-8">
+              <View className="w-full flex-1 pt-6 pb-3">
                 <Text className="text-gray-100 text-lg font-pregular ">
                   Të gjitha kategoritë
                 </Text>

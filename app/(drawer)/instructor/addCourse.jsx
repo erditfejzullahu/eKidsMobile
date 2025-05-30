@@ -18,15 +18,23 @@ import { useFocusEffect, useRouter } from 'expo-router'
 import * as ImagePicker from "expo-image-picker"
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const AddCourse = () => {
+    const router = useRouter();
+    const {role, isLoading} = useRole();
+    useEffect(() => {
+      if(!isLoading && !['Instructor', 'Admin'].includes(role)){
+        router.replace("/home")
+      }
+    }, [role])
+    
     const route = useRoute();
     const navigation = useNavigation();
     const {courseData, updateData} = route.params || {};
     const isUpdateMode = updateData === true;
     
 
-    const router = useRouter();
     const [step, setStep] = useState(1)
     const maxSteps = 3;
     const [isRefreshing, setIsRefreshing] = useState(false)

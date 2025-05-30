@@ -20,9 +20,16 @@ import { InstructorCreatedCourses, InstructorCreateOnlineMeeting, InstructorLess
 import Loading from '../../../components/Loading'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
+import { useRole } from '../../../navigation/RoleProvider'
 
 const AddScheduleMeeting = () => {
   const router = useRouter();
+  const {role, isLoading: roleLoading} = useRole();
+  useEffect(() => {
+    if(!roleLoading && !['Instructor', 'Admin'].includes(role)){
+      router.replace("/home")
+    }
+  }, [role])
   const route = useRoute();
   const navigation = useNavigation();
   const {updateData, meetingData} = route.params || {};

@@ -11,9 +11,16 @@ import { GetInstructorsCourses } from '../../../services/fetchingService';
 import EmptyState from "../../../components/EmptyState"
 import { useRouter } from 'expo-router';
 import { initialFilterData } from '../../../services/filterConfig';
+import { useRole } from '../../../navigation/RoleProvider';
 
 const InstructorHome = () => {
   const router = useRouter();
+  const {role, isLoading: roleLoading} = useRole();
+  useEffect(() => {
+    if(!roleLoading && !['Instructor', 'Admin'].includes(role)){
+      router.replace("/home")
+    }
+  }, [role])
   const {user, isLoading} = useGlobalContext();
   const [filterData, setFilterData] = useState({
     ...initialFilterData
