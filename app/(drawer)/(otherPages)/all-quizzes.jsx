@@ -13,6 +13,7 @@ import EmptyState from '../../../components/EmptyState'
 import { initialFilterData } from '../../../services/filterConfig'
 import ShareToFriends from '../../../components/ShareToFriends'
 import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
+import { ActivityIndicator } from 'react-native'
 
 const AllQuizzes = () => {
   const {user, isLoading} = useGlobalContext();
@@ -27,6 +28,8 @@ const AllQuizzes = () => {
   const [singleQuizData, setSingleQuizData] = useState(null)
 
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [loadedFirst, setLoadedFirst] = useState(false)
 
   const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(filterData))
 
@@ -42,9 +45,9 @@ const AllQuizzes = () => {
     }))
   }
 
-  
 
   const filterQuizes = (category) => {    
+    setLoadedFirst(false)
     setFilterData((prevValues) => ({
       ...prevValues,
       categoryId: category.CategoryID
@@ -59,9 +62,34 @@ const AllQuizzes = () => {
     setShareOpened(true);
   }
 
+  const loadMore = () => {
+    if(!quizesData.hasMore || isLoadingMore) return;
+    setIsLoadingMore(true)
+    setFilterData((prev) => ({
+      ...prev,
+      pageNumber: prev.pageNumber + 1
+    }))
+  }
+
+  useEffect(() => {
+    if(quizesData?.result?.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [quizesData])
+  
+
   useEffect(() => {
     if(data){
-      setQuizesData(data);
+      if(filterData.pageNumber > 1){
+        setQuizesData((prev) => ({
+          ...prev,
+          result: [...prev.result, ...data.result],
+          hasMore: data.hasMore
+        }))
+      }else{
+        setQuizesData(data);
+      }
+      setIsLoadingMore(false)
     }else{
       setQuizesData(null)
     }
@@ -75,10 +103,11 @@ const AllQuizzes = () => {
 
   const onRefresh = () => {
     setIsRefreshing(true)
+    setLoadedFirst(false)
     setFilterData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 15,
+      pageSize: 3,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -90,7 +119,7 @@ const AllQuizzes = () => {
     setIsRefreshing(false)
   }
 
-  if(isRefreshing || isLoading || quizzesLoading){
+  if((isRefreshing || isLoading || quizzesLoading) && !loadedFirst){
     return(
       <Loading />
     )
@@ -99,8 +128,10 @@ const AllQuizzes = () => {
     <>
     <FlatList 
       className="bg-primary h-full px-4"
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.1}
       refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing} />}
-      data={quizesData}
+      data={quizesData?.result}
       keyExtractor={(item) => 'Quiz-' + item?.id?.toString()}
       renderItem={({item}) => (
         <SingleQuizComponent 
@@ -174,9 +205,27 @@ const AllQuizzes = () => {
         </View>
       )}
       ListFooterComponent={() => (
-        <View className="my-4">
-          
+        <>
+        <View className="mb-4" />
+        <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
+        {quizesData?.hasMore ? (
+          <>
+          <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+          <ActivityIndicator color={"#FF9C01"} size={24} />
+          </> 
+        ): (
+            <>
+            <Text className="text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
+            <Image
+                source={images.breakHeart}
+                className="size-5"
+                tintColor={"#FF9C01"}
+                resizeMode='contain'
+            />
+            </>
+        )}
         </View>
+        </>
       )}
     />
 

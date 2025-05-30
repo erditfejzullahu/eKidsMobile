@@ -133,6 +133,12 @@ const Categories = () => {
       }
     }, [categories])
   )
+
+  useEffect(() => {
+    if(allData.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [allData])
   
 
   useEffect(() => {

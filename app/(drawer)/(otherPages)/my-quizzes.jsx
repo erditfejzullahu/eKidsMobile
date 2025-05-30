@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, TouchableOpacity, RefreshControl } from 'react-native'
+import { View, Text, Image, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { images, icons } from '../../../constants'
 import EmptyState from '../../../components/EmptyState'
@@ -28,6 +28,8 @@ const MyQuizzes = () => {
         ...initialFilterData,
         userId: user?.data?.userData?.id
     })
+    const [loadedFirst, setLoadedFirst] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const {shareOpened, setShareOpened} = useTopbarUpdater();
 
@@ -49,6 +51,7 @@ const MyQuizzes = () => {
 
 
     const sortQuizzes = (data) => {
+        setLoadedFirst(false)
         setFilterData((prev) => ({
             ...prev,
             sortByName: data.emri != null && "QuizName",
@@ -62,24 +65,24 @@ const MyQuizzes = () => {
 
     const onRefresh = async () => {
         setIsRefreshing(true)
-            setFilterData((prevData) => ({
-                ...prevData,
-                pageNumber: 1,
-                pageSize: 15,
-                sortByName: '',
-                sortNameOrder: '',
-                sortByDate: '',
-                sortDateOrder: '',
-                sortByViews: '',
-                sortViewOrder: '',
-                categoryId: '',
-            }))
+        setLoadedFirst(false)
+        setFilterData((prevData) => ({
+            ...prevData,
+            pageNumber: 1,
+            pageSize: 15,
+            sortByName: '',
+            sortNameOrder: '',
+            sortByDate: '',
+            sortDateOrder: '',
+            sortByViews: '',
+            sortViewOrder: '',
+            categoryId: '',
+        }))
         setIsRefreshing(false)
     }
 
     const filterQuizzes = (item) => {
-        console.log(item);
-        
+        setLoadedFirst(false)
         setFilterData((prevData) => ({
             ...prevData,
             categoryId: item.CategoryID  
@@ -123,15 +126,41 @@ const MyQuizzes = () => {
         console.log("delete quiz!!!");
     }
 
+    const loadMore = () => {
+        if(!yourQuizzesData.hasMore || isLoadingMore) return;
+        setIsLoadingMore(true);
+        setFilterData((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
+        }))
+        console.log("loadmore");
+    }
+
     useEffect(() => {
       if(data){
         console.log(data);
-        
-        setYourQuizzesData(data);
+        if(filterData.pageNumber > 1){
+            setYourQuizzesData(prev => ({
+                ...prev, 
+                result: [...prev.result, ...data.result],
+                hasMore: data.hasMore
+            }))
+        }else{
+            setYourQuizzesData(data);
+        }
+        setIsLoadingMore(false);
       }else{
-        setYourQuizzesData(null);
+        setYourQuizzesData([]);
+        setIsLoadingMore(false);
       }
     }, [data])
+
+    useEffect(() => {
+      if(yourQuizzesData?.result?.length > 0){
+        setLoadedFirst(true)
+      }
+    }, [yourQuizzesData])
+    
 
     useEffect(() => {
         refetch();
@@ -141,7 +170,7 @@ const MyQuizzes = () => {
 
     
 
-    if(isLoading || isRefreshing || quizloading){
+    if((isLoading || isRefreshing || quizloading) && !loadedFirst){
         return (
             <Loading />
         )
@@ -149,8 +178,10 @@ const MyQuizzes = () => {
         return (
                 <FlatList 
                     className="h-full bg-primary px-4"
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.1}
                     refreshControl={< RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
-                    data={yourQuizzesData}
+                    data={yourQuizzesData?.result}
                     keyExtractor={(item) => 'Quiz-' + item?.id?.toString()}
                     renderItem={({item}) => (
                         <SingleQuizComponent 
@@ -225,6 +256,24 @@ const MyQuizzes = () => {
                     ListFooterComponent={() => (
                         <>
                         <View className="mb-4"/>
+                        <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
+                        {yourQuizzesData?.hasMore ? (
+                            <>
+                            <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                            <ActivityIndicator color={"#FF9C01"} size={24} />
+                            </> 
+                        ): (
+                            <>
+                            <Text className="text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
+                            <Image
+                                source={images.breakHeart}
+                                className="size-5"
+                                tintColor={"#FF9C01"}
+                                resizeMode='contain'
+                            />
+                            </>
+                        )}
+                        </View>
                             {/* Quiz Actions Modal */}
                             <CustomModal 
                                 visible={modalVisible}
