@@ -35,8 +35,15 @@ const defaultMenuItems = [
 
 const DrawerUpdaterProvider = ({children}) => {
 
-    const {role, refreshRole} = useRole();
-    refreshRole();
+    const {role, refreshRole, isLoading} = useRole();
+
+    //duhna me check qita me kqyr apo bon
+    useEffect(() => { 
+        if(!isLoading){    
+            refreshRole();
+        }
+    }, [isLoading, role])
+    
     // console.log(role);
     
     const pathName = usePathname();

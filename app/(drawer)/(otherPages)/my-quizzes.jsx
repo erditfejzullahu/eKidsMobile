@@ -71,7 +71,7 @@ const MyQuizzes = () => {
                 sortByDate: '',
                 sortDateOrder: '',
                 sortByViews: '',
-                sortPopularOrder: '',
+                sortViewOrder: '',
                 categoryId: '',
             }))
         setIsRefreshing(false)
@@ -125,6 +125,8 @@ const MyQuizzes = () => {
 
     useEffect(() => {
       if(data){
+        console.log(data);
+        
         setYourQuizzesData(data);
       }else{
         setYourQuizzesData(null);

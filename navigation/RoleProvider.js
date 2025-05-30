@@ -11,7 +11,6 @@ export const RoleProvider = ({children}) => {
 
     const fetchRole = async () => {
       setIsLoading(true)
-      console.log("U thiss fetch rolic")
       const actualRole = await getRole();
       setRole(actualRole)
       setIsLoading(false)
@@ -22,7 +21,7 @@ export const RoleProvider = ({children}) => {
     }, [])
     
     return (
-        <RoleContext.Provider value={{role, refreshRole: fetchRole}}>
+        <RoleContext.Provider value={{role, refreshRole: fetchRole, isLoading}}>
             {children}
         </RoleContext.Provider>
     )
