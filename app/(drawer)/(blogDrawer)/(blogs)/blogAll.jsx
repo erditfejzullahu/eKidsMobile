@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, RefreshControl, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, RefreshControl, StyleSheet, Image } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import AddBlogComponent from '../../../../components/AddBlogComponent'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
@@ -6,6 +6,9 @@ import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { getAllBlogs, getAllBlogsByTag } from '../../../../services/fetchingService'
 import Loading from '../../../../components/Loading'
 import BlogCardComponent from '../../../../components/BlogCardComponent'
+import { ActivityIndicator } from 'react-native'
+import { icons, images } from '../../../../constants'
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view'
 
 const Blog = () => {
   
@@ -84,6 +87,7 @@ const Blog = () => {
       setHasMoreBlogs(hasMore)
     }else{
       setAllBlogs([])
+      setHasMoreBlogs(false)
     }
   }, [blogData])
 
@@ -97,12 +101,11 @@ const Blog = () => {
   
   if((blogLoading || isLoading) && pagination.pageNumber === 1) return (<Loading />)
   return (
-    <View className="flex-1">
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}>
-      
-        <FlatList
+    <View className="flex-1 h-full">      
+        <KeyboardAwareFlatList
+          behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
-          className="p-4 h-full bg-primary"
+          className="p-4 h-full bg-primary flex-1"
           data={allBlogs}
           contentContainerStyle={{gap: 20}}
           keyExtractor={(item) => `ParentBlog-${item.id}`}
@@ -144,14 +147,27 @@ const Blog = () => {
           {/* <TouchableWithoutFeedback onPress={userOutsidePostCreation}>
             <View className="my-6"><Text>asdasdasdasdasdasdasdasdasd</Text></View>
           </TouchableWithoutFeedback> */}
-            {hasMoreBlogs && <View className="mb-4">
-              <Text className="text-secondary text-center font-psemibold text-sm">Ju lutem prisni...</Text>
-            </View>}
+            <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
+              {hasMoreBlogs ? (
+                <>
+                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <ActivityIndicator color={"#FF9C01"} size={24} />
+                </>
+              ): (
+                <>
+                <Text className="text-white font-psemibold text-sm">Nuk ka me postime...</Text>
+                <Image 
+                  source={images.breakHeart}
+                  className="size-5"
+                  tintColor={"#FF9C01"}
+                  resizeMode='contain'
+                />
+                </>
+              )}
+            </View>
             </>
           )}
         />
-        
-    </KeyboardAvoidingView>
     </View>
   )
 }
