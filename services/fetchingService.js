@@ -352,7 +352,7 @@ export const getAllQuizzes = async (filters) => {
         })
 
         const queryString = new URLSearchParams(queryParams).toString();
-        console.log(queryString);
+        console.log(queryString, ' quizzes');
         
         const response = await apiClient.get(`/api/Quizzes/GetAll?${queryString}`)
         return response ? response.data : null;

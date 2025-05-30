@@ -107,7 +107,7 @@ const AllQuizzes = () => {
     setFilterData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 3,
+      pageSize: 15,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',

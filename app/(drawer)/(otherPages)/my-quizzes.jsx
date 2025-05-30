@@ -165,10 +165,6 @@ const MyQuizzes = () => {
     useEffect(() => {
         refetch();
     }, [filterData])
-    
-
-
-    
 
     if((isLoading || isRefreshing || quizloading) && !loadedFirst){
         return (
