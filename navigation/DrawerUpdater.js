@@ -43,7 +43,10 @@ const DrawerUpdaterProvider = ({children}) => {
     //         refreshRole();
     //     }
     // }, [isLoading, role])
-    refreshRole()
+    useEffect(() => {
+        refreshRole();
+    }, [])
+    
     // console.log(role);
     
     const pathName = usePathname();

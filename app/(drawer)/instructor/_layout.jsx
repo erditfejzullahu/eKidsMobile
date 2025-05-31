@@ -4,6 +4,7 @@ import { icons, images } from '../../../constants'
 import { TouchableOpacity } from 'react-native'
 import { useEffect } from 'react'
 import { useRole } from '../../../navigation/RoleProvider'
+import { useRouter } from 'expo-router'
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
   return (
@@ -29,8 +30,17 @@ const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
 
 
 const InstructorLayout = () => {
-    const {role, refreshRole} = useRole();
-    refreshRole()
+  const router = useRouter();
+    const {role, refreshRole, isLoading} = useRole();
+    useEffect(() => {
+      refreshRole()
+    }, [])
+    
+    useEffect(() => {
+      if(!isLoading && !['Instructor', 'Admin'].includes(role)){
+        router.replace('/home')
+      }
+    }, [role])
     
     if(role !== "Instructor" && role !== "Admin") return <Redirect href="/home"/>
     

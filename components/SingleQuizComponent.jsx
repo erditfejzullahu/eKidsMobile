@@ -144,6 +144,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, longPressShare, user
         </View>
         </TouchableOpacity>
       </View>
+      
       {!allQuizzes && (
         <>
         <CustomModal 

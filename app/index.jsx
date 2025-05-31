@@ -9,10 +9,13 @@ import CustomButton from '../components/CustomButton';
 import { useGlobalContext } from '../context/GlobalProvider';
 import 'react-native-gesture-handler'
 import { useRole } from '../navigation/RoleProvider';
+import { useEffect } from 'react';
 
 export default function App() {
   const {role, refreshRole} = useRole();
-  refreshRole();
+  useEffect(() => {
+    refreshRole();
+  }, [])
   const {isLoading, isLoggedIn} = useGlobalContext();
   
   if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
