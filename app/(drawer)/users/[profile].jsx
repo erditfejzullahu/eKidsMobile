@@ -28,12 +28,19 @@ const Profiles = () => {
     
     const {user, isLoading: userLoading} = useGlobalContext();
     const userData = user?.data?.userData;
-    if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
+    // if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
+    const router = useRouter();
+
+    useEffect(() => {
+      if(!userLoading && (parseInt(profile) === parseInt(userData?.id))){
+        router.replace('/profile')
+      }
+    }, [profile, userData])
+    
     
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     
-    const router = useRouter();
     const [profileData, setProfileData] = useState(null)
     const [softSkills, setSoftSkills] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(true)
@@ -43,19 +50,6 @@ const Profiles = () => {
     const endDate = new Date(`${currentYear}-12-31`); // December 31st
     const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-    const commitsData = [
-      { date: "2025-01-22", count: 10 },
-      { date: "2017-01-03", count: 2 },
-      { date: "2017-01-04", count: 3 },
-      { date: "2017-01-05", count: 4 },
-      { date: "2017-01-06", count: 5 },
-      { date: "2017-01-30", count: 2 },
-      { date: "2017-01-31", count: 3 },
-      { date: "2017-03-01", count: 2 },
-      { date: "2017-04-02", count: 4 },
-      { date: "2017-03-05", count: 2 },
-      { date: "2017-02-30", count: 4 }
-    ];
     const chartConfig = {
       backgroundGradientFrom: "#1E2923",
       backgroundGradientFromOpacity: 0,

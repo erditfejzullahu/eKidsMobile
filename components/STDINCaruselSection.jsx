@@ -7,8 +7,10 @@ import MeetingCardComponent from './MeetingCardComponent';
 import { icons } from '../constants';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
 import { useRouter } from 'expo-router';
+import StudentsItemComponent from './StudentsItemComponent';
 
 const STDINCaruselSection = ({data, sectionType, userData}) => {    
+  // sectionType can be "courses", "students", "onlineMeetings"
     const router = useRouter();
     
   // Return empty view if no data
@@ -58,32 +60,33 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
                 <OnlineClassesCard classes={item} userCategories={userData?.data?.categories} viewProfilePlace/>
             )}
             {sectionType === "students" && (
-                <View className="bg-oBlack border border-black-200 rounded-md p-4 relative" style={styles.box}>
-                    <View className="flex-row gap-2 items-center" style={styles.box}>
-                        <View>
-                            <Image 
-                                source={{uri: item?.profilePictureUrl}}
-                                className="size-14 border border-black-200"
-                                resizeMode='contain'
-                            />
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-base font-psemibold text-white" numberOfLines={1}>{item?.name}</Text>
-                            <Text className="text-xs font-plight text-gray-400" numberOfLines={1}>{item?.email}</Text>
-                            <Text className="text-xs font-plight text-gray-400" numberOfLines={1}>{item?.username}</Text>
-                        </View>
-                    </View>
-                    {userData?.data?.userData?.id === item.id && <Text className="bg-secondary text-white px-2 py-0.5 absolute right-0 top-0 rounded-bl-md rounded-tr-md border border-white text-xs font-psemibold">Ju</Text>}
-                    {userData?.data?.userData?.id !== item.id && <TouchableOpacity onPress={() => handleContactUser(item)} className="mt-2 -mb-1 bg-primary px-2 ml-auto py-1.5 border border-black-200 rounded-md  flex-row items-center gap-2">
-                        <Text className="text-white font-psemibold text-sm">Kontakto</Text>
-                        <Image 
-                            source={icons.chat}
-                            className="size-4"
-                            tintColor={"#ff9c01"}
-                            resizeMode='contain'
-                        />
-                    </TouchableOpacity>}
-                </View>
+                // <View className="bg-oBlack border border-black-200 rounded-md p-4 relative" style={styles.box}>
+                //     <View className="flex-row gap-2 items-center" style={styles.box}>
+                //         <View>
+                //             <Image 
+                //                 source={{uri: item?.profilePictureUrl}}
+                //                 className="size-14 border border-black-200"
+                //                 resizeMode='contain'
+                //             />
+                //         </View>
+                //         <View className="flex-1">
+                //             <Text className="text-base font-psemibold text-white" numberOfLines={1}>{item?.name}</Text>
+                //             <Text className="text-xs font-plight text-gray-400" numberOfLines={1}>{item?.email}</Text>
+                //             <Text className="text-xs font-plight text-gray-400" numberOfLines={1}>{item?.username}</Text>
+                //         </View>
+                //     </View>
+                //     {userData?.data?.userData?.id === item.id && <Text className="bg-secondary text-white px-2 py-0.5 absolute right-0 top-0 rounded-bl-md rounded-tr-md border border-white text-xs font-psemibold">Ju</Text>}
+                //     {userData?.data?.userData?.id !== item.id && <TouchableOpacity onPress={() => handleContactUser(item)} className="mt-2 -mb-1 bg-primary px-2 ml-auto py-1.5 border border-black-200 rounded-md  flex-row items-center gap-2">
+                //         <Text className="text-white font-psemibold text-sm">Kontakto</Text>
+                //         <Image 
+                //             source={icons.chat}
+                //             className="size-4"
+                //             tintColor={"#ff9c01"}
+                //             resizeMode='contain'
+                //         />
+                //     </TouchableOpacity>}
+                // </View>
+                <StudentsItemComponent item={item} currentUserData={userData}/>
             )}
             {sectionType === "onlineMeetings" && (
                 <MeetingCardComponent item={item} viewProfilePlace={true}/>

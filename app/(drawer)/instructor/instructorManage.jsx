@@ -2,7 +2,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TouchableWit
 import React, { useEffect, useState } from 'react'
 import DefaultHeader from '../../../components/DefaultHeader'
 import { Platform } from 'react-native'
-import { icons } from '../../../constants'
+import { icons, images } from '../../../constants'
 import * as Animatable from "react-native-animatable"
 import ManageTypesDialog from '../../../components/ManageTypesDialog'
 import useFetchFunction from '../../../hooks/useFetchFunction'
@@ -17,6 +17,7 @@ import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
 import { useRouter } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
+import StudentsItemComponent from '../../../components/StudentsItemComponent'
 
 const InstructorManage = () => {
     const router = useRouter();
@@ -31,27 +32,67 @@ const InstructorManage = () => {
     const [filterData, setFilterData] = useState({
         ...initialFilterData
     })
-    const {data, isLoading: manageLoading, refetch} = useFetchFunction(() => GetInstructorManageTypeData(manageType === "Kurseve" ? 0 : manageType === "Studenteve" ? 1 : manageType === "Takimeve" ? 2 : {}))
+    const {data, isLoading: manageLoading, refetch} = useFetchFunction(() => GetInstructorManageTypeData(manageType === "Kurseve" ? 0 : manageType === "Studenteve" ? 1 : manageType === "Takimeve" ? 2 : {}, filterData))
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [manageData, setManageData] = useState([])
 
+    const [loadedFirst, setLoadedFirst] = useState(false)
+    const [moreLoading, setMoreLoading] = useState(false)
+
     const onRefresh = async () => {
         setIsRefreshing(true)
+        setLoadedFirst(false)
+        setFilterData({...initialFilterData})
         await refetch();
         setIsRefreshing(false)
     }
 
     const handleSorter = (data) => {
-        //TODO 
+        setLoadedFirst(false)
+        setFilterData((prev) => ({
+        ...prev,
+        sortByName: data.emri != null && "Name",
+        sortNameOrder: data.emri,
+        sortByDate: data.data != null && "CreatedAt",
+        sortDateOrder: data.data,
+        sortByViews: data.shikime != null && "ViewCount",
+        sortViewOrder: data.shikime
+        }))
     }
+
+    const loadMore = () => {
+        if(!manageData?.hasMore || moreLoading) return;
+        setMoreLoading(true)
+        setFilterData((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
+        }))
+    }
+
+    useEffect(() => {
+      if(manageData?.data?.length > 0){
+        setLoadedFirst(true)
+      }
+    }, [manageData])
+    
 
     useEffect(() => {
         console.log(data, ' asdasd');
         
       if(data){
-        setManageData(data)
+        if(filterData.pageNumber > 1){
+            setManageData((prev) => ({
+                ...prev,
+                data: [...prev.data, ...data.data],
+                hasMore: data.hasMore
+            }))
+        }else{
+            setManageData(data)
+        }
+        setMoreLoading(false)
       }else{
         setManageData([])
+        setMoreLoading(false)
       }
     }, [data])
     
@@ -60,26 +101,26 @@ const InstructorManage = () => {
       refetch()      
     }, [manageType])
 
-    if(isLoading || isRefreshing || manageLoading) return <Loading />
+    if((isLoading || isRefreshing || manageLoading) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1">
     <FlatList 
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         className="h-full bg-primary"
         style={styles.box}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
         contentContainerStyle={{paddingLeft: 16, paddingRight: 16, gap: 24}}
-        data={manageData}
+        data={manageData?.data}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => {
             switch (manageType) {
                 case "Kurseve":
                     return <OnlineClassesCard userCategories={user?.data?.categories} classes={item} managePlace={true}/>
                 case "Studenteve":
-
-                    break;
+                    return <StudentsItemComponent currentUserData={user} item={item}/>
                 case "Takimeve":
                     return <MeetingCardComponent item={item} managePlace={true}/>
-                    break;
                 default:
                     break;
             }
@@ -110,7 +151,27 @@ const InstructorManage = () => {
             </>
         )}
         ListFooterComponent={() => (
-            <View className="my-4"></View>
+            <>
+            <View className="my-2" />
+            <View className="justify-center -mt-2 flex-row items-center gap-2">
+            {manageData?.hasMore ? (
+                <>
+                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <ActivityIndicator color={"#FF9C01"} size={24} />
+                </>
+                ) : (
+                <>
+                <Text className="text-white font-psemibold text-sm">Nuk ka me {manageType === "Kurseve" ? "kurse" : manageType === "Studenteve" ? "studente" : "takime"}...</Text>
+                <Image
+                    source={images.breakHeart}
+                    className="size-5"
+                    tintColor={"#FF9C01"}
+                    resizeMode='contain'
+                />
+                </>
+            )}
+            </View>
+            </>
         )}
     />
     </View>

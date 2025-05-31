@@ -1021,9 +1021,12 @@ export const InstructorLessonsBasedOfCourse = async (courseId) => {
     }
 }
 
-export const GetInstructorManageTypeData = async (manageType) => {
+export const GetInstructorManageTypeData = async (manageType, filterData) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/GetInstructorManageContentData?manageType=${manageType}`)
+        const response = await apiClient.get(`/api/Instructors/GetInstructorManageContentData?manageType=${manageType}`, {
+            params: filterData
+        })
+        console.log(response.config.url)
         return response && response.data
     } catch (error) {
         console.error(error.response.data);
