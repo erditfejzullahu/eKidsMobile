@@ -35,7 +35,7 @@ const defaultMenuItems = [
 
 const DrawerUpdaterProvider = ({children}) => {
 
-    const {role, refreshRole, isLoading} = useRole();
+    const {role, refreshRole} = useRole();
 
     //duhna me check qita me kqyr apo bon
     // useEffect(() => { 
