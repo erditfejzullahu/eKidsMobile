@@ -1,11 +1,12 @@
-import { useNavigation } from "expo-router"
+import { useNavigation, useRouter } from "expo-router"
 
 export const useNavigateToSupport = () => { //can be support, report or chatSupport
-    const navigation = useNavigation();
+    const router = useRouter();
 
     const navigateToSupport = (type) => {
-        navigation.navigate("support", {
-            type: type
+        router.push({
+            pathname: 'support',
+            params: {type}
         })
     }
 

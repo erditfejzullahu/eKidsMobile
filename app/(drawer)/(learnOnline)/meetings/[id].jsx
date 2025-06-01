@@ -14,16 +14,18 @@ import { currentUserID } from '../../../../services/authService'
 import NotifierComponent from '../../../../components/NotifierComponent'
 import * as Linking from "expo-linking"
 import FullscreenWebViewModal from '../../../../components/FullscreenWebViewModal'
+import { useRouter } from 'expo-router'
+import { useNavigateToSupport } from '../../../../hooks/goToSupportType'
 
 const Meetings = () => {
   const {id} = useLocalSearchParams();
   const {user, isLoading: userLoading} = useGlobalContext();
-  
+  const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {data, isLoading, refetch} = useFetchFunction(() => GetMeetingInformation(id))
   const [meetingData, setMeetingData] = useState(null)
   const [showMeetingModal, setShowMeetingModal] = useState(false)
-
+  const navigateToSupport = useNavigateToSupport();
   //LOGJIKA NESE KA VIDEO QE U BA UPLOAD E SENE (dmth u kry online meetingu po me pas mundsin me kqyr online meetingun qe u kry)
   const startingDate = new Date(meetingData?.scheduleDateTime).toLocaleTimeString("sq-AL", {
     day: "numeric",
@@ -40,7 +42,7 @@ const Meetings = () => {
   const outputText = () => {
     if(!meetingData?.isAllowed){
       return (
-        <>
+        <TouchableOpacity onPress={becomeStudentOfInstructor} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
           <Text className="text-white font-psemibold uppercase">Nuk lejoheni</Text>
           <Image 
             source={icons.close}
@@ -49,13 +51,13 @@ const Meetings = () => {
             resizeMode='contain'
           />
           <Text className="text-gray-400 font-plight text-xs absolute -bottom-6 bg-primary border border-black-200 rounded-md px-2 py-1 -ml-7" style={styles.box}>Kushtoni vemendje rubrikes ne fund!</Text>
-        </>
+        </TouchableOpacity>
       )
     }
 
     if(meetingData?.status === "Nuk eshte mbajtur(Mungese Instruktori)"){
       return (
-        <>
+        <TouchableOpacity onPress={() => navigateToSupport("report")} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
           <Text className="text-white font-psemibold uppercase">Paraqisni ankese</Text>
           <Image 
             source={icons.chat}
@@ -63,11 +65,11 @@ const Meetings = () => {
             className="size-6"
             resizeMode='contain'
           />
-        </>
+        </TouchableOpacity>
       )
     }else if(meetingData?.status === "Eshte anuluar"){
       return (
-        <>
+        <TouchableOpacity onPress={() => navigateToSupport("report")} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
           <Text className="text-white font-psemibold uppercase">Paraqisni ankese</Text>
           <Image 
             source={icons.chat}
@@ -75,11 +77,11 @@ const Meetings = () => {
             className="size-6"
             resizeMode='contain'
           />
-        </>
+        </TouchableOpacity>
       )
     }else if(meetingData?.status === "Nuk ka filluar ende"){
       return (
-        <>
+        <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
           <CountdownTimer meetingData={meetingData}/>
           <Image 
             source={icons.clock}
@@ -87,31 +89,31 @@ const Meetings = () => {
             className="size-6"
             resizeMode='contain'
           />
-        </>
+        </TouchableOpacity>
       )
     }else if(meetingData?.status === "Ka filluar"){
       return (
-      <>
-        <Text className="text-white font-psemibold uppercase">Filloni tani</Text>
-        <Image 
-          source={icons.play2}
-          tintColor={"#ff9c01"}
-          className="size-6"
-          resizeMode='contain'
-        />
-      </>
+        <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
+          <Text className="text-white font-psemibold uppercase">Filloni tani</Text>
+          <Image 
+            source={icons.play2}
+            tintColor={"#ff9c01"}
+            className="size-6"
+            resizeMode='contain'
+          />
+        </TouchableOpacity>
       )
     }else if(meetingData?.status === "Ka perfunduar"){
       return (
-        <>
+        <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
           <Text className="text-white font-psemibold uppercase">Shiko materialin</Text>
-        <Image 
-          source={icons.videoConference}
-          tintColor={"#ff9c01"}
-          className="size-6"
-          resizeMode='contain'
-        />
-        </>
+          <Image 
+            source={icons.videoConference}
+            tintColor={"#ff9c01"}
+            className="size-6"
+            resizeMode='contain'
+          />
+        </TouchableOpacity>
       )
     }
   }
@@ -189,7 +191,7 @@ const Meetings = () => {
   }
 
   useEffect(() => {
-    console.log(data);
+    console.log(data, ' data?');
     
     setMeetingData(data || null)
   }, [data])
@@ -221,9 +223,7 @@ const Meetings = () => {
             tintColor={"#ff9c01"}
           />
           <Text className="text-white font-psemibold text-xs bg-primary absolute z-50 top-0 left-0 border-b border-r border-black-200 rounded-br-md px-2 py-1" style={styles.box}>{meetingData?.status}</Text>
-          <TouchableOpacity onPress={() => setShowMeetingModal(true)} className="flex-row items-center gap-2 bg-primary p-4 border border-black-200" style={styles.box}>
-            {outputText()}
-          </TouchableOpacity>
+          {outputText()}
         </View>
         <View className="bg-primary border-b border-l border-r border-black-200 p-4" style={styles.box}>
           {outputMeetingTimeOutput()}
@@ -264,7 +264,7 @@ const Meetings = () => {
             </View>}
             <Text className="text-white font-plight text-sm">Kategoria: <Text className="font-psemibold text-secondary">{getCourseCategories(user?.data?.categories, meetingData?.course?.categoryId)}</Text></Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.replace(`tutor/${meetingData?.instructorId}`)}>
               <Animatable.View animation="pulse" iterationCount="infinite" duration={4000} className="mt-2 flex-row items-center gap-2 border border-black-200 rounded-md p-2 bg-primary" style={styles.box}>
                 <Image 
                   source={{uri: meetingData?.profilePictureUrl}}
