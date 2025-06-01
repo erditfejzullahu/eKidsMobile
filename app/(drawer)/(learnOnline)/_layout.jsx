@@ -23,8 +23,8 @@ const TabIcon = ({icon, color, name, focused}) => {
 }
 
 const _layout = () => {
-    const {role} = useRole();
-    if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
+    // const {role} = useRole();
+    // if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   return (
     <>
     {/* <Text>asdasd</Text> */}
