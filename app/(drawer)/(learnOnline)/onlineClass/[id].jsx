@@ -11,6 +11,7 @@ import OnlineCourseSectionExpander from '../../../../components/OnlineCourseSect
 import { useRouter } from 'expo-router'
 import NotifierComponent from '../../../../components/NotifierComponent'
 import { currentUserID } from '../../../../services/authService'
+import CustomModal from '../../../../components/Modal'
 
 const OnlineClass = () => {
   const router = useRouter();
@@ -19,6 +20,8 @@ const OnlineClass = () => {
   const {data, isLoading, refetch} = useFetchFunction(() => GetCourseById(id))
   const [courseData, setCourseData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const [openInformationModal, setOpenInformationModal] = useState(false)
 
   const onRefresh = async () => {
     setIsRefreshing(true)
@@ -158,9 +161,68 @@ const OnlineClass = () => {
       </View>
 
       <View className="relative">
+        <TouchableOpacity onPress={() => setOpenInformationModal(!openInformationModal)} className="absolute right-4 -top-4 z-50 p-2 bg-oBlack border border-black-200 rounded-md" style={styles.box}>
+          <Animatable.Image
+            animation={"pulse"}
+            iterationCount={"infinite"}
+            duration={1000}
+            source={icons.infoFilled}
+            className="size-5"
+            tintColor={"#fff"}
+          />
+        </TouchableOpacity>
+
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
         <OnlineCourseSectionExpander sections={courseData?.sections} />
       </View>
+
+      <CustomModal 
+        onClose={() => setOpenInformationModal(false)}
+        visible={openInformationModal}
+        title={"Informacione mbi leksione"}
+        onlyCancelButton={true}
+        cancelButtonText={"Largo dritaren"}
+      >
+        <View className="">
+          <Text className="text-gray-400 font-plight text-sm text-center">Gjate shfletimit te dritares se kursit, mund te shfletoni manualisht leksionet e kaluara, ku do mund te shihni disponueshmerine e materialit te leksionit perkates</Text>
+
+          <View className="bg-oBlack items-center rounded-md p-2 border border-black-200 mt-2" style={styles.box}>
+            <View className="flex-row items-center justify-center w-full gap-2">
+              <View className="border border-black-200 rounded-md bg-oBlack p-1 items-center justify-center" style={styles.box}>
+                <Animatable.Image
+                  animation={"pulse"}
+                  iterationCount={"infinite"}
+                  duration={2000}
+                  source={icons.play2}
+                  className="size-4"
+                  resizeMode='contain'
+                  tintColor={"#ff9c01"}
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="font-plight text-white text-xs">Ky imazh tregon se leksioni ne fjale, ka material/ka ndodhur</Text>
+              </View>
+            </View>
+
+            <View className="flex-row items-center justify-center w-full mt-2 gap-2">
+              <View className="border border-black-200 rounded-md bg-oBlack p-1 items-center justify-center" style={styles.box}>
+                <Animatable.Image
+                  animation={"pulse"}
+                  iterationCount={"infinite"}
+                  duration={2000}
+                  source={icons.close}
+                  className="size-4"
+                  resizeMode='contain'
+                  tintColor={"#b91c1c"}
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="font-plight text-white text-xs">Ky imazh tregon se leksioni ne fjale, nuk ka material/nuk ka ndodhur</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </CustomModal>
     </ScrollView>
   )
 }

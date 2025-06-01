@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import React, { useState } from 'react'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
+import { icons } from '../constants'
 
 const OnlineCourseSectionExpander = ({sections = []}) => {
     const [sectionsOpened, setSectionsOpened] = useState(sections?.map((item) => item.id))
@@ -31,7 +32,39 @@ const OnlineCourseSectionExpander = ({sections = []}) => {
                 </Animatable.View>
                 {sectionsOpened.includes(item.id) && <View className="mb-4">
                     {item?.lessons.map((lItem, lIdx) => (
-                        <Animatable.Text animation="fadeInLeft" key={lIdx} className="text-gray-400 font-psemibold rounded-sm mx-1 text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Animatable.Text>
+                        <Animatable.View animation="fadeInLeft" key={lIdx} className="relative mx-1">
+                            <Text className="text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Text>
+
+                            {/* nese ka material/klase online */}
+                            {/* <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                <Animatable.Image
+                                    animation={"pulse"}
+                                    iterationCount={"infinite"}
+                                    duration={2000}
+                                    source={icons.play2}
+                                    className="size-4"
+                                    resizeMode='contain'
+                                    tintColor={"#ff9c01"}
+                                />
+                            </TouchableOpacity> */}
+                            {/* nese ka material/klase online */}
+
+                            {/* nese nuk ka material/klase online */}
+                            <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                <Animatable.Image
+                                    animation={"pulse"}
+                                    iterationCount={"infinite"}
+                                    duration={2000}
+                                    source={icons.close}
+                                    className="size-4"
+                                    resizeMode='contain'
+                                    tintColor={"#b91c1c"}
+                                />
+                            </TouchableOpacity>
+                            {/* nese nuk ka material/klase online */}
+
+                            
+                        </Animatable.View>
                     ))}
                 </View>}
             </View>
