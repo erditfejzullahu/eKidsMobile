@@ -264,7 +264,7 @@ const Quiz = () => {
                             <TouchableOpacity onPress={() => router.replace(`/users/${quizData?.user?.id}`)}>
                                 <Text className="font-plight text-white text-sm p-1">Shikoni profilin</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => navigateToMessenger(quizData?.user, userData)}>
+                            <TouchableOpacity onPress={() => navigateToMessenger(router, quizData?.user, userData)}>
                                 <Text className="font-plight text-white text-sm p-1">Kontaktoni direkt</Text>
                             </TouchableOpacity>
                         </Animatable.View>}

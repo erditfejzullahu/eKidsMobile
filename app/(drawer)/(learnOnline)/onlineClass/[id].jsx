@@ -40,6 +40,12 @@ const OnlineClass = () => {
     alertType: "warning"
   })
 
+  const {showNotification: becomeStudent} = NotifierComponent({
+    title: "Gabim",
+    description: "Per te proceduar tek leksioni i klikuar, ju duhet te filloni kursin",
+    alertType: "warning"
+  })
+
   const handleCourseStart = async () => {
     if(courseData?.routes?.enrolled){
       router.replace(`meetings/${courseData?.routes?.routeTo?.id}`)
@@ -59,6 +65,14 @@ const OnlineClass = () => {
       }else{
         failed();
       }
+    }
+  }
+
+  const proceedToAvailableRoute = (id) => {
+    if(courseData?.routes?.enrolled){
+      router.replace(`meetings/${id}`)
+    }else{
+      becomeStudent()
     }
   }
 
@@ -173,7 +187,7 @@ const OnlineClass = () => {
         </TouchableOpacity>
 
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
-        <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)}/>
+        <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)} proceedToAvailableRoute={proceedToAvailableRoute}/>
       </View>
 
       {/* informacione per imazhe te leksioneve tek seksionet */}

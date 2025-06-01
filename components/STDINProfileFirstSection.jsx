@@ -147,10 +147,11 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
 
     const contactInstructor = () => {
         const instructorData = {
-            receiverFirstname: data?.instructorName.split(" ")[0],
-            receiverLastname: data?.instructorName.split(" ")[0],
-            receiverUsername: data?.instructorUsername,
-            receiverProfilePic: data?.profilePictureUrl,
+            id: data?.userId,
+            firstname: data?.instructorName.split(" ")[0],
+            lastname: data?.instructorName.split(" ")[1],
+            username: data?.instructorUsername,
+            profilePictureUrl: data?.profilePictureUrl,
         }
         
         navigateToMessenger(router, instructorData, userData?.data?.userData);
