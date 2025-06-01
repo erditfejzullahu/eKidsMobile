@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { View, Text, FlatList, RefreshControl, StyleSheet, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
 import LearnOnlineUpcomingClasses from '../../../components/LearnOnlineUpcomingClasses'
@@ -10,6 +10,8 @@ import { Platform } from 'react-native'
 import EmptyState from '../../../components/EmptyState'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
+import { ActivityIndicator } from 'react-native'
+import { images } from '../../../constants'
 
 const testArray = [{id:1},{id:2},{id:3}]
 
@@ -22,8 +24,21 @@ const AllUpcomingMeetings = () => {
   const [meetingsData, setMeetingsData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const [loadedFirst, setLoadedFirst] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const loadMore = () => {
+    if(meetingsData?.hasMore || loadingMore) return;
+    setLoadingMore(true)
+    setFilterData((prev) => ({
+      ...prev,
+      pageNumber: prev.pageNumber + 1
+    }))
+  }
+
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
@@ -31,13 +46,38 @@ const AllUpcomingMeetings = () => {
 
   useEffect(() => {
     console.log(data);
-    
-    setMeetingsData(data || [])
+    if(data){
+      if(filterData.pageNumber > 1){
+        setMeetingsData((prev) => ({
+          ...prev,
+          meetings: [...prev.meetings, ...data.meetings],
+          hasMore: data.hasMore
+        }))
+      }else{
+        setMeetingsData(data)
+      }
+      setLoadingMore(false)
+    }else{
+      setLoadingMore(false)
+      setMeetingsData([])
+    }
   }, [data])
+  
+  useEffect(() => {
+    if(meetingsData?.meetings?.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [meetingsData])
   
 
   const inputData = (data) => {
-    console.log(data)
+    if(data){
+      setLoadedFirst(false)
+      setFilterData((prev) => ({
+        ...prev,
+        searchInput: data
+      }))
+    }
   }
 
   const handleSorter = (data) => {
@@ -52,14 +92,16 @@ const AllUpcomingMeetings = () => {
     }))
   }
 
-  if(isLoading || isRefreshing) return <Loading />
+  if((isLoading || isRefreshing) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1">
         <FlatList
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
           className="h-full bg-primary"
           contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
-          data={meetingsData}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.1}
+          data={meetingsData?.meetings}
           keyExtractor={(item) => item.id}
           renderItem={({item}) => (
             <MeetingCardComponent item={item}/>
@@ -72,7 +114,27 @@ const AllUpcomingMeetings = () => {
             </View>
           )}
           ListFooterComponent={() => (
-            <View className="my-2"></View>
+            <>
+            <View className="mb-2" />
+            <View className="justify-center -mt-2 flex-row items-center gap-2">
+              {meetingsData?.hasMore ? (
+                  <>
+                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <ActivityIndicator color={"#FF9C01"} size={24} />
+                  </>
+                  ) : (
+                  <>
+                  <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                  <Image
+                      source={images.breakHeart}
+                      className="size-5"
+                      tintColor={"#FF9C01"}
+                      resizeMode='contain'
+                  />
+                  </>
+              )}
+              </View>
+              </>
           )}
           ListEmptyComponent={() => (
             <View className="bg-oBlack border border-black-200" style={styles.box}>

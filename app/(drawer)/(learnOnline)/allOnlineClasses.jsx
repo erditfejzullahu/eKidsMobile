@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, StyleSheet, RefreshControl } from 'react-native'
+import { View, Text, Image, FlatList, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { images } from '../../../constants'
 import SorterComponent from "../../../components/SorterComponent"
@@ -22,14 +22,28 @@ const AllOnlineClasses = () => {
   const [coursesData, setCoursesData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const [loadedFirst, setLoadedFirst] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const loadMore = () => {
+    if(!coursesData?.hasMore || loadingMore) return;
+    setLoadingMore(true)
+    setFilterData((prev) => ({
+      ...prev,
+      pageNumber: prev.pageNumber + 1
+    }))
+  }
+
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
 
   const handleSorter = async (data) => {
+    setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
       sortByName: data.emri != null && "Name",
@@ -44,19 +58,50 @@ const AllOnlineClasses = () => {
   useEffect(() => {
     refetch()
   }, [filterData])
+
+  useEffect(() => {
+    if(coursesData?.courses?.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [coursesData])
   
+  const inputData = (data) => {
+    if(data){
+      setLoadedFirst(false)
+      setFilterData((prev) => ({
+        ...prev,
+        searchInput: data
+      }))
+    }
+  }
 
   useEffect(() => {
     console.log(data, '  data')
-    setCoursesData(data || [])
+    if(data){
+      if(filterData.pageNumber > 1){
+        setCoursesData((prev) => ({
+          ...prev,
+          courses: [...prev.courses, ...data.courses],
+          hasMore: data.hasMore
+        }))
+      }else{
+        setCoursesData(data)
+      }
+      setLoadingMore(false)
+    }else{
+      setLoadingMore(false)
+      setCoursesData([])
+    }
   }, [data])
   
-  if(isLoading || isRefreshing || userLoading) return <Loading />
+  if((isLoading || isRefreshing || userLoading) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1 bg-primary">
         <FlatList
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-            data={coursesData}
+            data={coursesData?.courses}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.1}
             contentContainerStyle={{gap:24, paddingLeft: 16, paddingRight: 16}}
             keyExtractor={(item) => item.id}
             renderItem={({item}) => (
@@ -64,12 +109,32 @@ const AllOnlineClasses = () => {
             )}
             ListHeaderComponent={() => (
                 <View className="border-b border-black-200 pb-4 overflow-hidden -mb-2">
-                <LearnOnlineHeader headerTitle={"Kurset Online"} sentInput={(data) => console.log(data)}/>
+                <LearnOnlineHeader headerTitle={"Kurset Online"} sentInput={inputData}/>
                 <SorterComponent showSorter={true} sortButton={handleSorter}/>
                 </View>
             )}
             ListFooterComponent={() => (
-              <View className="mb-4"></View>
+              <>
+              <View className="mb-2" />
+              <View className="justify-center -mt-2 flex-row items-center gap-2">
+                {coursesData?.hasMore ? (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                    <ActivityIndicator color={"#FF9C01"} size={24} />
+                    </>
+                    ) : (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Nuk ka me kurse...</Text>
+                    <Image
+                        source={images.breakHeart}
+                        className="size-5"
+                        tintColor={"#FF9C01"}
+                        resizeMode='contain'
+                    />
+                    </>
+                )}
+                </View>
+                </>
             )}
             ListEmptyComponent={() => (
               <View className="bg-oBlack border border-black-200" style={styles.box}>

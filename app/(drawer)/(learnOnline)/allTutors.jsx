@@ -8,6 +8,7 @@ import { GetAllInstructors } from '../../../services/fetchingService';
 import Loading from '../../../components/Loading';
 import SorterComponent from '../../../components/SorterComponent';
 import { initialFilterData } from '../../../services/filterConfig';
+import { ActivityIndicator } from 'react-native';
 
 
 const AllTutors = () => {
@@ -18,15 +19,44 @@ const AllTutors = () => {
   const [instructorsData, setInstructorsData] = useState([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const [loadedFirst, setLoadedFirst] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const loadMore = () => {
+    if(!instructorsData?.hasMore || loadingMore) return;
+    setLoadingMore(true)
+    setFilterData((prev) => ({
+      ...prev,
+      pageNumber: prev.pageNumber + 1
+    }))
+  }
+
   const onRefresh = async () => {
     setIsRefreshing(true)
+    setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
   }
 
   useEffect(() => {
-    setInstructorsData(data || [])  
+    console.log(data);
+    
+    if(data){
+      if(filterData.pageNumber > 1){
+        setInstructorsData((prev) => ({
+          ...prev,
+          instructors: [...prev.instructors, ...data.instructors],
+          hasMore: data.hasMore
+        }))
+      }else{
+        setInstructorsData(data)
+      }
+      setLoadingMore(false)
+    }else{
+      setLoadingMore(false)
+      setInstructorsData([])  
+    }
   }, [data])
 
   useEffect(() => {
@@ -35,10 +65,17 @@ const AllTutors = () => {
   
 
   const inputData = (data) => {
-    console.log(data)
+    if(data){
+      setLoadedFirst(false)
+      setFilterData((prev) => ({
+        ...prev,
+        searchInput: data
+      }))
+    }
   }
   
   const handleSorter = (data) => {
+    setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
       sortByName: data.emri != null && "InstructorName",
@@ -50,14 +87,23 @@ const AllTutors = () => {
     }))
   }
 
-  if(isRefreshing || isLoading) return <Loading />
+  useEffect(() => {
+    if(instructorsData?.instructors?.length > 0){
+      setLoadedFirst(true)
+    }
+  }, [instructorsData])
+  
+
+  if((isRefreshing || isLoading) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1">
         <FlatList 
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
           className="h-full bg-primary"
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.1}
           contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
-          data={instructorsData}
+          data={instructorsData?.instructors}
           keyExtractor={(item) => item.userId}
           renderItem={({item}) => (
             <LearnOnlineTutorCard item={item}/>
@@ -69,7 +115,27 @@ const AllTutors = () => {
             </View>
           )}
           ListFooterComponent={() => (
-            <View className="my-2"></View>
+            <>
+            <View className="mb-2" />
+            <View className="justify-center -mt-2 flex-row items-center gap-2">
+              {instructorsData?.hasMore ? (
+                  <>
+                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <ActivityIndicator color={"#FF9C01"} size={24} />
+                  </>
+                  ) : (
+                  <>
+                  <Text className="text-white font-psemibold text-sm">Nuk ka me tutore...</Text>
+                  <Image
+                      source={images.breakHeart}
+                      className="size-5"
+                      tintColor={"#FF9C01"}
+                      resizeMode='contain'
+                  />
+                  </>
+              )}
+              </View>
+              </>
           )}
         />
     </View>
