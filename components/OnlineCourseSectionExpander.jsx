@@ -37,56 +37,52 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar}) => {
                             <Text className="text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Text>
 
                             {/* nese ka material/klase online */}
-                            {/* <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
-                                <Animatable.Image
-                                    animation={"pulse"}
-                                    iterationCount={"infinite"}
-                                    duration={2000}
-                                    source={icons.play2}
-                                    className="size-4"
-                                    resizeMode='contain'
-                                    tintColor={"#ff9c01"}
-                                />
-                            </TouchableOpacity> */}
-                            {/* nese ka material/klase online */}
-
-                            {/* nese nuk ka material/klase online */}
-                            {/* <TouchableOpacity onPress={handleInformationBar} className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
-                                <Animatable.Image
-                                    animation={"pulse"}
-                                    iterationCount={"infinite"}
-                                    duration={2000}
-                                    source={icons.close}
-                                    className="size-4"
-                                    resizeMode='contain'
-                                    tintColor={"#b91c1c"}
-                                />
-                            </TouchableOpacity> */}
-                            {/* nese nuk ka material/klase online */}
-
-                        {/* nese ska ndodh hala ama ka material (video_url content) */}
-                            <TouchableOpacity onPress={handleInformationBar} className="absolute flex-row items-center gap-0.5 right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
-                                <Animatable.Image
-                                    animation={"pulse"}
-                                    iterationCount={"infinite"}
-                                    duration={2000}
-                                    source={icons.close}
-                                    className="size-4"
-                                    resizeMode='contain'
-                                    tintColor={"#b91c1c"}
-                                />
-                                <Animatable.Image
-                                    animation={"pulse"}
-                                    iterationCount={"infinite"}
-                                    duration={2000}
-                                    source={icons.videoCamera}
-                                    className="size-4"
-                                    resizeMode='contain'
-                                    tintColor={"#b91c1c"}
-                                />
-                            </TouchableOpacity>
-                            {/* nese ska ndodh hala ama ka material (video_url content) */}
-
+                            {lItem?.availability ? (
+                                <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <Animatable.Image
+                                        animation={"pulse"}
+                                        iterationCount={"infinite"}
+                                        duration={2000}
+                                        source={icons.play2}
+                                        className="size-4"
+                                        resizeMode='contain'
+                                        tintColor={"#ff9c01"}
+                                    />
+                                </TouchableOpacity>
+                            ) : !lItem?.availability && lItem?.video_Url === null ? (
+                                <TouchableOpacity onPress={handleInformationBar} className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <Animatable.Image
+                                        animation={"pulse"}
+                                        iterationCount={"infinite"}
+                                        duration={2000}
+                                        source={icons.close}
+                                        className="size-4"
+                                        resizeMode='contain'
+                                        tintColor={"#b91c1c"}
+                                    />
+                                </TouchableOpacity>
+                            ) : !litem?.availability && lItem?.videoUrl ? (
+                                <TouchableOpacity onPress={handleInformationBar} className="absolute flex-row items-center gap-0.5 right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <Animatable.Image
+                                        animation={"pulse"}
+                                        iterationCount={"infinite"}
+                                        duration={2000}
+                                        source={icons.close}
+                                        className="size-4"
+                                        resizeMode='contain'
+                                        tintColor={"#b91c1c"}
+                                    />
+                                    <Animatable.Image
+                                        animation={"pulse"}
+                                        iterationCount={"infinite"}
+                                        duration={2000}
+                                        source={icons.videoCamera}
+                                        className="size-4"
+                                        resizeMode='contain'
+                                        tintColor={"#b91c1c"}
+                                    />
+                                </TouchableOpacity>
+                            ) : null}
                             </TouchableOpacity>
                         </Animatable.View>
                     ))}
