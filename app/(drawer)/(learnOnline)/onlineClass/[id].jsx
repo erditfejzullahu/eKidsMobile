@@ -173,9 +173,10 @@ const OnlineClass = () => {
         </TouchableOpacity>
 
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
-        <OnlineCourseSectionExpander sections={courseData?.sections} />
+        <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)}/>
       </View>
 
+      {/* informacione per imazhe te leksioneve tek seksionet */}
       <CustomModal 
         onClose={() => setOpenInformationModal(false)}
         visible={openInformationModal}
@@ -217,12 +218,42 @@ const OnlineClass = () => {
                 />
               </View>
               <View className="flex-1">
-                <Text className="font-plight text-white text-xs">Ky imazh tregon se leksioni ne fjale, nuk ka material/nuk ka ndodhur</Text>
+                <Text className="font-plight text-white text-xs">Ky imazh tregon se leksioni ne fjale, nuk ka material/nuk ka ndodhur <Text className="font-psemibold text-secondary">(nuk mund te navigoheni)</Text></Text>
               </View>
             </View>
+
+            <View className="flex-row items-center justify-center w-full mt-2 gap-2">
+              <View className="border border-black-200 rounded-md bg-oBlack p-1 items-center justify-center" style={styles.box}>
+                <View className="flex-row items-center gap-0.5">
+                  <Animatable.Image
+                    animation={"pulse"}
+                    iterationCount={"infinite"}
+                    duration={2000}
+                    source={icons.close}
+                    className="size-4"
+                    resizeMode='contain'
+                    tintColor={"#b91c1c"}
+                  />
+                  <Animatable.Image
+                    animation={"pulse"}
+                    iterationCount={"infinite"}
+                    duration={2000}
+                    source={icons.videoCamera}
+                    className="size-4"
+                    resizeMode='contain'
+                    tintColor={"#b91c1c"}
+                  />
+                </View>
+              </View>
+              <View className="flex-1">
+                <Text className="font-plight text-white text-xs">Ky imazh tregon se leksioni ne fjale, nuk ka ndodhur por ka material <Text className="font-psemibold text-secondary">(mund te navigoheni)</Text></Text>
+              </View>
+            </View>
+
           </View>
         </View>
       </CustomModal>
+      {/* informacione per imazhe te leksioneve tek seksionet */}
     </ScrollView>
   )
 }
