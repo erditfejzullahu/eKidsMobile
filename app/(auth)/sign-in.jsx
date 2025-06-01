@@ -10,6 +10,7 @@ import { useGlobalContext } from '../../context/GlobalProvider'
 import { userDetails } from '../../services/necessaryDetails'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NotifierComponent from '../../components/NotifierComponent'
+import { useRole } from '../../navigation/RoleProvider'
 
 const SignIn = () => {
 
@@ -25,6 +26,7 @@ const SignIn = () => {
   });
 
   const { setUser, setIsLoggedIn } = useGlobalContext();
+  const {role, isLoading, refreshRole} = useRole();
   const [form, setForm] = useState({
     email: '',
     password: ''
@@ -40,6 +42,12 @@ const SignIn = () => {
     title: "Ju lutem mbushni të fushat e kërkuara!"
   })
 
+  const {showNotification: error} = NotifierComponent({
+    alertType: "warning",
+    title: "Gabim",
+    description: "Dicka shkoi gabim, ju lutem provoni perseri!"
+  })
+  
 
   const submit = async () => {
     if(!form.email || !form.password){
@@ -53,6 +61,16 @@ const SignIn = () => {
             setIsLoggedIn(true);
             setUser(userResult)
             showNotification()
+            await refreshRole();
+            if(!isLoading){
+              if(['Admin', 'Instructor'].includes(role)){
+                router.replace('/home')
+              }else{
+                router.replace('/instructor/instructorHome')
+              }
+            }
+        }else{
+          error();
         }
       } catch (error) {
         console.error(error);

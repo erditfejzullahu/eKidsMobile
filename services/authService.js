@@ -3,9 +3,7 @@ import { storeTokens, removeTokens, isTokenExpired } from "./secureStorage";
 // import apiClient from "./apiClient";
 import { jwtDecode } from "jwt-decode";
 import { getAccessToken } from "./secureStorage";
-import { Alert } from "react-native";
 import { router } from "expo-router";
-// const https = require('https')
 
 const API_URL = 'https://dove-well-officially.ngrok-free.app'
 // axios.defaults.httpsAgent = new https.Agent({  
@@ -21,8 +19,6 @@ axios.interceptors.request.use(config => {
   });
   
 export const login = async (username, password) => {
-    console.log('asd');
-    
     try {
         const response = await axios.post(`${API_URL}/login`, {
             username,
@@ -30,23 +26,15 @@ export const login = async (username, password) => {
         });
         // console.log(response.data.token);
         const { accessToken, refreshToken } = response.data.token;
-        await storeTokens(accessToken, refreshToken)
         
         if(accessToken && refreshToken){
-            const role = await getRole();
-            if(role === "Admin" || role === "Student"){
-                router.replace('/home');
-            }else{
-                router.replace('/instructor/instructorHome')
-            }
+            await storeTokens(accessToken, refreshToken)
             return true;
         }
         return false;
         // return true;
     } catch (error) {
-        console.error(error);
-        
-        Alert.alert("Login failed!");
+        console.error(error);        
         return false
     }
 };
@@ -120,12 +108,9 @@ export const getRole = async () => {
     if(token){
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken.Role,  " GETROLE FUNCTION");
-            
             return decodedToken.Role;
         } catch (error) {
             console.error("error getting role", error);
-            
             return null;
         }
     }

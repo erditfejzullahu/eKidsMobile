@@ -35,7 +35,7 @@ const defaultMenuItems = [
 
 const DrawerUpdaterProvider = ({children}) => {
 
-    const {role, refreshRole} = useRole();
+    const {role, refreshRole, isLoading} = useRole();
 
     //duhna me check qita me kqyr apo bon
     // useEffect(() => { 
@@ -43,9 +43,9 @@ const DrawerUpdaterProvider = ({children}) => {
     //         refreshRole();
     //     }
     // }, [isLoading, role])
-    useEffect(() => {
-        refreshRole();
-    }, [])
+    // useEffect(() => {
+    //     refreshRole();
+    // }, [])
     
     // console.log(role);
     
@@ -107,15 +107,17 @@ const DrawerUpdaterProvider = ({children}) => {
             // console.log('????????asdasdasdasdasdasdasdasdasd');
             // setDrawerItemsUpdated(false)
             // setDrawerItems(defaultMenuItems)
-            if(role === "Admin"){
-                setDrawerItemsUpdated(true)
-                setDrawerItems([...instructorMenuItems, ...defaultMenuItems])
-            }else if(role === "Instructor"){
-                setDrawerItemsUpdated(false)
-                setDrawerItems(instructorMenuItems)
-            }else if(role === "Student"){
-                setDrawerItemsUpdated(false)
-                setDrawerItems(defaultMenuItems)
+            if(!isLoading){
+                if(role === "Admin"){
+                    setDrawerItemsUpdated(true)
+                    setDrawerItems([...instructorMenuItems, ...defaultMenuItems])
+                }else if(role === "Instructor"){
+                    setDrawerItemsUpdated(false)
+                    setDrawerItems(instructorMenuItems)
+                }else if(role === "Student"){
+                    setDrawerItemsUpdated(false)
+                    setDrawerItems(defaultMenuItems)
+                }
             }
             // setLoading(false);
         }
