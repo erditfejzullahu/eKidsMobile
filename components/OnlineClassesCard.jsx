@@ -11,7 +11,7 @@ import * as Progress from 'react-native-progress';
 import Modal from "../components/Modal"
 
 const OnlineClassesCard = ({classes, userCategories, managePlace = false, profilePlace = false, viewProfilePlace = false}) => {
-    console.log(classes);
+    console.log(classes, ' meetings');
     
     const [showCourseLessons, setShowCourseLessons] = useState(false)
     const [showLessonInfoModal, setShowLessonInfoModal] = useState(false)
@@ -21,6 +21,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
 
     const navigation = useNavigation();
     const editCardPress = () => {
+
         navigation.navigate('addCourse', {
             courseData: classes,
             updateData: true

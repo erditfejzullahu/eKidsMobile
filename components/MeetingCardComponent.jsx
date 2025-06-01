@@ -5,8 +5,10 @@ import { icons, images } from '../constants';
 import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router';
 import { useRouter } from 'expo-router';
+import NotifierComponent from './NotifierComponent';
 
 const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false}) => {
+    console.log(item, ' takimet')
     const router = useRouter();
     const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)
@@ -54,11 +56,21 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         year: "numeric"
     })
 
+    const {showNotification: editNotification} = NotifierComponent({
+        title: "Gabim!",
+        description: "Per shkak qe statusi i takimit nuk eshte ne kohen e ardhshme, ky takim nuk mund te perditesohet!",
+        alertType: "warning"
+    })
+
     const editPress = () => {
-        navigation.navigate("addScheduleMeeting", {
-            meetingData: item,
-            updateData: true
-        })
+        if(item.status === "Nuk ka filluar ende"){
+            navigation.navigate("addScheduleMeeting", {
+                meetingData: item,
+                updateData: true
+            })
+        }else{
+            editNotification();
+        }
     }
 
     const handleCardPress = () => {
