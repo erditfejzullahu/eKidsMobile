@@ -21,6 +21,8 @@ const OnlineClass = () => {
   const [courseData, setCourseData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  const [instructorMoreInformation, setInstructorMoreInformation] = useState(false)
+
   const [openInformationModal, setOpenInformationModal] = useState(false)
 
   const onRefresh = async () => {
@@ -188,6 +190,62 @@ const OnlineClass = () => {
 
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
         <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)} proceedToAvailableRoute={proceedToAvailableRoute}/>
+      </View>
+
+      <View className="p-4 border border-black-200 bg-primary my-4" style={styles.box}>
+        <Text className="text-white font-psemibold">Me shume rreth instruktorit</Text>
+
+        <TouchableOpacity onPress={() => router.replace(`tutor/${courseData?.instructorId}`)} className="flex-row flex-wrap items-center justify-between gap-2 border border-black-200 p-4 mt-2 bg-oBlack" style={styles.box}>
+          <View className="flex-row gap-2 items-center">
+            <View>
+              <Image 
+                source={{uri: courseData?.instructorProfilePicture}}
+                className="size-14"
+                resizeMode='contain'
+              />
+            </View>
+            <View>
+              <Text className="text-white font-psemibold">{courseData?.intructorName}</Text>
+              <Text className="text-gray-400 font-plight text-xs">{courseData?.instructorExpertise}</Text>
+            </View>
+          </View>
+          <View>
+            <Image 
+              source={icons.play2}
+              className="size-6"
+              tintColor={"#ff9c01"}
+              resizeMode='contain'
+            />
+          </View>
+
+          {!instructorMoreInformation && <View className="absolute left-0 right-0 -bottom-2 items-center justify-center mx-auto">
+            <TouchableOpacity className="bg-secondary self-start mx-auto" onPress={() => setInstructorMoreInformation(true)}>
+              <Text className="text-white font-psemibold text-xs border border-white px-2 py-0.5">Shiko me shume</Text>
+            </TouchableOpacity>
+          </View>}
+        </TouchableOpacity>
+
+        {instructorMoreInformation && <View className="flex-row flex-wrap items-center justify-between gap-2 border border-black-200 p-4 mt-2 bg-oBlack" style={styles.box}>
+          <Text className="text-gray-100 font-plight text0-sm">{courseData?.instructorBio}</Text>
+          <TouchableOpacity onPress={() => router.replace(`tutorCourses/${courseData?.instructorId}`)} className="bg-primary items-center flex-row gap-2 border border-black-200 px-2 py-1" style={styles.box}>
+            <Text className="text-white font-pmedium text-sm">Shfletoni te gjitha kurset</Text>
+            <Image 
+              source={icons.courses}
+              className="size-6"
+              resizeMode='contain'
+              tintColor={"#ff9c01"}
+            />
+          </TouchableOpacity>
+        </View>}
+        {!instructorMoreInformation && <TouchableOpacity className="bg-primary mt-6 self-start items-center flex-row gap-2 border border-black-200 px-2 py-1" style={styles.box}>
+          <Text className="text-white font-pmedium text-sm">Shfletoni te gjitha kurset</Text>
+          <Image 
+            source={icons.courses}
+            className="size-6"
+            resizeMode='contain'
+            tintColor={"#ff9c01"}
+          />
+        </TouchableOpacity>}
       </View>
 
       {/* informacione per imazhe te leksioneve tek seksionet */}

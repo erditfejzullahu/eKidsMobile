@@ -105,6 +105,10 @@ const _layout = () => {
             name="meetings/[id]"
             options={{tabBarVisible: false, href: null, headerShown: false}}
         />
+        <Tabs.Screen 
+            name='tutorCourses/[id]'
+            options={{tabBarVisible: false, href: null, headerShown: false}}
+        />
     </Tabs>
     </>
   )
