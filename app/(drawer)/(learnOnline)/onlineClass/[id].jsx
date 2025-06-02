@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { useLocalSearchParams } from 'expo-router'
 import Loading from '../../../../components/Loading'
@@ -24,6 +24,9 @@ const OnlineClass = () => {
   const [instructorMoreInformation, setInstructorMoreInformation] = useState(false)
 
   const [openInformationModal, setOpenInformationModal] = useState(false)
+
+  const instructorRef = useRef(null)
+  const scrollViewRef = useRef(null);
 
   const onRefresh = async () => {
     setIsRefreshing(true)
@@ -70,6 +73,19 @@ const OnlineClass = () => {
     }
   }
 
+  const handleGoToInstructor = () => {
+    instructorRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      if (pageY !== undefined) {
+        scrollViewRef.current?.scrollTo({ y: pageY, animated: true });
+      }
+    });
+    
+    if (!instructorMoreInformation) {
+      setInstructorMoreInformation(true);
+    }
+  };
+
+
   const proceedToAvailableRoute = (id) => {
     if(courseData?.routes?.enrolled){
       router.replace(`meetings/${id}`)
@@ -91,6 +107,7 @@ const OnlineClass = () => {
   if(isLoading || isRefreshing || !courseData) return <Loading />
   return (
     <ScrollView
+    ref={scrollViewRef}
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       className="h-full bg-primary"
     >
@@ -121,7 +138,7 @@ const OnlineClass = () => {
           />
         </View>
 
-        <TouchableOpacity className="absolute right-0 top-0">
+        <TouchableOpacity className="absolute right-0 top-0" onPress={handleGoToInstructor}>
           <Animatable.View animation="pulse" iterationCount="infinite" duration={2500} className="p-2 flex-row gap-2 items-center bg-oBlack border border-black-200 rounded-md" style={styles.box}>
             <View>
               <Image 
@@ -192,7 +209,7 @@ const OnlineClass = () => {
         <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)} proceedToAvailableRoute={proceedToAvailableRoute}/>
       </View>
 
-      <View className="p-4 border border-black-200 bg-primary my-4" style={styles.box}>
+      <View ref={instructorRef} className="p-4 border border-black-200 bg-primary my-4" style={styles.box}>
         <Text className="text-white font-psemibold">Me shume rreth instruktorit</Text>
 
         <TouchableOpacity onPress={() => router.replace(`tutor/${courseData?.instructorId}`)} className="flex-row flex-wrap items-center justify-between gap-2 border border-black-200 p-4 mt-2 bg-oBlack" style={styles.box}>
