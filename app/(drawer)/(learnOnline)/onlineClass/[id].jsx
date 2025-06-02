@@ -254,7 +254,7 @@ const OnlineClass = () => {
             />
           </TouchableOpacity>
         </View>}
-        {!instructorMoreInformation && <TouchableOpacity className="bg-primary mt-6 self-start items-center flex-row gap-2 border border-black-200 px-2 py-1" style={styles.box}>
+        {!instructorMoreInformation && <TouchableOpacity onPress={() => router.replace(`tutorCourses/${courseData?.instructorId}`)} className="bg-primary mt-6 self-start items-center flex-row gap-2 border border-black-200 px-2 py-1" style={styles.box}>
           <Text className="text-white font-pmedium text-sm">Shfletoni te gjitha kurset</Text>
           <Image 
             source={icons.courses}

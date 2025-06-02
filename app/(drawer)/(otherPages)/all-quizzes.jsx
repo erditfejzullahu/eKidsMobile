@@ -137,6 +137,7 @@ const AllQuizzes = () => {
       renderItem={({item}) => (
         <SingleQuizComponent 
           quizData={item}
+          user={user}
           allQuizzes={true}
           longPressShare={handleLongPressShare}
         />

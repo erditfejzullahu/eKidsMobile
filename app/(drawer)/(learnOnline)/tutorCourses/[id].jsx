@@ -11,17 +11,18 @@ import { initialFilterData } from '../../../../services/filterConfig'
 import { images } from '../../../../constants'
 import Loading from '../../../../components/Loading'
 import OnlineClassesCard from "../../../../components/OnlineClassesCard"
+import { GetInstructorCoursesById } from '../../../../services/fetchingService'
 
 const TutorCourses = () => {
     const {id} = useLocalSearchParams();
     const {user, isLoading} = useGlobalContext();
     const [coursesData, setCoursesData] = useState([])
-    const {data, isLoading: courseLoading, refetch} = useFetchFunction(() => {});
+    const [filterData, setFilterData] = useState({...initialFilterData})
+    const {data, isLoading: courseLoading, refetch} = useFetchFunction(() => GetInstructorCoursesById(id, filterData));
     const userData = user?.data?.userData;
     const [loadedFirst, setLoadedFirst] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [loadingMore, setLoadingMore] = useState(false)
-    const [filterData, setFilterData] = useState({...initialFilterData})
 
     const onRefresh = async () => {
         setIsRefreshing(true)
@@ -65,6 +66,8 @@ const TutorCourses = () => {
     }, [coursesData])
     
     useEffect(() => {
+        console.log(data);
+        
       if(data){
         if(filterData.pageNumber > 1){
             setCoursesData((prev) => ({
@@ -90,18 +93,20 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}
-            data={[]}
+            data={coursesData?.courses}
             keyExtractor={(item) => item.id}
             renderItem={({item}) => (
                 <OnlineClassesCard classes={item} userCategories={user?.data?.categories}/>
             )}
             ListHeaderComponent={() => (
                 <>
-                <DefaultHeader headerTitle={`Kurset e {personit}`} showBorderBottom={true} bottomSubtitle={"Shfrytezoni rubrikat perkatese per te naviguar dhe ndervepruar me kurset e paraqitura me poshte"}/>
-                <SorterComponent 
-                    showSorter={true}
-                    sortButton={(data) => handleSorter(data)}
-                />
+                <View className="mb-6">
+                    <DefaultHeader headerTitle={<>Kurset e <Text className="text-secondary">{coursesData?.instructor?.name?.split(" ")[0]}</Text></>} showBorderBottom={true} bottomSubtitle={"Shfrytezoni rubrikat perkatese per te naviguar dhe ndervepruar me kurset e paraqitura me poshte"}/>
+                    <SorterComponent 
+                        showSorter={true}
+                        sortButton={(data) => handleSorter(data)}
+                    />
+                </View>
                 </>
             )}
             ListEmptyComponent={() => (
@@ -109,7 +114,7 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
                     <EmptyState 
                         title={"Nuk ka kurse te krijuara"}
                         titleStyle={"!font-plight"}
-                        subtitle={"Nuk ka kurse te krijuara ende nga {personi}. Mund ta kontaktoni permes butonit me poshte"}
+                        subtitle={`Nuk ka kurse te krijuara ende nga ${coursesData?.instructor?.name?.split(" ")[0]}. Mund ta kontaktoni permes butonit me poshte`}
                         subtitleStyle={"!font-plight"}
                         buttonTitle={"Kontaktoje"}
                         isBookMarkPage
@@ -119,9 +124,9 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
             )}
             ListFooterComponent={() => (
                 <>
-                    <View className="mb-2" />
-                    {coursesData?.length > 0 && (
-                        <View className="justify-center -mt-2 flex-row items-center gap-2">
+                    <View className="mb-4" />
+                    {coursesData?.courses?.length > 0 && (
+                        <View className="justify-center flex-row items-center gap-2">
                         {coursesData?.hasMore ? (
                             <>
                             <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>

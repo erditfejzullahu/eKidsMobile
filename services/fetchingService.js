@@ -1123,3 +1123,15 @@ export const GetSingleInstructorDetailsFromStudentSide = async (id) => {
         return null;
     }
 }
+
+export const GetInstructorCoursesById = async (id, filterData) => {
+    try {
+        const response = await apiClient.get(`/api/Instructors/TutorCourses/${id}`, {
+            params: filterData
+        })
+        return response && response.data
+    } catch (error) {
+        console.error(error.response.data)
+        return null;
+    }
+}
