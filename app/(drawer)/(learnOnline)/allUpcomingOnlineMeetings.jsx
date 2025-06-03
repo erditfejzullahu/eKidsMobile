@@ -1,12 +1,137 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Platform } from 'react-native'
+import useFetchFunction from '../../../hooks/useFetchFunction'
+import { initialFilterData } from '../../../services/filterConfig'
+import Loading from '../../../components/Loading'
+import MeetingCardComponent from '../../../components/MeetingCardComponent'
+import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
+import SorterComponent from '../../../components/SorterComponent'
+import { icons } from '../../../constants'
+import { GetAllMeetings } from '../../../services/fetchingService'
 
-const allUpcomingOnlineMeetings = () => {
+const AllUpcomingOnlineMeetings = () => {
+    const [isRefreshing, setIsRefreshing] = useState(false)
+    const [filterData, setFilterData] = useState({...initialFilterData, userActiveMeetingSection: false})
+    const {data, isLoading, refetch} = useFetchFunction(() => GetAllMeetings(filterData))
+    const [loadedFirst, setLoadedFirst] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [meetingsData, setMeetingsData] = useState(null)
+    const [showTopElements, setShowTopElements] = useState(true)
+
+    const loadMore = () => {
+        if(!meetingsData?.hasMore || loadingMore) return;
+        setLoadingMore(true)
+        setFilterData((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
+        }))
+    }
+
+    const onRefresh = async () => {
+        setIsRefreshing(true)
+        setLoadedFirst(false)
+        await refetch();
+        setFilterData({...initialFilterData, userActiveMeetingSection: false})
+        setIsRefreshing(false)
+    }
+
+    const inputData = (data) => {
+        if(data){
+          setLoadedFirst(false)
+          setFilterData((prev) => ({
+            ...prev,
+            searchInput: data
+          }))
+        }
+    }
+
+    const handleSorter = (data) => {
+        setFilterData((prev) => ({
+          ...prev,
+          sortByName: data.emri != null && "Title",
+          sortNameOrder: data.emri,
+          sortByDate: data.data != null && "CreatedAt",
+          sortDateOrder: data.data,
+          sortByViews: data.shikime != null && "Participants",
+          sortViewOrder: data.shikime
+        }))
+    }
+
+    useEffect(() => {
+      if(meetingsData?.meetings?.length > 0){
+        setLoadedFirst(true)
+      }
+    }, [meetingsData])
+    
+
+    useEffect(() => {
+      if(data?.meetings?.length > 0){
+        if(filterData.pageNumber > 0){
+            setMeetingsData((prev) => ({
+                ...prev,
+                meetings: [...prev.meetings, ...data.meetings],
+                hasMore: data.hasMore
+            }))
+        }else{
+            setMeetingsData(data)
+        }
+        setLoadingMore(false)
+      }else{
+        setLoadingMore(false)
+        setMeetingsData(null)
+      }
+    }, [data])
+    if((isLoading || isRefreshing) && !loadedFirst) return <Loading />
   return (
-    <View>
-      <Text>allUpcomingOnlineMeetings</Text>
+    <View className="flex-1">
+      <FlatList 
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+        className="h-full bg-primary"
+        contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => (
+            <MeetingCardComponent item={item}/>
+        // e pasna bo edhe ni component po pak trash ListMeetingcomponent dicka 
+        )}
+        ListHeaderComponent={() => (
+            <View className="gap-2">
+                <LearnOnlineHeader headerTitle={"Klaset tua aktive"} sentInput={inputData}/>
+                <View className="overflow-hidden">
+                    <SorterComponent showSorter={true} sortButton={handleSorter}/>
+                </View>
+                <TouchableOpacity className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={styles.box}>
+                    <Text className="text-white font-plight text-sm">Vleresoni takimet</Text>
+                    <Image
+                    source={icons.star}
+                    className="size-5"
+                    resizeMode='contain'
+                    tintColor={"#fff"}
+                    />
+                </TouchableOpacity>
+            </View>
+        )}
+      />
     </View>
   )
 }
 
-export default allUpcomingOnlineMeetings
+export default AllUpcomingOnlineMeetings
+
+const styles = StyleSheet.create({
+  box: {
+      ...Platform.select({
+          ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.6,
+              shadowRadius: 10,
+            },
+            android: {
+              elevation: 8,
+            },
+      })
+  },
+})

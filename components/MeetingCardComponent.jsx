@@ -8,7 +8,6 @@ import { useRouter } from 'expo-router';
 import NotifierComponent from './NotifierComponent';
 
 const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false}) => {
-    console.log(item, ' takimet')
     const router = useRouter();
     const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)

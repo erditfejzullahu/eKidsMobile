@@ -1,4 +1,4 @@
-import { View, Text, FlatList, RefreshControl, StyleSheet, Image } from 'react-native'
+import { View, Text, FlatList, RefreshControl, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
 import LearnOnlineUpcomingClasses from '../../../components/LearnOnlineUpcomingClasses'
@@ -11,11 +11,11 @@ import EmptyState from '../../../components/EmptyState'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
 import { ActivityIndicator } from 'react-native'
-import { images } from '../../../constants'
-
-const testArray = [{id:1},{id:2},{id:3}]
+import { icons, images } from '../../../constants'
+import { useRouter } from 'expo-router'
 
 const AllOnlineMeetings = () => {
+  const router = useRouter();
   const [filterData, setFilterData] = useState({
     ...initialFilterData
   })
@@ -45,8 +45,8 @@ const AllOnlineMeetings = () => {
   }
 
   useEffect(() => {
-    if(data.length > 0){
-      console.log(data);
+    console.log(data);
+    if(data?.meetings?.length > 0){
       if(filterData.pageNumber > 1){
         setMeetingsData((prev) => ({
           ...prev,
@@ -110,7 +110,18 @@ const AllOnlineMeetings = () => {
           ListHeaderComponent={() => (
             <View className="gap-2">
               <LearnOnlineHeader headerTitle={"Klaset online"} sentInput={inputData}/>
-              <SorterComponent showSorter={true} sortButton={handleSorter}/>
+              <View className="overflow-hidden">
+                <SorterComponent showSorter={true} sortButton={handleSorter}/>
+              </View>
+              <TouchableOpacity onPress={() => router.replace('allUpcomingOnlineMeetings')} className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={styles.box}>
+                <Text className="text-white font-plight text-sm">Klaset tuaja te ardhshme</Text>
+                <Image 
+                  source={icons.clock}
+                  className="size-5"
+                  resizeMode='contain'
+                  tintColor={"#fff"}
+                />
+              </TouchableOpacity>
             </View>
           )}
           ListFooterComponent={() => (
