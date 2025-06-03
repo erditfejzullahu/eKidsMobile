@@ -49,9 +49,9 @@ const _layout = () => {
         }}
     >
         <Tabs.Screen 
-            name='allOnlineClasses'
+            name='allOnlineCourses'
             options={{
-                title: "allOnlineClasses",
+                title: "allOnlineCourses",
                 headerShown: false,
                 tabBarIcon: ({color, focused}) => (
                     <TabIcon 
@@ -79,9 +79,9 @@ const _layout = () => {
             }}
         />
         <Tabs.Screen 
-            name="allUpcomingMeetings"
+            name="allOnlineMeetings"
             options={{
-                title: "allUpcomingMeetings",
+                title: "allOnlineMeetings",
                 headerShown: false,
                 tabBarIcon: ({color, focused}) => (
                     <TabIcon 
@@ -92,6 +92,10 @@ const _layout = () => {
                     />
                 )
             }}
+        />
+        <Tabs.Screen 
+            name="allUpcomingOnlineMeetings"
+            options={{tabBarVisible: false, href: null, headerShown: false}}
         />
         <Tabs.Screen 
             name="onlineClass/[id]"

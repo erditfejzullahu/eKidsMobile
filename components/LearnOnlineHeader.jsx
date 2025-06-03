@@ -13,7 +13,7 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
     }, [searchInput])
     
   return (
-    <View className={`my-4 ${pathname === "/allTutors" || pathname === "/allUpcomingMeetings" ? "border-b border-black-200 mb-1 pb-4" : ""}`}>
+    <View className={`my-4 ${pathname === "/allTutors" || pathname === "/allOnlineMeetings" ? "border-b border-black-200 mb-1 pb-4" : ""}`}>
         <Text className="text-2xl text-white font-pmedium">{headerTitle}
             <View>
             <Image
@@ -26,7 +26,7 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
         <View className="mt-4">
             <Search 
                 valueData={searchInput}
-                placeholder={pathname === "/allTutors" ? "Kerkoni tutorin ose ekspertizen/lenden..." : pathname === "/allOnlineClasses" ? "Kerkoni kursin online te preferuar..." : "Kerkoni klaset qe jane caktuar..."}
+                placeholder={pathname === "/allTutors" ? "Kerkoni tutorin ose ekspertizen/lenden..." : pathname === "/allOnlineCourses" ? "Kerkoni kursin online te preferuar..." : "Kerkoni klaset qe jane caktuar..."}
                 searchFunc={(data) => setSearchInput(data)}
             />
         </View>

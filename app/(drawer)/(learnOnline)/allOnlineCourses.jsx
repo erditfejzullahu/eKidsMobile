@@ -13,7 +13,7 @@ import EmptyState from '../../../components/EmptyState';
 import { initialFilterData } from '../../../services/filterConfig';
 
 
-const AllOnlineClasses = () => {
+const AllOnlineCourses = () => {
   const [filterData, setFilterData] = useState({
     ...initialFilterData
   })
@@ -154,7 +154,7 @@ const AllOnlineClasses = () => {
   )
 }
 
-export default AllOnlineClasses
+export default AllOnlineCourses
 
 const styles = StyleSheet.create({
   box: {

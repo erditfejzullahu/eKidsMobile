@@ -15,7 +15,7 @@ import { images } from '../../../constants'
 
 const testArray = [{id:1},{id:2},{id:3}]
 
-const AllUpcomingMeetings = () => {
+const AllOnlineMeetings = () => {
   const [filterData, setFilterData] = useState({
     ...initialFilterData
   })
@@ -28,7 +28,7 @@ const AllUpcomingMeetings = () => {
   const [loadingMore, setLoadingMore] = useState(false)
 
   const loadMore = () => {
-    if(meetingsData?.hasMore || loadingMore) return;
+    if(!meetingsData?.hasMore || loadingMore) return;
     setLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
@@ -45,8 +45,8 @@ const AllUpcomingMeetings = () => {
   }
 
   useEffect(() => {
-    console.log(data);
-    if(data){
+    if(data.length > 0){
+      console.log(data);
       if(filterData.pageNumber > 1){
         setMeetingsData((prev) => ({
           ...prev,
@@ -109,7 +109,7 @@ const AllUpcomingMeetings = () => {
           )}
           ListHeaderComponent={() => (
             <View className="gap-2">
-              <LearnOnlineHeader headerTitle={"Klaset e pritura"} sentInput={inputData}/>
+              <LearnOnlineHeader headerTitle={"Klaset online"} sentInput={inputData}/>
               <SorterComponent showSorter={true} sortButton={handleSorter}/>
             </View>
           )}
@@ -152,7 +152,7 @@ const AllUpcomingMeetings = () => {
   )
 }
 
-export default AllUpcomingMeetings
+export default AllOnlineMeetings
 
 const styles = StyleSheet.create({
   box: {

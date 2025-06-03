@@ -23,7 +23,7 @@ const instructorMenuItems = [
 
 const defaultMenuItems = [
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
-    { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineClasses' },
+    { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineCourses' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
     { label: 'Statistikat studentore', icon: icons.students, path: '/all-students' },
     { label: 'Shto një kuiz', icon: icons.plus, path: '/add-quiz' },
