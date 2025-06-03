@@ -14,6 +14,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerUserSchema } from '../../schemas/registerUserSchema'
 import Loading from '../../components/Loading'
+import { useRole } from '../../navigation/RoleProvider'
+import { userDetails } from '../../services/necessaryDetails'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const {showNotification: errorr} = NotifierComponent({
   title: "Gabim",
@@ -27,7 +30,9 @@ const {showNotification: success} = NotifierComponent({
 })
 
 const SignUp = () => {
+  const {role, isLoading, refreshRole} = useRole();
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const { setUser, setIsLoggedIn } = useGlobalContext();
 
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(registerUserSchema),
@@ -56,10 +61,20 @@ const SignUp = () => {
       const response = await register(data)
       if(response.data === "me kqyr responsin"){
         success()
-        const loginReq = await login(data.email, data.password)
-        if(loginReq){
-          //check role
-          router.replace('/home')
+        const loginResponse = await login(data.email, data.password)
+        if(loginResponse){
+          const userResult = await userDetails();
+          setIsLoggedIn(true)
+          setUser(userResult)
+          if(!isLoading){
+            if(['Instructor'].includes(role)){
+              router.replace('/instructor/instructorHome')
+            }else{
+              router.replace('/home')
+            }
+          }
+        }else{
+          errorr();
         }
       }
     } catch (error) {

@@ -11,6 +11,9 @@ import { userDetails } from '../../services/necessaryDetails'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NotifierComponent from '../../components/NotifierComponent'
 import { useRole } from '../../navigation/RoleProvider'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { loginUserSchema } from '../../schemas/registerUserSchema'
 
 const SignIn = () => {
 
@@ -31,7 +34,6 @@ const SignIn = () => {
     email: '',
     password: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const {showNotification} = NotifierComponent({
     title: "Sapo u identifikuat me sukses"
@@ -47,7 +49,15 @@ const SignIn = () => {
     title: "Gabim",
     description: "Dicka shkoi gabim, ju lutem provoni perseri!"
   })
-  
+
+  const {control, reset, formState: {errors, isSubmitting}, handleSubmit} = useForm({
+    resolver: zodResolver(loginUserSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    },
+    mode: "onTouched"
+  })
 
   const submit = async () => {
     if(!form.email || !form.password){
@@ -63,10 +73,10 @@ const SignIn = () => {
             showNotification()
             await refreshRole();
             if(!isLoading){
-              if(['Admin', 'Instructor'].includes(role)){
-                router.replace('/home')
-              }else{
+              if(['Instructor'].includes(role)){
                 router.replace('/instructor/instructorHome')
+              }else{
+                router.replace('/home')
               }
             }
         }else{
@@ -92,33 +102,55 @@ const SignIn = () => {
         <View className="w-full justify-center min-h-[85vh] px-4 my-6">
           <Image
             source={images.logoNew}
-            resizeMode='contain' className="h-[100px] mb-10"
+            resizeMode='contain' className="h-[100px]"
           />
-          <Text className="text-white font-psemibold text-xl mt-4">Kyçuni tek Shoku juaj i Mësimit</Text>
-          <FormField 
-            title="Emaili i përdoruesit"
-            value={form.email}
-            placeholder="Shkruani emailin e përdoruesit"
-            handleChangeText={(e) => setForm({ ...form, email: e})}
-            otherStyles="mt-7"
-            keyboardType="email-address"
-          />
-
-          <FormField
-            title="Fjalëkalimi"
-            value={form.password}
-            placeholder="Shkruani fjalëkalimin tuaj"
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
-          />
-
-          <CustomButton 
-            title="Kyçuni"
-            handlePress={submit}
-            containerStyles="mt-7"
-            isLoading={isSubmitting}
-          />
-
+          <Text className="text-white font-psemibold text-xl mt-4 text-center">Kyçuni tek Shoku juaj i Mësimit</Text>
+          <View className="gap-3 mt-12">
+            <View>
+              <Controller 
+                control={control}
+                name="email"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Emaili i përdoruesit"
+                    value={value}
+                    placeholder="Shkruani emailin e përdoruesit"
+                    handleChangeText={onChange}
+                    keyboardType="email-address"
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Emaili juaj i verifikuar.</Text>
+              {errors.email && (
+                <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
+              )}
+            </View>
+            <View>
+              <Controller 
+                control={control}
+                name="password"
+                render={({field: {onChange, value}}) => (
+                  <FormField
+                    title="Fjalëkalimi"
+                    value={value}
+                    placeholder="Shkruani fjalëkalimin tuaj"
+                    handleChangeText={onChange}
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Fjalekalimi juaj.</Text>
+              {errors.password && (
+                <Text className="text-red-500 text-xs font-plight">{errors.password.message}</Text>
+              )}
+            </View>
+            <View>
+              <CustomButton 
+                title={`${isSubmitting ? "Duke u kycur" : "Kycuni"}`}
+                handlePress={handleSubmit(submit)}                
+                isLoading={isSubmitting}
+              />
+            </View>
+          </View>
           <View className="justify-center pt-5 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
               Nuk keni llogari?

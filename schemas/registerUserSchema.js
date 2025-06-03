@@ -51,3 +51,21 @@ export const registerUserSchema = z.object({
       invalid_type_error: "Roli duhet të jetë 'user', 'admin' ose 'moderator'",
     }),
 });
+
+export const loginUserSchema = z.object({
+    email: z.string({
+        required_error: "Emaili është i detyrueshëm",
+        invalid_type_error: "Emaili duhet të jetë tekst",
+      })
+      .min(1, { message: "Emaili nuk mund të jetë bosh" })
+      .email({ message: "Ju lutem shkruani një email valid" }),
+    password: z.string({
+    required_error: "Fjalëkalimi është i detyrueshëm",
+    invalid_type_error: "Fjalëkalimi duhet të jetë tekst",
+    })
+    .min(8, { message: "Fjalëkalimi duhet të ketë të paktën 8 karaktere" })
+    .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe, një të vogël, një numër dhe një simbol special (@$!%*?&)" }
+    ),
+})
