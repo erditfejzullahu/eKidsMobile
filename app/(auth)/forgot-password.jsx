@@ -5,8 +5,12 @@ import FormField from '../../components/FormField'
 import Loading from '../../components/Loading'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import CustomButton from '../../components/CustomButton'
+import { ForgotPasswordReq } from '../../services/fetchingService'
+import NotifierComponent from '../../components/NotifierComponent'
+import { useRouter } from 'expo-router'
 
 const ForgotPassword = () => {
+    const router = useRouter();
     const [email, setEmail] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false)
@@ -19,15 +23,39 @@ const ForgotPassword = () => {
         }, 1000);
     }
 
-    const submit = async () => {
-        setIsLoading(true)
-        try {
-            
-        } catch (error) {
-            console.error(error)
+    const {showNotification: success} = NotifierComponent({
+        title: "Sukses",
+        description: "Emaili shkoi me sukses ne adresen elektronike te paraqitur ne forme"
+    })
 
-        } finally {
-            setIsLoading(false)
+    const {showNotification: error} = NotifierComponent({
+        title: "Gabim",
+        description: "Dicka shkoi gabim, ju lutem provoni perseri!",
+        alertType: "warning"
+    })
+
+    const {showNotification: emptyField} = NotifierComponent({
+        title: "Gabim",
+        description: "Emaili është i detyrueshëm",
+        alertType: "warning"
+    })
+
+    const submit = async () => {
+        if(email.trim() === "" || email === null){
+            emptyField()
+            return;
+        }
+        setIsLoading(true)
+        const payload = {
+            email: email
+        }
+        const response = await ForgotPasswordReq(payload)
+        if(response === 200){
+            success();
+            router.replace('/sign-in')
+        }else{
+            setEmail("")
+            error();
         }
     }
 

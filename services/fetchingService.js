@@ -1136,3 +1136,12 @@ export const GetInstructorCoursesById = async (id, filterData) => {
         return null;
     }
 }
+
+export const ForgotPasswordReq = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Users/forgot-password`, payload)
+        return response && response.status;
+    } catch (error) {
+        return error.response.status
+    }
+}
