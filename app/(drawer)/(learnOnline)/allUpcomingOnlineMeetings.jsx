@@ -7,10 +7,14 @@ import Loading from '../../../components/Loading'
 import MeetingCardComponent from '../../../components/MeetingCardComponent'
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
 import SorterComponent from '../../../components/SorterComponent'
-import { icons } from '../../../constants'
+import { icons, images } from '../../../constants'
 import { GetAllMeetings } from '../../../services/fetchingService'
+import { ActivityIndicator } from 'react-native'
+import EmptyState from '../../../components/EmptyState'
+import { useRouter } from 'expo-router'
 
 const AllUpcomingOnlineMeetings = () => {
+    const router = useRouter();
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [filterData, setFilterData] = useState({...initialFilterData, userActiveMeetingsSection: true})    
     const {data, isLoading, refetch} = useFetchFunction(() => GetAllMeetings(filterData))
@@ -114,6 +118,40 @@ const AllUpcomingOnlineMeetings = () => {
                     />
                 </TouchableOpacity>
             </View>
+        )}
+        ListEmptyComponent={() => (
+            <View className="bg-oBlack border border-black-200" style={styles.box}>
+              <EmptyState
+                title={"Nuk keni takime ne pritje!"}
+                subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
+                isSearchPage={true}
+                buttonTitle={"Ndjek kurse"}
+                buttonFunction={() => router.replace('allOnlineCourses')}
+              />
+            </View>
+        )}
+        ListFooterComponent={() => (
+            <>
+            <View className="mb-2" />
+            <View className="justify-center -mt-2 flex-row items-center gap-2">
+                {meetingsData?.hasMore ? (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                    <ActivityIndicator color={"#FF9C01"} size={24} />
+                    </>
+                    ) : (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                    <Image
+                        source={images.breakHeart}
+                        className="size-5"
+                        tintColor={"#FF9C01"}
+                        resizeMode='contain'
+                    />
+                    </>
+                )}
+            </View>
+            </>
         )}
       />
     </View>
