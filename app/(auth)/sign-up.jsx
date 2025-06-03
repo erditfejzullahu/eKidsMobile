@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, StyleSheet, Alert } from 'react-native'
+import { View, Text, ScrollView, Image, StyleSheet, Alert, RefreshControl } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
@@ -10,143 +10,225 @@ import { Link, router } from 'expo-router'
 import { login, register } from '../../services/authService'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import NotifierComponent from '../../components/NotifierComponent'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { registerUserSchema } from '../../schemas/registerUserSchema'
+import Loading from '../../components/Loading'
 
-const {showNotification} = NotifierComponent({
-  title: "Ju lutem mbushni të gjitha fushat!",
+const {showNotification: errorr} = NotifierComponent({
+  title: "Gabim",
+  description: "Dicka shkoi gabim, ju lutem provoni perseri",
   alertType: "warning"
 })
 
+const {showNotification: success} = NotifierComponent({
+  title: "Sukses",
+  description: "Sapo u regjistruat me sukses, tani do te ridrejtoheni!",
+})
+
 const SignUp = () => {
-  const [form, setForm] = useState({
-    email: '',
-    username: '',
-    firstname: '',
-    lastname: '',
-    password: '',
-    age: '',
-    role: '',
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
+    resolver: zodResolver(registerUserSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      firstname: "",
+      lastname: "",
+      password: "",
+      age: 13,
+      role: "student"
+    },
+    mode: "onTouched"
   })
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  const submit = async () => {
-    if(!form.email || !form.username || !form.firstname || !form.lastname || !form.password || !form.age || !form.role){
-      showNotification();
-    }else{
-      try {
-        setIsLoading(true);
-        const response = await register(
-          form.email, 
-          form.username, 
-          form.firstname, 
-          form.lastname,
-          form.password,
-          form.age,
-          form.role
-        )
-        console.log(response.data);
-        if(response.data === 'me kqyr qysh ekom lon'){
-          const loginReq = await login(form.email, form.password)
-          console.log(loginReq.data)
-          if(loginReq){
-            router.replace('/home')
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  const onRefresh = () => {
+    setIsRefreshing(true)
+    reset();
+    setTimeout(() => {
+      setIsRefreshing(false)
+    }, 1000);
   }
 
+  const submit = async (data) => {
+    try {
+      const response = await register(data)
+      if(response.data === "me kqyr responsin"){
+        success()
+        const loginReq = await login(data.email, data.password)
+        if(loginReq){
+          //check role
+          router.replace('/home')
+        }
+      }
+    } catch (error) {
+      console.error(error)
+      errorr();
+    }
+  }
+if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">
-      <ScrollView className="my-6">
         <KeyboardAwareScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        enableOnAndroid={true} // Ensures Android support
-        extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
-        keyboardShouldPersistTaps="handled"
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          className="my-6"
+          contentContainerStyle={{ flexGrow: 1 }}
+          enableOnAndroid={true} // Ensures Android support
+          extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
+          keyboardShouldPersistTaps="handled"
         >
         <View className="w-full justify-center h-full px-4">
-          <Image 
-            source={images.logoNew}
-            resizeMode="contain" className="h-[100px] items-center justify-center m-auto"
-          />
-          <Text className="text-white text-center font-pblack text-xl mt-4">
-            Regjistrohuni falas tek
-          </Text>
-          <Text className="text-secondary text-center font-pblack text-xl">
-            Shoku juaj i Mësimit
-          </Text>
-          <FormField 
-            title="Emri juaj"
-            value={form.firstname}
-            placeholder="Shkruani emrin tuaj këtu"
-            handleChangeText={(e) => setForm({ ...form, firstname: e })}
-            otherStyles="mt-7"
-          />
-          <FormField 
-            title="Mbiemri juaj"
-            value={form.lastname}
-            placeholder="Shkruani mbiemrin tuaj këtu"
-            handleChangeText={(e) => setForm({ ...form, lastname: e })}
-            otherStyles="mt-7"
-          />
-          <FormField 
-            title="Emaili juaj"
-            value={form.email}
-            placeholder="Shkruani emailin tuaj këtu"
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-7"
-            keyboardType="email-address"
-          />
-          <FormField 
-            title="Nofka juaj"
-            value={form.username}
-            placeholder="Shkruani nofkën tuaj këtu"
-            handleChangeText={(e) => setForm({ ...form, username: e })}
-            otherStyles="mt-7"
-          />
-          <FormField 
-            title="Mosha juaj"
-            value={form.age}
-            placeholder="Paraqitni moshën tuaj këtu"
-            handleChangeText={(e) => setForm({ ...form, age: e })}
-            otherStyles="mt-7"
-            keyboardType="number-pad"
-          />
-          <Text className="mt-7 text-base text-gray-100 font-pmedium">Roli juaj</Text>
-          <Picker
-            selectedValue={form.category}
-            onValueChange={
-              (value) => setForm({ ...form, category: value })
-            }
-            placeholder={{ label: "Zgjidhni ne cilen kategori futet kuizi juaj", value: '' }}
-            style={pickerSelectStyles}
-            itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
-          >
-              <Picker.Item label="Student" value="student" />
-              <Picker.Item label="Prind" value="prind" />
-          </Picker>
-          {/* <Picker 
-            onValueChange={
-              (value) => setForm({...form, role: value})
-            }
-            items={[
-              { label: 'Student', value: 'student' },
-              { label: 'Prind', value: 'prind' },
-            ]}
-            placeholder={{ label: "Zgjidhni rolin tuaj", value: '' }}
-            style={pickerSelectStyles}
-          /> */}
-          <CustomButton 
-            title="Regjistrohuni"
-            handlePress={submit}
-            containerStyles="mt-7 mb-4"
-            isLoading={isLoading}
-          />
+          <View className="mb-4">
+            <Image 
+              source={images.logoNew}
+              resizeMode="contain" className="h-[100px] items-center justify-center m-auto"
+            />
+            <Text className="text-white text-center font-pblack text-xl mt-4">
+              Regjistrohuni falas tek
+            </Text>
+            <Text className="text-secondary text-center font-pblack text-xl">
+              Shoku juaj i Mësimit
+            </Text>
+          </View>
+          <View className="gap-3">
+            <View>
+              <Controller 
+                control={control}
+                name="firstname"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Emri juaj"
+                    value={value}
+                    placeholder="Shkruani emrin tuaj këtu"
+                    handleChangeText={onChange}
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani emrin tuaj valid.</Text>
+              {errors.firstname && (
+                <Text className="text-red-500 text-xs font-plight">{errors.firstname.message}</Text>
+              )}
+            </View>
+            <View>
+              <Controller 
+                control={control}
+                name="lastname"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Mbiemri juaj"
+                    value={value}
+                    placeholder="Shkruani mbiemrin tuaj këtu"
+                    handleChangeText={onChange}
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani mbiemrin tuaj valid.</Text>
+              {errors.lastname && (
+                <Text className="text-red-500 text-xs font-plight">{errors.lastname.message}</Text>
+              )}
+            </View>
+            <View>
+              <Controller 
+                control={control}
+                name="email"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Emaili juaj"
+                    value={value}
+                    placeholder="Shkruani emailin tuaj këtu"
+                    handleChangeText={onChange}
+                    keyboardType="email-address"
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Paraqisni nje email valid, per shkak se ky email do perdoret per verifikim dhe kycje te llogarise suaj.</Text>
+              {errors.email && (
+                <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
+              )}
+            </View>
+            <View>
+              <Controller 
+                control={control}
+                name="username"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Emri i perdoruesit"
+                    value={value}
+                    placeholder="Shkruani emrin tuaj te preferuar"
+                    handleChangeText={onChange}
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani nje emer tuaj te preferuar per qasje te shpejte.</Text>
+              {errors.username && (
+                <Text className="text-red-500 text-xs font-plight">{errors.username.message}</Text>
+              )}
+            </View>
+            <View>
+              <Controller 
+                control={control}
+                name="age"
+                render={({field: {onChange, value}}) => (
+                  <FormField 
+                    title="Mosha juaj"
+                    value={value.toString()}
+                    placeholder="Paraqitni moshën tuaj këtu"
+                    handleChangeText={onChange}
+                    keyboardType="number-pad"
+                  />
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Paraqisni moshen tuaj aktuale.</Text>
+              {errors.age && (
+                <Text className="text-red-500 text-xs font-plight">{errors.age.message}</Text>
+              )}
+            </View>
+            <View>
+              <Text className="text-base text-gray-100 font-pmedium">Roli juaj</Text>
+              <Controller 
+                control={control}
+                name="role"
+                render={({field: {onChange, value}}) => (
+                  <Picker
+                    selectedValue={value}
+                    onValueChange={
+                      (value) => onChange(value)
+                    }
+                    placeholder={{ label: "Zgjidhni rolin tuaj", value: '' }}
+                    style={pickerSelectStyles}
+                    itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+                  >
+                      <Picker.Item label="Student" value="student" />
+                      <Picker.Item label="Instruktor" value="instructor" />
+                  </Picker>
+                )}
+              />
+              <Text className="text-xs text-gray-400 font-plight mt-1">Zgjidhni rolin tuaj ne mes te Studentit dhe Instruktorit. Nese zgjidhni rolin Student, ju mund te beni aplikimin per Instruktor.</Text>
+              {errors.role && (
+                <Text className="text-red-500 text-xs font-plight">{errors.role.message}</Text>
+              )}
+            </View>
+            {/* <Picker 
+              onValueChange={
+                (value) => setForm({...form, role: value})
+              }
+              items={[
+                { label: 'Student', value: 'student' },
+                { label: 'Prind', value: 'prind' },
+              ]}
+              placeholder={{ label: "Zgjidhni rolin tuaj", value: '' }}
+              style={pickerSelectStyles}
+            /> */}
+            <View>
+              <CustomButton 
+                title={`${isSubmitting ? "Duke aplikuar" : "Regjistrohuni"}`}
+                handlePress={handleSubmit(submit)}
+                containerStyles="mb-4"
+                isLoading={isSubmitting}
+              />
+            </View>
+          </View>
           <View className="justify-center items-center flex-row gap-2 mb-2">
           <Text className="text-lg text-gray-100 font-pregular">
             Keni llogari?
@@ -156,7 +238,6 @@ const SignUp = () => {
 
         </View>
         </KeyboardAwareScrollView>
-      </ScrollView>
     </SafeAreaView>
   )
 }

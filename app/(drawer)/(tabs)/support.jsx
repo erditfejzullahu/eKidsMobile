@@ -75,6 +75,7 @@ const Support = () => {
 
   return (
     <KeyboardAwareScrollView
+    
         key={refreshKey}
         className="h-full bg-primary px-4"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
