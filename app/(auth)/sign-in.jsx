@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, Alert, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, Image, Alert, StyleSheet, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React, { useState } from 'react'
 import {images} from '../../constants'
@@ -14,6 +14,7 @@ import { useRole } from '../../navigation/RoleProvider'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginUserSchema } from '../../schemas/registerUserSchema'
+import Loading from '../../components/Loading'
 
 const SignIn = () => {
 
@@ -30,10 +31,15 @@ const SignIn = () => {
 
   const { setUser, setIsLoggedIn } = useGlobalContext();
   const {role, isLoading, refreshRole} = useRole();
-  const [form, setForm] = useState({
-    email: '',
-    password: ''
-  })
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const onRefresh = () => {
+    setIsRefreshing(true)
+    reset();
+    setTimeout(() => {
+      setIsRefreshing(false)
+    }, 1000);
+  }
 
   const {showNotification} = NotifierComponent({
     title: "Sapo u identifikuat me sukses"
@@ -59,13 +65,9 @@ const SignIn = () => {
     mode: "onTouched"
   })
 
-  const submit = async () => {
-    if(!form.email || !form.password){
-      alertNotification()
-    }else{
-      setIsSubmitting(true);
+  const submit = async (data) => {
       try {        
-        const response = await login(form.email, form.password)
+        const response = await login(data.email, data.password)
         if(response){
           const userResult = await userDetails();
             setIsLoggedIn(true);
@@ -82,22 +84,21 @@ const SignIn = () => {
         }else{
           error();
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsSubmitting(false)
+      } catch (errorr) {
+        console.error(errorr);
+        error();
       }
-    }
   }
-
+if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView>
       <KeyboardAwareScrollView style={styles.container}
-      contentContainerStyle={{ flexGrow: 1 }}
-      enableOnAndroid={true} // Ensures Android support
-      extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
-      keyboardShouldPersistTaps="handled"
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid={true} // Ensures Android support
+        extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
+        keyboardShouldPersistTaps="handled"
       >
         <View className="w-full justify-center min-h-[85vh] px-4 my-6">
           <Image
@@ -105,7 +106,7 @@ const SignIn = () => {
             resizeMode='contain' className="h-[100px]"
           />
           <Text className="text-white font-psemibold text-xl mt-4 text-center">Kyçuni tek Shoku juaj i Mësimit</Text>
-          <View className="gap-3 mt-12">
+          <View className="gap-3 mt-6">
             <View>
               <Controller 
                 control={control}
@@ -156,6 +157,9 @@ const SignIn = () => {
               Nuk keni llogari?
             </Text>
             <Link href="/sign-up" className="text-lg font-semibold text-secondary">Regjistrohuni</Link>
+          </View>
+          <View>
+            <Link href="/forgot-password" className="text-secondary font-semibold text-center underline">Keni harruar fjalekalimin?</Link>
           </View>
 
         </View>
