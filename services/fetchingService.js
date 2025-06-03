@@ -1044,8 +1044,9 @@ export const GetAllMeetings = async (filters) => {
             }
         })
 
-        const queryString = new URLSearchParams(queryParams);
-
+        const queryString = new URLSearchParams(queryParams).toString();
+        console.log(queryString, ' string');
+        
         const response = await apiClient.get(`/api/OnlineMeetings/AllMeetings?${queryString}`)
         return response && response.data;
     } catch (error) {

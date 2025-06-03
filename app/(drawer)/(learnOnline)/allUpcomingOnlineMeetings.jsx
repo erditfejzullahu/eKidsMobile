@@ -12,12 +12,11 @@ import { GetAllMeetings } from '../../../services/fetchingService'
 
 const AllUpcomingOnlineMeetings = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const [filterData, setFilterData] = useState({...initialFilterData, userActiveMeetingSection: false})
+    const [filterData, setFilterData] = useState({...initialFilterData, userActiveMeetingsSection: true})    
     const {data, isLoading, refetch} = useFetchFunction(() => GetAllMeetings(filterData))
     const [loadedFirst, setLoadedFirst] = useState(false)
     const [loadingMore, setLoadingMore] = useState(false)
     const [meetingsData, setMeetingsData] = useState(null)
-    const [showTopElements, setShowTopElements] = useState(true)
 
     const loadMore = () => {
         if(!meetingsData?.hasMore || loadingMore) return;
@@ -32,7 +31,7 @@ const AllUpcomingOnlineMeetings = () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         await refetch();
-        setFilterData({...initialFilterData, userActiveMeetingSection: false})
+        setFilterData({...initialFilterData, userActiveMeetingSection: true})
         setIsRefreshing(false)
     }
 
@@ -66,8 +65,10 @@ const AllUpcomingOnlineMeetings = () => {
     
 
     useEffect(() => {
+        console.log(data);
+        
       if(data?.meetings?.length > 0){
-        if(filterData.pageNumber > 0){
+        if(filterData.pageNumber > 1){
             setMeetingsData((prev) => ({
                 ...prev,
                 meetings: [...prev.meetings, ...data.meetings],
@@ -88,12 +89,13 @@ const AllUpcomingOnlineMeetings = () => {
       <FlatList 
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
+        data={meetingsData?.meetings}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         className="h-full bg-primary"
         contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
-            <MeetingCardComponent item={item}/>
+            <MeetingCardComponent item={item} userActiveUpcomingMeetingsSection/>
         // e pasna bo edhe ni component po pak trash ListMeetingcomponent dicka 
         )}
         ListHeaderComponent={() => (

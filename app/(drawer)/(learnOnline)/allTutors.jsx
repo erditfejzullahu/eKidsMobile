@@ -46,7 +46,7 @@ const AllTutors = () => {
       if(filterData.pageNumber > 1){
         setInstructorsData((prev) => ({
           ...prev,
-          instructors: [...prev.instructors, ...data.instructors],
+          instructors: [...prev?.instructors, ...data.instructors],
           hasMore: data.hasMore
         }))
       }else{

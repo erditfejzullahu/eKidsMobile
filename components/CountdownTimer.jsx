@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 
-const CountdownTimer = ({ meetingData }) => {
+const CountdownTimer = ({ meetingData, textStyle }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0
   });
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
     if (!meetingData?.scheduleDateTime) return;
@@ -26,6 +27,7 @@ const CountdownTimer = ({ meetingData }) => {
           minutes: 0,
           seconds: 0
         });
+        setHasStarted(true);
         return;
       }
 
@@ -35,6 +37,7 @@ const CountdownTimer = ({ meetingData }) => {
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
       setTimeLeft({ days, hours, minutes, seconds });
+      setHasStarted(false);
     };
 
     // Update immediately
@@ -66,7 +69,11 @@ const CountdownTimer = ({ meetingData }) => {
 
   return (
     <View>
-        <Text className="text-white font-psemibold uppercase">Nis për: {formatCountdown()}</Text>
+      {hasStarted ? (
+        <Text className={`text-white font-psemibold uppercase ${textStyle}`}>Takimi ka filluar!</Text>
+      ) : (
+        <Text className={`text-white font-psemibold uppercase ${textStyle}`}>Nis për: {formatCountdown()}</Text>
+      )}
     </View>
   );
 };

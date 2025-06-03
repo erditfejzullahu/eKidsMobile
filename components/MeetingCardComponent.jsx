@@ -6,8 +6,9 @@ import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router';
 import { useRouter } from 'expo-router';
 import NotifierComponent from './NotifierComponent';
+import CountdownTimer from "./CountdownTimer"
 
-const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false}) => {
+const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false, userActiveUpcomingMeetingsSection = false}) => {
     const router = useRouter();
     const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)
@@ -90,7 +91,7 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
             </TouchableOpacity>
         </Animatable.View>)}
 
-        {!viewProfilePlace && <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white max-w-[130px]" style={styles.box}>{item?.status}</Text>}
+        {!viewProfilePlace && <Text className="absolute -left-2 -top-2 z-50 bg-secondary border border-white px-2 py-0.5 font-psemibold text-sm text-white max-w-[130px]" style={styles.box}>{item?.status}</Text>}
         {item.status !== 0 && <Text className="absolute -top-2 -right-2 z-50 bg-oBlack border border-black-200 px-2 py-0.5 font-psemibold text-sm text-white" style={styles.box}><Text className="text-secondary">{item.participants}</Text> Pjesemarres</Text>}
 
         {/* logic to make when it starts notification and stuff */}
@@ -181,8 +182,16 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
                     </View>
                 </View>)}
             </Animatable.View>}
+
         </View>
 
+            {userActiveUpcomingMeetingsSection && (
+                <View className="absolute items-center justify-center left-0 right-0 -bottom-2">
+                    <View className="bg-primary border border-black-200 px-2 py-1" style={styles.box}>
+                        <CountdownTimer meetingData={item} textStyle={"!normal-case !text-sm !text-secondary !font-pblack"}/>
+                    </View>
+                </View>
+            )}
     </TouchableOpacity>
   )
 }
