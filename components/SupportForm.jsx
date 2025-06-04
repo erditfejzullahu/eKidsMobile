@@ -70,7 +70,8 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
             availableTicketId: data.topicType,
             ticketCreatorUserId: userId,
             reportedUserId: null,
-            otherMessage: data.otherTopic
+            otherMessage: data.otherTopic,
+            image: data.image
         }
         const response = await CreateSupportReportTicket(payload);
         if(response === 200){

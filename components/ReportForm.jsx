@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { reportSectionSchema } from '../schemas/reportSectionSchema'
@@ -12,9 +12,34 @@ import { TouchableOpacity } from 'react-native'
 import * as ImagePicker from "expo-image-picker"
 import CustomButton from './CustomButton'
 import { currentUserID } from '../services/authService'
-import { CreateSupportReportTicket } from '../services/fetchingService'
+import { CreateSupportReportTicket, reqUsersBySearch } from '../services/fetchingService'
+import _ from 'lodash'
+import { icons } from '../constants'
 
 const ReportForm = ({onSuccess, availableTickets = []}) => {
+
+    const [showResults, setShowResults] = useState(false);
+    const [resultLoading, setResultLoading] = useState(false)
+    const [searchResults, setSearchResults] = useState([])
+    
+    const searchUsers = async (query) => {
+        if(query.length < 3){
+            setSearchResults([])
+            return;
+        }
+        setResultLoading(true)
+        const response = await reqUsersBySearch(query)
+        console.log(response);
+        
+        setSearchResults(response);
+        setResultLoading(false)
+    }
+    const debounceFetchUsers = useCallback(_.debounce(searchUsers, 500), [])
+    
+    const handleUserSelect = (username, onChange) => {
+        onChange(username)
+        setShowResults(false)
+    }
     
     const {control, handleSubmit, watch, trigger, reset, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(reportSectionSchema),
@@ -23,6 +48,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
             description: "",
             image: "",
             otherTopic: "",
+            reportUser: ""
         },
         mode: "onTouched"
     })
@@ -47,7 +73,8 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
             availableTicketId: data.issueType,
             ticketCreatorUserId: userId,
             reportedUserId: null,
-            otherMessage: data.otherTopic
+            otherMessage: data.otherTopic,
+            image: data.image
         }
         const response = await CreateSupportReportTicket(payload);
         if(response === 200){
@@ -84,6 +111,13 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         }
     }
 
+    useEffect(() => {
+      return () => {
+        debounceFetchUsers.cancel();
+      }
+    }, [debounceFetchUsers])
+    
+
   return (
     <View className="gap-3" style={styles.box}>
       <View>
@@ -109,30 +143,96 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
             <Text className="text-red-500 font-plight text-xs">{errors.issueType.message}</Text>
         )}
       </View>
-      {selectedTopic === 25 && (<Animatable.View animation={"fadeInLeft"}>
+
+      {(selectedTopic === 17 || selectedTopic === 16) && (
+            <Animatable.View animation={"fadeInLeft"}>
+            <Controller 
+                control={control}
+                name="reportUser"
+                render={({field: {onChange, value}}) => (
+                    <FormField 
+                        title={"Emri i perdoruesit"}
+                        value={value}
+                        handleChangeText={(text) => {
+                            onChange(text)
+                            debounceFetchUsers(text)
+                            setShowResults(true);
+                        }}
+                        placeholder={"P.sh. Erdit Fejzullahu"}
+                    />
+                )}
+            />
+            {showResults && (resultLoading ? (
+                <View className="flex-row items-center gap-1 py-1">
+                    <Text className="text-white text-sm font-psemibold py-2">Duke kërkuar...</Text>
+                    <ActivityIndicator color={"#FF9C01"} size={24} />
+                </View>
+            ) : searchResults.length > 0 ? (
+                <View className="mt-1 bg-gray-800 rounded-lg max-h-40">
+                    <ScrollView className="h-[80px] bg-oBlack border z-50 border-black-200 rounded-md" style={styles.box} scrollEnabled>
+                        {searchResults.map((item) => (
+                            <TouchableOpacity 
+                                key={item.id}
+                                className="p-3 bg-oBlack flex-row items-center justify-between border-b border-black-200"
+                                onPress={() => handleUserSelect(item.username, onChange)}
+                                style={styles.box}
+                            >
+                                <View className="flex-row items-center gap-2">
+                                    <View>
+                                        <Image 
+                                            source={{uri: item.profilePictureUrl}}
+                                            className="size-12 rounded-md border border-black-200 p-1"
+                                            resizeMode='contain'
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text className="text-white font-psemibold text-base">{item.name}</Text>
+                                        <Text className="text-gray-400 font-plight text-xs">{item.isCloseFiend === false && item.isFriend === false ? "Perdorues" : "Mik"}</Text>
+                                    </View>
+                                </View>
+                                <View>
+                                    <Image 
+                                        source={icons.play2}
+                                        className="size-6"
+                                        resizeMode='contain'
+                                        tintColor={"#ff9c01"}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+            ) : searchResults.length === 0 && (
+                <Text className="text-white text-sm font-psemibold py-2">Nuk u gjet asnjë përdorues</Text>
+            ))}
+
+            <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni emrin e perdoruesit qe deshironi te raportoni per X arsye. Ne shkrim e siper, perdoruesit qe perputhen me shkrimin tuaj do paraqiten ne dritare.</Text>
+            {errors.reportUser && (
+                <Text className="text-red-500 font-plight text-xs">{errors.reportUser.message}</Text>
+            )}
+            </Animatable.View>
+        )}
+
+      {(selectedTopic === 25 || selectedTopic === 17 || selectedTopic === 16) && (<Animatable.View animation={"fadeInLeft"}>
             <Controller 
                 control={control}
                 name="otherTopic"
                 render={({field: {onChange, value}}) => (
                     <FormField
-                        title={"Zgjidhni raportimin tjeter"}
+                        title={`${selectedTopic === 25 ? "Zgjidhni raportimin tjeter" : "Arsyja e raportimit te perdoruesit"}`}
                         value={value}
                         handleChangeText={onChange}
-                        placeholder={"P.sh. Raportim ne lidhje me..."}
+                        placeholder={`${selectedTopic === 25 ? "P.sh. Raportim ne lidhje me..." : "P.sh. Erdit Fejzullahu"}`}
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani raportimin tjeter.</Text>
+            <Text className="text-xs text-gray-400 font-plight mt-1">{selectedTopic === 25 ? "Shkruani raportimin tjeter." : "Parqitni arsyjen e raportimit te personit ne fjale."}</Text>
             {errors.otherTopic && (
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
         </Animatable.View>)}
 
-        {(selectedTopic === String(17) || selectedTopic === String(16)) && (
-            <Controller 
-
-            />
-        )}
+        
         <View>
             <Controller 
                 name="description"
