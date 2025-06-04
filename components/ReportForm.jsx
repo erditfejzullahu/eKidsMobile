@@ -21,6 +21,11 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const [showResults, setShowResults] = useState(false);
     const [resultLoading, setResultLoading] = useState(false)
     const [searchResults, setSearchResults] = useState([])
+
+    const [userReportedId, setUserReportedId] = useState(null)
+
+    
+    
     
     const searchUsers = async (query) => {
         if(query.length < 3){
@@ -36,8 +41,10 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     }
     const debounceFetchUsers = useCallback(_.debounce(searchUsers, 500), [])
     
-    const handleUserSelect = (username, onChange) => {
-        onChange(username)
+    const handleUserSelect = (user, onChange) => {
+        onChange(user.name)
+        setUserReportedId(user.id)
+        
         setShowResults(false)
     }
     
@@ -54,6 +61,15 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     })
 
     const selectedTopic = watch("issueType");
+
+    useEffect(() => {
+        const isUserReport = selectedTopic === 16 || selectedTopic === 17;
+        if (!isUserReport) {
+            setUserReportedId(null);
+            reset({ reportUser: "" }, {keepValues: true});
+            setShowResults(false);
+        }
+    }, [selectedTopic, reset]);
 
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
@@ -72,7 +88,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         const payload = {
             availableTicketId: data.issueType,
             ticketCreatorUserId: userId,
-            reportedUserId: null,
+            reportedUserId: userReportedId,
             otherMessage: data.otherTopic,
             image: data.image
         }
@@ -150,6 +166,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                 control={control}
                 name="reportUser"
                 render={({field: {onChange, value}}) => (
+                    <>
                     <FormField 
                         title={"Emri i perdoruesit"}
                         value={value}
@@ -160,51 +177,52 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                         }}
                         placeholder={"P.sh. Erdit Fejzullahu"}
                     />
+                    {showResults && (resultLoading ? (
+                        <View className="flex-row items-center gap-1 py-1">
+                            <Text className="text-white text-sm font-psemibold py-2">Duke kërkuar...</Text>
+                            <ActivityIndicator color={"#FF9C01"} size={24} />
+                        </View>
+                    ) : searchResults.length > 0 ? (
+                        <View className="mt-1 bg-gray-800 rounded-lg max-h-40">
+                            <ScrollView className="h-[80px] bg-oBlack border z-50 border-black-200 rounded-md" style={styles.box} scrollEnabled>
+                                {searchResults.map((item) => (
+                                    <TouchableOpacity 
+                                        key={item.id}
+                                        className="p-3 bg-oBlack flex-row items-center justify-between border-b border-black-200"
+                                        onPress={() => handleUserSelect(item, onChange)}
+                                        style={styles.box}
+                                    >
+                                        <View className="flex-row items-center gap-2">
+                                            <View>
+                                                <Image 
+                                                    source={{uri: item.profilePictureUrl}}
+                                                    className="size-12 rounded-md border border-black-200 p-1"
+                                                    resizeMode='contain'
+                                                />
+                                            </View>
+                                            <View>
+                                                <Text className="text-white font-psemibold text-base">{item.name}</Text>
+                                                <Text className="text-gray-400 font-plight text-xs">{item.isCloseFiend === false && item.isFriend === false ? "Perdorues" : "Mik"}</Text>
+                                            </View>
+                                        </View>
+                                        <View>
+                                            <Image 
+                                                source={icons.play2}
+                                                className="size-6"
+                                                resizeMode='contain'
+                                                tintColor={"#ff9c01"}
+                                            />
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    ) : value.length >= 3 && (
+                        <Text className="text-white text-sm font-psemibold py-2">Nuk u gjet asnjë përdorues</Text>
+                    ))}
+                    </>
                 )}
             />
-            {showResults && (resultLoading ? (
-                <View className="flex-row items-center gap-1 py-1">
-                    <Text className="text-white text-sm font-psemibold py-2">Duke kërkuar...</Text>
-                    <ActivityIndicator color={"#FF9C01"} size={24} />
-                </View>
-            ) : searchResults.length > 0 ? (
-                <View className="mt-1 bg-gray-800 rounded-lg max-h-40">
-                    <ScrollView className="h-[80px] bg-oBlack border z-50 border-black-200 rounded-md" style={styles.box} scrollEnabled>
-                        {searchResults.map((item) => (
-                            <TouchableOpacity 
-                                key={item.id}
-                                className="p-3 bg-oBlack flex-row items-center justify-between border-b border-black-200"
-                                onPress={() => handleUserSelect(item.username, onChange)}
-                                style={styles.box}
-                            >
-                                <View className="flex-row items-center gap-2">
-                                    <View>
-                                        <Image 
-                                            source={{uri: item.profilePictureUrl}}
-                                            className="size-12 rounded-md border border-black-200 p-1"
-                                            resizeMode='contain'
-                                        />
-                                    </View>
-                                    <View>
-                                        <Text className="text-white font-psemibold text-base">{item.name}</Text>
-                                        <Text className="text-gray-400 font-plight text-xs">{item.isCloseFiend === false && item.isFriend === false ? "Perdorues" : "Mik"}</Text>
-                                    </View>
-                                </View>
-                                <View>
-                                    <Image 
-                                        source={icons.play2}
-                                        className="size-6"
-                                        resizeMode='contain'
-                                        tintColor={"#ff9c01"}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-            ) : searchResults.length === 0 && (
-                <Text className="text-white text-sm font-psemibold py-2">Nuk u gjet asnjë përdorues</Text>
-            ))}
 
             <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni emrin e perdoruesit qe deshironi te raportoni per X arsye. Ne shkrim e siper, perdoruesit qe perputhen me shkrimin tuaj do paraqiten ne dritare.</Text>
             {errors.reportUser && (
