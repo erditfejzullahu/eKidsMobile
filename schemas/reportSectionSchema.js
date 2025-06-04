@@ -6,7 +6,8 @@ export const reportSectionSchema = z.object({
     image: z
       .string()
       .regex(/^data:image\/(png|jpeg|jpg|gif);base64,/, "Formati i imazhit nuk është i vlefshëm")
-      .optional(),
+      .optional()
+      .or(z.literal('')),
     otherTopic: z.string().optional(),
     }).superRefine((data, ctx) => {
     if (data.issueType === 25 && (!data.otherTopic || data.otherTopic.trim() === "")) {

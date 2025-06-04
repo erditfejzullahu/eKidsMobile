@@ -19,8 +19,9 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
         defaultValues: {
             subject: '',
             description: '',
-            topicType: "Ndihme_Navigimi",
-            otherTopic: ''
+            topicType: 1,
+            otherTopic: '',
+            image: ""
         },
         mode: "onTouched"
     })
@@ -121,17 +122,6 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                         {availableTickets.map((item) => (
                             <Picker.Item key={item.id} label={item.ticketTitle} value={item.id} />
                         ))}
-                        {/* <Picker.Item label="Ndihme ngarkimi" value="Ndihme_Ngarkimi" />
-                        <Picker.Item label="Ndihme kuizi" value="Ndihme_Kuizi" />
-                        <Picker.Item label="Ndihme diskutimi" value="Ndihme_Diskutimi" />
-                        <Picker.Item label="Ndihme blogu" value="Ndihme_Blogu" />
-                        <Picker.Item label="Ndihme mesimi online" value="Ndihme_Mesimi_Online" />
-                        <Picker.Item label="Ndihme kursi" value="Ndihme_Kursi" />
-                        <Picker.Item label="Ndihme leksioni" value="Ndihme_Leksioni" />
-                        <Picker.Item label="Ndihme komenti" value="Ndihme_Komenti" />
-                        <Picker.Item label="Ndihme komunikimi" value="Ndihme_Komunikimi" />
-                        <Picker.Item label="Ndihme profili" value="Ndihme_Profili" />
-                        <Picker.Item label="Tjeter" value="tjeter" /> */}
                     </Picker>
                 )}
             />
@@ -181,6 +171,10 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     </>
                 )}
             />
+            <Text className="text-xs text-gray-400 font-plight mt-1">Per vleresim me te mire te raportimit tuaj paraqitni screenshots(SC) te problemit/raportimit.</Text>
+            {errors.image && (
+                <Text className="text-red-500 font-plight text-xs">{errors.image.message}</Text>
+            )}
         </View>
         <View>
             <CustomButton 

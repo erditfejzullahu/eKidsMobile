@@ -5,9 +5,10 @@ export const supportSectionSchema = z.object({
     description: z.string().optional(),
     topicType: z.number().min(6, "Arsyja eshte e domosdoshme"),
     image: z
-        .string()
-        .regex(/^data:image\/(png|jpeg|jpg|gif);base64,/, "Formati i imazhit nuk është i vlefshëm")
-        .optional(),
+      .string()
+      .regex(/^data:image\/(png|jpeg|jpg|gif);base64,/, "Formati i imazhit nuk është i vlefshëm")
+      .optional()
+      .or(z.literal('')),
     otherTopic: z.string().optional(),
     }).superRefine((data, ctx) => {
     if (data.topicType === 12 && (!data.otherTopic || data.otherTopic.trim() === "")) {

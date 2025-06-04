@@ -17,7 +17,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {control, handleSubmit, watch, trigger, reset, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(reportSectionSchema),
         defaultValues: {
-            issueType: "Problem_Aplikacioni",
+            issueType: 13,
             description: "",
             image: "",
             otherTopic: "",
@@ -89,18 +89,6 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     {availableTickets.map((item) => (
                         <Picker.Item label={item.ticketTitle} key={item.id} value={item.id} />
                     ))}
-                    {/* <Picker.Item label="Problem pagese" value="Problem_Pagese" />
-                    <Picker.Item label="Problem donacioni" value="Problem_Donacioni" />
-                    <Picker.Item label="Raportoni instruktorin" value="Raportoni_Instruktorin" />
-                    <Picker.Item label="Raportoni perdoruesin" value="Raportoni_Perdoruesin" />
-                    <Picker.Item label="Problem kursi" value="Problem_Kursi" />
-                    <Picker.Item label="Problem leksioni" value="Problem_Leksioni" />
-                    <Picker.Item label="Problem kuizi" value="Problem_Kuizi" />
-                    <Picker.Item label="Problem filtrimi" value="Problem_Filtrimi" />
-                    <Picker.Item label="Problem renditjeje" value="Problem_Renditjeje" />
-                    <Picker.Item label="Problem mesimi online" value="Problem_Mesimi_Online" />
-                    <Picker.Item label="Problem mbajtja e mesimeve online" value="Problem_Mbajtja_Mesimit_Online" />
-                    <Picker.Item label="Tjeter" value="tjeter" /> */}
                 </Picker>
             )}
         />
