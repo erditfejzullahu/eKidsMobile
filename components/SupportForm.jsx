@@ -11,6 +11,8 @@ import { Picker } from '@react-native-picker/picker'
 import CustomButton from './CustomButton'
 import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
+import { currentUserID } from '../services/authService'
+import { CreateSupportReportTicket } from '../services/fetchingService'
 
 const SupportForm = ({onSuccess, availableTickets = []}) => {
 
@@ -61,12 +63,22 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
         }
     }
 
-    const submitSupport = (data) => {
+    const submitSupport = async (data) => {
         console.log(data);
-
-        setTimeout(() => {
+        const userId = await currentUserID()
+        const payload = {
+            availableTicketId: data.topicType,
+            ticketCreatorUserId: userId,
+            reportedUserId: null,
+            otherMessage: data.otherTopic
+        }
+        const response = await CreateSupportReportTicket(payload);
+        if(response === 200){
+            success()
             onSuccess()
-        }, 1000);
+        }else{
+            error();
+        }
     }
 
   return (

@@ -1155,3 +1155,12 @@ export const GetAvailableTickets = async () => {
         return []
     }
 }
+
+export const CreateSupportReportTicket = async (payload) => {
+    try {
+        const response = await apiClient.post(`/api/Support/CreateReportSupportTicket`, payload)
+        return response && response.status
+    } catch (error) {
+        return error.response.status;
+    }
+}

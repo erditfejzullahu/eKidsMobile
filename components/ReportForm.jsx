@@ -11,6 +11,8 @@ import FormField from './FormField'
 import { TouchableOpacity } from 'react-native'
 import * as ImagePicker from "expo-image-picker"
 import CustomButton from './CustomButton'
+import { currentUserID } from '../services/authService'
+import { CreateSupportReportTicket } from '../services/fetchingService'
 
 const ReportForm = ({onSuccess, availableTickets = []}) => {
     
@@ -38,12 +40,22 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         alertType: "warning"
     })
 
-    const submitReport = (data) => {
+    const submitReport = async (data) => {
         console.log(data)
-
-        setTimeout(() => {
+        const userId = await currentUserID();
+        const payload = {
+            availableTicketId: data.issueType,
+            ticketCreatorUserId: userId,
+            reportedUserId: null,
+            otherMessage: data.otherTopic
+        }
+        const response = await CreateSupportReportTicket(payload);
+        if(response === 200){
+            success()
             onSuccess()
-        }, 1000);
+        }else{
+            error();
+        }
     }
 
     const {showNotification: requestPermission} = NotifierComponent({
