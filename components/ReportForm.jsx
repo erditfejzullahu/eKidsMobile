@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { reportSectionSchema } from '../schemas/reportSectionSchema'
@@ -12,8 +12,8 @@ import { TouchableOpacity } from 'react-native'
 import * as ImagePicker from "expo-image-picker"
 import CustomButton from './CustomButton'
 
-const ReportForm = ({onSuccess}) => {
-
+const ReportForm = ({onSuccess, availableTickets = []}) => {
+    
     const {control, handleSubmit, watch, trigger, reset, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(reportSectionSchema),
         defaultValues: {
@@ -86,8 +86,10 @@ const ReportForm = ({onSuccess}) => {
                     style={pickerSelectStyles}
                     itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
                     >
-                    <Picker.Item label="Problem aplikacioni" value="Problem_Aplikacioni" />
-                    <Picker.Item label="Problem pagese" value="Problem_Pagese" />
+                    {availableTickets.map((item) => (
+                        <Picker.Item label={item.ticketTitle} key={item.id} value={item.id} />
+                    ))}
+                    {/* <Picker.Item label="Problem pagese" value="Problem_Pagese" />
                     <Picker.Item label="Problem donacioni" value="Problem_Donacioni" />
                     <Picker.Item label="Raportoni instruktorin" value="Raportoni_Instruktorin" />
                     <Picker.Item label="Raportoni perdoruesin" value="Raportoni_Perdoruesin" />
@@ -98,7 +100,7 @@ const ReportForm = ({onSuccess}) => {
                     <Picker.Item label="Problem renditjeje" value="Problem_Renditjeje" />
                     <Picker.Item label="Problem mesimi online" value="Problem_Mesimi_Online" />
                     <Picker.Item label="Problem mbajtja e mesimeve online" value="Problem_Mbajtja_Mesimit_Online" />
-                    <Picker.Item label="Tjeter" value="tjeter" />
+                    <Picker.Item label="Tjeter" value="tjeter" /> */}
                 </Picker>
             )}
         />
@@ -107,7 +109,7 @@ const ReportForm = ({onSuccess}) => {
             <Text className="text-red-500 font-plight text-xs">{errors.issueType.message}</Text>
         )}
       </View>
-      {selectedTopic === "tjeter" && (<Animatable.View animation={"fadeInLeft"}>
+      {selectedTopic === 25 && (<Animatable.View animation={"fadeInLeft"}>
             <Controller 
                 control={control}
                 name="otherTopic"
@@ -125,6 +127,12 @@ const ReportForm = ({onSuccess}) => {
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
         </Animatable.View>)}
+
+        {(selectedTopic === String(17) || selectedTopic === String(16)) && (
+            <Controller 
+
+            />
+        )}
         <View>
             <Controller 
                 name="description"

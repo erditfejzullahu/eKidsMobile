@@ -9,25 +9,39 @@ import ReportForm from '../../../components/ReportForm'
 import SupportChatForm from '../../../components/SupportChatForm'
 import { useRoute } from '@react-navigation/native'
 import { useFocusEffect, useNavigation } from 'expo-router'
+import useFetchFunction from "../../../hooks/useFetchFunction"
+import { GetAvailableTickets } from '../../../services/fetchingService'
+import Loading from '../../../components/Loading'
 
 const Support = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const {type} = route.params || {} //accept support, report, chatSupport
     const [refreshKey, setRefreshKey] = useState(0)
+    const {data, isLoading, refetch} = useFetchFunction(() => GetAvailableTickets())
+    const [availableTickets, setAvailableTickets] = useState([])
+    
     const [sectionEnabled, setSectionEnabled] = useState({
         supportSection: true,
         reportSection: false,
         chatSupportSection: false,
     })
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const onRefresh = () => {
+    const onRefresh = async () => {
         setIsRefreshing(true)
         setRefreshKey(prev => prev + 1)
-        setTimeout(() => {
-            setIsRefreshing(false)
-        }, 1000);
+        await refetch();
+        setIsRefreshing(false)
     }
+
+    useEffect(() => {
+        console.log(data);
+        
+        setAvailableTickets(data || [])
+    }, [data])
+    
+    const supportTickets = availableTickets.filter((item) => item.ticketType === 0)
+    const reportTickets = availableTickets.filter((item) => item.ticketType === 1)
 
     useEffect(() => {
         if(type){
@@ -72,7 +86,7 @@ const Support = () => {
     const handleSuccessForm = () => {
         setRefreshKey(prev => prev + 1)
     }
-
+if(isLoading || isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView
     
@@ -118,8 +132,8 @@ const Support = () => {
         </View>
 
         <View className="my-4">
-            {sectionEnabled.supportSection && <SupportForm onSuccess={handleSuccessForm}/>}
-            {sectionEnabled.reportSection && <ReportForm onSuccess={handleSuccessForm}/>}
+            {sectionEnabled.supportSection && <SupportForm availableTickets={supportTickets} onSuccess={handleSuccessForm}/>}
+            {sectionEnabled.reportSection && <ReportForm availableTickets={reportTickets} onSuccess={handleSuccessForm}/>}
             {sectionEnabled.chatSupportSection && <SupportChatForm />}
         </View>
     </KeyboardAwareScrollView>

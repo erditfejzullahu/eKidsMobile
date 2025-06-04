@@ -12,7 +12,7 @@ import CustomButton from './CustomButton'
 import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
 
-const SupportForm = ({onSuccess}) => {
+const SupportForm = ({onSuccess, availableTickets = []}) => {
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(supportSectionSchema),
@@ -118,8 +118,10 @@ const SupportForm = ({onSuccess}) => {
                         style={pickerSelectStyles}
                         itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
                     >
-                        <Picker.Item label="Ndihme navigimi" value="Ndihme_Navigimi" />
-                        <Picker.Item label="Ndihme ngarkimi" value="Ndihme_Ngarkimi" />
+                        {availableTickets.map((item) => (
+                            <Picker.Item key={item.id} label={item.ticketTitle} value={item.id} />
+                        ))}
+                        {/* <Picker.Item label="Ndihme ngarkimi" value="Ndihme_Ngarkimi" />
                         <Picker.Item label="Ndihme kuizi" value="Ndihme_Kuizi" />
                         <Picker.Item label="Ndihme diskutimi" value="Ndihme_Diskutimi" />
                         <Picker.Item label="Ndihme blogu" value="Ndihme_Blogu" />
@@ -129,7 +131,7 @@ const SupportForm = ({onSuccess}) => {
                         <Picker.Item label="Ndihme komenti" value="Ndihme_Komenti" />
                         <Picker.Item label="Ndihme komunikimi" value="Ndihme_Komunikimi" />
                         <Picker.Item label="Ndihme profili" value="Ndihme_Profili" />
-                        <Picker.Item label="Tjeter" value="tjeter" />
+                        <Picker.Item label="Tjeter" value="tjeter" /> */}
                     </Picker>
                 )}
             />
@@ -139,7 +141,7 @@ const SupportForm = ({onSuccess}) => {
             )}
         </View>
 
-        {selectedTopic === "tjeter" && (<Animatable.View animation={"fadeInLeft"}>
+        {selectedTopic === 12 && (<Animatable.View animation={"fadeInLeft"}>
             <Controller 
                 control={control}
                 name="otherTopic"

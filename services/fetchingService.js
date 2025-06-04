@@ -1145,3 +1145,13 @@ export const ForgotPasswordReq = async (payload) => {
         return error.response.status
     }
 }
+
+export const GetAvailableTickets = async () => {
+    try {
+        const response = await apiClient.get(`/api/Support/GetAvailableTickets`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+}

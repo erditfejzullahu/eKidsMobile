@@ -1,7 +1,7 @@
 import {z} from "zod"
 
 export const reportSectionSchema = z.object({
-    issueType: z.string().min(6, "Arsyja eshte e domosdoshme"),
+    issueType: z.number().min(6, "Arsyja eshte e domosdoshme"),
     description: z.string().min(10, "Pershkrimi eshte i domosdoshem"),
     image: z
       .string()
@@ -9,7 +9,7 @@ export const reportSectionSchema = z.object({
       .optional(),
     otherTopic: z.string().optional(),
     }).superRefine((data, ctx) => {
-    if (data.topicType === "tjeter" && (!data.otherTopic || data.otherTopic.trim() === "")) {
+    if (data.issueType === 25 && (!data.otherTopic || data.otherTopic.trim() === "")) {
         ctx.addIssue({
         path: ["otherTopic"],
         code: z.ZodIssueCode.custom,
