@@ -54,11 +54,10 @@ export const registerUserSchema = z.object({
 
 export const loginUserSchema = z.object({
     email: z.string({
-        required_error: "Emaili është i detyrueshëm",
-        invalid_type_error: "Emaili duhet të jetë tekst",
+        required_error: "Emaili/Emri është i detyrueshëm",
+        invalid_type_error: "Emaili/Emri duhet të jetë tekst",
       })
-      .min(1, { message: "Emaili nuk mund të jetë bosh" })
-      .email({ message: "Ju lutem shkruani një email valid" }),
+      .min(1, { message: "Emaili/Emri nuk mund të jetë bosh" }),
     password: z.string({
     required_error: "Fjalëkalimi është i detyrueshëm",
     invalid_type_error: "Fjalëkalimi duhet të jetë tekst",

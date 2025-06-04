@@ -113,15 +113,15 @@ if(isRefreshing) return <Loading />
                 name="email"
                 render={({field: {onChange, value}}) => (
                   <FormField 
-                    title="Emaili i përdoruesit"
+                    title="Emaili/Emri i perdoruesit"
                     value={value}
-                    placeholder="Shkruani emailin e përdoruesit"
+                    placeholder="Shkruani emailin/emrin e përdoruesit"
                     handleChangeText={onChange}
                     keyboardType="email-address"
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Emaili juaj i verifikuar.</Text>
+              <Text className="text-xs text-gray-400 font-plight mt-1">Emaili juaj i verifikuar apo emri i perdoruesit. <Text className="text-secondary">Jo EMRI/MBIEMRI JUAJ!</Text></Text>
               {errors.email && (
                 <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
               )}

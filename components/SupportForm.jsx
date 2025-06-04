@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,6 +10,7 @@ import FormField from './FormField'
 import { Picker } from '@react-native-picker/picker'
 import CustomButton from './CustomButton'
 import * as Animatable from "react-native-animatable"
+import * as ImagePicker from "expo-image-picker"
 
 const SupportForm = ({onSuccess}) => {
 
@@ -38,6 +39,26 @@ const SupportForm = ({onSuccess}) => {
         description: "Dicka shkoi gabim. Ju lutem provoni perseri!",
         alertType: "warning"
     })
+
+    const pickImage = async (onChange) => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if(permission.granted === false){
+            requestPermission();
+            return;
+        }
+        let image = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: 0,
+            aspect: [4,3],
+            allowsEditing: true,
+            base64: true
+        })
+
+        if(!image.canceled){
+            let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
+            onChange(base64)
+        }
+    }
 
     const submitSupport = (data) => {
         console.log(data);
@@ -136,7 +157,29 @@ const SupportForm = ({onSuccess}) => {
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
         </Animatable.View>)}
-        
+        <View>
+            <Controller 
+                control={control}
+                name="image"
+                render={({field: {value, onChange}}) => (
+                    <>
+                        <Text className={`text-base text-gray-100 font-pmedium mb-2`}>Paraqitni imazhin /Opsionale</Text>
+                        <TouchableOpacity className="bg-oBlack border-2 border-black-200 rounded-xl py-3" onPress={() => pickImage(onChange)}>
+                            <Text className="text-white text-center font-psemibold ">{value ? "Ndrysho imazhin" : "Zgjidh imazhin"}</Text>
+                        </TouchableOpacity>
+                        {value ? (
+                            <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>
+                                <Image
+                                    source={{uri: value}}
+                                    className="w-full h-full"
+                                    resizeMode='contain'
+                                />
+                            </View>
+                        ) : null}
+                    </>
+                )}
+            />
+        </View>
         <View>
             <CustomButton 
                 title={`${isSubmitting ? "Duke u derguar" : "Dergoni"}`}
