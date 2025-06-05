@@ -10,6 +10,8 @@ import { reqGetAllUserTypes } from '../services/fetchingService'
 import MessengerSearchInput from './MessengerSearchInput'
 import { StyleSheet } from 'react-native'
 import { Platform } from 'react-native'
+import * as Animatable from "react-native-animatable"
+
 
 const AllUsersFilter = ({userData}) => {    
     const [userTypes, setUserTypes] = useState(1)
@@ -56,7 +58,7 @@ const AllUsersFilter = ({userData}) => {
         )}
         ListHeaderComponent={() => (
             <View className="flex-row rounded-[5px] relative items-center pt-4" style={styles.box}>
-                {!showSearchInput && <><View className={`flex-1 rounded-tl-md rounded-bl-md items-center border border-black-200 ${userTypes === 1 ? "bg-oBlack" : ""}`}>
+                {!showSearchInput && <Animatable.View className="flex-row flex-1 items-center" animation={"fadeInLeft"} easing={"ease-in-out"} duration={500}><View className={`flex-1 rounded-tl-md rounded-bl-md items-center border border-black-200 ${userTypes === 1 ? "bg-oBlack" : ""}`}>
                 <TouchableOpacity onPress={() => setUserTypes(1)} className="p-2 flex-row items-center gap-1">
                     <Text className="font-plight text-white text-sm">Te gjithe</Text>
                     <Image 
@@ -89,13 +91,15 @@ const AllUsersFilter = ({userData}) => {
                         style={{tintColor: userTypes === 3 ? "#ff9c01" : "#fff"}}
                     />
                 </TouchableOpacity>
-                </View></>}
+                </View></Animatable.View>}
                 {showSearchInput && (
                     <MessengerSearchInput sendText={(data) => setSearchParam(data)}/>
                 )}
                 <View className="ml-2">
                     <TouchableOpacity onPress={() => setShowSearchInput(!showSearchInput)} className="bg-secondary rounded-full border border-white p-2">
-                        <Image
+                        <Animatable.Image
+                            animation={"fadeIn"}
+                            duration={500}
                             source={showSearchInput ? icons.close : icons.search}
                             tintColor={"#fff"}
                             className="size-4"

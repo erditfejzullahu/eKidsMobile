@@ -1,11 +1,12 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { Platform } from 'react-native'
+import * as Animatable from "react-native-animatable"
 
 const MessengerSearchInput = ({sendText}) => {
     const [searchText, setSearchText] = useState("")
   return (
-    <View className="flex-1 border-black-200 rounded-md bg-oBlack p-1 border">
+    <Animatable.View animation={"fadeInLeft"} easing={"ease-in-out"} duration={500} className="flex-1 border-black-200 rounded-md bg-oBlack p-1 border">
       <TextInput 
         value={searchText}
         onChangeText={(e) => setSearchText(e)}
@@ -13,7 +14,7 @@ const MessengerSearchInput = ({sendText}) => {
         placeholder='Kerkoni perdorues...'
         className="p-2 pt-1.5 pb-1 font-plight text-white placeholder:text-gray-400 text-sm underline rounded-md border-black-200"
       />
-    </View>
+    </Animatable.View>
   )
 }
 
