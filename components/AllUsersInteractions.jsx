@@ -57,7 +57,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
   return (
     <TouchableWithoutFeedback onPress={() => setShowOptions(!showOptions)}>
         <TouchableOpacity onLongPress={() => setShowOptions(!showOptions)} delayLongPress={300}
-            onPress={() => navigateToMessenger(router, usersData, currentUserData)}>
+            onPress={() => {setShowOptions(false); navigateToMessenger(router, usersData, currentUserData)}}>
             <Animatable.View 
             iterationCount="infinite"
             duration={1500}

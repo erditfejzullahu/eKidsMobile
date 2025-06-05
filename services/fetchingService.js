@@ -533,7 +533,7 @@ export const reqMakeNotificationsRead = async () => {
     }
 }
 
-export const reqGetAllUserTypes = async (userId, types, filters) => {
+export const reqGetAllUserTypes = async (userId, types, searchParam) => {
     try {
         // const queryParams = {}
         // Object.keys(filters).forEach((key) => {

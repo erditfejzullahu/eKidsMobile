@@ -82,12 +82,10 @@ const MyQuizzes = () => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-        console.log("loadmore");
     }
 
     useEffect(() => {
       if(data){
-        console.log(data);
         if(filterData.pageNumber > 1){
             setYourQuizzesData(prev => ({
                 ...prev, 
