@@ -64,7 +64,6 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
     }
 
     const submitSupport = async (data) => {
-        console.log(data);
         const userId = await currentUserID()
         const payload = {
             availableTicketId: data.topicType,

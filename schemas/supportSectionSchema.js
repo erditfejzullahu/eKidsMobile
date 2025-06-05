@@ -3,7 +3,7 @@ import {z} from 'zod'
 export const supportSectionSchema = z.object({
     subject: z.string().min(6, "Subjekti eshte i domosdoshem"),
     description: z.string().optional(),
-    topicType: z.number().min(6, "Arsyja eshte e domosdoshme"),
+    topicType: z.number().min(1, "Arsyja eshte e domosdoshme"),
     image: z
       .string()
       .regex(/^data:image\/(png|jpeg|jpg|gif);base64,/, "Formati i imazhit nuk është i vlefshëm")

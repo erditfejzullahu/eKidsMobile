@@ -1,7 +1,7 @@
 import {z} from "zod"
 
 export const reportSectionSchema = z.object({
-    issueType: z.number().min(6, "Arsyja eshte e domosdoshme"),
+    issueType: z.number().min(1, "Arsyja eshte e domosdoshme"),
     description: z.string().min(10, "Pershkrimi eshte i domosdoshem"),
     image: z
       .string()
@@ -17,7 +17,7 @@ export const reportSectionSchema = z.object({
         code: z.ZodIssueCode.custom,
         message: "Ju lutem shpjegoni temën tjetër",
         });
-    } else if(data.issueType === 17 || data.issueType === 16){
+    } else if((data.issueType === 17 || data.issueType === 16) && (!data.reportUser || data.reportUser.trim() === "") && (!data.otherTopic || data.otherTopic.trim() === "")){
       ctx.addIssue({
         path: ["reportUser"],
         code: z.ZodIssueCode.custom,

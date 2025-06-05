@@ -83,6 +83,10 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     })
 
     const submitReport = async (data) => {
+        if(userReportedId === null){
+            UserIdNotSaved()
+            return;
+        }
         console.log(data)
         const userId = await currentUserID();
         const payload = {
@@ -104,6 +108,12 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {showNotification: requestPermission} = NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Na nevojitet akses ne librarine e fotove tuaja.",
+        alertType: "warning"
+    })
+
+    const {showNotification: UserIdNotSaved} = NotifierComponent({
+        tite: "Dicka shkoi gabim!",
+        description: "Klikoni personin qe deshironi te raportoni!",
         alertType: "warning"
     })
 
