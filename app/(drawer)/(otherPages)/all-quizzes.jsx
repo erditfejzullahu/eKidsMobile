@@ -15,6 +15,7 @@ import ShareToFriends from '../../../components/ShareToFriends'
 import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
 import { ActivityIndicator } from 'react-native'
 import QuizzesCategoriesFilter from '../../../components/QuizzesCategoriesFilter'
+import SearchInput from '../../../components/SearchInput'
 
 const AllQuizzes = () => {
   const {user, isLoading} = useGlobalContext();
@@ -24,7 +25,8 @@ const AllQuizzes = () => {
   const [quizesData, setQuizesData] = useState(null)
   const [filterData, setFilterData] = useState({
     ...initialFilterData,
-    userId: user?.data?.userData?.id
+    userId: user?.data?.userData?.id,
+    searchParam: ""
   })
   const [singleQuizData, setSingleQuizData] = useState(null)
 
@@ -116,6 +118,7 @@ const AllQuizzes = () => {
       sortByViews: '',
       sortViewOrder: '',
       categoryId: '',
+      searchParam: ""
     }))
     setIsRefreshing(false)
   }
@@ -155,7 +158,13 @@ const AllQuizzes = () => {
             </View>
           </Text>
         </View>
-
+        <View className="my-2">
+          <SearchInput
+            placeholder={"Kerkoni kuize..."}
+            searchFunc={(e) => {setLoadedFirst(false); setFilterData((prev) => ({...prev, searchParam: e}))}}
+            valueData={filterData.searchParam}
+          />
+        </View>
         <QuizzesCategoriesFilter filterQuizzes={filterQuizes} sortQuizzes={sortQuizes} userCategories={userCategories}/>
         </>
       )}

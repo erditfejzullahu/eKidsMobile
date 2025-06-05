@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router'
 import ShareToFriends from '../../../components/ShareToFriends'
 import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
 import QuizzesCategoriesFilter from '../../../components/QuizzesCategoriesFilter'
+import SearchInput from '../../../components/SearchInput'
 
 const MyQuizzes = () => {
     const {user, isLoading} = useGlobalContext();
@@ -24,7 +25,8 @@ const MyQuizzes = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [filterData, setFilterData] = useState({
         ...initialFilterData,
-        userId: user?.data?.userData?.id
+        userId: user?.data?.userData?.id,
+        searchParam: ""
     })
     const [loadedFirst, setLoadedFirst] = useState(false)
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -59,6 +61,7 @@ const MyQuizzes = () => {
             sortByViews: '',
             sortViewOrder: '',
             categoryId: '',
+            searchParam: ""
         }))
         setIsRefreshing(false)
     }
@@ -145,8 +148,15 @@ const MyQuizzes = () => {
                                 </View>
                             </Text>
                         </View>
-
+                        <View className="my-2">
+                            <SearchInput
+                                placeholder={"Kerkoni kuizet tuaja..."}
+                                searchFunc={(e) => {setLoadedFirst(false); setFilterData((prev) => ({...prev, searchParam: e}))}}
+                                valueData={filterData.searchParam}
+                            />
+                        </View>
                         <QuizzesCategoriesFilter sortQuizzes={sortQuizzes} filterQuizzes={filterQuizzes} userCategories={userCategories}/>
+                        
                         </>
                     )}
                     ListEmptyComponent={() => (
