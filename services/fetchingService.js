@@ -533,7 +533,7 @@ export const reqMakeNotificationsRead = async () => {
     }
 }
 
-export const reqGetAllUserTypes = async (userId, types, searchParam) => {
+export const reqGetAllUserTypes = async (userId, types, searchParam = "") => {
     try {
         // const queryParams = {}
         // Object.keys(filters).forEach((key) => {
@@ -542,7 +542,7 @@ export const reqGetAllUserTypes = async (userId, types, searchParam) => {
         //     }
         // })
         // const queryString = new URLSearchParams(queryParams).toString();    
-        const response = await apiClient.get(`/api/UserFriends/GetAllByUser/${userId}?types=${types}`)   //types; 1 for all, 2 for friends, 3 for closefriends
+        const response = await apiClient.get(`/api/UserFriends/GetAllByUser/${userId}?types=${types}&searchParam=${searchParam}`)   //types; 1 for all, 2 for friends, 3 for closefriends
         return response ? response.data : null
     } catch (error) {
         // console.error(error, 'usertypes');

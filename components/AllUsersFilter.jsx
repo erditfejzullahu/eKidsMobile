@@ -15,7 +15,7 @@ import * as Animatable from "react-native-animatable"
 
 const AllUsersFilter = ({userData}) => {    
     const [userTypes, setUserTypes] = useState(1)
-    const {data, isLoading, refetch} = useFetchFunction(() => reqGetAllUserTypes(userData?.id, userTypes))
+    const {data, isLoading, refetch} = useFetchFunction(() => reqGetAllUserTypes(userData?.id, userTypes, searchParam))
     const [usersData, setUsersData] = useState([])
 
     const [showSearchInput, setShowSearchInput] = useState(false)

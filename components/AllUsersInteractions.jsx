@@ -20,38 +20,68 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
     const returnLastMessage = () => {
 
-        if(usersData?.lastMessage?.message === null){
+        if(usersData?.lastMessage === null){
             return "Nuk ka bisede aktuale. Fillo biseden tani!"
         }
 
-        if(usersData?.lastMessage?.message?.content !== null){
-            return usersData?.lastMessage?.message?.content
-        }else if(usersData?.lastMessage?.message?.content === null){
-            if(usersData?.lastMessage?.message?.blogId !== null){
-                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+        if(usersData?.lastMessage?.content !== null){
+            return usersData?.lastMessage?.content
+        }else if(usersData?.lastMessage?.content === null){
+            if(usersData?.lastMessage?.blogId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
                     return "Ti e ke derguar nje Blog. Vazhdo biseden tani!"
                 }else{
-                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Blog. Vazhdo biseden tani!`
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Blog. Vazhdo biseden tani!`
                 }
-            } else if(usersData?.lastMessage?.message?.courseId !== null){
-                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+            } else if(usersData?.lastMessage?.courseId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
                     return "Ti e ke derguar nje Kurs. Vazhdo biseden tani!"
                 }else{
-                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Kurs. Vazhdo biseden tani!`
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Kurs. Vazhdo biseden tani!`
                 }
-            } else if(usersData?.lastMessage?.message?.lessonId !== null){
-                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+            } else if(usersData?.lastMessage?.lessonId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
                     return "Ti e ke derguar nje Leksion. Vazhdo biseden tani!"
                 }else{
-                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Leksion. Vazhdo biseden tani!`
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Leksion. Vazhdo biseden tani!`
                 }
-            } else if(usersData?.lastMessage?.message?.quizId !== null){
-                if(usersData?.lastMessage?.message?.senderUsername === currentUserData?.username){
+            } else if(usersData?.lastMessage?.quizId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
                     return "Ti e ke derguar nje Kuiz. Vazhdo biseden tani!"
                 }else{
-                    return `${usersData?.lastMessage?.message?.senderUsername} te ka derguar nje Kuiz. Vazhdo biseden tani!`
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Kuiz. Vazhdo biseden tani!`
                 }
-            } 
+            } else if(usersData?.lastMessage?.discussionId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Diskutim. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Diskutim. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.instructorCourseId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Kurs Instruktori. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Kurs Instruktori. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.instructorId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Instruktor. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Instruktor. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.instructorLessonId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Leksion Instruktori. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Leksion Instruktori. Vazhdo biseden tani!`
+                }
+            } else if(usersData?.lastMessage?.onlineMeetingId !== null){
+                if(usersData?.lastMessage?.senderUsername === currentUserData?.username){
+                    return "Ti e ke derguar nje Takim Online. Vazhdo biseden tani!"
+                }else{
+                    return `${usersData?.lastMessage?.senderUsername} te ka derguar nje Takim Online. Vazhdo biseden tani!`
+                }
+            }
         }
     }
   return (
