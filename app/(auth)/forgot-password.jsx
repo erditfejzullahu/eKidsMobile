@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, Image, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, SafeAreaView, Image, ScrollView, RefreshControl, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-        <KeyboardAwareScrollView refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />} className="h-full px-4" contentContainerStyle={{flexGrow: 1, justifyContent: "space-between", alignItems: "center"}}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" extraScrollHeight={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />} className="h-full px-4" contentContainerStyle={{flexGrow: 1, justifyContent: "space-between", alignItems: "center"}}>
             <View className="w-full flex-1 justify-center">
                 <View>
                     <Image 
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
                     />
                 </View>
             </View>
-            <View className="w-full justify-end">
+            <View className="w-full justify-end border-t border-black-200 pt-3">
                 <Text className="text-white font-psemibold text-sm">Realizuar nga <Text className="text-secondary">Murrizi Co.</Text></Text>
             </View>
         </KeyboardAwareScrollView>

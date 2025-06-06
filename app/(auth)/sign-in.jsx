@@ -92,7 +92,6 @@ const SignIn = () => {
 if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">
-      <ScrollView>
       <KeyboardAwareScrollView style={styles.container}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -164,7 +163,6 @@ if(isRefreshing) return <Loading />
 
         </View>
           </KeyboardAwareScrollView>
-      </ScrollView>
     </SafeAreaView>
   )
 }

@@ -43,7 +43,7 @@ const AllMessages = () => {
                   />
                 </View>
               </Text>
-              {hideHeader === false && <Text className="text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve apo kuizeve ne pergjithesi!</Text>}
+              {hideHeader === false && <Text className="text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve, kuizeve, leksioneve, mesimit online apo edhe disutimeve ne pergjithesi!</Text>}
             </View>
             <View className="relative w-full mb-4">
               {hideHeader === false && <View className="border border-black-200 rounded-[10px] p-2">
