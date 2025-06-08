@@ -58,12 +58,6 @@ const AllQuizzes = () => {
   }
 
   const {setShareOpened, shareOpened} = useTopbarUpdater();
-  const handleLongPressShare = (quizData) => {
-    console.log(quizData, ' data');
-    
-    setSingleQuizData(quizData?.id)
-    setShareOpened(true);
-  }
 
   const loadMore = () => {
     if(!quizesData.hasMore || isLoadingMore) return;
@@ -142,7 +136,6 @@ const AllQuizzes = () => {
           quizData={item}
           user={user}
           allQuizzes={true}
-          longPressShare={handleLongPressShare}
         />
       )}
       ListHeaderComponent={() => (
@@ -203,12 +196,6 @@ const AllQuizzes = () => {
         </View>
         </>
       )}
-    />
-
-    <ShareToFriends 
-      currentUserData={user?.data?.userData}
-      shareType="quiz"
-      passedItemId={singleQuizData}
     />
 
     {/* modali */}

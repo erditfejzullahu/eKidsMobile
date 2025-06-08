@@ -11,8 +11,8 @@ import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import ShareToFriends from './ShareToFriends';
 
 
-const SingleQuizComponent = ({quizData, allQuizzes = false, longPressShare, user, refetchCall}) => {
-  
+const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) => {
+      
     const userCategories = user?.data?.categories;
     const userData = user?.data?.userData;
     const router = useRouter();
@@ -106,7 +106,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, longPressShare, user
   return (
     <>
     <View className="mt-4 mb-4" style={styles.box}>
-      <TouchableOpacity onLongPress={allQuizzes ? () => longPressShare(quizData) : {}} delayLongPress={300} onPress={allQuizzes ? handleQuizStart : () => setModalVisible(true)}>
+      <TouchableOpacity onLongPress={allQuizzes ? () => setShareOpened(true) : undefined} delayLongPress={300} onPress={allQuizzes ? handleQuizStart : () => setModalVisible(true)}>
         <View className="border border-black-200 bg-oBlack p-4 relative">
             <Text className="text-white font-psemibold text-lg">{quizData?.quizName}</Text>
             <Text className="text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>
@@ -145,6 +145,12 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, longPressShare, user
         </TouchableOpacity>
       </View>
       
+      <ShareToFriends
+        currentUserData={user?.data?.userData}
+        shareType="quiz"
+        passedItemId={quizData?.id}
+      />
+
       {!allQuizzes && (
         <>
         <CustomModal 
@@ -198,11 +204,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, longPressShare, user
         </CustomModal>
 
 
-        <ShareToFriends
-            currentUserData={user?.data?.userData}
-            shareType="quiz"
-            passedItemId={quizData?.id}
-        />
+        
 
         <CustomModal
             visible={deleteModalVisible}

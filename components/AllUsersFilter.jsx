@@ -24,6 +24,7 @@ const AllUsersFilter = ({userData}) => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const onRefresh = async () => {
         setIsRefreshing(true)
+        setSearchParam("")
         await refetch();
         setIsRefreshing(false)
     }
