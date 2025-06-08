@@ -410,7 +410,7 @@ export const getAllUsers = async () => {
 export const fetchAllComments = async (sender, receiver, filters) => {
     try {
         const queryParams = {}
-        if(filters.page) queryParams.page = filters.page;
+        if(filters.pageNumber) queryParams.pageNumber = filters.pageNumber;
         if(filters.pageSize) queryParams.pageSize = filters.pageSize;
 
         const queryString = new URLSearchParams(queryParams).toString();

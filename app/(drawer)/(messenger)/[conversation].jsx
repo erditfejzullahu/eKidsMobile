@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, TextInput, RefreshControl, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity, TextInput, RefreshControl, StyleSheet, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { Image } from 'react-native';
@@ -22,25 +22,20 @@ import * as FileSystem from 'expo-file-system';
 const Conversation = () => {
     const router = useRouter();
     const conversation = useLocalSearchParams();
-    const {data, isLoading: commentsLoading, refetch} = useFetchFunction(() => fetchAllComments(conversation?.currentUserUsername, conversation?.receiverUsername, messagePagination))
-    const [messagePagination, setMessagePagination] = useState({
-        page: 1,
-        pageSize: 15
-    })
-    const [fixPagination, setFixPagination] = useState({
-        page: 0,
-        pageSize: 15
-    })
-    const [isRefreshing, setIsRefreshing] = useState(false)
+    const [paginationState, setPaginationState] = useState({pageNumber: 1, pageSize: 15})
+    const {data, isLoading: commentsLoading, refetch} = useFetchFunction(() => fetchAllComments(conversation?.currentUserUsername, conversation?.receiverUsername, paginationState))
     const {user, isLoading} = useGlobalContext();
 
     const [openMoreDetails, setOpenMoreDetails] = useState(false) //duhet me kry
 
     const [connection, setConnection] = useState(null)
     const [receiver, setReceiver] = useState('')
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState({messages: [], hasMore: false})
     const [messageSent, setMessageSent] = useState('')
     const [textInputFocused, setTextInputFocused] = useState(false)
+
+    const [loadedFirst, setLoadedFirst] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
 
     const messageVal = useRef(null)
 
@@ -110,12 +105,6 @@ const Conversation = () => {
         })
     }
 
-    const onRefresh = () => {
-        setIsRefreshing(true)
-        
-        setIsRefreshing(false)
-    }
-
     const updateReadMessages = async () => {
         const response = await reqReadMessages(conversation?.currentUserUsername, conversation?.receiverUsername)
         if(response === 200){
@@ -124,6 +113,16 @@ const Conversation = () => {
             console.log("Error reading messages");
         }
     }
+
+    useEffect(() => {
+      if(messages){
+        console.log("po hin?????")
+        setLoadedFirst(true)
+      }else{
+        console.log("spo hin???")
+      }
+    }, [messages])
+    
     
     
     useEffect(() => {
@@ -133,14 +132,23 @@ const Conversation = () => {
     }, [conversation?.conversation])
 
     useEffect(() => {
+        console.log(data, " conversation");
       if(data){
-        setMessages(data)      
-        console.log(data);
+        if(paginationState.pageNumber > 1){
+            setMessages((prev) => ({
+                ...prev,
+                messages: [...prev.messages, ...data.messages],
+                hasMore: data.hasMore
+            }))
+        }else{
+            setMessages(data)      
+        }
+        setIsLoadingMore(false)
         updateReadMessages()
+      }else{
+        setIsLoadingMore(false)
+        setMessages(null)
       }
-    //   else{
-    //     setMessages(null)
-    //   }
     }, [data])
 
     //connectioni me hub dhe shtimi i mesazheve
@@ -197,30 +205,32 @@ const Conversation = () => {
 
             newConnection.on('ReceiveMessage', (messageData) => {
                 
-                setMessages((prevMessages) => [
-                    {
-                        content: messageData.content,
-                        createdAt: messageData.createdAt,
-                        id: messageData.id,
-                        isRead: messageData.isRead,
-                        fileUrl: messageData.fileUrl,
-                        receiver:{
-                            firstname: messageData.receiver.firstname,
-                            lastname: messageData.receiver.lastname,
-                            profilePictureUrl: messageData.receiver.profilePictureUrl,
-                            username: messageData.receiver.username
+                setMessages((prevMessages) => ({
+                    messages: [
+                        {
+                            content: messageData.content,
+                            createdAt: messageData.createdAt,
+                            id: messageData.id,
+                            isRead: messageData.isRead,
+                            fileUrl: messageData.fileUrl,
+                            receiver:{
+                                firstname: messageData.receiver.firstname,
+                                lastname: messageData.receiver.lastname,
+                                profilePictureUrl: messageData.receiver.profilePictureUrl,
+                                username: messageData.receiver.username
+                            },
+                            receiverUsername: messageData.receiverUsername,
+                            sender:{
+                                firstname: messageData.sender.firstname,
+                                lastname: messageData.sender.lastname,
+                                profilePictureUrl: messageData.sender.profilePictureUrl,
+                                username: messageData.sender.username
+                            },
+                            senderUsername: messageData.senderUsername
                         },
-                        receiverUsername: messageData.receiverUsername,
-                        sender:{
-                            firstname: messageData.sender.firstname,
-                            lastname: messageData.sender.lastname,
-                            profilePictureUrl: messageData.sender.profilePictureUrl,
-                            username: messageData.sender.username
-                        },
-                        senderUsername: messageData.senderUsername
-                    },
-                    ...prevMessages
-                ])
+                        ...prevMessages?.messages,
+                    ]
+                }))
             })
 
             newConnection.on('MessageSent', (messageData) => {
@@ -230,30 +240,32 @@ const Conversation = () => {
                 // console.log(receiver, message, fileUrl ? fileUrl : ", ", createdAt);
                 console.log('message sent !!');
                 
-                setMessages((prevMessages) => [
-                    {
-                        content: messageData.content,
-                        createdAt: messageData.createdAt,
-                        id: messageData.id,
-                        isRead: messageData.isRead,
-                        fileUrl: messageData.fileUrl,
-                        receiver:{
-                            firstname: messageData.receiver.firstname,
-                            lastname: messageData.receiver.lastname,
-                            profilePictureUrl: messageData.receiver.profilePictureUrl,
-                            username: messageData.receiver.username
+                setMessages((prevMessages) => ({
+                    messages: [
+                        {
+                            content: messageData.content,
+                            createdAt: messageData.createdAt,
+                            id: messageData.id,
+                            isRead: messageData.isRead,
+                            fileUrl: messageData.fileUrl,
+                            receiver:{
+                                firstname: messageData.receiver.firstname,
+                                lastname: messageData.receiver.lastname,
+                                profilePictureUrl: messageData.receiver.profilePictureUrl,
+                                username: messageData.receiver.username
+                            },
+                            receiverUsername: messageData.receiverUsername,
+                            sender:{
+                                firstname: messageData.sender.firstname,
+                                lastname: messageData.sender.lastname,
+                                profilePictureUrl: messageData.sender.profilePictureUrl,
+                                username: messageData.sender.username
+                            },
+                            senderUsername: messageData.senderUsername
                         },
-                        receiverUsername: messageData.receiverUsername,
-                        sender:{
-                            firstname: messageData.sender.firstname,
-                            lastname: messageData.sender.lastname,
-                            profilePictureUrl: messageData.sender.profilePictureUrl,
-                            username: messageData.sender.username
-                        },
-                        senderUsername: messageData.senderUsername
-                    },
-                    ...prevMessages,
-                ])
+                        ...prevMessages?.messages,
+                    ]
+                }))
             })
 
             newConnection.onclose(async (error) => {
@@ -328,50 +340,24 @@ const Conversation = () => {
     }
 
     
-
-
     //shtim i meszheve tvjetra
     const onEndReached = () => {
-        setFixPagination((prevPag) => ({
-            ...prevPag,
-            page: prevPag.page += 1,
+        if(!messages?.hasMore || isLoadingMore) return;
+        setIsLoadingMore(true)
+        setPaginationState((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
         }))
-
-        console.log('po thirret PA KON FUNDI CHECK THREESHOLD TE FLATLIST NASHTA?');
-        
     }
-    
-    const addOlderData = async () => {
 
-        //FIX PO I KTHEN MESSAGES NULL
-
-        try {
-            const response = await apiClient.get(`/api/Conversations/${conversation?.currentUserUsername}/${conversation?.receiverUsername}?page=${fixPagination.page}&pageSize=${fixPagination.pageSize}`)
-            if(response.data){
-                console.log(response.data, ' addOlderData');
-                
-                if(messages){
-                    setMessages((prevMessages) => [...prevMessages, ...response.data])
-                }else{
-                    console.log('no messages ?');
-                }
-            }
-        } catch (error) {
-            console.error(error, ' qitu?');
-        }
-    }
-    
     useEffect(() => {
-        if(fixPagination.page > 1){
-            addOlderData();
-        }
-    }, [fixPagination])
-    //shtim i meszheve tvjetra
+      refetch()
+    }, [paginationState])
     
 
     const flatListRef = useRef(null) // implementim per me shku ne fund te meszhev me naj ikon posht a najsen
 
-    if(isLoading || isRefreshing) {
+    if((isLoading || commentsLoading) && !loadedFirst) {
         return(
             <Loading />
         )
@@ -450,17 +436,15 @@ const Conversation = () => {
                     </View>
                 </View>
                 <View className="flex-1">
-                    {commentsLoading 
-                        ? <Loading /> : 
                     <FlatList
                         // refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
                         // className="flex-1"
                         extraScrollHeight={15}
                         ref={flatListRef}
                         onEndReached={onEndReached}
-                        onEndReachedThreshold={0}
+                        onEndReachedThreshold={0.1}
                         inverted //per me shku bot
-                        data={messages} //per me reverse .reverse()
+                        data={messages?.messages} //per me reverse .reverse()
                         keyExtractor={(item) => 'chat-' + item?.id}
                         renderItem={({item}) => (
                             <SenderReceiverChat
@@ -469,8 +453,28 @@ const Conversation = () => {
                                 conversationUserData={conversation}
                             />
                         )}
+                        ListFooterComponent={() => (
+                            (messages?.messages?.length > 0 && (
+                                (messages.hasMore && isLoadingMore ? (
+                                    <View className="px-4 justify-center py-2 flex-row items-center gap-2">
+                                        <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                                        <ActivityIndicator color={"#FF9C01"} size={24} />
+                                    </View>
+                                ) : (
+                                    <View className="px-4 justify-center py-2 flex-row items-center gap-2">
+                                        <Text className="text-white font-psemibold text-sm">Nuk ka me mesazhe...</Text>
+                                        <Image
+                                            source={images.breakHeart}
+                                            className="size-5"
+                                            tintColor={"#FF9C01"}
+                                            resizeMode='contain'
+                                        />
+                                    </View>
+                                ))
+                            ))
+                        )}
                         contentContainerStyle={{ flexGrow: 1, gap: 14, paddingTop: 12, paddingBottom: 16, justifyContent: 'flex-end'  }} //flexDirection: 'column-reverse' per me shku bot 
-                    />}
+                    />
                 </View>
                 <View className={`relative ${textInputFocused ? "mb-24" : ""}`}>
 
