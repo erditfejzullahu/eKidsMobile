@@ -11,50 +11,39 @@ const TopbarUpdaterProvider = ({children}) => {
     const [showQuizOrCourseSharer, setShowQuizOrCourseSharer] = useState(false)
     const [shareOpened, setShareOpened] = useState(false)
     const [showDiscussionSearcher, setShowDiscussionSearcher] = useState(false)
+    const [showInstructorCourseSharer, setShowInstructorCourseSharer] = useState(false)
+    const [showInstructorSharer, setShowInstructorSharer] = useState(false)
+    const [showOnlineMeetingSharer, setShowOnlineMeetingSharer] = useState(false)
 
     const [discussionSection, setDiscussionSection] = useState(false)
 
     const pathname = usePathname();
     
     useEffect(() => {
+        setDiscussionSection(pathname.includes("discussions"));
 
-        if(pathname.includes("discussions")){
-            setDiscussionSection(true)
-        }else{
-            setDiscussionSection(false)
+        const pathCheck = {
+            messages: pathname === "/all-messages",
+            blog: pathname.includes("/blogAll"),
+            quizOrCourse: pathname.includes('/quiz') || pathname.includes("/course"),
+            discussion: pathname.includes('discussion'),
+            instructorCourse: pathname.includes('/onlineClass/'),
+            instructor: pathname.includes('/tutor/'),
+            onlineMeeting: pathname.includes('/meetings/')
         }
 
-        if(pathname === '/all-messages'){
-            setShowSearcher(true)
-            setShowBlogSearcher(false)
-            setShowQuizOrCourseSharer(false)
-            setShowDiscussionSearcher(false)
-        }else if(pathname.includes("/blogAll")){
-            setShowSearcher(false);
-            setShowBlogSearcher(true)
-            setShowQuizOrCourseSharer(false)
-            setShowDiscussionSearcher(false)
-        }else if(pathname.includes("/quiz") || pathname.includes("/course")){
-            setShowSearcher(false)
-            setShowBlogSearcher(false)
-            setShowQuizOrCourseSharer(true)
-            setShowDiscussionSearcher(false)
-        }else if(pathname.includes("discussion")){
-            setShowDiscussionSearcher(true)
-            setShowSearcher(false)
-            setShowBlogSearcher(false)
-            setShowQuizOrCourseSharer(false)
-        }else{
-            setShowSearcher(false)
-            setShowBlogSearcher(false)
-            setShowQuizOrCourseSharer(false)
-            setShowDiscussionSearcher(false)
-        }
+        setShowSearcher(pathCheck.messages)
+        setShowBlogSearcher(pathCheck.blog)
+        setShowQuizOrCourseSharer(pathCheck.quizOrCourse)
+        setShowInstructorCourseSharer(pathCheck.instructorCourse)
+        setShowDiscussionSearcher(pathCheck.discussion)
+        setShowInstructorSharer(pathCheck.instructor)
+        setShowOnlineMeetingSharer(pathCheck.onlineMeeting)
             
     }, [pathname])
     
     return(
-        <TopbarUpdaterContext.Provider value={{discussionSection, showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened}} >
+        <TopbarUpdaterContext.Provider value={{discussionSection, showInstructorCourseSharer, showInstructorSharer, showOnlineMeetingSharer, showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened}} >
             {children}
         </TopbarUpdaterContext.Provider>
     )

@@ -16,6 +16,7 @@ import * as Linking from "expo-linking"
 import FullscreenWebViewModal from '../../../../components/FullscreenWebViewModal'
 import { useRouter } from 'expo-router'
 import { useNavigateToSupport } from '../../../../hooks/goToSupportType'
+import ShareToFriends from '../../../../components/ShareToFriends'
 
 const Meetings = () => {
   const {id} = useLocalSearchParams();
@@ -197,7 +198,7 @@ const Meetings = () => {
   }, [data])
   
 
-  if(isLoading || isRefreshing) return <Loading />
+  if(isLoading || isRefreshing || userLoading) return <Loading />
   return (
     <>
     <ScrollView 
@@ -297,7 +298,11 @@ const Meetings = () => {
         </Animatable.View>}
       </View>
     </ScrollView>
-
+    <ShareToFriends 
+      currentUserData={user?.data?.userData}
+      passedItemId={id}
+      shareType={"onlineMeeting"}
+    />
     <FullscreenWebViewModal visible={showMeetingModal} onClose={() => setShowMeetingModal(false)} url={`https://2xd0xqpd-3000.euw.devtunnels.ms/room/${meetingData?.meetingUrl}`}/>
     </>
   )

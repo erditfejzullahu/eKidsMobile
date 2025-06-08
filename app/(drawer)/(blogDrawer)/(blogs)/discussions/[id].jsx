@@ -19,6 +19,9 @@ import EmptyState from "../../../../../components/EmptyState"
 import NotifierComponent from '../../../../../components/NotifierComponent';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import CreateDiscussionAnswer from '../../../../../components/CreateDiscussionAnswer';
+import { useTopbarUpdater } from '../../../../../navigation/TopbarUpdater';
+import ShareToFriends from '../../../../../components/ShareToFriends';
+import { useGlobalContext } from '../../../../../context/GlobalProvider';
 const discussionComments = [
   {
     id: 1,
@@ -95,6 +98,8 @@ const discussion = () => {
     const {id} = useLocalSearchParams();
     const {data, isLoading, refetch} = useFetchFunction(() => getDiscussionById(id))
     const {data: answersData, isLoading: answersLoading, refetch: answersRefetch} = useFetchFunction(() => getDiscussionsAnswers(id))
+    const {setShareOpened} = useTopbarUpdater()
+    const {user, isLoading: userLoading} = useGlobalContext()
     const [discussionData, setDiscussionData] = useState(null)
     const [discussionAnswerData, setDiscussionAnswerData] = useState([]);
     const [discussionRefreshing, setDiscussionRefreshing] = useState(false);
@@ -155,7 +160,7 @@ const discussion = () => {
 
     let flatListRef;
     
-    if(isLoading || discussionRefreshing || answersLoading) return <Loading />
+    if(isLoading || discussionRefreshing || answersLoading || userLoading) return <Loading />
     
   return (
     <View className="flex-1 h-full bg-primary">
@@ -245,7 +250,7 @@ const discussion = () => {
                     systemFonts={['Poppins-Black', 'Poppins-Bold', 'Poppins-ExtraBold', 'Poppins-Light', 'Poppins-Medium', 'Poppins-Regular', 'Popping-SemiBold']}
                 />
               </ScrollView>
-              <TouchableOpacity className="absolute -bottom-3 left-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
+              <TouchableOpacity onPress={() => setShareOpened(true)} className="absolute -bottom-3 left-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
                   <Text className="font-psemibold text-sm text-white">Shperndaje</Text>
                   <Image
                     source={icons.share}
@@ -290,6 +295,11 @@ const discussion = () => {
           </View>
           </View>
           {/* comments and sorting comments */}
+          <ShareToFriends 
+            passedItemId={id}
+            shareType={"discussion"}
+            currentUserData={user?.data?.userData}
+          />
           </>
         )}
         ListFooterComponent={() => (

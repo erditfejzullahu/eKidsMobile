@@ -3,10 +3,14 @@ import React, { useState } from 'react'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
 import { icons } from '../constants'
+import { useTopbarUpdater } from '../navigation/TopbarUpdater'
+import ShareToFriends from './ShareToFriends'
 
-const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proceedToAvailableRoute}) => {
+const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proceedToAvailableRoute, currentUserData}) => {
     const [sectionsOpened, setSectionsOpened] = useState(sections?.map((item) => item.id))
     
+    const [passingShareItemId, setPassingShareItemId] = useState(null)
+
     const handleSectionsOpened = (id) => {
         setSectionsOpened((prevData) => {
             if(prevData.includes(id)){
@@ -18,6 +22,8 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
         })
     }
 
+    const {setShareOpened} = useTopbarUpdater()
+
     const handleLessonClick = (item) => {
         if(item.meeting){
             proceedToAvailableRoute(item.meeting.id)
@@ -28,6 +34,11 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
         }
     }
 
+    const handleLongPressClick = (id) => {
+        setPassingShareItemId(id)
+        setShareOpened(true)
+    }
+    
     if(!Array.isArray(sections)) return null;
     
     return (
@@ -43,7 +54,7 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                 {sectionsOpened.includes(item.id) && <View className="mb-4">
                     {item?.lessons.map((lItem, lIdx) => (
                         <Animatable.View animation="fadeInLeft" key={lIdx} className="relative mx-1">
-                            <TouchableOpacity onPress={() => handleLessonClick(lItem)}>
+                            <TouchableOpacity onPress={() => handleLessonClick(lItem)} onLongPress={() => handleLongPressClick(item.id)}>
                                 <Text className="text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Text>
                                 {lItem.meeting && <Text className="absolute text-[8px] bg-oBlack border-black-200 px-0.5 py-[1px] border rounded-br-md border-r font-plight left-0 top-0 text-gray-400" style={styles.box}>{lItem.meeting.status}</Text>}
                                 {lItem?.meeting ? (
@@ -96,6 +107,11 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                         </Animatable.View>
                     ))}
                 </View>}
+                <ShareToFriends 
+                    currentUserData={currentUserData?.data?.userData}
+                    shareType={"instructorLesson"}
+                    passedItemId={passingShareItemId}
+                />
             </View>
             )
         }

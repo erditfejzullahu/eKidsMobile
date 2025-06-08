@@ -22,8 +22,33 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     const [quizSelected, setQuizSelected] = useState(null);
     const [userFriendData, setUserFriendData] = useState([])
 
+    const outputText = () => {
+        switch (shareType) {
+            case "quiz":
+                return "Kuizin"
+            case "lesson":
+                return "Leksionin"
+            case "course":
+                return "Kursin"
+            case "blog":
+                return "Blogun"
+            case "discussion":
+                return "Diskutimin"
+            case "instructor":
+                return "Instruktorin"
+            case "instructorCourse":
+                return "Kursin e Instruktorit"
+            case "instructorLesson":
+                return "Leksionin e Instruktorit"
+            case "onlineMeeting":
+                return "Takimin Online"
+            default:
+                return "Artikullin"
+        }
+    }
+
     const {showNotification: successShare} = NotifierComponent({
-        title: `Sapo derguat ${shareType === "quiz" ? "Kuizin" : shareType === "lesson" ? "Leksionin" : shareType === "course" ? "Kursin" : " "} me sukses`,
+        title: `Sapo derguat ${outputText()} me sukses`,
         description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!"
     })
 
@@ -34,16 +59,21 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     })
     
     const shareToUser = async (receiverUser) => {        
-        console.log(passedItemId);
-        
         const payload = {
             senderUsername: currentUserData?.username,
             receiverUsername: receiverUser?.username,
             lessonId: shareType === "lesson" ? passedItemId : null,
             quizId: shareType === "quiz" ? passedItemId : null,
-            courseId: shareType === "course" ? passedItemId : null 
+            courseId: shareType === "course" ? passedItemId : null,
+            blogId: shareType === "blog" ? passedItemId : null,
+            discussionId: shareType === "discussion" ? passedItemId : null,
+            instructorId: shareType === "instructor" ? passedItemId : null,
+            instructorCourseId: shareType === "instructorCourse" ? passedItemId : null,
+            instructorLessonId: shareType === "instructorLesson" ? passedItemId : null,
+            onlineMeetingId: shareType === "onlineMeeting" ? passedItemId : null
         }
-        const response = await reqShareToUser(shareType === "quiz" ? 1 : shareType === "lesson" ? 2 : shareType === "course" ? 3 : null, payload);
+
+        const response = await reqShareToUser(shareType === "quiz" ? 1 : shareType === "lesson" ? 2 : shareType === "course" ? 3 : shareType === "blog" ? 4 : shareType === "discussion" ? 5 : shareType === "instructor" ? 6 : shareType === "instructorCourse" ? 7 : shareType === "instructorLesson" ? 8 : shareType === "onlineMeeting" ? 9 : undefined, payload);
         setShareOpened(false)
         if(response === 200){
             successShare();
@@ -62,8 +92,6 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         setUserFriendLoading(true)
         const response = await reqGetAllUserTypes(currentUserData?.id, 2)
         if(response){
-            console.log(response);
-            
             setUserFriendData(response);
         }
         setUserFriendLoading(false)

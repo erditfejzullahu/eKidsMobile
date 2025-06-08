@@ -11,6 +11,7 @@ import { useGlobalContext } from '../../../../context/GlobalProvider';
 import { Platform } from 'react-native';
 import STDINCaruselSection from '../../../../components/STDINCaruselSection';
 import { Redirect } from 'expo-router';
+import ShareToFriends from '../../../../components/ShareToFriends';
 
 const Tutor = () => {
   const {id} = useLocalSearchParams();
@@ -55,7 +56,11 @@ const Tutor = () => {
       <STDINCaruselSection data={instructorData?.instructorCourses} sectionType={"courses"} userData={user}/>
       <STDINCaruselSection data={instructorData?.instructorStudents} sectionType={"students"} userData={user}/>
       <STDINCaruselSection data={instructorData?.onlineMeetings} sectionType={"onlineMeetings"} userData={user}/>
-      
+      <ShareToFriends 
+        currentUserData={user?.data?.userData}
+        passedItemId={id}
+        shareType={"instructor"}
+      />
     </ScrollView>
   )
 }

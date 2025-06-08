@@ -12,6 +12,8 @@ import { useRouter } from 'expo-router'
 import NotifierComponent from '../../../../components/NotifierComponent'
 import { currentUserID } from '../../../../services/authService'
 import CustomModal from '../../../../components/Modal'
+import ShareToFriends from '../../../../components/ShareToFriends'
+import { useGlobalContext } from '../../../../context/GlobalProvider'
 
 const OnlineClass = () => {
   const router = useRouter();
@@ -20,6 +22,8 @@ const OnlineClass = () => {
   const {data, isLoading, refetch} = useFetchFunction(() => GetCourseById(id))
   const [courseData, setCourseData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const {user, isLoading: userLoading} = useGlobalContext()
 
   const [instructorMoreInformation, setInstructorMoreInformation] = useState(false)
 
@@ -206,7 +210,7 @@ const OnlineClass = () => {
         </TouchableOpacity>
 
         <Text className="text-white font-plight px-1.5 py-0.5 text-xs bg-secondary rounded-md border border-white  absolute -top-2 left-2 z-50" style={styles.box}>Planprogrami mesimor i ndare ne seksione</Text>
-        <OnlineCourseSectionExpander sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)} proceedToAvailableRoute={proceedToAvailableRoute}/>
+        <OnlineCourseSectionExpander currentUserData={user} sections={courseData?.sections} handleInformationBar={() => setOpenInformationModal(true)} proceedToAvailableRoute={proceedToAvailableRoute}/>
       </View>
 
       <View ref={instructorRef} className="p-4 border border-black-200 bg-primary my-4" style={styles.box}>
@@ -343,6 +347,11 @@ const OnlineClass = () => {
         </View>
       </CustomModal>
       {/* informacione per imazhe te leksioneve tek seksionet */}
+      <ShareToFriends 
+        currentUserData={user?.data?.userData}
+        shareType={"instructorCourse"}
+        passedItemId={id}
+      />
     </ScrollView>
   )
 }
