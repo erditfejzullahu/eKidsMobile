@@ -51,7 +51,7 @@ const course = () => {
 
     const sendTestimonial = async () => {
         try {
-            const response = await apiClient.patch(`/api/CourseCompleted/${completeData?.id}/${completeData?.userId}`, testimonialValue, {
+            const response = await apiClient.patch(`/api/CourseCompleted/${completeData?.id}`, testimonialValue, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -59,13 +59,13 @@ const course = () => {
             if(response.status === 200){
                 successNotifier();
                 await refetch();
+            }else{
+                errorNotifier();
             }
         } catch (error) {
             console.log(error);
             errorNotifier();
         }
-        console.log(testimonialValue);
-        
     }
 
     useEffect(() => {

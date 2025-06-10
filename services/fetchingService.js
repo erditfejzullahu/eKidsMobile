@@ -156,8 +156,7 @@ export const userActualProgresses = async (userId) => {
 
 export const getBookmarks = async () => {
     try {
-        const userId = await currentUserID();
-        const response = await apiClient.get(`/api/Bookmarks/GetAll/${userId}`)
+        const response = await apiClient.get(`/api/Bookmarks/GetAll/`)
         return response ? response.data : null
     } catch (error) {
         return null;
@@ -218,9 +217,8 @@ export const bookmarkStatus = async (userId, courseId, lessonId) => {
 
 
 export const fetchLesson = async (lessonId) => {
-    const userId = await currentUserID();
     try {
-        const response = await apiClient.get(`/api/Lessons/${lessonId}?userId=${userId}`)
+        const response = await apiClient.get(`/api/Lessons/${lessonId}`)
         return response ? response.data : null
     } catch (error) {
         return null;
@@ -278,9 +276,9 @@ export const reqCreateLike = async (commentId, userId) => {
     }
 }
 
-export const reqCreateLessonLike = async (lessonId, userId) => {
+export const reqCreateLessonLike = async (lessonId) => {
     try {
-        const response = await apiClient.patch(`/api/Lessons/UpdateLike/${lessonId}?userId=${userId}`)
+        const response = await apiClient.patch(`/api/Lessons/UpdateLike/${lessonId}`)
         return response ? response.data : null
     } catch (error) {
         console.error(error);
@@ -474,8 +472,8 @@ export const getUserQuizzesCreated = async (userId) => {
 
 export const reqGetStatusQuiz = async (quizId) => {
     try {
-        const userId = await currentUserID();
-        const response = await apiClient.get(`/api/QuizzesCompletation/GetStatusQuizz/${userId}/${quizId}`)
+        // const userId = await currentUserID();
+        const response = await apiClient.get(`/api/QuizzesCompletation/GetStatusQuizz/${quizId}`)
         return response ? response.data : null
     } catch (error) {
         // console.error(error, ' asd');
@@ -648,28 +646,26 @@ export const getAllTagsWithChilds = async (categoryId) => {
     }
 }
 
-export const getAllBlogsByTag = async (userId, tagId, pagination, forYouOrFriends) => {        
+export const getAllBlogsByTag = async (tagId, pagination, forYouOrFriends) => {        
     try {
         let queryParams = {}
         if(pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber;
         if(pagination.pageSize) queryParams.pageSize = pagination.pageSize;
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${userId}/${tagId}&friendsBlogsOrAll=${forYouOrFriends}?${queryString}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogsByTag/${tagId}&friendsBlogsOrAll=${forYouOrFriends}?${queryString}`)
         return response ? response.data : null
     } catch (error) {
         return null;
     }
 }
 
-export const getAllBlogs = async (userId, pagination, forYouOrFriends) => {
-    console.log("po vjen??");
-    
+export const getAllBlogs = async (pagination, forYouOrFriends) => {
     try {
         let queryParams = {}
         if (pagination.pageNumber) queryParams.pageNumber = pagination.pageNumber
-        if (pagination.pageSize) queryParams.pagesize = pagination.pageSize
+        if (pagination.pageSize) queryParams.pageSize = pagination.pageSize
         const queryString = new URLSearchParams(queryParams).toString();
-        const response = await apiClient.get(`/api/Blogs/GetAllBlogs/${userId}?${queryString}&friendsBlogsOrAll=${forYouOrFriends}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogs?${queryString}&friendsBlogsOrAll=${forYouOrFriends}`)
         return response ? response.data : null
     } catch (error) {
         return null
@@ -696,7 +692,7 @@ export const reqCreatePost = async (payload) => {
     }
 }
 
-export const getCommentsByBlog = async (blogId, userId, fullBlogComments, pagination) => {
+export const getCommentsByBlog = async (blogId, fullBlogComments, pagination) => {
     
     try {
         let queryParams = {};
@@ -707,7 +703,7 @@ export const getCommentsByBlog = async (blogId, userId, fullBlogComments, pagina
 
         const queryString = new URLSearchParams(queryParams).toString();
         
-        const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}/${userId}?fullBlogComments=${fullBlogComments}&${queryString}`)
+        const response = await apiClient.get(`/api/Blogs/GetCommentsByBlog/${blogId}?fullBlogComments=${fullBlogComments}&${queryString}`)
         return response ? response.data : null
     } catch (error) {
         console.log(error);
@@ -736,9 +732,9 @@ export const reqLikeBlog = async (blogId, userId) => {
     }
 }
 
-export const reqLikeBlogComment = async (blogCommentId, userId, blogId) => {
+export const reqLikeBlogComment = async (blogCommentId, blogId) => {
     try {
-        const response = await apiClient.post(`/api/Blogs/LikeComment?blogCommentId=${blogCommentId}&userId=${userId}&blogId=${blogId}`)
+        const response = await apiClient.post(`/api/Blogs/LikeComment?blogCommentId=${blogCommentId}&blogId=${blogId}`)
         return response && response.data
     } catch (error) {
         return error.response.status

@@ -115,13 +115,14 @@ const Conversation = () => {
     }
 
     useEffect(() => {
-      if(messages){
-        console.log("po hin?????")
+      if(messages?.messages?.length > 0){
         setLoadedFirst(true)
       }else{
-        console.log("spo hin???")
+        if(commentsLoading && isLoading){
+            setLoadedFirst(true)
+        }
       }
-    }, [messages])
+    }, [messages, commentsLoading, isLoading])
     
     
     
@@ -184,6 +185,8 @@ const Conversation = () => {
                     await newConnection.start()
                     console.log('Connected to chat hub');
                 } catch (error) {
+                    console.log(error);
+                    
                     if(error.message.includes('401')){
                         try {
                             const refreshToken = await getRefreshToken();
@@ -229,7 +232,8 @@ const Conversation = () => {
                             senderUsername: messageData.senderUsername
                         },
                         ...prevMessages?.messages,
-                    ]
+                    ],
+                    hasMore: data?.hasMore
                 }))
             })
 
@@ -237,7 +241,6 @@ const Conversation = () => {
                 if(messageData?.receiver?.username === messageData?.sender?.username){
                     return;
                 }
-                // console.log(receiver, message, fileUrl ? fileUrl : ", ", createdAt);
                 console.log('message sent !!');
                 
                 setMessages((prevMessages) => ({
@@ -264,7 +267,8 @@ const Conversation = () => {
                             senderUsername: messageData.senderUsername
                         },
                         ...prevMessages?.messages,
-                    ]
+                    ],
+                    hasMore: data?.hasMore
                 }))
             })
 

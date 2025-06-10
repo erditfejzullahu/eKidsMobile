@@ -14,8 +14,8 @@ const Blog = () => {
   
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
-        blogTagId === null ? getAllBlogs(user?.data?.userData?.id, pagination, forYouToggle)
-        : getAllBlogsByTag(user?.data?.userData?.id, blogTagId?.tagId, pagination, forYouToggle)
+        blogTagId === null ? getAllBlogs(pagination, forYouToggle)
+        : getAllBlogsByTag(blogTagId?.tagId, pagination, forYouToggle)
   );
 
   const [passUserOutside, setPassUserOutside] = useState(false)

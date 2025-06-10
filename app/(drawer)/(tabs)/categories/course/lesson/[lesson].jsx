@@ -68,9 +68,9 @@ const lessonContent = () => {
 
 
     const handleLessonLike = async () => {
-      const userId = await currentUserID();
+      // const userId = await currentUserID();
       try {
-        const response = await reqCreateLessonLike(lesson, userId);
+        const response = await reqCreateLessonLike(lesson);
         if(response){
           // console.log(response);
           

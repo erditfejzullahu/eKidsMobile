@@ -84,7 +84,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     
 
     const getComments = async () => {                
-        const response = await getCommentsByBlog(blog.id, user.id, fullBlogSection, pagination)
+        const response = await getCommentsByBlog(blog.id, fullBlogSection, pagination)
         
         if(response && response?.blogComments?.length > 0){
             // console.log(response, ' komente')
@@ -276,8 +276,8 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }
     }
 
-    const likeBlogComment = async (commentId, userId, blogId) => {        
-        const response = await reqLikeBlogComment(commentId, userId, blogId)
+    const likeBlogComment = async (commentId, blogId) => {        
+        const response = await reqLikeBlogComment(commentId, blogId)
         
         if(response.message === "LikeAdd"){
             // await getComments();
