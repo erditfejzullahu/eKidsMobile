@@ -125,7 +125,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     }
 
     const removeOnWaitingFriend = async () => {
-        const response = await removeFriendRequestReq(userData?.data?.userData?.id, data?.userId);
+        const response = await removeFriendRequestReq(data?.userId);
         if(response === 200){
             await relationRefetch();
         }else{
@@ -134,7 +134,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     }
 
     const removeFriend = async () => {
-        const response = await removeFriendReq(userData?.data?.userData?.id, data?.userId)
+        const response = await removeFriendReq(data?.userId)
         if(response === 200){
             successFriendDeletion()
             setRemoveFriendModal(false);

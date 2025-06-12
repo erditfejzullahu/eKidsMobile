@@ -611,18 +611,18 @@ export const makeUserFriendReq = async (data) => {
     }
 }
 
-export const removeFriendReq = async (userId, friendId) => {
+export const removeFriendReq = async (friendId) => {
     try {
-        const response = await apiClient.delete(`/api/UserFriends/DeleteFriend?userId=${userId}&friendId=${friendId}`)
+        const response = await apiClient.delete(`/api/UserFriends/DeleteFriend?friendId=${friendId}`)
         return response && response.status;
     } catch (error) {
         return error.response.status;
     }
 }
 
-export const removeFriendRequestReq = async (userId, receiverId) => {
+export const removeFriendRequestReq = async (receiverId) => {
     try {
-        const response = await apiClient.delete(`/api/UserFriends/DeleteFriendRequest?userId=${userId}&receiverId=${receiverId}`);
+        const response = await apiClient.delete(`/api/UserFriends/DeleteFriendRequest?receiverId=${receiverId}`);
         return response && response.status;
     } catch (error) {
         return error.response.status;

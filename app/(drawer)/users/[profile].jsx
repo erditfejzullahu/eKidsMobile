@@ -127,7 +127,7 @@ const Profiles = () => {
     }
 
     const removeOnWaitingFriend = async () => {
-      const response = await removeFriendRequestReq(userData?.id, profile);
+      const response = await removeFriendRequestReq(profile);
       if(response === 200){
         await relationRefetch();
       }else{
@@ -136,7 +136,7 @@ const Profiles = () => {
     }
 
     const removeFriend = async () => {
-      const response = await removeFriendReq(userData?.id, profile)
+      const response = await removeFriendReq(profile)
       if(response === 200){
         successFriendDeletion()
         setRemoveFriendModal(false);
