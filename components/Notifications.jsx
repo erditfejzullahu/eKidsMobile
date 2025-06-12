@@ -25,10 +25,16 @@ import { useRouter } from 'expo-router';
 
 const Notifications = ({ onClose }) => {
     const router = useRouter();
-    const {data, isLoading, refetch} = useFetchFunction(() => getNotifications())
+    const [paginationParams, setPaginationParams] = useState({
+        pageSize: 15,
+        pageNumber: 1
+    })
+    const {data, isLoading, refetch} = useFetchFunction(() => getNotifications(paginationParams))
     // const {data: readStatus, isLoading: readLoading, refetch: readRefetch} = useFetchFunction(() => reqMakeNotificationsRead())
-    const [notificationData, setNotificationData] = useState([])
+    const [notificationData, setNotificationData] = useState({notifications: [], hasMore: false})
     const [isRefreshing, setIsRefreshing] = useState(false)
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const [loadedFirst, setLoadedFirst] = useState(false)
     const {isOpened, setIsOpened, currentConnection} = useNotificationContext();
     const handleOutsidePress = (event) => {
         // This ensures touches inside the ScrollView or children are ignored
@@ -44,17 +50,34 @@ const Notifications = ({ onClose }) => {
         setIsRefreshing(false)
     }
 
-    const addOlderNotifications = async () => {
-        console.log('log');
+    const loadMore = async () => {
+        if(!notificationData?.hasMore || isLoadingMore) return;
+        setIsLoadingMore(false)
+        setPaginationParams((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
+        }))
     }
     
 
     useEffect(() => {
-      if(data){
-        setNotificationData(data)
         console.log(data);
-        
-      }
+        if(data){
+            if(paginationParams.pageNumber > 1){
+                setNotificationData((prev) => ({
+                    ...prev,
+                    notifications: [...prev.notifications, data.notifications],
+                    hasMore: data.hasMore
+                }))
+            }else{
+                setNotificationData(data)
+            }
+            setIsLoadingMore(false)
+        }else{
+            setIsLoadingMore(false)
+            setNotificationData(null)
+        }
+        setLoadedFirst(true)
     }, [data])
 
     useEffect(() => {
@@ -64,26 +87,19 @@ const Notifications = ({ onClose }) => {
       }
     }, [])
     
-
-    // useEffect(() => {
-    //   if(isOpened){
-    //     currentConnection.invoke('markNotificationsAsRead');
-    //     console.log(' ??');
-        
-    //   }
-    // }, [isOpened])
-    
     const deleteNotification = async (item) => {
         const response = await reqDeleteNotification(item?.id)
-        console.log(response);
-        
         if(response === 200){
-            // await refetch();
-            setNotificationData((prevData) => {
-                const newArray = prevData.filter((idx) => idx.id !== item.id);
-                return newArray;
+            setNotificationData((prev) => {
+                if(!prev || !prev.notifications) return prev;
+                const updatedNotifications = prev.notifications.filter((nItem) => nItem.id !== item.id)
+                return {
+                    ...prev,
+                    notifications: updatedNotifications,
+                    hasMore: prev.hasMore
+                }
             })
-        } 
+        }
     }
 
 
@@ -146,7 +162,7 @@ const Notifications = ({ onClose }) => {
                 className="w-full absolute h-full right-0 left-0"
                 style={[{ backgroundColor: "rgba(0, 0, 0, 0.5)" }, styles.box]}
             >
-                {isLoading 
+                {isLoading && !loadedFirst
                 ? 
                     <View className="w-[95%] h-[60%] mt-[100px] z-20 m-auto border border-black-200 bg-oBlack rounded-[10px]">
                         <Loading />
@@ -158,9 +174,9 @@ const Notifications = ({ onClose }) => {
                                 refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
                                 className="w-[95%] max-h-[60%] mt-[100px] z-20 m-auto border border-black-200 bg-oBlack rounded-[10px]"
                                 style={styles.box}
-                                onEndReached={addOlderNotifications}
-                                onEndReachedThreshold={0}
-                                data={notificationData}
+                                onEndReached={loadMore}
+                                onEndReachedThreshold={0.1}
+                                data={notificationData?.notifications}
                                 keyExtractor={(item) => item?.id}
                                 renderItem={({item}) => {
                                     const date = new Date(item?.createdAt);

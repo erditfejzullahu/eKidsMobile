@@ -511,10 +511,11 @@ export const getCompletedQuizzesByUser = async (userId) => {
     }
 }
 
-export const getNotifications = async () => {
+export const getNotifications = async (paginationDto) => {
     try {
-        const userId = await currentUserID();
-        const response = await apiClient.get(`/api/Notifications/${userId}`)
+        const response = await apiClient.get(`/api/Notifications/`, {
+            params: paginationDto
+        })
         return response ? response.data : null;
     } catch (error) {
         return null;
@@ -523,6 +524,7 @@ export const getNotifications = async () => {
 
 export const reqMakeNotificationsRead = async () => {
     try {
+        console.log("U thirr make readi in close")
         const response = await apiClient.get(`/api/Notifications/MakeReadNotifications`)
         return response ? response.status : null;
     } catch (error) {
@@ -550,8 +552,7 @@ export const reqGetAllUserTypes = async (userId, types, searchParam = "") => {
 
 export const reqDeleteNotification = async (id) => {
     try {
-        const userId = await currentUserID();
-        const response = await apiClient.delete(`/api/Notifications/${id}?userId=${userId}`)
+        const response = await apiClient.delete(`/api/Notifications/${id}`)
         return response ? response.status : false;
     } catch (error) {
         console.error(error);

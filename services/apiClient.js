@@ -36,8 +36,7 @@ apiClient.interceptors.response.use(
         if(requestCounter > 15 && !commitmentInProgress){
             commitmentInProgress = true;
             try {
-                const userId = await currentUserID();
-                await apiClient.put(`/api/Users/IncreaseCommitment/${userId}`);
+                await apiClient.put(`/api/Users/IncreaseCommitment/`);
             } catch (error) {
                 console.error(error.response, " error in increasing commitment");
             } finally {
