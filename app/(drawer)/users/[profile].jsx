@@ -22,6 +22,12 @@ import * as Animatable from "react-native-animatable"
 import EmptyState from '../../../components/EmptyState'
 import BlogsProfile from '../../../components/BlogsProfile'
 import DiscussionsProfile from '../../../components/DiscussionsProfile'
+import { useCallback } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
 
 const Profiles = () => {
     const {profile} = useLocalSearchParams();
@@ -41,20 +47,25 @@ const Profiles = () => {
     // if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
     const router = useRouter();
 
-    useEffect(() => {
-      if(!userLoading && (parseInt(profile) === parseInt(userData?.id))){
-        router.replace('/profile')
-      }
-    }, [profile, userData, userLoading])
+    useFocusEffect(
+      useCallback(() => {
+        if(!userLoading && (parseInt(profile) === parseInt(userData?.id))){
+          router.replace('/profile')
+        }
+      }, [profile, userData, userLoading])
+    )
 
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
-    useEffect(() => {
-      console.log('Data changed:', data);
-      if(!isLoading && data?.role === "Instructor") {
-        console.log('Redirecting to tutor profile');
-        router.replace(`/tutor/${data?.instructorId}`);
-      }
-    }, [data, isLoading, profile]);
+    useFocusEffect(
+      useCallback(() => {
+        console.log('Data changed:', data);
+        if(!isLoading && data?.role === "Instructor") {
+          console.log('Redirecting to tutor profile');
+          router.replace(`/tutor/${data?.instructorId}`);
+        }
+      }, [data, isLoading, profile])
+    )
+    
 
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     

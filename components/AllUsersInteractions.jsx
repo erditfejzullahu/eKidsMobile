@@ -8,7 +8,6 @@ import * as Animatable from "react-native-animatable"
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
     console.log(usersData);
-    
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
     const date = new Date(usersData?.lastMessage?.message?.createdAt);
@@ -17,6 +16,11 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
         month: 'long',  // Full month name
         day: 'numeric',
     });
+
+    const handleRouteToUser = () => {
+        setShowOptions(false)
+        router.replace(`/users/${usersData?.id}`)
+    }
 
     const returnLastMessage = () => {
 
@@ -123,7 +127,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
                 {showOptions && <View className="absolute self-start -left-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
                     <View className="border-b border-black-200">
-                        <TouchableOpacity onPress={() => {router.replace({pathname: `/users/${usersData?.id}`, params: {_timestamp: Date.now()}}), setShowOptions(false)}}>
+                        <TouchableOpacity onPress={() => handleRouteToUser()}>
                             <Text className="font-plight text-white text-sm p-1">Vizitoni profilin</Text>
                         </TouchableOpacity>
                     </View>

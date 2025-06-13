@@ -12,9 +12,13 @@ import { Platform } from 'react-native';
 import STDINCaruselSection from '../../../../components/STDINCaruselSection';
 import { Redirect } from 'expo-router';
 import ShareToFriends from '../../../../components/ShareToFriends';
-
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
 const Tutor = () => {
   const {id} = useLocalSearchParams();
+  console.log(id, " IDJA");
+  
   const router = useRouter();
   const {data, isLoading, refetch} = useFetchFunction(() => GetSingleInstructorDetailsFromStudentSide(id))
   const [instructorData, setInstructorData] = useState(null)
@@ -40,6 +44,8 @@ const Tutor = () => {
   }
 
   useEffect(() => {
+    console.log(data);
+    
     setInstructorData(data || null)
   }, [data])
 
