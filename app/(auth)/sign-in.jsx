@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Image, Alert, StyleSheet, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {images} from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
@@ -29,7 +29,7 @@ const SignIn = () => {
     },
   });
 
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { setUser, setIsLoggedIn, isLoggedIn } = useGlobalContext();
   const {role, isLoading, refreshRole} = useRole();
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -74,13 +74,6 @@ const SignIn = () => {
             setUser(userResult)
             showNotification()
             await refreshRole();
-            if(!isLoading){
-              if(['Instructor'].includes(role)){
-                router.replace('/instructor/instructorHome')
-              }else{
-                router.replace('/home')
-              }
-            }
         }else{
           error();
         }
@@ -89,6 +82,17 @@ const SignIn = () => {
         error();
       }
   }
+
+  useEffect(() => {
+    if(isLoggedIn){
+      if(["Instructor"].includes(role)){
+        router.replace('/instructor/instructorHome')
+      }else{
+        router.replace('/home')
+      }
+    }
+  }, [role, isLoggedIn])
+  
 if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">

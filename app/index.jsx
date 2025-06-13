@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, Text, View } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'react-native';
 import { images } from '../constants'
@@ -12,13 +12,28 @@ import { useRole } from '../navigation/RoleProvider';
 import { useEffect } from 'react';
 
 export default function App() {
-  const {role, refreshRole} = useRole();
-  useEffect(() => {
-    refreshRole();
-  }, [])
+  const {role, refreshRole, isLoading: roleLoading} = useRole();
   const {isLoading, isLoggedIn} = useGlobalContext();
+  const router = useRouter();
+
+  // useEffect(() => {
+  //   refreshRole();
+  // }, [])
+
+  useEffect(() => {
+    if(!isLoading && !roleLoading){
+      if(isLoggedIn){
+        if(["Instructor"].includes(role)){
+          router.replace('/instructor/instructorHome')
+        }else{
+          router.replace('/home')
+        }
+      }
+    }
+  }, [isLoggedIn, isLoading, role, roleLoading])
   
-  if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
+  
+  // if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
 
   return (
     <SafeAreaView className="bg-primary h-full">

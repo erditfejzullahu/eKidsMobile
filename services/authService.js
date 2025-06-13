@@ -120,7 +120,7 @@ export const getRole = async () => {
 export const logout = async () => {
     try {
         await removeTokens();
-        router.replace('/sign-in');
+        router.replace('/');
     } catch (error) {
         console.error("Error during logout", error);
     }
