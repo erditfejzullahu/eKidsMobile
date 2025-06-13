@@ -35,8 +35,8 @@ export const registerUserSchema = z.object({
     })
     .min(8, { message: "Fjalëkalimi duhet të ketë të paktën 8 karaktere" })
     .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe, një të vogël, një numër dhe një simbol special (@$!%*?&)" }
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/,
+      { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të vogël, një të madhe, një numër dhe një karakter special (@$!%*?&.)" }
     ),
   
     age: z.number({
@@ -64,7 +64,7 @@ export const loginUserSchema = z.object({
     })
     .min(8, { message: "Fjalëkalimi duhet të ketë të paktën 8 karaktere" })
     .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të madhe, një të vogël, një numër dhe një simbol special (@$!%*?&)" }
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/,
+      { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të vogël, një të madhe, një numër dhe një karakter special (@$!%*?&.)" }
     ),
 })
