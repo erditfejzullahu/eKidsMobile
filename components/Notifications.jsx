@@ -40,11 +40,13 @@ const Notifications = ({ onClose }) => {
         // This ensures touches inside the ScrollView or children are ignored
         if (event.target === event.currentTarget) {
             setIsOpened(false);
+            setLoadedFirst(false)
         }
     };
 
     const onRefresh = async () => {
         setIsRefreshing(true)
+        setLoadedFirst(false)
         setNotificationData([])
         await refetch();
         setIsRefreshing(false)
@@ -58,6 +60,14 @@ const Notifications = ({ onClose }) => {
             pageNumber: prev.pageNumber + 1
         }))
     }
+    
+    useEffect(() => {
+      if(notificationData?.notifications?.length > 0 && data){
+        setLoadedFirst(true)
+      }else if(data === null){
+        setLoadedFirst(true)
+      }
+    }, [notificationData, data])
     
 
     useEffect(() => {
@@ -77,7 +87,6 @@ const Notifications = ({ onClose }) => {
             setIsLoadingMore(false)
             setNotificationData(null)
         }
-        setLoadedFirst(true)
     }, [data])
 
     useEffect(() => {
@@ -105,7 +114,8 @@ const Notifications = ({ onClose }) => {
 
     const {showNotification: errorInRequests} = NotifierComponent({
         title: "Dicka shkoi gabim",
-        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes"
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+        alertType: "warning"
     })
 
     const {showNotification: acceptedFriendRequest} = NotifierComponent({
@@ -126,15 +136,7 @@ const Notifications = ({ onClose }) => {
         }
     }
 
-    const removeAcceptReq = async (senderId, receiverId, notificationId) => {
-        const response = await removeFriendRequestReq(receiverId);
-        if(response === 200){
-            removedFriendRequest();
-            await deleteNotification(notificationId);
-        }else{
-            errorInRequests()
-        }
-    }
+    
 
     const handleNotificationClick = (notification) => {        
         if(notification.type === 6){ //friend accepted
@@ -142,8 +144,27 @@ const Notifications = ({ onClose }) => {
             router.replace(`/users/${notification.userId}`)
         }
     }
+
+    const handleRemoveFriendRequest = async (item) => {
+        const response = await removeFriendRequestReq(item?.userId)
+        if(response === 200){
+            setNotificationData((prev) => {
+                if(!prev || !prev.notifications) return prev;
+                const updatedNotifications = prev.notifications.filter((nItem) => nItem.id !== item.id)
+                return {
+                    ...prev,
+                    notifications: updatedNotifications,
+                    hasMore: prev.hasMore
+                }
+            })
+        }else{
+            errorInRequests();
+        }
+    }
     
     const outputNotificationWithType = (item) => {
+        console.log(item , " asdasdhgasyu7dghasyudhausdh");
+        
         // LoginActivity = 10
         // PasswordReset = 11
         // registeredAccount = 12
@@ -151,14 +172,19 @@ const Notifications = ({ onClose }) => {
         // ProgressTrackingInformation = 18
         // CompletedProgressNotification = 19
 
-        switch (true) {
-            case item.type === 10 || item.type === 11 || item.type === 12 || item.type === 15 || item.type === 16 || item.type === 17 || item.type === 18 || item.type === 19:
+        switch (item.type) {
+            case 10:
+            case 11:
+            case 12:
+            case 17:
+            case 18:
+            case 19:
                 return <>
                     <View className="self-start">
                         <View>
                             <Image
                                 // source={{uri: item?.type === 4 ? item?.notificationSender?.profilePicture : item?.notificationSender?.profilePicture}}
-                                source={{uri: (item.type === 15 || item.type === 16) ? item.notificationSender?.profilePicture : item.notificationReceiver?.profilePicture}}
+                                source={{uri: item.notificationReceiver?.profilePicture}}
                                 className="h-20 w-20 rounded-[5px]"
                                 resizeMode="cover"
                             />
@@ -172,25 +198,25 @@ const Notifications = ({ onClose }) => {
             case 13:
                 // FriendRequestSended = 13
                 return <>
-                    <View className="self-start">
+                    <View className="self-start ">
                         <View>
                             <Image
                                 // source={{uri: item?.type === 4 ? item?.notificationSender?.profilePicture : item?.notificationSender?.profilePicture}}
-                                source={{uri: item?.notificationSender?.profilePicture}}
+                                source={{uri: item?.notificationSender.profilePicture}}
                                 className="h-20 w-20 rounded-[5px]"
                                 resizeMode="cover"
                             />
                         </View>
-                        <View className="mt-2">
-                            {/* Me ndryshu me bo me shkronja ndalo requestin qatij personit qe ja ke dergu */}
-                            <TouchableOpacity onPress={() => removeFriendRequestReq(item?.receiverId)} className="bg-secondary rounded-[5px]">
-                                <Text className="font-psemibold text-sm text-secondary">Anuloni</Text>
-                            </TouchableOpacity>
-                        </View>
+                        
                     </View>
                     <View className="flex-1">
                         <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationSender.name}</Text>
-                        <Text className="font-plight text-sm text-gray-400">{item.information}</Text>
+                        <Text className="font-plight text-sm text-gray-400">Ju keni derguar nje ftese miqesie tek <Text className="text-secondary">{item.notificationReceiver?.name}</Text></Text>
+                        <View className="mt-2">
+                            <TouchableOpacity onPress={() => handleRemoveFriendRequest(item)} className="bg-oBlack self-start px-4 py-0.5 rounded-md border-black-200 border" style={styles.box}>
+                                <Text className="font-psemibold text-sm text-secondary text-center">Anuloni</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </>
             case 14: 
@@ -206,7 +232,7 @@ const Notifications = ({ onClose }) => {
                         />
                     </View>
                     <View className="flex-row gap-2 mt-2 justify-between">
-                        <TouchableOpacity onPress={() => acceptFriendReq(item?.userId, item?.receiverId, item?.id)} className="bg-secondary rounded-[5px]">
+                        <TouchableOpacity onPress={() => acceptFriendReq(item)} className="bg-secondary rounded-[5px]">
                             <Image 
                                 source={icons.checked}
                                 className="w-7 h-7"
@@ -214,7 +240,7 @@ const Notifications = ({ onClose }) => {
                                 tintColor={"#fff"}
                                 />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => removeAcceptReq(item?.userId, item?.receiverId, item?.id)} className="bg-secondary rounded-[5px]">
+                        <TouchableOpacity onPress={() => handleRemoveFriendRequest(item)} className="bg-secondary rounded-[5px]">
                             <Image 
                                 source={icons.close}
                                 className="w-7 h-7 p-1"
@@ -266,6 +292,7 @@ const Notifications = ({ onClose }) => {
                     </View>
                 </>
             default:
+                <Text className="p-4">asdasdasdasdasd</Text>
                 break;
             }
     }
@@ -335,7 +362,7 @@ const Notifications = ({ onClose }) => {
                                                     <View className="absolute bottom-1 right-2">
                                                         <Text className="text-secondary font-psemibold text-xs">{formattedDate}</Text>
                                                     </View>
-                                                    {outputNotificationWithType(item)}
+                                                    {outputNotificationWithType(item)}                                                    
                                                     {item?.isRead === false && 
                                                         <View className="absolute left-2 top-2 bg-secondary rounded-lg p-0.5">
                                                             <Image 
