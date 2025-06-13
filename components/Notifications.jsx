@@ -122,6 +122,10 @@ const Notifications = ({ onClose }) => {
         title: "Sapo keni pranuar kerkesen e miqesise me sukses",
     })
 
+    const {showNotification: comingSoon} = NotifierComponent({
+        title: "Se shpejti do implementohet Dritarja e Njoftimeve",
+    })
+
     const {showNotification: removedFriendRequest} = NotifierComponent({
         title: "Sapo keni pranuar kerkesen e miqesise me sukses",
     })
@@ -139,9 +143,14 @@ const Notifications = ({ onClose }) => {
     
 
     const handleNotificationClick = (notification) => {        
-        if(notification.type === 6){ //friend accepted
+        if(notification.type === 13 || notification.type === 14 || notification.type === 16){ //friend accepted
             setIsOpened(false)
             router.replace(`/users/${notification.userId}`)
+        }else if(notification.type === 15){
+            setIsOpened(false)
+            router.replace(`/users/${notification.receiverId}`)
+        }else{
+            comingSoon()
         }
     }
 
@@ -163,9 +172,7 @@ const Notifications = ({ onClose }) => {
         }
     }
     
-    const outputNotificationWithType = (item) => {
-        console.log(item , " asdasdhgasyu7dghasyudhausdh");
-        
+    const outputNotificationWithType = (item) => {        
         // LoginActivity = 10
         // PasswordReset = 11
         // registeredAccount = 12
