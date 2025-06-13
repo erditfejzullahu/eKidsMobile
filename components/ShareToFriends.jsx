@@ -9,9 +9,9 @@ import { icons } from '../constants';
 import NotifierComponent from './NotifierComponent';
 
 const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
-    console.log(shareType);
-    console.log(passedItemId);
-    console.log(currentUserData);
+    // console.log(shareType);
+    // console.log(passedItemId);
+    // console.log(currentUserData);
     
     // if(shareType !== "quiz" || shareType !== "course" || shareType !== "lesson"){
     //     return null;

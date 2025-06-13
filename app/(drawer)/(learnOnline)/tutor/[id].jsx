@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import useFetchFunction from '../../../../hooks/useFetchFunction';
 import { GetSingleInstructorDetailsFromStudentSide, getUserRelationStatus } from '../../../../services/fetchingService';
 import Loading from '../../../../components/Loading';
@@ -15,13 +15,22 @@ import ShareToFriends from '../../../../components/ShareToFriends';
 
 const Tutor = () => {
   const {id} = useLocalSearchParams();
+  const router = useRouter();
   const {data, isLoading, refetch} = useFetchFunction(() => GetSingleInstructorDetailsFromStudentSide(id))
   const [instructorData, setInstructorData] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {user, isLoading: userLoading} = useGlobalContext();
   const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(user?.data?.userData?.id, instructorData?.userId));
   const [relationStatus, setRelationStatus] = useState(null)
-  if(user?.data?.userData?.id === data?.userId) return <Redirect href={"instructor/instructorProfile"} />
+  // if(user?.data?.userData?.id === data?.userId) return <Redirect href={"instructor/instructorProfile"} />
+
+  useEffect(() => {
+    if(user?.data?.userData?.id === data?.userId){
+      router.replace("instructor/instructorProfile")
+    }
+    
+  }, [data, user, id])
+  
 
   const onRefresh = async () => {
     setIsRefreshing(true)

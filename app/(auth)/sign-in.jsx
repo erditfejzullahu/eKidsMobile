@@ -15,9 +15,11 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginUserSchema } from '../../schemas/registerUserSchema'
 import Loading from '../../components/Loading'
+import { useNavigation } from 'expo-router'
+import { CommonActions } from '@react-navigation/native'
 
 const SignIn = () => {
-
+  const navigation = useNavigation();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -86,9 +88,13 @@ const SignIn = () => {
   useEffect(() => {
     if(isLoggedIn){
       if(["Instructor"].includes(role)){
-        router.replace('/instructor/instructorHome')
+        navigation.dispatch(CommonActions.reset({
+          index: 0, routes: [{name: "instructor/instructorHome"}]
+        }))
       }else{
-        router.replace('/home')
+        navigation.dispatch(CommonActions.reset({
+          index: 0, routes: [{name: "(drawer)", state: {routes: [{name: "(tabs)", state: {routes: [{name: 'home'}]}}]}}]
+        }))
       }
     }
   }, [role, isLoggedIn])

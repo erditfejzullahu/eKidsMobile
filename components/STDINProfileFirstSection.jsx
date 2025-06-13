@@ -16,7 +16,7 @@ import CustomModal from '../components/Modal'
 
 const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefetch}) => {
     console.log(data);
-    
+    console.log(relationStatus)
     const router = useRouter();
     const [courseModal, setCourseModal] = useState(false)
     const [coursesData, setCoursesData] = useState([])
@@ -109,7 +109,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         const response = await makeUserFriendReq(payload)
         if(response === 200){
             successFriendReq()
-        await relationRefetch();
+            await relationRefetch();
         }else{
             failedReq()
         }
@@ -118,7 +118,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     const acceptFriend = async () => {
         const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
         if(response === 200){
-            await refreshData();
+            await relationRefetch();
         }else{
             failedReq()
         }
@@ -138,7 +138,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         if(response === 200){
             successFriendDeletion()
             setRemoveFriendModal(false);
-            await refreshData()
+            await relationRefetch();
         }else{
             setRemoveFriendModal(false);
             failedReq()

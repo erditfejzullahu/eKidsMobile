@@ -524,7 +524,6 @@ export const getNotifications = async (paginationDto) => {
 
 export const reqMakeNotificationsRead = async () => {
     try {
-        console.log("U thirr make readi in close")
         const response = await apiClient.get(`/api/Notifications/MakeReadNotifications`)
         return response ? response.status : null;
     } catch (error) {

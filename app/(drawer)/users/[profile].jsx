@@ -25,7 +25,17 @@ import DiscussionsProfile from '../../../components/DiscussionsProfile'
 
 const Profiles = () => {
     const {profile} = useLocalSearchParams();
+    console.log(profile, " profili");
     
+    useEffect(() => {
+      setProfileData(null);
+      setRelationStatus(null)
+      setSoftSkills([])
+      // refetch();
+      // relationRefetch();
+      refreshData();
+    }, [profile])
+
     const {user, isLoading: userLoading} = useGlobalContext();
     const userData = user?.data?.userData;
     // if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
@@ -35,10 +45,17 @@ const Profiles = () => {
       if(!userLoading && (parseInt(profile) === parseInt(userData?.id))){
         router.replace('/profile')
       }
-    }, [profile, userData])
-    
-    
+    }, [profile, userData, userLoading])
+
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
+    useEffect(() => {
+      console.log('Data changed:', data);
+      if(!isLoading && data?.role === "Instructor") {
+        console.log('Redirecting to tutor profile');
+        router.replace(`/tutor/${data?.instructorId}`);
+      }
+    }, [data, isLoading, profile]);
+
     const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(userData?.id, profile));
     
     const [profileData, setProfileData] = useState(null)
@@ -214,14 +231,7 @@ const Profiles = () => {
       // console.log(relationStatus === null);
     }, [relationData])
 
-    useEffect(() => {
-      setProfileData(null);
-      setRelationStatus(null)
-      setSoftSkills([])
-      // refetch();
-      // relationRefetch();
-      refreshData();
-    }, [profile])
+    
     
 
    
@@ -278,11 +288,7 @@ const Profiles = () => {
       }
     }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes])
     
-    useEffect(() => {
-      if (data?.role === "Instructor" && !isLoading) {
-        router.replace(`/tutor/${data?.instructorId}`);
-      }
-    }, [data, isLoading]);
+    
     
 
 

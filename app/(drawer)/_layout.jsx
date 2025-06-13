@@ -19,7 +19,8 @@ import { getAccessToken, getRefreshToken } from '../../services/secureStorage'
 import * as SignalR from '@microsoft/signalr';
 import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
 import { useRole } from '../../navigation/RoleProvider'
-
+import { useNavigation } from 'expo-router'
+import { CommonActions } from '@react-navigation/native'
 
 const showIcons = (icon, size, color) => {
     return(
@@ -32,6 +33,8 @@ const showIcons = (icon, size, color) => {
 }
 
 const CustomHeader = (props) => {
+    const navigation = useNavigation();
+
     const {role} = useRole();
     
     const pathname = usePathname();
@@ -56,6 +59,9 @@ const CustomHeader = (props) => {
             await logout();
             setIsLoggedIn(false)
             setUser(null)
+            navigation.dispatch(CommonActions.reset({
+                index: 0, routes: [{name: "(auth)", state: {routes: [{name: "sign-in"}]}}]
+            }))
         } catch (error) {
             console.error('Error ne logout ', error);
             
@@ -124,62 +130,6 @@ const CustomHeader = (props) => {
                             <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{role === "Instructor" ? "Instruktor" : role === "Student" ? "Student" : "Administrator"}</Text>
                         </View>
                     </View>
-
-                    {/* <TouchableOpacity onPress={router.push('/profile')}>??ASDA?</TouchableOpacity> */}
-
-                    {/* <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.profile, 22, changeIconColor('/profile'))
-                    )} 
-                        label={'Profili im'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/profile')}}
-                        onPress={() => router.push('/profile')}
-                    />
-                    <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.parents, 22, changeIconColor('/all-parents'))
-                        
-                    )}
-                        label={'Prindërit pjesëmarrës'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/all-parents')}}
-                        onPress={() => {
-                            router.push('/all-parents')
-                        }}
-                    />
-                    <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.students, 22, changeIconColor('/all-students'))
-                    )}
-                        label={'Statistikat studentore'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/all-students')}}
-                        onPress={() => {
-                            router.push('/all-students')
-                        }}
-                    />
-                    <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.plus, 22, changeIconColor('/add-quiz'))
-                    )}
-                        label={'Shto një kuiz'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/add-quiz')}}
-                        onPress={() => {
-                            router.push('/add-quiz')
-                        }}
-                    />
-                    <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.statistics, 22, changeIconColor('/my-statistics'))
-                    )}
-                        label={'Statistikat e mia'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/my-statistics')}}
-                        onPress={() => {
-                            router.push('/my-statistics')
-                        }}
-                    />
-                    <DrawerItem icon={({color, size}) => (
-                        showIcons(icons.generalsStats, 22, changeIconColor('/general-statistics'))
-                    )}
-                        label={'Statistikat gjenerale'}
-                        labelStyle={{ ...style.labelItem, color: changeIconColor('/general-statistics')}}
-                        onPress={() => {
-                            router.push('/general-statistics')
-                        }}
-                    /> */}
 
                 <ScrollView className={`${drawerItemsUpdated ? 'h-[300px]' : 'h-[350px]'}`}>
                     <DrawerItems pathname={pathname} routerProps={props.navigation} />

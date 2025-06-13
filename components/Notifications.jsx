@@ -47,19 +47,26 @@ const Notifications = ({ onClose }) => {
     const onRefresh = async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
-        setNotificationData([])
+        // setNotificationData([])
+        setPaginationParams({pageNumber: 1})
         await refetch();
         setIsRefreshing(false)
     }
 
     const loadMore = async () => {
-        if(!notificationData?.hasMore || isLoadingMore) return;
+        if(!notificationData.hasMore || isLoadingMore) return;
+        console.log("Po thirret loadmore")
         setIsLoadingMore(false)
         setPaginationParams((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
     }
+
+    useEffect(() => {
+      refetch();
+    }, [paginationParams])
+    
     
     useEffect(() => {
       if(notificationData?.notifications?.length > 0 && data){
@@ -76,7 +83,7 @@ const Notifications = ({ onClose }) => {
             if(paginationParams.pageNumber > 1){
                 setNotificationData((prev) => ({
                     ...prev,
-                    notifications: [...prev.notifications, data.notifications],
+                    notifications: [...prev.notifications, ...data.notifications],
                     hasMore: data.hasMore
                 }))
             }else{
@@ -85,7 +92,7 @@ const Notifications = ({ onClose }) => {
             setIsLoadingMore(false)
         }else{
             setIsLoadingMore(false)
-            setNotificationData(null)
+            setNotificationData({notifications: [], hasMore: false})
         }
     }, [data])
 
@@ -337,9 +344,9 @@ const Notifications = ({ onClose }) => {
                                     className="h-full rounded-md"
                                     refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
                                     onEndReached={loadMore}
-                                    onEndReachedThreshold={0.1}
+                                    onEndReachedThreshold={0.5}
                                     data={notificationData?.notifications}
-                                    keyExtractor={(item) => item?.id}
+                                    keyExtractor={(item) => item?.id.toString()}
                                     renderItem={({item}) => {
                                         const date = new Date(item?.createdAt);
                                         const formattedDate = date.toLocaleDateString('sq-AL', {
@@ -363,7 +370,7 @@ const Notifications = ({ onClose }) => {
                                                 <TouchableOpacity 
                                                 onPress={() => handleNotificationClick(item)}
                                                 style={styles.box} 
-                                                className={`border-b border-black-200 p-3 flex-row gap-2 flex-1 relative ${item?.type === 1 ? "bg-oBlack" : item?.type === 4 ? "bg-black" : "bg-primary"}`}
+                                                className={`border-b border-black-200 p-3 flex-row gap-2 flex-1 relative ${item?.type === 14 ? "bg-oBlack" : (item?.type === 15 || item?.type === 16) ? "bg-black" : "bg-primary"}`}
                                                 // onPress={}
                                                 >
                                                     

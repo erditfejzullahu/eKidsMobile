@@ -10,30 +10,50 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import 'react-native-gesture-handler'
 import { useRole } from '../navigation/RoleProvider';
 import { useEffect } from 'react';
+import { useNavigation } from 'expo-router';
+import { CommonActions } from '@react-navigation/native';
 
 export default function App() {
   const {role, refreshRole, isLoading: roleLoading} = useRole();
   const {isLoading, isLoggedIn} = useGlobalContext();
-  const router = useRouter();
-
+  // const router = useRouter();
+  const navigation = useNavigation();
   // useEffect(() => {
   //   refreshRole();
   // }, [])
 
-  useEffect(() => {
-    if(!isLoading && !roleLoading){
-      if(isLoggedIn){
-        if(["Instructor"].includes(role)){
-          router.replace('/instructor/instructorHome')
-        }else{
-          router.replace('/home')
-        }
+  // useEffect(() => {
+  //   if(!isLoading && !roleLoading){
+  //     if(isLoggedIn){
+  //       const targetRoute = 
+  //         role === "Instructor"
+  //         ? {name: 'instructor/instructorHome'}
+  //         : {name: '(drawer)/(tabs)/home'}
+  //       navigation.dispatch(
+  //         CommonActions.reset({
+  //           index: 0,
+  //           routes: [targetRoute]
+  //         })
+  //       )
+  //       // if(["Instructor"].includes(role)){
+  //       //   router.replace('/instructor/instructorHome')
+  //       // }else{
+  //       //   router.replace('/home')
+  //       // }
+  //     }
+  //   }
+  // }, [isLoggedIn, isLoading, role, roleLoading])
+  
+  
+  if(!isLoading && !roleLoading) {
+    if(isLoggedIn){
+      const targetRoute = 
+        role === "Instructor" 
+        ? "/instructor/instructorHome"
+        : "/home"
+        return <Redirect href={`${targetRoute}`}/>
       }
     }
-  }, [isLoggedIn, isLoading, role, roleLoading])
-  
-  
-  // if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
 
   return (
     <SafeAreaView className="bg-primary h-full">
