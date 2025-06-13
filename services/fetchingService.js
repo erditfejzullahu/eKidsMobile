@@ -553,10 +553,10 @@ export const reqGetAllUserTypes = async (userId, types, searchParam = "") => {
 export const reqDeleteNotification = async (id) => {
     try {
         const response = await apiClient.delete(`/api/Notifications/${id}`)
-        return response ? response.status : false;
+        return response && response.status;
     } catch (error) {
         console.error(error);
-        return false;
+        return error.response.status;
     }
 }
 
@@ -780,9 +780,9 @@ export const getBlogByTitle = async (title) => {
     }
 }
 
-export const acceptFriendRequest = async (senderId, receiverId) => {
+export const acceptFriendRequest = async (senderId) => {
     try {
-        const response = await apiClient.put(`/api/UserFriends/AcceptFriendRequest?senderId=${senderId}&receiverId=${receiverId}`)
+        const response = await apiClient.put(`/api/UserFriends/AcceptFriendRequest?senderId=${senderId}`)
         return response && response.status;
     } catch (error) {
         return error.response.status

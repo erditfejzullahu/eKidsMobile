@@ -257,7 +257,7 @@ const Profiles = () => {
     
 
     const acceptFriend = async () => {
-      const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
+      const response = await acceptFriendRequest(relationStatus?.senderId)
       if(response === 200){
         await refreshData();
       }else{

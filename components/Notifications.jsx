@@ -126,11 +126,11 @@ const Notifications = ({ onClose }) => {
         title: "Sapo keni pranuar kerkesen e miqesise me sukses",
     })
     
-    const acceptFriendReq = async (senderId, receiverId, notificationId) => {
-        const response = await acceptFriendRequest(senderId, receiverId);
+    const acceptFriendReq = async (item) => {
+        const response = await acceptFriendRequest(item.userId);
         if(response === 200){
             acceptedFriendRequest()
-            await deleteNotification(notificationId);
+            await refetch()
         }else{
             errorInRequests()
         }
@@ -148,6 +148,7 @@ const Notifications = ({ onClose }) => {
     const handleRemoveFriendRequest = async (item) => {
         const response = await removeFriendRequestReq(item?.userId)
         if(response === 200){
+            await refetch()
             setNotificationData((prev) => {
                 if(!prev || !prev.notifications) return prev;
                 const updatedNotifications = prev.notifications.filter((nItem) => nItem.id !== item.id)
@@ -192,7 +193,7 @@ const Notifications = ({ onClose }) => {
                     </View>
                     <View className="flex-1">
                         <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
-                        <Text className="font-plight text-sm text-gray-400">{item.information}</Text>
+                        <Text className="font-plight text-xs text-gray-400">{item.information}</Text>
                     </View>
                 </>
             case 13:
@@ -210,8 +211,8 @@ const Notifications = ({ onClose }) => {
                         
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationSender.name}</Text>
-                        <Text className="font-plight text-sm text-gray-400">Ju keni derguar nje ftese miqesie tek <Text className="text-secondary">{item.notificationReceiver?.name}</Text></Text>
+                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-400">Ju keni derguar nje ftese miqesie tek <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
                         <View className="mt-2">
                             <TouchableOpacity onPress={() => handleRemoveFriendRequest(item)} className="bg-oBlack self-start px-4 py-0.5 rounded-md border-black-200 border" style={styles.box}>
                                 <Text className="font-psemibold text-sm text-secondary text-center">Anuloni</Text>
@@ -251,8 +252,8 @@ const Notifications = ({ onClose }) => {
                     </View>
                 </View>
                 <View className="flex-1">
-                    <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
-                    <Text className="font-plight text-sm text-gray-400">{item.information}</Text>
+                    <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                    <Text className="font-plight text-xs text-gray-400">Hej {item.notificationReceiver.name.split(" ")[0]}, <Text className="text-secondary">{item.notificationSender?.name}</Text> ju ka derguar ftese miqesie... Nderveproni ne baze te butonave poshte imazhit.</Text>
                 </View>
                 </>
             case 15:
@@ -269,8 +270,8 @@ const Notifications = ({ onClose }) => {
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
-                        <Text className="font-plight text-sm text-gray-400"><Text className="text-secondary">{item.notificationReceiver?.name}</Text> ka pranuar kerkesen tende te miqesise</Text>
+                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-400"><Text className="text-secondary">{item.notificationSender?.name}</Text> ka pranuar kerkesen tende te miqesise</Text>
                     </View>
                 </>
             case 16:
@@ -287,8 +288,8 @@ const Notifications = ({ onClose }) => {
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
-                        <Text className="font-plight text-sm text-gray-400">Ju keni pranuar kerkesen e miqesise me <Text className="text-secondary">{item.notificationReceiver?.name}</Text></Text>
+                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-400">Ju keni pranuar kerkesen e miqesise me <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
                     </View>
                 </>
             default:
