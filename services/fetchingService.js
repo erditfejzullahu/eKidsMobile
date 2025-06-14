@@ -844,6 +844,15 @@ export const getTagsByTitle = async (title) => {
     }
 }
 
+export const getDiscussionsByTitle = async (title) => {
+    try {
+        const response = await apiClient.get(`/api/Discussions/GetDiscussionByTitle?searchParam=${title}`)
+        return response && response.data;
+    } catch (error) {
+        return null;
+    }
+}
+
 export const getDiscussions = async (userId, sortBy) => {
     try {
         // const response = await apiClient.get(`/api/Discussions`, {

@@ -11,13 +11,14 @@ import { useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import { useNotificationContext } from '../context/NotificationState'
 import _ from 'lodash'
-import { getBlogByTitle, reqUsersBySearch } from '../services/fetchingService'
+import { getBlogByTitle, getDiscussionsByTitle, reqUsersBySearch } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
 import BlogSearchInput from './ShowBlogsQuery'
 import ShowBlogsQuery from './ShowBlogsQuery'
 import { useGlobalContext } from '../context/GlobalProvider'
 import CustomButton from './CustomButton'
 import NotifierComponent from './NotifierComponent'
+import ShowDiscussionsQuery from './ShowDiscussionsQuery'
 
 const Topbar = () => {
     const {user, isLoading} = useGlobalContext();
@@ -25,6 +26,7 @@ const Topbar = () => {
     const navigator = useNavigation();
     const [retrivedData, setRetrivedData] = useState(null)
     const [retrivedBlogData, setRetrivedBlogData] = useState([])
+    const [retrievedDiscussionData, setRetrievedDiscussionData] = useState([])
     const [notificationsOpened, setNotificationsOpened] = useState(false)
     const {showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened, showDiscussionSearcher, showInstructorCourseSharer, showInstructorSharer, showOnlineMeetingSharer} = useTopbarUpdater();
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
@@ -48,10 +50,18 @@ const Topbar = () => {
         }
     }
 
+    const fetchDiscussions = async () => {
+        const response = await getDiscussionsByTitle(queryText)
+        console.log(response, ' res');
+        
+        setRetrievedDiscussionData(response || [])
+    }
+
     useEffect(() => {
       if(queryText === '' || queryText === null){
         setRetrivedData(null)
         setRetrivedBlogData(null)
+        setRetrievedDiscussionData(null)
       }else{
         handleInput();
       }
@@ -60,12 +70,15 @@ const Topbar = () => {
 
     const debounceFetchData = useCallback(_.debounce(fetchUsers, 500), [])
     const debounceFetchBlogData = useCallback(_.debounce(fetchBlogs, 500), [])
+    const debounceFetchDiscussionData = useCallback(_.debounce(fetchDiscussions, 500), [])
 
     const handleInput = () => {        
         if(showSearcher){
             if(queryText.length > 2) debounceFetchData(queryText)
         }else if(showBlogSearcher){
             if(queryText.length > 2) debounceFetchBlogData(queryText)
+        }else if(showDiscussionSearcher){
+            if(queryText.length > 2) debounceFetchDiscussionData(queryText);
         }
     }
 
@@ -74,6 +87,7 @@ const Topbar = () => {
       return () => {
         debounceFetchBlogData.cancel();
         debounceFetchData.cancel();
+        debounceFetchDiscussionData.cancel();
       }
     }, [])
     
@@ -189,6 +203,11 @@ const Topbar = () => {
             <ShowBlogsQuery retrivedBlogData={retrivedBlogData} userData={user}/>
         </Animatable.View>
         }
+        {(showDiscussionSearcher && retrievedDiscussionData?.length > 0 && queryText !== '') && (
+        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
+            <ShowDiscussionsQuery retrivedBlogData={retrivedBlogData} userData={user}/>
+        </Animatable.View>
+        )}
 
       <StatusBar backgroundColor='#13131a' style='light'/>
 
