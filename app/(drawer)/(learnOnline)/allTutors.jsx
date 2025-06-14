@@ -83,7 +83,8 @@ const AllTutors = () => {
       sortByDate: data.data != null && "WhenBecameInstructor",
       sortDateOrder: data.data,
       sortByViews: data.shikime != null && "InstructorStudents",
-      sortViewOrder: data.shikime
+      sortViewOrder: data.shikime,
+      pageSize: data.pageSize,
     }))
   }
 

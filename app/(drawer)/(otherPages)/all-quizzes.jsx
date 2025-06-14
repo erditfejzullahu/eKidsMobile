@@ -44,7 +44,8 @@ const AllQuizzes = () => {
       sortByDate: data.data != null && "createdAt",
       sortDateOrder: data.data,
       sortByViews: data.shikime != null && "viewCount",
-      sortViewOrder: data.shikime
+      sortViewOrder: data.shikime,
+      pageSize: data.pageSize,
     }))
   }
 

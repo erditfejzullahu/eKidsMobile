@@ -44,7 +44,7 @@ const Categories = () => {
     setSortingData((prevData) => ({
       ...prevData,
       pageNumber: 1,
-      pageSize: 3,
+      pageSize: 15,
       sortByName: '',
       sortNameOrder: '',
       sortByDate: '',
@@ -115,7 +115,8 @@ const Categories = () => {
       sortByDate: data.data != null && "CreatedAt",
       sortDateOrder: data.data,
       sortByViews: data.shikime != null && "ViewCount",
-      sortViewOrder: data.shikime
+      sortViewOrder: data.shikime,
+      pageSize: data.pageSize,
     }))
   }
 

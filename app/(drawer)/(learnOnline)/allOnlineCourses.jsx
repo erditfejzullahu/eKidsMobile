@@ -51,7 +51,8 @@ const AllOnlineCourses = () => {
       sortByDate: data.data != null && "CreatedAt",
       sortDateOrder: data.data,
       sortByViews: data.shikime != null && "ViewCount",
-      sortViewOrder: data.shikime
+      sortViewOrder: data.shikime,
+      pageSize: data.pageSize
     }))
   }
 

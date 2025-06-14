@@ -57,7 +57,8 @@ const AllUpcomingOnlineMeetings = () => {
           sortByDate: data.data != null && "CreatedAt",
           sortDateOrder: data.data,
           sortByViews: data.shikime != null && "Participants",
-          sortViewOrder: data.shikime
+          sortViewOrder: data.shikime,
+          pageSize: data.pageSize,
         }))
     }
 
