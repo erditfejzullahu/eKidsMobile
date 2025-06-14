@@ -5,8 +5,9 @@ import { icons } from '../constants'
 import { TouchableOpacity } from 'react-native'
 import RenderHTML from 'react-native-render-html'
 import { useRouter } from 'expo-router'
+import { noop } from 'lodash'
 
-const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt, id}}) => {
+const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt, id}, discussionComponentSection = false, closeDiscussionModal}) => {
     const router = useRouter();
     const [htmlContent, setHtmlContent] = useState({html: ""})
     const {width} = useWindowDimensions();
@@ -26,7 +27,14 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
         day: 'numeric',
       });
   return (
-    <TouchableOpacity className="bg-oBlack p-4 relative border border-black-200" style={styles.box} onPress={() => router.push(`/discussions/${id}`)}>
+    <TouchableOpacity className="bg-oBlack p-4 relative border border-black-200" style={styles.box} 
+        onPress={() => {
+            if (discussionComponentSection) {
+            closeDiscussionModal();
+            }
+            router.push(`/discussions/${id}`);
+        }}
+        >
         <View className="absolute -right-2 -top-2 border border-black-200 rounded-md bg-primary p-2" style={styles.box}>
             {user !== null ? <Image 
                 source={{uri: user?.profilePictureUrl}}

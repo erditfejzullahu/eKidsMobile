@@ -70,7 +70,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
                                 </View>
                             )}
                             renderItem={({ item }) => (
-                                <DiscussionsCard discussion={item}/>
+                                <DiscussionsCard discussion={item} discussionComponentSection={true} closeDiscussionModal={() => setOpenModal(false)}/>
                             )}
                             ListEmptyComponent={() => (
                                 <EmptyState

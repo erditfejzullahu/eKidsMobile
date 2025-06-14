@@ -33,7 +33,6 @@ const AddScheduleMeeting = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const {updateData, meetingData} = route.params || {};
-  console.log(meetingData, ' meeting data');
 
   useEffect(() => {
     if(meetingData && isUpdateMode){
