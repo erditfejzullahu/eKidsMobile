@@ -102,8 +102,10 @@ import videoConference from "../assets/icons/video-conference.png"
 import available from "../assets/icons/available.png"
 import clock from "../assets/icons/clock.png"
 import customerSupport from "../assets/icons/customer-support.png"
+import equalizer from "../assets/icons/equalizer.png"
 
 export default {
+  equalizer,
   customerSupport,
   clock,
   available,

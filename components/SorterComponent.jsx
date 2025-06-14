@@ -9,7 +9,11 @@ const SorterComponent = ({ showSorter, sortButton }) => {
 
     // export example
     // {"data": null, "emri": "asc", "shikime": null}
-
+    const [paginationOptions, setPaginationOptions] = useState({
+        pageSizeOptions: [15, 30, 50],
+        showPaginationOptions: false
+    })
+    
     const [sortableOptions, setSortableOptions] = useState([
         {
             id: 1,
@@ -85,7 +89,8 @@ const SorterComponent = ({ showSorter, sortButton }) => {
     const [sendData, setData] = useState({
         emri: null,
         data: null,
-        shikime: null
+        shikime: null,
+        pageSize: 15
     })
 
     const setActiveButton = (id) => {
@@ -165,15 +170,29 @@ const SorterComponent = ({ showSorter, sortButton }) => {
     if (!showSorter) return null;
     return (
         <>
+        {paginationOptions.showPaginationOptions && <Animatable.View animation={"slideInLeft"} duration={500} className="flex-row flex-1">
+            {/* <Text className=""></Text> */}
+            {paginationOptions.pageSizeOptions.map((item, index) => (
+                <TouchableOpacity key={index} onPress={() => setData((prev) => ({...prev, pageSize: item}))} className={`flex-1 ${item == sendData.pageSize ? "bg-oBlack" : "bg-primary"} flex-row gap-1 justify-center p-2 border-b-0 border items-center border-black-200 ${(index === 1 || index === 2) ? "border-l-0" : ""}`}>
+                    <Text className="text-white text-sm font-plight"><Text className="text-secondary">{item}</Text> artikuj</Text>
+                    {item == sendData.pageSize &&  <Image 
+                        source={icons.tick}
+                        className="size-5"
+                        resizeMode='contain'
+                        tintColor={"#FF9C01"}
+                    />}
+                </TouchableOpacity>
+            ))}
+        </Animatable.View>}
         <Animatable.View
             animation="slideInUp"
             duration={300}
         >
-            <View className="border border-black-200 flex-row w-full justify-between">
+            <View className="flex-row w-full items-center justify-between">
                         {sortableOptions.map((option, index) => (
                             <View 
                                 key={option.id}
-                                className="flex-1 border-black-200 items-center p-2"
+                                className={`flex-1 border ${index === 1 || index === 2 ? "border-l-0" : ""} border-black-200 items-center p-2`}
                                 style={{
                                     borderRightWidth: index < sortableOptions.length - 1 ? 1 : 0,
                                     borderColor: "#232533",
@@ -198,11 +217,19 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                                 
                             </View> 
                         ))}
+                        <TouchableOpacity className="border border-black-200 p-2" onPress={() => setPaginationOptions((prev) => ({...prev, showPaginationOptions: !prev.showPaginationOptions}))}>
+                            <Image 
+                                source={icons.equalizer}
+                                className="size-5"
+                                tintColor={"#FF9C01"}
+                                resizeMode='contain'
+                            />
+                        </TouchableOpacity>
                     </View>
 
             {activeOptionId && (
                 <>
-                <View className="w-full flex-row border-b border-l border-r border-black-200">
+                <View className={`w-full flex-row ${sortableOptions.find(option => option.id === activeOptionId && option.ticked) ? "border-b" : ""} border-l border-r border-black-200`}>
                     {sortableOptions
                         .find(option => option.id === activeOptionId && option.ticked)
                         ?.underObj.map((subOption, subIndex) => (
@@ -231,7 +258,6 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                             </TouchableOpacity>
                         </View>
                     ))}
-                    
                 </View>
                 </>
             )}

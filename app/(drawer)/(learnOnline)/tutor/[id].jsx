@@ -32,7 +32,6 @@ const Tutor = () => {
     if(user?.data?.userData?.id === data?.userId){
       router.replace("instructor/instructorProfile")
     }
-    
   }, [data, user, id])
   
 
