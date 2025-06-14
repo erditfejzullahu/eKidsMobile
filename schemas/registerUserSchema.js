@@ -63,8 +63,8 @@ export const loginUserSchema = z.object({
     invalid_type_error: "Fjalëkalimi duhet të jetë tekst",
     })
     .min(8, { message: "Fjalëkalimi duhet të ketë të paktën 8 karaktere" })
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/,
-      { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të vogël, një të madhe, një numër dhe një karakter special (@$!%*?&.)" }
-    ),
+    // .regex(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/,
+    //   { message: "Fjalëkalimi duhet të përmbajë të paktën një shkronjë të vogël, një të madhe, një numër dhe një karakter special (@$!%*?&.)" }
+    // ),
 })

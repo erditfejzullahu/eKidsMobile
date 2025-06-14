@@ -25,6 +25,9 @@ import DiscussionsProfile from '../../../components/DiscussionsProfile'
 import BlogsProfile from '../../../components/BlogsProfile'
 import { useRole } from '../../../navigation/RoleProvider'
 import OnlineClassesCard from '../../../components/OnlineClassesCard'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { personalInformations } from '../../../schemas/profileSchema'
 
 const Profile = () => {
   const {role} = useRole()
@@ -78,6 +81,33 @@ const router = useRouter();
     phone: '',
   })
 
+  const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
+    resolver: zodResolver(personalInformations),
+    defaultValues: {
+      name: "",
+      lastname: "",
+      password: "",
+      confirmPassword: "",
+      username: "",
+      email: "",
+      phone: ""
+    },
+    mode: "onTouched"
+  })
+
+  useEffect(() => {
+    if(userData){
+      reset({
+        name: userData?.firstname,
+        lastname: userData?.lastname,
+        username: userData?.username,
+        email: userData?.email,
+        phoneNumber: getMetaValue(userData.userMeta, "Phone")
+      })
+
+    }
+  }, [userData, reset])
+  
 
   const onRefresh = async () => {
     setRefreshing(true)
@@ -118,19 +148,6 @@ const router = useRouter();
       showOnlineCoursesProgresses()
     }
   }, [showOnlineCoursesProgress])
-  
-
-  useEffect(() => {
-    if(userData){
-      setForm({
-        firstname: userData.firstname,
-        lastname: userData.lastname,
-        username: userData.username,
-        email: userData.email,
-        phone: getMetaValue(userData.userMeta, "Phone")
-      })
-    }
-  }, [userData])
 
   const togglePassword = () => {
     setChangePassword(!changePassword)
@@ -407,74 +424,152 @@ const router = useRouter();
           extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
           keyboardShouldPersistTaps="handled"
           >
-            <View className="px-4 mb-4">
-              <FormField
-                title={"Emri"}
-                placeholder={"Shkruani emrin tuaj këtu"}
-                value={form.firstname}
-                handleChangeText={(e) => setForm({ ...form, firstname: e })}
-                otherStyles={"mt-5"}
-              />
-              <FormField 
-                title={"Mbiemri"}
-                placeholder={"Shkruani mbiemrin tuaj këtu"}
-                value={form.lastname}
-                handleChangeText={(e) => setForm({ ...form, lastname: e })}
-                otherStyles={"mt-5"}
-              />
-              <FormField 
-                title={"Nofka juaj"}
-                placeholder={"Shkruani nofkën tuaj këtu"}
-                value={form.username}
-                handleChangeText={(e) => setForm({ ...form, username: e })}
-                otherStyles={"mt-5"}
-              />
-              <FormField 
-                title={"Emaili juaj"}
-                placeholder={"Shkruani emailin tuaj këtu"}
-                value={form.email}
-                handleChangeText={(e) => setForm({ ...form, email: e})}
-                otherStyles={"mt-5"}
-                keyboardType="email-address"
-              />
-              <FormField 
-                title={"Numri juaj i telefonit"}
-                placeholder={"044-536-900"}
-                value={form.phone}
-                handleChangeText={(e) => setForm({ ...form, phone: e })}
-                otherStyles={"mt-5"}
-                keyboardType="number-pad"
-              />
-                <TouchableOpacity
-                  onPress={togglePassword}
-                  className="mt-5"
-                >
-                  <Text className="text-base text-secondary font-psemibold">{changePassword ? "Nuk dua të ndryshoj fjalëkalimin" : "Dëshironi të ndryshoni fjalëkalimin?"}</Text>
-                </TouchableOpacity>
+            <View className="px-4 mb-4 mt-4 gap-3">
+              <View>
+                <Controller 
+                  control={control}
+                  name="name"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Emri"}
+                      placeholder={"Shkruani emrin tuaj këtu"}
+                      value={value}
+                      handleChangeText={onChange}
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani emrin tuaj te vertete.</Text>
+                {errors.name && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.name.message}</Text>
+                )}
+              </View>
+              <View>
+                <Controller 
+                  control={control}
+                  name="lastname"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Mbiemri"}
+                      placeholder={"Shkruani mbiemrin tuaj këtu"}
+                      value={value}
+                      handleChangeText={onChange}
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani mbiemrin tuaj te vertete.</Text>
+                {errors.lastname && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.lastname.message}</Text>
+                )}
+              </View>
+              <View>
+                <Controller 
+                  control={control}
+                  name="username"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Emri juaj i perdoruesit"}
+                      placeholder={"Shkruani nofken tuaj këtu"}
+                      value={value}
+                      handleChangeText={onChange}
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani se si deshironi te paraqiteni ju ne platforme.</Text>
+                {errors.username && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.username.message}</Text>
+                )}
+              </View>
+              <View>
+                <Controller 
+                  control={control}
+                  name="email"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Emaili juaj"}
+                      placeholder={"Shkruani emailin tuaj ketu"}
+                      value={value}
+                      handleChangeText={onChange}
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1"><Text className="text-secondary">Vemendje:</Text> Ne ndryshim te emailit, ju duhet te verifikoni emailin e ri.</Text>
+                {errors.email && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
+                )}
+              </View>
+              <View>
+                <Controller 
+                  control={control}
+                  name="phoneNumber"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Numri juaj"}
+                      placeholder={"Shkruani numrin tuaj ketu"}
+                      value={value}
+                      handleChangeText={onChange}
+                      keyboardType="phone-pad"
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni numrin tuaj ne perdorim aktual.</Text>
+                {errors.phoneNumber && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.phoneNumber.message}</Text>
+                )}
+              </View>
+                <View>
+                  <TouchableOpacity
+                    onPress={togglePassword}
+                    className=""
+                  >
+                    <Text className="text-base text-secondary font-psemibold">{changePassword ? "Nuk dua të ndryshoj fjalëkalimin" : "Dëshironi të ndryshoni fjalëkalimin?"}</Text>
+                  </TouchableOpacity>
+                </View>
               {changePassword ? 
                 <>
                 <View>
-                  <FormField 
-                    title={"Ndryshoni fjalëkalimin"}
-                    placeholder={"Shkruani fjalëkalimin e ri"}
-                    value={form.password}
-                    handleChangeText={(e) => setForm({ ...form, password: e })}
-                    otherStyles={"mt-5"}
+                  <Controller 
+                    control={control}
+                    name="password"
+                    render={({field: {onChange, value}}) => (
+                      <FormField
+                        title={"Fjalekalimi juaj"}
+                        placeholder={"Shkruani fjalekalimin tuaj te ri ketu"}
+                        value={value}
+                        handleChangeText={onChange}
+                        secureTextEntry
+                      />
+                    )}
                   />
-                  <FormField
-                    title={"Konfirmoni fjalëkalimin e ri"}
-                    placeholder={"Shkruani fjalëkalimin e mësipërm"}
-                    value={form.confirmPassword}
-                    handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
-                    otherStyles={"mt-5"}
+                  <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani nje fjalekalim te forte.</Text>
+                  {errors.password && (
+                    <Text className="text-red-500 text-xs font-plight">{errors.password.message}</Text>
+                  )}
+                </View>
+                <View>
+                  <Controller 
+                    control={control}
+                    name="confirmPassword"
+                    render={({field: {onChange, value}}) => (
+                      <FormField
+                        title={"Konfirmoni fjalekalimin"}
+                        placeholder={"Shkruani fjalekalimin tuaj te ri ketu"}
+                        value={value}
+                        handleChangeText={onChange}
+                        secureTextEntry
+                      />
+                    )}
                   />
+                  <Text className="text-xs text-gray-400 font-plight mt-1">Konfirmoni fjalekalimin e shkruar me larte.</Text>
+                  {errors.confirmPassword && (
+                    <Text className="text-red-500 text-xs font-plight">{errors.confirmPassword.message}</Text>
+                  )}
                 </View>
                 </> : null}
                 <CustomButton 
                   title={"Përditësoni të dhënat"}
                   containerStyles={"w-full mt-5"}
-                  isLoading={submitLoading}
-                  handlePress={updateDetails}
+                  isLoading={isSubmitting}
+                  handlePress={handleSubmit(updateDetails)}
                 />
             </View>
           </KeyboardAwareScrollView>}
