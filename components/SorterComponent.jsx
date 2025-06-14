@@ -153,8 +153,13 @@ const SorterComponent = ({ showSorter, sortButton }) => {
             option.underObj.some(subOption => subOption.ticked)
         );
         setShowButton(anySubTicked);
-    }, [sortableOptions]);
+        
+    }, [sortableOptions, paginationOptions.showPaginationOptions]);
 
+    useEffect(() => {
+        setShowButton(true)
+    }, [paginationOptions, sendData.pageSize])
+    
     
     // const updateShowButton = () => {
     //     const anySubTicked = sortableOptions.some(option =>
