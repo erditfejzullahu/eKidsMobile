@@ -9,62 +9,6 @@ import { getDiscussions } from '../../../../../services/fetchingService'
 import Loading from "../../../../../components/Loading"
 import EmptyState from '../../../../../components/EmptyState'
 
-const dummyDiscussions = [
-    {
-        title: "How to optimize React Native performance?",
-        content: "I'm facing performance issues in my React Native app. What are some best practices to optimize performance?",
-        tags: ["react-native", "performance", "optimization"],
-        user: {
-            name: "John Doe",
-            avatar: "https://example.com/avatar1.jpg",
-        },
-        votes: 15,
-        answers: 3,
-        views: 120,
-        createdAt: Date.now()
-    },
-    {
-        title: "What's the best way to manage state in Vue 3?",
-        content: "I'm trying to decide between Vuex and Pinia. What are the pros and cons of each?",
-        tags: ["vue", "vuex", "pinia", "state-management"],
-        user: {
-            name: "Jane Smith",
-            avatar: "https://example.com/avatar2.jpg",
-        },
-        votes: 22,
-        answers: 5,
-        views: 200,
-        createdAt: Date.now()
-    },
-    {
-        title: "How does Prisma handle self-referencing tables?",
-        content: "I have a table where an entity can relate to itself. How do I structure this properly in Prisma?",
-        tags: ["prisma", "database", "sql"],
-        user: {
-            name: "Alice Johnson",
-            avatar: "https://example.com/avatar3.jpg",
-        },
-        votes: 10,
-        answers: 2,
-        views: 85,
-        createdAt: Date.now()
-    },
-    {
-        title: "What are the security best practices for NestJS?",
-        content: "I'm building an API with NestJS and want to make sure it's secure. What should I focus on?",
-        tags: ["nestjs", "security", "authentication"],
-        user: {
-            name: "Michael Brown",
-            avatar: "https://example.com/avatar4.jpg",
-        },
-        votes: 30,
-        answers: 8,
-        views: 350,
-        createdAt: Date.now()
-    }
-];
-
-
 const allDiscussions = () => {
     const router = useRouter();
     const [sortBy, setSortBy] = useState(0)

@@ -637,9 +637,9 @@ export const getAllTagsByCategory = async (categoryId) => {
     }
 }
 
-export const getAllTagsWithChilds = async (categoryId) => {
+export const getAllBlogTags = async (searchParam) => {
     try {
-        const response = await apiClient.get(`/api/Blogs/GetAllTagsWithChild?categoryId=${categoryId}`)
+        const response = await apiClient.get(`/api/Blogs/GetAllBlogTags?searchParam=${!searchParam ? "" : searchParam}`)
         return response ? response.data : null
     } catch (error) {
         return null
@@ -672,6 +672,15 @@ export const getAllBlogs = async (pagination, forYouOrFriends) => {
     }
 }
 
+export const deleteBlog = async (id) => {
+    try {
+        const response = await apiClient.delete(`/api/Blogs/${id}`)
+        return response && response.status;
+    } catch (error) {
+        return error.response.status
+    }
+}
+
 export const getBlogById = async (blogId, userId) => {
     try {
         const response = await apiClient.get(`/api/Blogs/GetBlogById/${blogId}/${userId}`)
@@ -688,6 +697,7 @@ export const reqCreatePost = async (payload) => {
         const response = await apiClient.post(`/api/Blog`, payload)
         return response ? response.data : null
     } catch (error) {
+        console.log(error.response.data)
         return null
     }
 }
@@ -836,8 +846,10 @@ export const createDiscussion = async (payload) => {
 }
 
 export const getTagsByTitle = async (title) => {
+    console.log(!title);
+    
     try {
-        const response = await apiClient.get(`/api/Discussions/TypingTags?title=${title}`)
+        const response = await apiClient.get(`/api/Discussions/TypingTags?title=${!title ? "" : title}`)
         return response && response.data;
     } catch (error) {
         return null

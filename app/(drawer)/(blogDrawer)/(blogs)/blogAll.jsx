@@ -24,6 +24,7 @@ const Blog = () => {
 
   const [allBlogs, setAllBlogs] = useState([])
   const [hasMoreBlogs, setHasMoreBlogs] = useState(false)
+  const [key, setKey] = useState(1)
 
   const [blogTagId, setBlogTagId] = useState(null)
   const [pagination, setPagination] = useState({
@@ -74,8 +75,8 @@ const Blog = () => {
   }
 
   useEffect(() => {
+    console.log(blogData, ' ??');
     if(blogData){
-      console.log(blogData);
       
       const {data, hasMore} = blogData;
       if(data && data?.length > 0){
@@ -101,7 +102,7 @@ const Blog = () => {
   
   if((blogLoading || isLoading) && pagination.pageNumber === 1) return (<Loading />)
   return (
-    <View className="flex-1 h-full">      
+    <View className="flex-1 h-full" key={key}>      
         <KeyboardAwareFlatList
           behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
@@ -129,7 +130,7 @@ const Blog = () => {
                 </View>
               </View>
 
-              <AddBlogComponent userData={user} getUserOutside={passUserOutside} />
+              <AddBlogComponent userData={user} getUserOutside={passUserOutside} sendRefreshCall={() => setKey((prev) => prev + 1)}/>
             </View>
             {blogTagId !== null && 
             <View className="-mb-2 mt-4 flex-row items-center gap-2">

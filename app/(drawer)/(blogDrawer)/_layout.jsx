@@ -1,19 +1,18 @@
-import { View, Text, Button, ScrollView, Image, TextInput, FlatList } from 'react-native';
+import { View, Text, Button, ScrollView, Image, TextInput, RefreshControl, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Drawer } from 'react-native-drawer-layout';
 import { Link, Stack } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { images } from '../../../constants';
 import {useGlobalContext} from '../../../context/GlobalProvider'
-import TagsByCategories from '../../../components/TagsByCategories';
 import { useBlogsDrawerContext } from '../../../context/BlogsDrawerProvider';
 import BlogsDrawerContext from "../../../context/BlogsDrawerProvider"
 import { useTopbarUpdater } from '../../../navigation/TopbarUpdater';
 import BlogsDrawyerHeader from '../../../components/BlogsDrawyerHeader';
-import { getTagsByTitle } from '../../../services/fetchingService';
+import { getAllBlogTags, getTagsByTitle } from '../../../services/fetchingService';
 import _ from 'lodash';
 import useFetchFunction from '../../../hooks/useFetchFunction';
-import DiscussionTagsLayout from '../../../components/DiscussionTagsLayout';
+import AllTagsLayoutForDiscussionOrBlogs from '../../../components/AllTagsLayoutForDiscussionOrBlogs';
 import Loading from '../../../components/Loading';
 import EmptyState from '../../../components/EmptyState';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
@@ -22,16 +21,31 @@ const TagsHeader = () => {
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;
   // console.log(userCategories);
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const {discussionSection} = useTopbarUpdater();
   const [isDiscussionSection, setIsDiscussionSection] = useState(false)
 
   const [discussionTagData, setDiscussionTagData] = useState([])
+  const [blogsTagData, setBlogsTagData] = useState([])
 
-  const {data, isLoading: discussionTagLoading, refetch} = useFetchFunction(() => isDiscussionSection ? getTagsByTitle(null) : {})
+  const [discussionBlogsTagsInputs, setDiscussionBlogsTagsInputs] = useState({
+    blogsInput: "",
+    discussionsInput: ""
+  })
+
+  const {data, isLoading: discussionOrBlogTagsLoading, refetch} = useFetchFunction(() => isDiscussionSection ? getTagsByTitle(discussionBlogsTagsInputs.discussionsInput.trim() === "" ? null : discussionBlogsTagsInputs.discussionsInput) : getAllBlogTags(discussionBlogsTagsInputs.blogsInput.trim() === "" ? null : discussionBlogsTagsInputs.blogsInput))
+
+  const onRefresh = async () => {
+    setIsRefreshing(true)
+    setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: "", discussionsInput: ""}))
+    await refetch();
+    setIsRefreshing(false)
+  }
 
   useEffect(() => {
+    console.log("po thirret")
     if(data){
-      setDiscussionTagData(data)
+      isDiscussionSection ? setDiscussionTagData(data || []) : setBlogsTagData(data || [])
     }
   }, [data])
   
@@ -39,56 +53,35 @@ const TagsHeader = () => {
   useEffect(() => {
     if(discussionSection){
       setIsDiscussionSection(true)
-      refetch()
+      setBlogsTagData([])
+      // onRefresh();
     }else{
       setIsDiscussionSection(false)
       setDiscussionTagData([])
+      // onRefresh();
     }
   }, [discussionSection])
 
-  const GetTags = async (tagInput) => {
-    console.log(tagInput)
-    if(tagInput.length > 1){
-      const response = await getTagsByTitle(tagInput)
-      console.log(response);
-      
-      if(response){
-        setDiscussionTagData(response);
-      }else{
-        setDiscussionTagData([])
-      }
-    }
-  }
-  
-  const debounceTagsData = useCallback(
-    _.debounce((text) => {
-      GetTags(text);
-    }, 500), []
-  )
-  
   useEffect(() => {
-    return () => {
-      debounceTagsData.cancel();
-    }
-  }, [])
+    refetch()
+  }, [discussionBlogsTagsInputs])
   
-  if(discussionSection){
-    if(discussionTagLoading) return <Loading />
-  }
+    if(discussionOrBlogTagsLoading || isRefreshing) return <Loading />
   return (
     //tek pjesa e ketij hederi i qes krejt etiketimet me accordions ne baze te kategorive // etiketimet duhet me pas mundesin me pas underetiketime
     <FlatList
-      className="flex-1 bg-oBlack p-4 border-r border-black-200"
+      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
+      className="flex-1 bg-oBlack p-4 border-r overflow-hidden border-black-200"
       contentContainerStyle={{flexGrow: 1, gap: 6}}
-      data={isDiscussionSection ? discussionTagData : userCategories}
-      keyExtractor={(item) => isDiscussionSection ? item.id : 'kategoria-' + item?.CategoryID}
+      columnWrapperStyle={{gap: 6, overflow: "scroll"}}
+      numColumns={4}
+      data={isDiscussionSection ? discussionTagData : blogsTagData}
+      keyExtractor={(item) => item.id}
       renderItem={({item}) => (
-        isDiscussionSection
-          ? <DiscussionTagsLayout item={item}/>
-          : <TagsByCategories categories={item}/> 
+        <AllTagsLayoutForDiscussionOrBlogs item={item} discussionSection={isDiscussionSection}/>
       )}
       ListHeaderComponent={() => (
-        <BlogsDrawyerHeader sendInput={(input) => debounceTagsData(input)} />
+        <BlogsDrawyerHeader discussionSection={isDiscussionSection} sendDiscussionInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, discussionsInput: input}))} sendBlogsInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: input}))}/>
       )}
       ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end", position: isDiscussionSection ? "absolute" : "static", bottom: "0", width: isDiscussionSection ? "100%" : "auto"}}
       ListFooterComponent={() => (
@@ -99,7 +92,7 @@ const TagsHeader = () => {
       ListEmptyComponent={() => (
         <View>
           <EmptyState 
-            title={isDiscussionSection ? "Nuk ka etiketime diskutimi" : "Nuk ka te dhena blogu"}
+            title={isDiscussionSection ? "Nuk ka etiketime diskutimi" : "Nuk ka etiketime blogu"}
             subtitle={"Nese mendoni qe eshte gabim kontaktoni Panelin e Ndihmes"}
             isSearchPage={true}
             buttonTitle={"Paraqitni ankese"}

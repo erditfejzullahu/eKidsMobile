@@ -2,18 +2,11 @@ import { View, Text, TextInput, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import { images } from '../constants';
+import SearchInput from "./SearchInput"
 
-const BlogsDrawyerHeader = ({sendInput}) => {
-    const {discussionSection} = useTopbarUpdater();
+const BlogsDrawyerHeader = ({sendDiscussionInput, sendBlogsInput, discussionSection}) => {
+    // const {discussionSection} = useTopbarUpdater();
     const [isDiscussionSection, setIsDiscussionSection] = useState(false)
-    const [tagInput, setTagInput] = useState("")
-
-    useEffect(() => {
-      if(tagInput){
-        sendInput(tagInput)
-      }
-    }, [tagInput])
-    
 
     useEffect(() => {
         if(discussionSection){
@@ -26,7 +19,7 @@ const BlogsDrawyerHeader = ({sendInput}) => {
   return (
     <>
     <View className="mb-6">
-        <Text className="text-white font-psemibold text-xl">{isDiscussionSection ? "Shfletoni etiketimet" : "Shfletoni kategorite"}
+        <Text className="text-white font-psemibold text-xl">Shfletoni etiketimet
         <View>
             <Image
             source={images.path}
@@ -37,11 +30,15 @@ const BlogsDrawyerHeader = ({sendInput}) => {
         </Text>
     </View>
     {isDiscussionSection && <View className="mb-4">
-        <TextInput
-        value={tagInput}
-        onChangeText={(e) => setTagInput(e)}
-        className="text-white font-plight text-sm placeholder:text-gray-400 border border-black-200 p-3 rounded-md pb-2"
-        placeholder='Kerkoni etiektime...'
+        <SearchInput 
+          placeholder={"Kerkoni etiketime"}
+          searchFunc={(e) => sendDiscussionInput(e)}
+        />
+    </View>}
+    {!isDiscussionSection && <View className="mb-4">
+        <SearchInput 
+          placeholder={"Kerkoni etiketime"}
+          searchFunc={(e) => sendBlogsInput(e)}
         />
     </View>}
     </>

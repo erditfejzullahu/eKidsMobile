@@ -2,7 +2,7 @@ import { View, Text, Image, Platform, StyleSheet, TextInput, ScrollView, Modal, 
 import React, { useLayoutEffect, useRef } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
-import { getAllTagsWithChilds, getCourseCategories, reqCreatePost } from '../services/fetchingService'
+import { getAllBlogTags, getCourseCategories, reqCreatePost } from '../services/fetchingService'
 import { FlatList } from 'react-native-gesture-handler'
 import { useEffect } from 'react'
 import { icons, images } from '../constants'
@@ -12,15 +12,19 @@ import NotifierComponent from './NotifierComponent'
 import useFetchFunction from "../hooks/useFetchFunction"
 import { flatMap, flatten, flattenDeep, noop } from 'lodash'
 
-const AddBlogComponent = ({userData, getUserOutside}) => {
+const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
+
+    //tagsselected is select by click from all tags,
+    //outputtags is written
+
     const user = userData?.data?.userData
     
     const categories = userData?.data?.categories
 
     const [selectedCategory, setSelectedCategory] = useState(null)
-    const {data: tagData, isLoading: tagLoading, refetch: tagRefetch} = useFetchFunction(selectedCategory !== null ? () => getAllTagsWithChilds(selectedCategory) : noop)
+    const {data: tagData, isLoading: tagLoading, refetch: tagRefetch} = useFetchFunction(() => getAllBlogTags())
     const [openCategories, setOpenCategories] = useState(false)
-    const [tagsData, setTagsData] = useState(null)
+    const [tagsData, setTagsData] = useState([])
     const [openTags, setOpenTags] = useState(false)
     const [inputFocused, setInputFocused] = useState(false)
 
@@ -51,59 +55,13 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
         setContainerWidth(width); // Save container width
     };
 
-    // useLayoutEffect(() => {
-    //     if (containerWidth === 0) return; // Ensure container width is set
-
-    //     if (imageSelected.image) {
-    //         // Dynamically calculate height for remote images
-    //         console.log('hini');
-            
-    //         Image.getSize(
-    //             imageSelected.image,
-    //             (width, height) => {
-    //                 const calculatedHeight = (height / width) * containerWidth;
-    //                 setImageHeight(calculatedHeight);
-    //                 console.log(imageHeight);
-    //             },
-    //             (error) => console.error('Error fetching image size:', error)
-    //         );
-    //     } else if (images.testimage) {
-    //         // Dynamically calculate height for local images
-    //         const { width, height } = Image.resolveAssetSource(images.testimage);
-    //         const calculatedHeight = (height / width) * containerWidth;
-    //         setImageHeight(calculatedHeight);
-    //     }
-    // }, [imageSelected, containerWidth])
-
     const selectTags = (item) => {
-        // console.log(item, ' item');
-        
-        setTagsSelected((prevData) => {
-            const relatedChild = tagsData.filter(tag => tag.parent_Id === item.id)
-            const childTag = tagsData.find(tag => tag.parent_Id === item.id)
-            const relatedOthers = tagsData.filter(tag => tag.parent_Id === item.parent_Id && tag.id !== item.id)
-            const getParent = tagsData.filter(tag => tag.id === item.parent_Id)
-            if(prevData.some((tag => tag.id === item.id))){
-                return prevData.filter(tag => tag.id !== item.id && !relatedChild.some(rt => rt.id === tag.id) && !relatedOthers);
-            }else {
-                if(item.isChild){
-                    const newTags = [
-                        ...prevData,
-                        {id: item.id, name: item.name, isChild: true},
-                        ...relatedOthers.map(tag => ({id: tag.id, name: tag.name, isChild: true})),
-                        ...getParent.map(tag => ({id: tag.id, name: tag.name, isChild: false}))
-                    ]
-                    console.log(newTags, 'tags');
-                    
-                    return newTags;
-                }else{        
-                    const newTags = [
-                        ...prevData,
-                        {id: item.id, name: item.name, isChild: false},
-                        ...relatedChild.map(tag => ({id: tag.id, name: tag.name, isChild: true}))    
-                    ]
-                    return newTags;
-                }
+        setTagsSelected((prev) => {
+            const exists = prev.some(tag => tag.id === item.id)
+            if(exists){
+                return prev.filter(tag => tag.id !== item.id)
+            }else{
+                return [...prev, item];
             }
         })
     }
@@ -194,66 +152,65 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
         alertType: "warning"
     })   
 
+    const {showNotification: titleContentError} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem mbushni titullin dhe permbajtjen e blogut",
+        alertType: "warning"
+    })   
+    const {showNotification: tagsSelectedError} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem zgjidhni nje ose me shume etiketime, apo krijoni tuajat",
+        alertType: "warning"
+    })   
+    const {showNotification: outputTagsError} = NotifierComponent({
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem shkruani nje ose me shume etiketime, apo zgjidhni nga egzistueset",
+        alertType: "warning"
+    })   
+
     const createBlog = async () => {
-        let payload = {};
-        console.log(outputTags.length);
         
-        if(addTags && outputTags.length > 0){
-            payload = {
-                blogDto: {
-                    title: title,
-                    content: blogContent,
-                    categoryId: selectedCategory,
-                    status: postStatus,
-                    images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => [type + base64]) : null,
-                    userId: user.id
-                },
-                tagDto: {
-                    name: outputTags[0],
-                    parentId: null,
-                    category_Id: selectedCategory,
-                    children: outputTags.slice(1).map(tag => ({
-                        name: tag,
-                        category_Id: selectedCategory
-                    }))
-                }
-            }
-            
-        }else if(allTags && tagsSelected.length > 0){
-            payload = {
-                blogDto: {
-                    title: title,
-                    content: blogContent,
-                    categoryId: selectedCategory,
-                    tagId: tagsSelected[0].id,
-                    images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => type + base64) : null,
-                    status: postStatus,
-                    userId: user.id
-                },
-                // tagDto: {
-                    //     name: "",
-                    //     parentId: "",
-                    //     category_Id: selectedCategory,
-                    //     children: tagsSelected.map(tag => ({
-                        //         name: tag.name,
-                        //         category_Id: selectedCategory
-                        //     }))
-                        // }
-                    }
-                }
-                
-                const response = await reqCreatePost(payload);
+        
+        if(title.trim() === "" || title.trim() === null){
+            titleContentError()
+            return;
+        }
+        if(allTags && tagsSelected.length === 0){
+            tagsSelectedError()
+            return;
+        }
+        if(addTags && outputTags.length === 0){
+            outputTagsError()
+            return;
+        }
+        
+        
+        let theTags = []
+
+        if(addTags){
+            const writtenTags = outputTags.map(tag => ({name: tag}));
+            theTags = writtenTags;
+        }else if(allTags){
+            const selectedTags = selectedTags.map(tag => ({name: tag.name}));
+            theTags = selectedTags
+        }
+        
+        const payload = {
+            title: title,
+            categoryId: selectedCategory,
+            userId: user.id,
+            status: postStatus,
+            content: blogContent,
+            images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => [type + base64]) : null,
+            tags: theTags
+        }
+
+        console.log(payload, ' ??');
+        const response = await reqCreatePost(payload);
                 
         if(response){
             successNotification()
-            setInputFocused(false)
-            setTitle("")
-            setBlogContent("")
-            setSelectedCategory(null)
-            setTagsSelected([])
-            setPostStatus(1)
-            setOutputTags([])
-            setImagesSelected([])
+            sendRefreshCall();
         }else{
             failedNotification()
         }
@@ -284,20 +241,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
     }, [getUserOutside])
     
     useEffect(() => {        
-      if(tagData){
-        const flatten = flatMap(tagData, parent => [
-            parent,
-            ...parent.children.map(child => ({
-                ...child,
-                isChild: true
-            }))
-        ])        
-        console.log(flatten);
-        
-        setTagsData(flatten)
-      }else{
-        setTagsData(null)
-      }
+      setTagsData(tagData || [])
     }, [tagData])
 
     useEffect(() => {
@@ -338,7 +282,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                         <View>
                             <Text className="text-white font-psemibold">{user?.firstname} {user?.lastname}</Text>
                         </View>
-                        <TouchableOpacity onPress={() => setOpenPostStatus(true)}>
+                        <TouchableOpacity onPress={() => setOpenPostStatus(!openPostStatus)}>
                             <View className="flex-row gap-2 items-center relative z-50">
                                 <View>
                                     <Text className="text-gray-400 font-pregular text-sm">{postStatus === 1 ? "Publik" : postStatus === 2 ? "Privat" : "Miqte"}</Text>
@@ -426,13 +370,23 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                             <View className="mb-2">
                                 <Text className="text-white font-psemibold text-xs">Kategorite</Text>
                             </View>
-                            {selectedCategory === null && 
-                            <TouchableOpacity onPress={() => setOpenCategories(!openCategories)} className="border border-black-200 rounded-[5px] p-2 px-4 self-start">
-                                <Text className="font-plight text-gray-400 text-sm">Zgjidh kategorine</Text>    
-                            </TouchableOpacity>}
-                            {selectedCategory !== null && <TouchableOpacity onPress={() => setOpenCategories(!openCategories)} className="border border-black-200 rounded-[5px] self-start p-2 px-4">
-                                <Text className="font-psemibold text-gray-400 text-sm">{getCourseCategories(categories, selectedCategory)}</Text>
-                            </TouchableOpacity>}
+                            <View className="flex-row items-center gap-2">
+                                {selectedCategory === null && 
+                                <TouchableOpacity onPress={() => setOpenCategories(!openCategories)} className="border border-black-200 rounded-[5px] p-2 px-4 self-start">
+                                    <Text className="font-plight text-gray-400 text-sm">E pakategorizuar</Text>    
+                                </TouchableOpacity>}
+                                {selectedCategory !== null && <TouchableOpacity onPress={() => setOpenCategories(!openCategories)} className="border border-black-200 rounded-[5px] self-start p-2 px-4">
+                                    <Text className="font-psemibold text-gray-400 text-sm">{getCourseCategories(categories, selectedCategory)}</Text>
+                                </TouchableOpacity>}
+                                {selectedCategory !== null && <TouchableOpacity onPress={() => {setSelectedCategory(null); setOpenCategories(false)}}>
+                                    <Image 
+                                        source={icons.close}
+                                        className="w-3 h-3"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />
+                                </TouchableOpacity>}
+                            </View>
                             {openCategories && <View className="p-2 border border-black-200 rounded-[5px] bottom-0 bg-oBlack mt-2" style={styles.box}>
                                 <FlatList
                                     className="h-[60px]"
@@ -518,8 +472,8 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                         data={tagsSelected || []}
                                         keyExtractor={(item) => `tagunew-${item?.id}`}
                                         renderItem={({item, index}) => (
-                                            <View className={`${item.isChild ? "" : "bg-secondary !border-white"} border relative border-black-200 rounded-[5px] self-start p-2 px-4`}>
-                                                <Text className={`${item.isChild ? "" : "!text-white font-psemibold"} font-plight text-gray-400 text-xs`}>{item?.name}</Text>
+                                            <View className={`${index !== 1 ? "" : "bg-secondary !border-white"} border relative border-black-200 rounded-[5px] self-start p-2 px-4`}>
+                                                <Text className={`${index !== 1 ? "" : "!text-white font-psemibold"} font-plight text-gray-400 text-xs`}>{item?.name}</Text>
                                             </View>
                                         )}
                                     />}
@@ -545,7 +499,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                         )}
                                         ListEmptyComponent={() => (
                                             <View className="items-center justify-center m-auto content-center">
-                                                <Text className="text-white text-sm font-psemibold">Ju lutem zgjidhni nje kategori</Text>
+                                                <Text className="text-white text-sm font-psemibold">Nuk ka etiketime te disponueshme</Text>
                                             </View>
                                         )}
                                         showsVerticalScrollIndicator
@@ -575,7 +529,7 @@ const AddBlogComponent = ({userData, getUserOutside}) => {
                                 />
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => setOpenPostStatus(true)} className="flex-row gap-2 items-center">
+                        <TouchableOpacity onPress={() => setOpenPostStatus(!openPostStatus)} className="flex-row gap-2 items-center">
                             <Image 
                                 source={icons.earth}
                                 className="h-6 w-6"
