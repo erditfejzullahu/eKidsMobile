@@ -17,7 +17,7 @@ import Loading from '../../../components/Loading';
 import EmptyState from '../../../components/EmptyState';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 
-const TagsHeader = () => {
+const TagsHeader = ({isOpened}) => {
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;
   // console.log(userCategories);
@@ -48,7 +48,12 @@ const TagsHeader = () => {
       isDiscussionSection ? setDiscussionTagData(data || []) : setBlogsTagData(data || [])
     }
   }, [data])
-  
+
+  useEffect(() => {
+    if(isOpened){
+      refetch();
+    }
+  }, [isOpened])
 
   useEffect(() => {
     if(discussionSection){
@@ -116,7 +121,7 @@ const _layout = () => {
         open={isDrawerOpened}
         onOpen={() => setIsDrawerOpened(true)}
         onClose={() => setIsDrawerOpened(false)}
-        renderDrawerContent={() => <TagsHeader />}
+        renderDrawerContent={() => <TagsHeader isOpened={isDrawerOpened}/>}
         // drawerType="front"
         drawerStyle={{
           width: 300,
