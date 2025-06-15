@@ -11,6 +11,7 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import Loading from './Loading';
 import { useRouter } from 'expo-router';
 import CountdownTimer from './CountdownTimer';
+import FullScreenImage from './FullScreenImage';
 
 
 const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => {
@@ -21,6 +22,9 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
     const [progress, setProgress] = useState(0)
     const [modalVisible, setModalVisible] = useState(false)
     const [isDownloading, setIsDownloading] = useState(false)
+
+    const [currentImageUrl, setCurrentImageUrl] = useState("")
+    const [fullScreenImageVisible, setFullScreenImageVisible] = useState(false)
 
     const date = new Date(renderItem?.createdAt);
     const formattedDate = date.toLocaleDateString('sq-AL', {
@@ -52,23 +56,23 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
         if(item === null) return;
 
         if(item.lesson){
-            router.replace(`/categories/course/lesson/${item.lesson.id}`)
+            router.replace(`/categories/course/lesson/${item?.lesson?.id}`)
         }else if(item.course){
-            router.replace(`/categories/course/${item.course.id}`)
+            router.replace(`/categories/course/${item?.course?.id}`)
         }else if(item.quiz){
-            router.replace(`/quiz/${item.quiz.id}`)
+            router.replace(`/quiz/${item?.quiz?.id}`)
         }else if(item.blog){
-            router.replace(`(blogs)/${item.blog.id}`)
+            router.replace(`(blogs)/${item?.blog?.id}`)
         }else if(item.discussion){
             router.replace(`/`)
         }else if(item.instructor){
-
+            router.replace(`/tutor/${item?.instructor?.id}`)
         }else if(item.instructorCourse){
-
-        }else if(item.instructorLesson){
-
+            router.replace(`/onlineClass/${item?.instructorCourse?.id}`)
+        }else if(item.instructorLesson){    
+            router.replace(`/`) //route to that specific onlinemeeting or smth else
         }else if(item.onlineMeeting){
-
+            router.replace(`/meetings/${item?.onlineMeeting?.id}`)
         }
     }
     
@@ -130,7 +134,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         {renderItem?.content && renderItem?.fileUrl ? (
                             <>
                                 <View className="max-h-[200px] my-2">
-                                    <TouchableOpacity onLongPress={downloadFile}>
+                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setModalVisible(true)}}>
                                         <Image 
                                             source={{uri: renderItem?.fileUrl}}
                                             resizeMode='cover'
@@ -184,7 +188,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         )}
                                     </View>
                                 </View>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting === null ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
                                 {(renderItem?.course || renderItem?.lesson || renderItem?.quiz || renderItem?.blog?.categoryId || renderItem?.instructorLesson?.categoryId || renderItem?.instructorCourse?.categoryId) ? (
                                     <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog ? renderItem?.blog?.categoryId : renderItem?.instructorLesson ? renderItem?.instructorLesson?.categoryId : renderItem?.instructorCourse ? renderItem?.instructorCourse?.categoryId : 1)}</Text>
                                 ) : (
@@ -278,7 +282,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         )}
                                     </View>
                                 </View>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting === null ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
                                 {(renderItem?.course || renderItem?.lesson || renderItem?.quiz || renderItem?.blog?.categoryId || renderItem?.instructorLesson?.categoryId || renderItem?.instructorCourse?.categoryId) ? (
                                     <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog ? renderItem?.blog?.categoryId : renderItem?.instructorLesson ? renderItem?.instructorLesson?.categoryId : renderItem?.instructorCourse ? renderItem?.instructorCourse?.categoryId : 1)}</Text>
                                 ) : (
@@ -349,6 +353,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             </View>
         </View>    
     </Modal>
+    <FullScreenImage />
     </>
   )
 }
