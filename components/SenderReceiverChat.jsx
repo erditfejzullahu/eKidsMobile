@@ -10,6 +10,7 @@ import { getCourseCategories } from '../services/fetchingService';
 import { useGlobalContext } from '../context/GlobalProvider';
 import Loading from './Loading';
 import { useRouter } from 'expo-router';
+import CountdownTimer from './CountdownTimer';
 
 
 const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => {
@@ -28,7 +29,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
       day: 'numeric',
     });
 
-    const sharedItemDates = new Date(renderItem?.quiz ? renderItem?.quiz?.createdAt : renderItem?.course ? renderItem?.course?.createdAt : renderItem?.lesson ? renderItem?.lesson?.createdAt : renderItem?.blog?.createdAt);
+    const sharedItemDates = new Date(renderItem?.quiz ? renderItem?.quiz?.createdAt : renderItem?.course ? renderItem?.course?.createdAt : renderItem?.lesson ? renderItem?.lesson?.createdAt : renderItem?.blog ? renderItem?.blog?.createdAt : renderItem?.discussion ? renderItem?.discussion?.createdAt : renderItem?.instructor ? renderItem?.instructor?.createdAt : renderItem?.instructorCourse ? renderItem?.instructorCourse?.createdAt : renderItem?.instructorLesson ? renderItem?.instructorLesson?.createdAt : undefined);
     const formateSharedItemDates = sharedItemDates.toLocaleDateString('sq-AL', {
         year: 'numeric',
         month: 'long',  // Full month name
@@ -58,6 +59,16 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             router.replace(`/quiz/${item.quiz.id}`)
         }else if(item.blog){
             router.replace(`(blogs)/${item.blog.id}`)
+        }else if(item.discussion){
+            router.replace(`/`)
+        }else if(item.instructor){
+
+        }else if(item.instructorCourse){
+
+        }else if(item.instructorLesson){
+
+        }else if(item.onlineMeeting){
+
         }
     }
     
@@ -127,6 +138,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         />
                                     </TouchableOpacity>
                                 </View>
+
                                 {isDownloading && <Animatable.View animation="fadeIn" easing="ease-in-out" duration={400} className="mb-2">
                                     <Progress.Bar progress={progress / 100} unfilledColor='#d9d9d9' color="#ff9c01" borderWidth={0} height={8} width={null}/>
                                 </Animatable.View>}
@@ -144,28 +156,27 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     className="h-full max-h-[200px] rounded-[10px]"
                                 />
                             </View>
-                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem.blog ) ? (
+                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLessons || renderItem?.onlineMeeting) ? (
                             <>
                             <View className="bg-oBlack border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
                                 <TouchableOpacity className="absolute top-0 right-0" onPress={() => handleGoToLocation(renderItem)}>
-                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} className="text-white font-psemibold text-xs  px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : "Shfleto blogun"}</Animatable.Text>
+                                    <Animatable.Text animation="pulse" iterationCount="infinite" duration={1000} className="text-white font-psemibold text-xs  px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-b border-l border-black-200" style={styles.box}>{renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : renderItem?.blog ? "Shfleto blogun" : renderItem?.discussion ? "Shfleto diskutimin" : renderItem?.instructor ? "Vizito instruktorin" : renderItem?.instructorLesson ? "Shfleto leksionin" : renderItem?.instructorCourse ? "Shfleto kursin" : renderItem?.onlineMeeting ? "Ndiq takimin" : "None"}</Animatable.Text>
                                 </TouchableOpacity>
                                 <View>
-                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog?.title}</Text>
+                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog ? renderItem?.blog?.title : renderItem?.discussion ? renderItem?.discussion?.title : renderItem?.instructor ? renderItem?.instructor?.name : renderItem?.instructorLesson ? renderItem?.instructorLesson?.title : renderItem?.instructorCourse ? renderItem?.instructorCourse?.name : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.title : "None"}</Text>
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog?.content}</Text>
+                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
-                                        {(renderItem?.course || renderItem?.lesson) && <Image 
-                                            source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson?.lessonFeaturedImage}}
+                                        {(renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson) ? (<Image 
+                                            source={{uri: renderItem?.course ? (renderItem?.course?.courseFeaturedImage || icons.courses) : renderItem?.lesson ? (renderItem?.lesson?.lessonFeaturedImage || icons.lectures) : renderItem?.blog ? (renderItem?.blog?.profilePictureUrl || icons.blogs) : renderItem?.discussion ? (renderItem?.discussion?.user?.profilePictureUrl || icons.discussion) : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.image || icons.lectures) : renderItem?.instructorCourse ? (renderItem?.instructorCourse?.image || icons.courses) : images.logoNew}}
                                             className="h-20 w-20 border border-secondary rounded-[5px]"
                                             resizeMode='cover'
-                                        />}
-                                        {renderItem?.quiz && (
+                                        />) : (
                                             <Image 
-                                                source={icons.quiz}
+                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'
@@ -173,8 +184,12 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         )}
                                     </View>
                                 </View>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{formateSharedItemDates}</Text>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog?.categoryId)}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
+                                {(renderItem?.course || renderItem?.lesson || renderItem?.quiz || renderItem?.blog?.categoryId || renderItem?.instructorLesson?.categoryId || renderItem?.instructorCourse?.categoryId) ? (
+                                    <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog ? renderItem?.blog?.categoryId : renderItem?.instructorLesson ? renderItem?.instructorLesson?.categoryId : renderItem?.instructorCourse ? renderItem?.instructorCourse?.categoryId : 1)}</Text>
+                                ) : (
+                                    <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{renderItem?.blog ? "Blog" : renderItem?.instructorLesson ? "Leksion" : renderItem?.instructorCourse ? "Kurs" : renderItem?.instructor ? "Instruktor" : renderItem?.discussion ? "Diskutim" : renderItem?.onlineMeeting ? "Takim Online" : "None"}</Text>
+                                )}
                             </View>
                             </>
                         ) : (<Text className="text-white text-sm italic">Mesazhi eshte fshire</Text>)}
@@ -227,7 +242,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     className="h-full max-h-[200px] rounded-[10px]"
                                 />
                             </View>
-                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson) ? (
+                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson || renderItem?.onlineMeeting) ? (
                             <View className="bg-primary border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
                                 <TouchableOpacity
                                     onPress={() => handleGoToLocation(renderItem)}
@@ -238,25 +253,24 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         style={styles.box}
                                         
                                     >
-                                        {renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : "Shfleto blogun"}
+                                        {renderItem?.course ? "Shfleto kursin" : renderItem?.lesson ? "Ndiq ligjeraten" : renderItem?.quiz ? "Ploteso kuizin" : renderItem?.blog ? "Shfleto blogun" : renderItem?.discussion ? "Shfleto diskutimin" : renderItem?.instructor ? "Vizito instruktorin" : renderItem?.instructorLesson ? "Shfleto leksionin" : renderItem?.instructorCourse ? "Shfleto kursin" : renderItem?.onlineMeeting ? "Ndiq takimin" : "None"}
                                     </Animatable.Text>
                                 </TouchableOpacity>
                                 <View>
-                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog?.title}</Text>
+                                    <Text className="text-white font-psemibold text-base border-b border-secondary self-start" numberOfLines={1}>{renderItem?.quiz ? renderItem?.quiz?.quizName : renderItem?.course ? renderItem.course?.courseName : renderItem?.lesson ? renderItem?.lesson?.lessonName : renderItem?.blog ? renderItem?.blog?.title : renderItem?.discussion ? renderItem?.discussion?.title : renderItem?.instructor ? renderItem?.instructor?.name : renderItem?.instructorLesson ? renderItem?.instructorLesson?.title : renderItem?.instructorCourse ? renderItem?.instructorCourse?.name : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.title : "None"}</Text>
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog?.content}</Text>
+                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
-                                        {(renderItem?.course || renderItem?.lesson) && <Image 
-                                            source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson?.lessonFeaturedImage}}
+                                        {(renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson) ? (<Image 
+                                            source={{uri: renderItem?.course ? (renderItem?.course?.courseFeaturedImage || icons.courses) : renderItem?.lesson ? (renderItem?.lesson?.lessonFeaturedImage || icons.lectures) : renderItem?.blog ? (renderItem?.blog?.profilePictureUrl || icons.blogs) : renderItem?.discussion ? (renderItem?.discussion?.user?.profilePictureUrl || icons.discussion) : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.image || icons.lectures) : renderItem?.instructorCourse ? (renderItem?.instructorCourse?.image || icons.courses) : images.logoNew}}
                                             className="h-20 w-20 border border-secondary rounded-[5px]"
                                             resizeMode='cover'
-                                        />}
-                                        {renderItem?.quiz && (
+                                        />) : (
                                             <Image 
-                                                source={icons.quiz}
+                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'
@@ -264,8 +278,12 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         )}
                                     </View>
                                 </View>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{formateSharedItemDates}</Text>
-                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog?.categoryId)}</Text>
+                                <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 left-0 px-2 py-0.5 rounded-bl-[5px] rounded-tr-[5px] bg-secondary border-t border-r border-black-200">{renderItem?.onlineMeeting ? formateSharedItemDates : (renderItem?.onlineMeeting?.status === 0 || renderItem?.onlineMeeting?.status === 3) ? <CountdownTimer meetingData={renderItem?.onlineMeeting}/> : "Ka perfunduar"}</Text>
+                                {(renderItem?.course || renderItem?.lesson || renderItem?.quiz || renderItem?.blog?.categoryId || renderItem?.instructorLesson?.categoryId || renderItem?.instructorCourse?.categoryId) ? (
+                                    <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{getCourseCategories(categories, renderItem?.course ? renderItem?.course?.courseCategory : renderItem?.lesson ? renderItem?.lesson?.courseCategory : renderItem?.quiz ? renderItem?.quiz?.quizCategory : renderItem?.blog ? renderItem?.blog?.categoryId : renderItem?.instructorLesson ? renderItem?.instructorLesson?.categoryId : renderItem?.instructorCourse ? renderItem?.instructorCourse?.categoryId : 1)}</Text>
+                                ) : (
+                                    <Text style={styles.box} className="text-white font-psemibold text-xs absolute bottom-0 right-0 px-2 py-0.5 rounded-br-[5px] rounded-tl-[5px] bg-oBlack border-t border-l border-black-200">{renderItem?.blog ? "Blog" : renderItem?.instructorLesson ? "Leksion" : renderItem?.instructorCourse ? "Kurs" : renderItem?.instructor ? "Instruktor" : renderItem?.discussion ? "Diskutim" : renderItem?.onlineMeeting ? "Takim Online" : "None"}</Text>
+                                )}
                             </View>
                         ) : (<Text className="text-white text-sm italic">Mesazhi eshte fshire</Text>)}
                         
