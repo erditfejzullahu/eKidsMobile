@@ -23,7 +23,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
     const [modalVisible, setModalVisible] = useState(false)
     const [isDownloading, setIsDownloading] = useState(false)
 
-    const [currentImageUrl, setCurrentImageUrl] = useState("")
+    const [currentImageUrl, setCurrentImageUrl] = useState([])
     const [fullScreenImageVisible, setFullScreenImageVisible] = useState(false)
 
     const date = new Date(renderItem?.createdAt);
@@ -134,7 +134,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         {renderItem?.content && renderItem?.fileUrl ? (
                             <>
                                 <View className="max-h-[200px] my-2">
-                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl([renderItem?.fileUrl]); setFullScreenImageVisible(true)}}>
                                         <Image 
                                             source={{uri: renderItem?.fileUrl}}
                                             resizeMode='cover'
@@ -154,7 +154,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                             <Text className="font-plight text-sm text-gray-400 mb-2">{renderItem?.content}</Text>
                         ) : !renderItem?.content && renderItem?.fileUrl ? (
                             <View className="max-h-[200px] my-2 mb-4">
-                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl([renderItem?.fileUrl]); setFullScreenImageVisible(true)}}>
                                     <Image
                                         source={{ uri: renderItem?.fileUrl }}
                                         resizeMode='cover'
@@ -228,7 +228,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         {renderItem?.content && renderItem?.fileUrl ? (
                             <>
                                 <View className="max-h-[200px] my-2">
-                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl([renderItem?.fileUrl]); setFullScreenImageVisible(true)}}>
                                         <Image 
                                             source={{uri: renderItem?.fileUrl}}
                                             resizeMode='cover'
@@ -243,8 +243,8 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         ) : renderItem?.content && !renderItem?.fileUrl ? (
                             <Text className="font-plight text-sm text-gray-400 mb-2">{renderItem?.content}</Text>
                         ) : !renderItem?.content && renderItem?.fileUrl ? (
-                            <View className="max-h-[200px] my-2 mb-4">
-                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                            <View className="max-h-[200px] my-2 mb-4">``
+                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl([renderItem?.fileUrl]); setFullScreenImageVisible(true)}}>
                                     <Image
                                         source={{ uri: renderItem?.fileUrl }}
                                         resizeMode='cover'
@@ -361,7 +361,8 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
     </Modal>
     <FullScreenImage 
         visible={fullScreenImageVisible}
-        uri={currentImageUrl}
+        images={currentImageUrl}
+        initialIndex={0}
         onClose={() => setFullScreenImageVisible(false)}
     />
     </>
