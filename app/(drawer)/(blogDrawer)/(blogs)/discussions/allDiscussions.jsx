@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FlatList, Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { icons, images } from '../../../../../constants'
 import DiscussionsFilter from '../../../../../components/DiscussionsFilter'
 import DiscussionsCard from '../../../../../components/DiscussionsCard'
@@ -21,18 +21,43 @@ const AllDiscussions = () => {
     const {data, isLoading, refetch} = useFetchFunction(() => getDiscussions(sortBy, paginationData, tagIdSelected?.tagId))
     
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const [discussionData, setDiscussionData] = useState([])
+    const [discussionData, setDiscussionData] = useState({discussions: [], discussionsCount: 0, hasMore: false})
+
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [loadedFirst, setLoadedFirst] = useState(false)
 
     const [tagIdSelected, setTagIdSelected] = useState(null)
 
     const onRefresh = async () => {
         setIsRefreshing(true)
         setSortBy(0)
+        setPaginationData((prev) => ({...prev, pageSize: 15, pageNumber: 1}))
         if(sortBy === 0){
             await refetch();
         }
         setIsRefreshing(false)
     }
+
+    const loadMore = () => {
+        if(!discussionData?.hasMore || loadingMore) return;
+        setLoadingMore(true)
+        setPaginationData((prev) => ({
+            ...prev,
+            pageNumber: prev.pageNumber + 1
+        }))
+    }
+
+    useEffect(() => {
+      refetch();
+    }, [paginationData])
+
+    useEffect(() => {
+      if(!isLoading){
+        setLoadedFirst(true)
+      }
+    }, [isLoading])
+    
+    
 
     useEffect(() => {
       if(tagId){
@@ -42,12 +67,22 @@ const AllDiscussions = () => {
     
 
     useEffect(() => {
+        console.log(data,  ' asdasdasdasd');
       if(data){
-        setDiscussionData(data)
-        console.log(discussionData,  ' asdasdasdasd');
-        
+        if(paginationData.pageNumber > 1){
+            setDiscussionData((prev) => ({
+                ...prev,
+                discussions: [...prev.discussions, ...data.discussions],
+                discussionsCount: data.discussionsCount,
+                hasMore: data.hasMore
+            }))
+        }else{
+            setDiscussionData(data)
+        }
+        setLoadingMore(false)
       }else{
-        setDiscussionData([])
+        setLoadingMore(false)
+        setDiscussionData(null)
       }
     }, [data])
 
@@ -56,13 +91,15 @@ const AllDiscussions = () => {
     }, [sortBy])
     
     
-if(isLoading) return <Loading />
+if(isLoading && !loadedFirst) return <Loading />
   return (
     <FlatList 
         className="bg-primary px-4"
-        data={discussionData?.data}
+        data={discussionData?.discussions}
         contentContainerStyle={{gap:20}}
         keyExtractor={(item) => item.id}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
         renderItem={({item}) => (
             <DiscussionsCard discussion={item}/>
@@ -100,18 +137,36 @@ if(isLoading) return <Loading />
 
             <DiscussionsFilter sendData={(param) => setSortBy(param)} sortBy={sortBy}/>
 
-            {(discussionData.length > 0 && discussionData?.discussionsCount > 0) && <View className="mt-2">
+            {(discussionData?.discussions?.length > 0 && discussionData?.discussionsCount > 0) && <View className="mt-2">
                 <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
             </View>}
             {tagIdSelected?.name && (
-                <Text className="text-white font-psemibold mt-3">Etiketimi i perzgjedhur: <Text className="text-secondary">{tagIdSelected?.name}</Text></Text>
+                <Text className="text-white font-psemibold mt-3 text-right">Etiketimi i perzgjedhur: <Text className="text-secondary">{tagIdSelected?.name}</Text></Text>
             )}
             </>
         )}
         ListFooterComponent={() => (
-            <View className="mb-4">
-                {discussionData?.hasMore && <Loading />}
+            <>
+            <View className="mb-2" />
+            <View className="justify-center -mt-2 mb-4 flex-row items-center gap-2">
+                {discussionData?.hasMore ? (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                    <ActivityIndicator color={"#FF9C01"} size={24} />
+                    </>
+                    ) : (
+                    <>
+                    <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                    <Image
+                        source={images.breakHeart}
+                        className="size-5"
+                        tintColor={"#FF9C01"}
+                        resizeMode='contain'
+                    />
+                    </>
+                )}
             </View>
+            </>
         )}
         ListEmptyComponent={() => (
             <View className="bg-oBlack border border-black-200" style={styles.box}>
