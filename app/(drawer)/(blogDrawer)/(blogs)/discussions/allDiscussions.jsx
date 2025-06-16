@@ -30,6 +30,7 @@ const AllDiscussions = () => {
 
     const onRefresh = async () => {
         setIsRefreshing(true)
+        setLoadedFirst(false)
         setSortBy(0)
         setPaginationData((prev) => ({...prev, pageSize: 15, pageNumber: 1}))
         if(sortBy === 0){
@@ -87,6 +88,7 @@ const AllDiscussions = () => {
     }, [data])
 
     useEffect(() => {
+        setLoadedFirst(false)
       refetch();
     }, [sortBy])
     

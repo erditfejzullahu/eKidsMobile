@@ -134,7 +134,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         {renderItem?.content && renderItem?.fileUrl ? (
                             <>
                                 <View className="max-h-[200px] my-2">
-                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setModalVisible(true)}}>
+                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
                                         <Image 
                                             source={{uri: renderItem?.fileUrl}}
                                             resizeMode='cover'
@@ -154,11 +154,13 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                             <Text className="font-plight text-sm text-gray-400 mb-2">{renderItem?.content}</Text>
                         ) : !renderItem?.content && renderItem?.fileUrl ? (
                             <View className="max-h-[200px] my-2 mb-4">
-                                <Image
-                                    source={{ uri: renderItem?.fileUrl }}
-                                    resizeMode='cover'
-                                    className="h-full max-h-[200px] rounded-[10px]"
-                                />
+                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                    <Image
+                                        source={{ uri: renderItem?.fileUrl }}
+                                        resizeMode='cover'
+                                        className="h-full max-h-[200px] rounded-[10px]"
+                                    />
+                                </TouchableOpacity>
                             </View>
                         ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLessons || renderItem?.onlineMeeting) ? (
                             <>
@@ -226,11 +228,13 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                         {renderItem?.content && renderItem?.fileUrl ? (
                             <>
                                 <View className="max-h-[200px] my-2">
-                                    <Image 
-                                        source={{uri: renderItem?.fileUrl}}
-                                        resizeMode='cover'
-                                        className="h-full max-h-[200px] rounded-[10px]"
-                                    />
+                                    <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                        <Image 
+                                            source={{uri: renderItem?.fileUrl}}
+                                            resizeMode='cover'
+                                            className="h-full max-h-[200px] rounded-[10px]"
+                                        />
+                                    </TouchableOpacity>
                                 </View>
                                 <View>
                                     <Text className="font-plight text-sm text-gray-400 mb-2">{renderItem?.content}</Text>
@@ -240,11 +244,13 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                             <Text className="font-plight text-sm text-gray-400 mb-2">{renderItem?.content}</Text>
                         ) : !renderItem?.content && renderItem?.fileUrl ? (
                             <View className="max-h-[200px] my-2 mb-4">
-                                <Image
-                                    source={{ uri: renderItem?.fileUrl }}
-                                    resizeMode='cover'
-                                    className="h-full max-h-[200px] rounded-[10px]"
-                                />
+                                <TouchableOpacity onLongPress={downloadFile} onPress={() => {setCurrentImageUrl(renderItem?.fileUrl); setFullScreenImageVisible(true)}}>
+                                    <Image
+                                        source={{ uri: renderItem?.fileUrl }}
+                                        resizeMode='cover'
+                                        className="h-full max-h-[200px] rounded-[10px]"
+                                    />
+                                </TouchableOpacity>
                             </View>
                         ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson || renderItem?.onlineMeeting) ? (
                             <View className="bg-primary border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
@@ -353,7 +359,11 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             </View>
         </View>    
     </Modal>
-    <FullScreenImage />
+    <FullScreenImage 
+        visible={fullScreenImageVisible}
+        uri={currentImageUrl}
+        onClose={() => setFullScreenImageVisible(false)}
+    />
     </>
   )
 }
