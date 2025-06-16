@@ -8,14 +8,22 @@ import useFetchFunction from '../../../../../hooks/useFetchFunction'
 import { getDiscussions } from '../../../../../services/fetchingService'
 import Loading from "../../../../../components/Loading"
 import EmptyState from '../../../../../components/EmptyState'
+import { useRoute } from '@react-navigation/native'
 
-const allDiscussions = () => {
+const AllDiscussions = () => {
+    const route = useRoute();
+    const {tagId, name} = route.params || {};
+    console.log(tagId, ' tagId');
+    
     const router = useRouter();
     const [sortBy, setSortBy] = useState(0)
-    const {data, isLoading, refetch} = useFetchFunction(() => getDiscussions(null, sortBy))
+    const [paginationData, setPaginationData] = useState({pageNumber: 1, pageSize: 15});
+    const {data, isLoading, refetch} = useFetchFunction(() => getDiscussions(sortBy, paginationData, tagIdSelected?.tagId))
     
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [discussionData, setDiscussionData] = useState([])
+
+    const [tagIdSelected, setTagIdSelected] = useState(null)
 
     const onRefresh = async () => {
         setIsRefreshing(true)
@@ -25,6 +33,13 @@ const allDiscussions = () => {
         }
         setIsRefreshing(false)
     }
+
+    useEffect(() => {
+      if(tagId){
+        setTagIdSelected({tagId, name})
+      }
+    }, [tagId, name])
+    
 
     useEffect(() => {
       if(data){
@@ -88,6 +103,9 @@ if(isLoading) return <Loading />
             {(discussionData.length > 0 && discussionData?.discussionsCount > 0) && <View className="mt-2">
                 <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
             </View>}
+            {tagIdSelected?.name && (
+                <Text className="text-white font-psemibold mt-3">Etiketimi i perzgjedhur: <Text className="text-secondary">{tagIdSelected?.name}</Text></Text>
+            )}
             </>
         )}
         ListFooterComponent={() => (
@@ -110,7 +128,7 @@ if(isLoading) return <Loading />
   )
 }
 
-export default allDiscussions
+export default AllDiscussions
 
 const styles = StyleSheet.create({
     box: {

@@ -865,16 +865,11 @@ export const getDiscussionsByTitle = async (title) => {
     }
 }
 
-export const getDiscussions = async (userId, sortBy) => {
+export const getDiscussions = async (sortBy, paginationData, tagId) => {
     try {
-        // const response = await apiClient.get(`/api/Discussions`, {
-        //     params: { //param makes it queryable link // ex: ?userId=45&sortBy=0 etc
-        //         sortBy: JSON.stringify(sortBy)
-        //     }
-        // })
         console.log(sortBy);
         
-        const response = await apiClient.get(`/api/Discussions?SortBy=${sortBy}`)
+        const response = await apiClient.get(`/api/Discussions?SortBy=${sortBy}&tagId=${!tagId ? "" : tagId}&pageSize=${paginationData.pageSize}&pageNumber=${paginationData.pageNumber}`)
         return response && response.data
     } catch (error) {
         return null;

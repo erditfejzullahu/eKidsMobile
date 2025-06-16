@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router'
 import CreateDiscussionForm from '../../../../../components/CreateDiscussionForm'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const addDiscussion = () => {
+const AddDiscussion = () => {
     const router = useRouter();
   return (
     <KeyboardAwareScrollView  className="h-full bg-primary px-4" keyboardShouldPersistTaps="handled" behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -42,7 +42,7 @@ const addDiscussion = () => {
   )
 }
 
-export default addDiscussion
+export default AddDiscussion
 
 const styles = StyleSheet.create({
     box: {

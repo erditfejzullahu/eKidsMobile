@@ -9,8 +9,12 @@ import BlogCardComponent from '../../../../components/BlogCardComponent'
 import { ActivityIndicator } from 'react-native'
 import { icons, images } from '../../../../constants'
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view'
+import { useRoute } from '@react-navigation/native'
 
 const Blog = () => {
+  const route = useRoute();
+  const {tagId, name} = route.params || {}
+  console.log(tagId, ' tagId');
   
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
@@ -33,6 +37,14 @@ const Blog = () => {
   })
 
   const [forYouToggle, setForYouToggle] = useState(1) //1 all 2 friends
+
+
+  useEffect(() => {
+    if(tagId){
+      setBlogTagId({tagId, name})
+    }
+  }, [tagId, name])
+  
 
   useEffect(() => {
     setIsRefreshing(true)

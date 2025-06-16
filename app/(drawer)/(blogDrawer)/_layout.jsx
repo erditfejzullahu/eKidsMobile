@@ -1,7 +1,7 @@
 import { View, Text, Button, ScrollView, Image, TextInput, RefreshControl, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Drawer } from 'react-native-drawer-layout';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { images } from '../../../constants';
 import {useGlobalContext} from '../../../context/GlobalProvider'
@@ -17,7 +17,7 @@ import Loading from '../../../components/Loading';
 import EmptyState from '../../../components/EmptyState';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 
-const TagsHeader = ({isOpened}) => {
+const TagsHeader = ({isOpened, passRouteClicked}) => {
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;
   // console.log(userCategories);
@@ -43,7 +43,6 @@ const TagsHeader = ({isOpened}) => {
   }
 
   useEffect(() => {
-    console.log("po thirret")
     if(data){
       isDiscussionSection ? setDiscussionTagData(data || []) : setBlogsTagData(data || [])
     }
@@ -83,7 +82,7 @@ const TagsHeader = ({isOpened}) => {
       data={isDiscussionSection ? discussionTagData : blogsTagData}
       keyExtractor={(item) => item.id}
       renderItem={({item}) => (
-        <AllTagsLayoutForDiscussionOrBlogs item={item} discussionSection={isDiscussionSection}/>
+        <AllTagsLayoutForDiscussionOrBlogs item={item} discussionSection={isDiscussionSection} tagClicked={(data) => passRouteClicked(data)}/>
       )}
       ListHeaderComponent={() => (
         <BlogsDrawyerHeader discussionSection={isDiscussionSection} sendDiscussionInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, discussionsInput: input}))} sendBlogsInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: input}))}/>
@@ -112,8 +111,17 @@ const TagsHeader = ({isOpened}) => {
 };
 
 const _layout = () => {
+  const router = useRouter();
   const {isDrawerOpened, setIsDrawerOpened} = useBlogsDrawerContext();
   // const [isDrawerOpen, setDrawerOpen] = useState(isDrawerOpened);
+  const handleRoute = (data) => {
+    setIsDrawerOpened(false)
+    if(data.discussion){
+      router.replace({pathname: `/discussions/allDiscussions`, params: {tagId: data.id, name: data.title}})
+    }else{
+      router.replace({pathname: `/blogAll`, params: {tagId: data.id, name: data.name}})
+    }
+  }
   return (
     <>
       <Drawer
@@ -121,7 +129,7 @@ const _layout = () => {
         open={isDrawerOpened}
         onOpen={() => setIsDrawerOpened(true)}
         onClose={() => setIsDrawerOpened(false)}
-        renderDrawerContent={() => <TagsHeader isOpened={isDrawerOpened}/>}
+        renderDrawerContent={() => <TagsHeader isOpened={isDrawerOpened} passRouteClicked={(data) => handleRoute(data)}/>}
         // drawerType="front"
         drawerStyle={{
           width: 300,
