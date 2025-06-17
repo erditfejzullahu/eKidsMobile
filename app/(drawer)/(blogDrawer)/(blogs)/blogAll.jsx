@@ -14,7 +14,6 @@ import { useRoute } from '@react-navigation/native'
 const Blog = () => {
   const route = useRoute();
   const {tagId, name} = route.params || {}
-  console.log(tagId, ' tagId');
   
   const {user, isLoading} = useGlobalContext();
   const { data: blogData, isLoading: blogLoading, refetch: blogRefetch } = useFetchFunction(() =>
@@ -148,7 +147,7 @@ const Blog = () => {
               <View>
                 <Text className="text-gray-400 font-plight text-sm">Etiketimi i zgjedhur:</Text>
               </View>
-              <View className="bg-secondary px-2 py-0.5 rounded-[5px]">
+              <View className="bg-secondary border border-white px-2 py-0.5 rounded-[5px]">
                 <Text className="text-white font-psemibold text-sm">{blogTagId.name}</Text>
               </View>
             </View>}

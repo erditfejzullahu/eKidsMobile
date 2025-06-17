@@ -34,7 +34,7 @@ const BlogsLayout = () => {
         </View>
     </View>
     <Tabs
-        backBehavior='history'
+        backBehavior="history"
         screenOptions={{
             tabBarShowLabel: false,
             tabBarActiveTintColor: '#FFA001',

@@ -1,7 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const AllTagsLayoutForDiscussionOrBlogs = ({item, discussionSection = true, tagClicked}) => {
+const AllTagsLayoutForDiscussionOrBlogs = ({item, discussionSection, tagClicked}) => {
+  // console.log(discussionSection,  ' discussionsection');
+  
   const handleRedirection = (item) => {
     if(discussionSection){
       tagClicked({discussion: true, id: item.id, name: item.title})

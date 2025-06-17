@@ -20,8 +20,6 @@ const TopbarUpdaterProvider = ({children}) => {
     const pathname = usePathname();
     
     useEffect(() => {
-        setDiscussionSection(pathname.includes("discussions"));
-
         const pathCheck = {
             messages: pathname === "/all-messages",
             blog: pathname.includes("/blogAll"),
@@ -31,7 +29,8 @@ const TopbarUpdaterProvider = ({children}) => {
             instructor: pathname.includes('/tutor/'),
             onlineMeeting: pathname.includes('/meetings/')
         }
-
+        
+        setDiscussionSection(pathCheck.discussion);
         setShowSearcher(pathCheck.messages)
         setShowBlogSearcher(pathCheck.blog)
         setShowQuizOrCourseSharer(pathCheck.quizOrCourse)
@@ -43,7 +42,7 @@ const TopbarUpdaterProvider = ({children}) => {
     }, [pathname])
     
     return(
-        <TopbarUpdaterContext.Provider value={{discussionSection, showInstructorCourseSharer, showInstructorSharer, showOnlineMeetingSharer, showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened}} >
+        <TopbarUpdaterContext.Provider value={{discussionSection, showInstructorCourseSharer, showInstructorSharer, showOnlineMeetingSharer, showDiscussionSearcher, showSearcher, showBlogSearcher, showQuizOrCourseSharer, shareOpened, setShareOpened, setDiscussionSection}} >
             {children}
         </TopbarUpdaterContext.Provider>
     )

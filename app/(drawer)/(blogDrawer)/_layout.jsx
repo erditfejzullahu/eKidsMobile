@@ -1,7 +1,7 @@
 import { View, Text, Button, ScrollView, Image, TextInput, RefreshControl, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Drawer } from 'react-native-drawer-layout';
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, usePathname, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
 import { images } from '../../../constants';
 import {useGlobalContext} from '../../../context/GlobalProvider'
@@ -23,8 +23,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
   // console.log(userCategories);
   const [isRefreshing, setIsRefreshing] = useState(false)
   const {discussionSection} = useTopbarUpdater();
-  const [isDiscussionSection, setIsDiscussionSection] = useState(false)
-
+  
   const [discussionTagData, setDiscussionTagData] = useState([])
   const [blogsTagData, setBlogsTagData] = useState([])
 
@@ -33,7 +32,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
     discussionsInput: ""
   })
 
-  const {data, isLoading: discussionOrBlogTagsLoading, refetch} = useFetchFunction(() => isDiscussionSection ? getTagsByTitle(discussionBlogsTagsInputs.discussionsInput.trim() === "" ? null : discussionBlogsTagsInputs.discussionsInput) : getAllBlogTags(discussionBlogsTagsInputs.blogsInput.trim() === "" ? null : discussionBlogsTagsInputs.blogsInput))
+  const {data, isLoading: discussionOrBlogTagsLoading, refetch} = useFetchFunction(() => discussionSection ? getTagsByTitle(discussionBlogsTagsInputs.discussionsInput.trim() === "" ? null : discussionBlogsTagsInputs.discussionsInput) : getAllBlogTags(discussionBlogsTagsInputs.blogsInput.trim() === "" ? null : discussionBlogsTagsInputs.blogsInput))
 
   const onRefresh = async () => {
     setIsRefreshing(true)
@@ -44,7 +43,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
 
   useEffect(() => {
     if(data){
-      isDiscussionSection ? setDiscussionTagData(data || []) : setBlogsTagData(data || [])
+      discussionSection ? setDiscussionTagData(data || []) : setBlogsTagData(data || [])
     }
   }, [data])
 
@@ -55,20 +54,8 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
   }, [isOpened])
 
   useEffect(() => {
-    if(discussionSection){
-      setIsDiscussionSection(true)
-      setBlogsTagData([])
-      // onRefresh();
-    }else{
-      setIsDiscussionSection(false)
-      setDiscussionTagData([])
-      // onRefresh();
-    }
-  }, [discussionSection])
-
-  useEffect(() => {
     refetch()
-  }, [discussionBlogsTagsInputs])
+  }, [discussionBlogsTagsInputs, discussionSection])
   
     if(discussionOrBlogTagsLoading || isRefreshing) return <Loading />
   return (
@@ -79,15 +66,15 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
       contentContainerStyle={{flexGrow: 1, gap: 6}}
       columnWrapperStyle={{gap: 6, overflow: "scroll"}}
       numColumns={4}
-      data={isDiscussionSection ? discussionTagData : blogsTagData}
+      data={discussionSection ? discussionTagData : blogsTagData}
       keyExtractor={(item) => item.id}
       renderItem={({item}) => (
-        <AllTagsLayoutForDiscussionOrBlogs item={item} discussionSection={isDiscussionSection} tagClicked={(data) => passRouteClicked(data)}/>
+        <AllTagsLayoutForDiscussionOrBlogs item={item} discussionSection={discussionSection} tagClicked={(data) => passRouteClicked(data)}/>
       )}
       ListHeaderComponent={() => (
-        <BlogsDrawyerHeader discussionSection={isDiscussionSection} sendDiscussionInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, discussionsInput: input}))} sendBlogsInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: input}))}/>
+        <BlogsDrawyerHeader discussionSection={discussionSection} sendDiscussionInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, discussionsInput: input}))} sendBlogsInput={(input) => setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: input}))}/>
       )}
-      ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end", position: isDiscussionSection ? "absolute" : "static", bottom: "0", width: isDiscussionSection ? "100%" : "auto"}}
+      ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end", position: discussionSection ? "absolute" : "static", bottom: "0", width: discussionSection ? "100%" : "auto"}}
       ListFooterComponent={() => (
         <View className={`py-2 border-t border-black-200 mb-2 `}>
           <Text className="text-white font-plight text-xs">Realizuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
@@ -96,7 +83,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
       ListEmptyComponent={() => (
         <View>
           <EmptyState 
-            title={isDiscussionSection ? "Nuk ka etiketime diskutimi" : "Nuk ka etiketime blogu"}
+            title={discussionSection ? "Nuk ka etiketime diskutimi" : "Nuk ka etiketime blogu"}
             subtitle={"Nese mendoni qe eshte gabim kontaktoni Panelin e Ndihmes"}
             isSearchPage={true}
             buttonTitle={"Paraqitni ankese"}
@@ -113,15 +100,25 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
 const _layout = () => {
   const router = useRouter();
   const {isDrawerOpened, setIsDrawerOpened} = useBlogsDrawerContext();
-  // const [isDrawerOpen, setDrawerOpen] = useState(isDrawerOpened);
+  const {setDiscussionSection} = useTopbarUpdater();
   const handleRoute = (data) => {
     setIsDrawerOpened(false)
     if(data.discussion){
-      router.replace({pathname: `/discussions/allDiscussions`, params: {tagId: data.id, name: data.title}})
+      console.log(data, ' tek layoutin')
+      router.replace({pathname: `/discussions/allDiscussions`, params: {tagId: data.id, name: data.name}})
     }else{
       router.replace({pathname: `/blogAll`, params: {tagId: data.id, name: data.name}})
     }
   }
+  const pathname = usePathname();
+  useEffect(() => {
+    if(pathname.includes('discussions')){
+      setDiscussionSection(true);
+    }else{
+      setDiscussionSection(false);
+    }
+  }, [isDrawerOpened, pathname])
+  
   return (
     <>
       <Drawer

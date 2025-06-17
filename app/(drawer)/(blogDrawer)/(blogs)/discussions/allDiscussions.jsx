@@ -13,7 +13,6 @@ import { useRoute } from '@react-navigation/native'
 const AllDiscussions = () => {
     const route = useRoute();
     const {tagId, name} = route.params || {};
-    console.log(tagId, ' tagId');
     
     const router = useRouter();
     const [sortBy, setSortBy] = useState(0)
@@ -66,7 +65,11 @@ const AllDiscussions = () => {
       }
     }, [tagId, name])
     
-
+    useEffect(() => {
+        setLoadedFirst(false)
+        refetch();
+    }, [tagIdSelected])
+    
     useEffect(() => {
         console.log(data,  ' asdasdasdasd');
       if(data){
