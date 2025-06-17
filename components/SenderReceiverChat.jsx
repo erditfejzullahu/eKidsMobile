@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, Modal } from 'react-native'
+import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, Modal, TouchableWithoutFeedback } from 'react-native'
 import React from 'react'
 import { icons, images } from '../constants';
 import { useState } from 'react';
@@ -320,51 +320,55 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
         
     </View>
     <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+    animationType="fade"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => setModalVisible(false)}
     >
-        <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-            <View style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[200px] items-center">
-                {/* <View className="w-full items-center">
-                    <Text className="font-psemibold text-lg text-white mb-2 border-b border-secondary">Detajet e mesazhit</Text>
-                </View> */}
-                <View>
-                    <Text className="font-pbold text-white text-sm">E derguar me:</Text>
-                    <Text className="font-plight text-gray-400 text-sm">{formattedDateExtended}</Text>
-                </View>
-
-                {renderItem?.senderUsername === currentUser?.username && (
-                <View className="mt-2 flex-row items-center gap-1 justify-end w-full">
-                    <View>
-                        <Image 
-                            source={icons.eyes}
-                            className="h-6 w-6"
-                            resizeMode='contain'
-                            tintColor={"#fff"}
-                        />
-                    </View>
-                    
+        <TouchableWithoutFeedback 
+            onPress={() => setModalVisible(false)}
+        >
+            <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
+                {/* Prevent the modal content from closing when pressing inside it */}
+                <TouchableWithoutFeedback>
+                    <View style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[200px] items-center">
                         <View>
-                            <Text className="text-secondary font-psemibold text-sm">{renderItem?.isRead ? "Eshte pare" : "Nuk eshte pare"}</Text>
+                            <Text className="font-pbold text-white text-sm">E derguar me:</Text>
+                            <Text className="font-plight text-gray-400 text-sm">{formattedDateExtended}</Text>
                         </View>
-                </View>
-                )}
-                
-                <View className="absolute -top-1 -right-1">
-                    <TouchableOpacity onPress={() => setModalVisible(false)} className="bg-white p-1 rounded-full">
-                        <Image 
-                            source={icons.close}
-                            tintColor={"#000"}
-                            className="h-2 w-2"
-                        />
-                    </TouchableOpacity>
-                </View>
+
+                        {renderItem?.senderUsername === currentUser?.username && (
+                        <View className="mt-2 flex-row items-center gap-1 justify-end w-full">
+                            <View>
+                                <Image 
+                                    source={icons.eyes}
+                                    className="h-6 w-6"
+                                    resizeMode='contain'
+                                    tintColor={"#fff"}
+                                />
+                            </View>
+                            
+                                <View>
+                                    <Text className="text-secondary font-psemibold text-sm">{renderItem?.isRead ? "Eshte pare" : "Nuk eshte pare"}</Text>
+                                </View>
+                        </View>
+                        )}
+                        
+                        <View className="absolute -top-1 -right-1">
+                            <TouchableOpacity onPress={() => setModalVisible(false)} className="bg-white p-1 rounded-full">
+                                <Image 
+                                    source={icons.close}
+                                    tintColor={"#000"}
+                                    className="h-2 w-2"
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
             </View>
-        </View>    
+        </TouchableWithoutFeedback>
     </Modal>
-    <FullScreenImage 
+    <FullScreenImage
         visible={fullScreenImageVisible}
         images={currentImageUrl}
         initialIndex={0}

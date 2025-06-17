@@ -13,19 +13,26 @@ import { Platform } from 'react-native';
 import * as SignalR from '@microsoft/signalr';
 import { getAccessToken, getRefreshToken, isTokenExpired } from '../../../services/secureStorage';
 import { refresh } from '../../../services/authService';
-import { fetchAllComments, reqReadMessages } from '../../../services/fetchingService';
+import { acceptFriendRequest, fetchAllComments, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq, reqReadMessages } from '../../../services/fetchingService';
 import apiClient from '../../../services/apiClient';
 import * as ImagePicker from 'expo-image-picker'
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system';
+import { noop } from 'lodash';
+import CustomModal from '../../../components/Modal';
+import NotifierComponent from '../../../components/NotifierComponent';
+import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 
 const Conversation = () => {
     const router = useRouter();
     const conversation = useLocalSearchParams();
     const [paginationState, setPaginationState] = useState({pageNumber: 1, pageSize: 15})
+    console.log(conversation, ' conversation');
+    
     const {data, isLoading: commentsLoading, refetch} = useFetchFunction(() => fetchAllComments(conversation?.currentUserUsername, conversation?.receiverUsername, paginationState))
     const {user, isLoading} = useGlobalContext();
-
+    const {data: relationData, isLoading: relationReloading, refetch: relationRefetch} = useFetchFunction(() => getUserRelationStatus(user?.data?.userData?.id, conversation?.conversation));
+    
     const [openMoreDetails, setOpenMoreDetails] = useState(false) //duhet me kry
 
     const [connection, setConnection] = useState(null)
@@ -33,9 +40,12 @@ const Conversation = () => {
     const [messages, setMessages] = useState({messages: [], hasMore: false})
     const [messageSent, setMessageSent] = useState('')
     const [textInputFocused, setTextInputFocused] = useState(false)
+    const [relationStatus, setRelationStatus] = useState(null)
+    
 
     const [loadedFirst, setLoadedFirst] = useState(false)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const [removeFriendModal, setRemoveFriendModal] = useState(false)
 
     const messageVal = useRef(null)
 
@@ -115,6 +125,33 @@ const Conversation = () => {
     }
 
     useEffect(() => {
+      setRelationStatus(relationData || null)
+    }, [relationData])
+
+    const outputRelation = () => {
+        if(relationReloading){
+            return 4;
+        }else{
+            if(relationStatus === null){
+              return 0 // Shto miqesine 0
+            }else{
+              if((relationStatus?.senderId !== user?.data?.userData?.id) && relationStatus?.status === 1){
+                return 1 //ma ka qu aj mu // 1 //Shoqerohu!
+              }else if((relationStatus?.senderId === user?.data?.userData?.id) && relationStatus?.status === 1){
+                return 2 // ja kom qu un atij // 2 //Ne pritje
+              }else if((relationStatus?.receiverId !== user?.data?.userData?.id) && relationStatus?.status === 1){
+                return 1;
+              }else if((relationStatus?.receiverId === user?.data?.userData?.id) && relationStatus?.status === 1){
+                return 2;
+              }else{
+                return 3 //shoqerohu
+              }
+            }
+        }
+      }
+    
+
+    useEffect(() => {
       if(messages?.messages?.length > 0){
         setLoadedFirst(true)
       }else{
@@ -130,6 +167,7 @@ const Conversation = () => {
       setReceiver(conversation?.receiverUsername)
       setMessages(null)
       refetch();
+      relationRefetch();
     }, [conversation?.conversation])
 
     useEffect(() => {
@@ -341,6 +379,72 @@ const Conversation = () => {
         }
     }
 
+    console.log(conversation?.conversation, ' asdasd');
+    console.log(user?.data?.userData?.id, ' asdasdasdasd')
+    
+
+    const { showNotification: successFriendReq } = NotifierComponent({
+        title: "Kerkesa shkoi me sukes!",
+        description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
+    })
+
+    const {showNotification: successFriendDeletion} = NotifierComponent({
+        title: "Kerkesa shkoi me sukses!",
+        description: `Sapo e larguat ${conversation?.receiverFirstname} ${conversation?.receiverLastname} nga statusi juaj miqesor me perdorues!`
+    })
+
+    const { showNotification: failedReq } = NotifierComponent({
+    title: "Dicka shkoi gabim!",
+    description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+    alertType: "warning"
+    })
+
+    const makeFriend = async () => {
+        const payload = {
+            userId: user?.data?.userData?.id,
+            receiverId: conversation?.conversation,
+            information: "user req",
+            type: 4
+        };
+
+        const response = await makeUserFriendReq(payload)
+        if(response === 200){
+            successFriendReq()
+            await relationRefetch();
+        }else{
+            failedReq()
+        }
+    }
+
+    const removeOnWaitingFriend = async () => {
+        const response = await removeFriendRequestReq(conversation?.conversation);
+        if(response === 200){
+            await relationRefetch();
+        }else{
+            failedReq();
+        }
+    }
+
+    const removeFriend = async () => {
+        const response = await removeFriendReq(conversation?.conversation)
+        if(response === 200){
+            successFriendDeletion()
+            setRemoveFriendModal(false);
+            await relationRefetch()
+        }else{
+            setRemoveFriendModal(false);
+            failedReq()
+        }
+    }
+
+    const acceptFriend = async () => {
+        const response = await acceptFriendRequest(relationStatus?.senderId)
+        if(response === 200){
+            await relationRefetch();
+        }else{
+            failedReq()
+        }
+    }
     
     //shtim i meszheve tvjetra
     const onEndReached = () => {
@@ -356,7 +460,7 @@ const Conversation = () => {
       refetch()
     }, [paginationState])
     
-
+    const useReportNavigation = useNavigateToSupport();
     const flatListRef = useRef(null) // implementim per me shku ne fund te meszhev me naj ikon posht a najsen
 
     if((isLoading || commentsLoading) && !loadedFirst) {
@@ -405,35 +509,55 @@ const Conversation = () => {
 
                         {openMoreDetails && <View className="absolute bg-oBlack right-6 p-2 z-20 rounded-[5px] border-black-200 border mt-[45px]">
                             <View className="border-b border-black-200">
-                                <TouchableOpacity className="flex-row items-center" onPress={() => router.replace(`/users/${conversation?.conversation}`)}>
+                                <TouchableOpacity className="flex-row gap-1 justify-center items-center" onPress={() => router.replace(`/users/${conversation?.conversation}`)}>
                                     <Text className="text-white p-1 font-pregular">Shikoni profilin</Text>
                                     <Image 
                                         source={icons.profile}
-                                        className="h-4 w-4"
+                                        className="h-5 w-5"
                                         resizeMode='contain'
+                                        tintColor={"#FF9C01"}
                                     />
                                 </TouchableOpacity>
                             </View>
-                            <View className="border-b border-black-200">
-                                <TouchableOpacity className="flex-row items-center">
-                                    <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
+                            {parseInt(conversation?.conversation) !== parseInt(user?.data?.userData?.id) && <View className="border-b border-black-200">
+                                <TouchableOpacity 
+                                    className="flex-row gap-1 justify-center items-center"
+                                    onPress={() => {
+                                        if (outputRelation() === 0) {
+                                            makeFriend();
+                                        } else if (outputRelation() === 1) {
+                                            acceptFriend();
+                                        } else if (outputRelation() === 2) {
+                                            removeOnWaitingFriend();
+                                        } else if (outputRelation() === 3) {
+                                            setOpenMoreDetails(false);
+                                            setRemoveFriendModal(true); // This should show the modal
+                                        }
+                                    }}
+                                    >
+                                    <Text className="text-white p-1 font-pregular">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : outputRelation() === 4 ? "Prisni..." : "Undefined"}</Text>
                                     <Image 
-                                        source={icons.profile}
-                                        className="h-4 w-4"
+                                        source={icons.friends}
+                                        className="h-5 w-5"
                                         resizeMode='contain'
+                                        tintColor={"#FF9C01"}
                                     />
                                 </TouchableOpacity>
-                            </View>
-                            <View>
-                                <TouchableOpacity className="flex-row items-center">
-                                    <Text className="text-white p-1 font-pregular">Se shpejti...</Text>
+                            </View>}
+                            {parseInt(conversation?.conversation) !== parseInt(user?.data?.userData?.id) && <View>
+                                <TouchableOpacity 
+                                    className="flex-row gap-1 justify-center items-center"
+                                    onPress={() => useReportNavigation("report")}
+                                    >
+                                    <Text className="text-white p-1 font-pregular">Raportoni</Text>
                                     <Image 
-                                        source={icons.profile}
-                                        className="h-4 w-4"
+                                        source={icons.report}
+                                        className="h-5 w-5"
                                         resizeMode='contain'
+                                        tintColor={"#FF9C01"}
                                     />
                                 </TouchableOpacity>
-                            </View>
+                            </View>}
                         </View>}
                     </View>
                 </View>
@@ -565,6 +689,17 @@ const Conversation = () => {
                     </View>
                 </View>
             </View>
+            <CustomModal
+                visible={removeFriendModal}
+                showButtons={true}
+                title={"Njoftim mbi veprimin"}
+                onClose={() => setRemoveFriendModal(false)}
+                onProcced={removeFriend}
+                cancelButtonText={"Largoni dritaren!"}
+                proceedButtonText={"Largo miqesine!"}
+                >
+                    <Text className="text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{conversation?.receiverFirstname} {conversation?.receiverLastname}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
+            </CustomModal>
         </KeyboardAvoidingView>
         )
     }
