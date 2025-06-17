@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
 import { icons } from '../constants'
@@ -22,7 +22,7 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
         })
     }
 
-    const {setShareOpened} = useTopbarUpdater()
+    const {setShareOpened, shareOpened} = useTopbarUpdater()
 
     const handleLessonClick = (item) => {
         if(item.meeting){
@@ -34,10 +34,20 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
         }
     }
 
-    const handleLongPressClick = (id) => {
-        setPassingShareItemId(id)
+    const handleLongPressClick = (item) => {
+        setPassingShareItemId(item.id)
         setShareOpened(true)
     }
+
+    useEffect(() => {
+      if(!shareOpened){
+        setPassingShareItemId(null)
+      }
+      if(passingShareItemId){
+        setShareOpened(true)
+      }
+    }, [passingShareItemId, shareOpened])    
+    
     
     if(!Array.isArray(sections)) return null;
     
@@ -54,7 +64,7 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                 {sectionsOpened.includes(item.id) && <View className="mb-4">
                     {item?.lessons.map((lItem, lIdx) => (
                         <Animatable.View animation="fadeInLeft" key={lIdx} className="relative mx-1">
-                            <TouchableOpacity onPress={() => handleLessonClick(lItem)} onLongPress={() => handleLongPressClick(item.id)}>
+                            <TouchableOpacity onPress={() => handleLessonClick(lItem)} onLongPress={() => handleLongPressClick(lItem)}>
                                 <Text className="text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Text>
                                 {lItem.meeting && <Text className="absolute text-[8px] bg-oBlack border-black-200 px-0.5 py-[1px] border rounded-br-md border-r font-plight left-0 top-0 text-gray-400" style={styles.box}>{lItem.meeting.status}</Text>}
                                 {lItem?.meeting ? (
@@ -107,11 +117,11 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                         </Animatable.View>
                     ))}
                 </View>}
-                <ShareToFriends 
+                {passingShareItemId && <ShareToFriends 
                     currentUserData={currentUserData?.data?.userData}
                     shareType={"instructorLesson"}
                     passedItemId={passingShareItemId}
-                />
+                />}
             </View>
             )
         }

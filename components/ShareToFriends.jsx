@@ -21,6 +21,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     const [userFriendLoading, setUserFriendLoading] = useState(false)
     const [quizSelected, setQuizSelected] = useState(null);
     const [userFriendData, setUserFriendData] = useState([])
+    const [shareLoading, setShareLoading] = useState(false)
 
     const outputText = () => {
         switch (shareType) {
@@ -58,7 +59,8 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         alertType: "warning"
     })
     
-    const shareToUser = async (receiverUser) => {        
+    const shareToUser = async (receiverUser) => {       
+        setShareLoading(true) 
         const payload = {
             senderUsername: currentUserData?.username,
             receiverUsername: receiverUser?.username,
@@ -80,6 +82,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         }else{
             errorShare();
         }
+        setShareLoading(false)
     }
 
     useEffect(() => {
@@ -140,7 +143,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
                                         <Text className="text-gray-400 font-plight text-xs">Student</Text>
                                     </View>
                                     <View>
-                                        <TouchableOpacity onPress={() => shareToUser(item)} className="mr-2">
+                                        <TouchableOpacity disabled={shareLoading} onPress={() => shareToUser(item)} className={`mr-2 ${shareLoading ? "opacity-50" : ""}`}>
                                             <Image
                                                 source={icons.send}
                                                 className="h-6 w-6"

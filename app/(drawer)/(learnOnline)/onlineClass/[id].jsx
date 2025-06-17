@@ -28,7 +28,7 @@ const OnlineClass = () => {
   const [instructorMoreInformation, setInstructorMoreInformation] = useState(false)
 
   const [openInformationModal, setOpenInformationModal] = useState(false)
-
+  
   const instructorRef = useRef(null)
   const scrollViewRef = useRef(null);
 
@@ -347,7 +347,7 @@ const OnlineClass = () => {
         </View>
       </CustomModal>
       {/* informacione per imazhe te leksioneve tek seksionet */}
-      <ShareToFriends 
+      <ShareToFriends
         currentUserData={user?.data?.userData}
         shareType={"instructorCourse"}
         passedItemId={id}
