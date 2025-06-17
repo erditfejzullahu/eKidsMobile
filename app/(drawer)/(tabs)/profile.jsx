@@ -88,7 +88,7 @@ const router = useRouter();
 
   useEffect(() => {
     if(userData){
-      console.log(userData, ' userdata');
+      // console.log(userData, ' userdata');
       
       reset({
         name: userData?.firstname,
@@ -120,7 +120,7 @@ const router = useRouter();
   useEffect(() => {
     if(completedQuizzes){
       setCompletedQuizzesData(completedQuizzes)
-      console.log(completedQuizzes);
+      // console.log(completedQuizzes);
       
     }else{
       setCompletedQuizzesData(null)
@@ -689,7 +689,7 @@ const router = useRouter();
                 {(showCompletedQuizzes && completedQuizzesData?.length > 0) ? 
                 <View className="mb-4">
                     {completedQuizzesData && completedQuizzesData.map((item) => {
-                      console.log(item);
+                      // console.log(item);
                       const date = new Date(item?.createdAt); // Ensure createdAt is properly parsed
                       const formattedDate = date.toLocaleDateString('sq-AL', {
                         year: 'numeric',

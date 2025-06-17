@@ -34,21 +34,10 @@ const ShowOtherDetailsProfile = ({userId}) => {
         barPercentage: 0.5,
         useShadowColorFromDataset: false // optional
     };
-    // const commitsData = [
-    //     { date: "2025-01-22", count: 10 },
-    //     { date: "2017-01-03", count: 2 },
-    //     { date: "2017-01-04", count: 3 },
-    //     { date: "2017-01-05", count: 4 },
-    //     { date: "2017-01-06", count: 5 },
-    //     { date: "2017-01-30", count: 2 },
-    //     { date: "2017-01-31", count: 3 },
-    //     { date: "2017-03-01", count: 2 },
-    //     { date: "2017-04-02", count: 4 },
-    //     { date: "2017-03-05", count: 2 },
-    //     { date: "2017-02-30", count: 4 }
-    //   ];
 
     useEffect(() => {
+        console.log(data);
+        
       if(data){
         setUserOtherData(data)
       }else{
@@ -101,11 +90,10 @@ const ShowOtherDetailsProfile = ({userId}) => {
             ...prevData,
             birthDay: userOtherData?.birthday !== null ? new Date(userOtherData?.birthday) : new Date(),
             softSkills: userOtherData?.softSkills !== null ? (typeof userOtherData?.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [],
+            professionalSkills: userOtherData?.skills !== null ? (typeof userOtherData?.skills === "string" ? JSON.parse(userOtherData.skills) : userOtherData.skills) : [],
             userEducations: userOtherData?.userEducations?.length > 0 ? userOtherData?.userEducations : prevData.userEducations,
             userJobs: userOtherData?.userJobs?.length > 0 ? userOtherData?.userJobs : prevData.userJobs,
-            professionalSkills: userOtherData?.skills !== null ? userOtherData?.skills : [],
-            profession: userOtherData?.profession
-        }))        
+        }))
       }
 
       setShowInformationStepTick((prevData) => ({
@@ -294,16 +282,17 @@ const ShowOtherDetailsProfile = ({userId}) => {
         if(userOtherData && Object.keys(userOtherData).length !== 0){            
             const birthday = userInformationData.birthDay;
             const formattedDate = birthday.toISOString().split("T")[0];
-            console.log(formattedDate);
             
             const updatedUserInformation = {
                 ...userInformationData,
                 softSkills: JSON.stringify(userInformationData.softSkills),
-                birthDay: formattedDate
+                birthDay: formattedDate,
+                skills: JSON.stringify(userInformationData.professionalSkills)
             }
             const response = await updateUserOtherInformations(userOtherData?.id, updatedUserInformation);
             if(response === 200){
                 await refetch();
+                successUpdate();
             }else{
                 unsuccessfulUpdate()
             }
@@ -316,7 +305,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     ...userInformationData,
                     softSkills: JSON.stringify(userInformationData.softSkills),
                     birthday: formattedDate,
-                    professionalSkills: JSON.stringify(userInformationData.professionalSkills)
+                    skills: JSON.stringify(userInformationData.professionalSkills)
                 }
                 
                 const response = await reqUpdateUserInformation(updatedData);
@@ -559,7 +548,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
             <ScrollView style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[85%] max-h-[80vh]" contentContainerStyle={{alignItems: "center"}}>
-                <View className="bg-oBlack w-full p-2 rounded-t-[10px] border border-oBlack mb-3" style={styles.box}>
+                <View className="bg-oBlack w-full p-2 rounded border border-black-200 mb-3" style={styles.box}>
                     <Text className="text-white font-pregular text-center text-2xl">{showModals.type === "education" ? "Edukimi shkollor" : showModals.type === "jobs" ? "Eksperienca profesionale" : showModals.type === "softSkills" ? "Aftesi te buta" : "Aftesi profesionale"}</Text>
                 </View>
 
