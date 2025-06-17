@@ -846,7 +846,6 @@ export const createDiscussion = async (payload) => {
 }
 
 export const getTagsByTitle = async (title) => {
-    console.log(!title);
     
     try {
         const response = await apiClient.get(`/api/Discussions/TypingTags?title=${!title ? "" : title}`)

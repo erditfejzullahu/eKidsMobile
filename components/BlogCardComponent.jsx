@@ -63,8 +63,8 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                 resizeMode='contain'
             />
         </TouchableOpacity>}
-        <View className="top-0 right-0 absolute flex-row items-center gap-1.5" style={styles.box}>
-            {blog?.categoryId && <Text className={`font-psemibold rounded-bl-[10px] rounded-tr-[10px] p-2 py-1.5 bg-secondary text-xs text-white pr-8 `}>{getCourseCategories(categories, blog?.categoryId)}</Text>}
+        <View className="top-0 right-0 absolute flex-row items-center gap-1.5">
+            {blog?.categoryId && <Text className={`font-psemibold rounded-bl-[10px] rounded-tr-[10px] p-2 py-1.5 bg-secondary text-xs text-white pr-9`} style={styles.box}>{getCourseCategories(categories, blog?.categoryId)}</Text>}
             <TouchableOpacity className=" bg-primary p-1 absolute rounded-bl-md rounded-tr-md right-0 top-0 border-b border-l border-black-200" style={styles.box}>
                 <Image 
                     source={icons.more}
