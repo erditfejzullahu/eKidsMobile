@@ -1,5 +1,5 @@
 import { View, Text, Image, Platform, StyleSheet, TextInput, ScrollView, Modal, Pressable, TouchableWithoutFeedback, Touchable, KeyboardAvoidingView } from 'react-native'
-import React, { useLayoutEffect, useRef } from 'react'
+import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
 import { getAllBlogTags, getCourseCategories, reqCreatePost } from '../services/fetchingService'
@@ -10,7 +10,7 @@ import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from "../hooks/useFetchFunction"
-import { flatMap, flatten, flattenDeep, noop } from 'lodash'
+import _, { flatMap, flatten, flattenDeep, noop } from 'lodash'
 import FullScreenImage from './FullScreenImage'
 
 const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
@@ -23,7 +23,8 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const categories = userData?.data?.categories
 
     const [selectedCategory, setSelectedCategory] = useState(null)
-    const {data: tagData, isLoading: tagLoading, refetch: tagRefetch} = useFetchFunction(() => getAllBlogTags())
+    const {data: tagData, isLoading: tagLoading, refetch: tagRefetch} = useFetchFunction(() => getAllBlogTags(searchTagQuery))
+    const [searchTagQuery, setSearchTagQuery] = useState("")
     const [openCategories, setOpenCategories] = useState(false)
     const [tagsData, setTagsData] = useState([])
     const [openTags, setOpenTags] = useState(false)
@@ -38,8 +39,6 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const [addTags, setAddTags] = useState(false)
 
     const [blogCreating, setBlogCreating] = useState(false)
-
-    const [filteredTags, setFilteredTags] = useState([]); //for all tags get from api zgjidh etiketimet
 
     const [writtenTags, setWrittenTags] = useState(null)
     const [outputTags, setOutputTags] = useState([])
@@ -239,6 +238,17 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         setOpenTagDialog(false)
         setOpenPostStatus(false)
     }
+    const debounceTagsSearchingRef = useRef();
+    const debounceTagsSearching = useMemo(() => {
+        const fn = _.debounce((text) => setSearchTagQuery(text), 500)
+        debounceTagsSearchingRef.current = fn;
+        return fn;
+    },[])
+    
+    useEffect(() => {
+      tagRefetch();
+    }, [searchTagQuery])
+    
 
     useEffect(() => {
         if(writtenTags !== null){
@@ -267,6 +277,13 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         tagRefetch()
         console.log(tagData)
     }, [selectedCategory])
+    
+    useEffect(() => {
+      
+      return () => {
+        debounceTagsSearchingRef.current?.cancel();
+      }
+    }, [])
     
     
     
@@ -537,22 +554,16 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                     />}
                                 {openTags && <View className="p-2 border border-black-200 rounded-[5px] bottom-0 bg-oBlack mt-2" style={styles.box}>
                                     <TextInput
-                                        className="bg-primary text-white p-2 rounded mb-2 border border-black-200"
-                                        placeholder="Search tags..."
+                                        className="bg-primary text-white font-plight text-sm p-2 rounded mb-2 border border-black-200"
+                                        placeholder="Kerkoni etiketime..."
                                         style={styles.box}
                                         placeholderTextColor="#999"
-                                        onChangeText={(text) => {
-                                            // Filter tags based on search text
-                                            const filtered = tagsData.filter(tag => 
-                                            tag.name.toLowerCase().includes(text.toLowerCase())
-                                            );
-                                            setFilteredTags(filtered);
-                                    }}
+                                        onChangeText={(text) => debounceTagsSearching(text)}
                                     />
                                     <FlatList
                                         className="h-[60px]"
                                         scrollEnabled={true}
-                                        data={filteredTags || tagsData}
+                                        data={tagsData}
                                         keyExtractor={(item) => `selectTags-${item?.id}`}
                                         renderItem={({item}) => (
                                             <TouchableOpacity 
