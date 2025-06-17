@@ -11,6 +11,7 @@ import * as ImagePicker from "expo-image-picker"
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from "../hooks/useFetchFunction"
 import { flatMap, flatten, flattenDeep, noop } from 'lodash'
+import FullScreenImage from './FullScreenImage'
 
 const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
 
@@ -36,6 +37,10 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const [allTags, setAllTags] = useState(true)
     const [addTags, setAddTags] = useState(false)
 
+    const [blogCreating, setBlogCreating] = useState(false)
+
+    const [filteredTags, setFilteredTags] = useState([]); //for all tags get from api zgjidh etiketimet
+
     const [writtenTags, setWrittenTags] = useState(null)
     const [outputTags, setOutputTags] = useState([])
     const [enteredOnce, setEnteredOnce] = useState(false)
@@ -46,6 +51,12 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const [tagsSelected, setTagsSelected] = useState([])
 
     const [imagesSelected, setImagesSelected] = useState([])
+
+    const [fullscreenModalOptions, setFullscreenModalOptions] = useState({
+        visible: false,
+        images: [],
+        index: 0
+    })
 
     const [imageHeight, setImageHeight] = useState(0);
     const [containerWidth, setContainerWidth] = useState(0);
@@ -80,7 +91,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             quality: 0,
             base64: true
         })
-        console.log(result);
+        // console.log(result);
         
 
         if(!result.canceled){
@@ -183,7 +194,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             outputTagsError()
             return;
         }
-        
+        setBlogCreating(true)
         
         let theTags = []
 
@@ -191,7 +202,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             const writtenTags = outputTags.map(tag => ({name: tag}));
             theTags = writtenTags;
         }else if(allTags){
-            const selectedTags = selectedTags.map(tag => ({name: tag.name}));
+            const selectedTags = tagsSelected.map(tag => ({name: tag.name}));
             theTags = selectedTags
         }
         
@@ -211,9 +222,17 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         if(response){
             successNotification()
             sendRefreshCall();
+            setTitle('');
+            setBlogContent('');
+            setImagesSelected([]);
+            setTagsSelected([]);
+            setOutputTags([]);
+            setWrittenTags(null);
+            setSelectedCategory(null);
         }else{
             failedNotification()
         }
+        setBlogCreating(false)
     }
 
     const removeOpenedDialogs = () => {
@@ -295,15 +314,33 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                         tintColor={"#9ca3af"}
                                     />
                                 </View>
-                                {openPostStatus && <Animatable.View animation="bounceIn" className="absolute -right-16 -bottom-10 bg-oBlack z-50 border border-black-200 rounded-[5px]" style={styles.box}>
-                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(1);}} className="p-1.5 mx-2 border-b border-black-200">
+                                {openPostStatus && <Animatable.View animation="bounceIn" className="absolute -right-16 -bottom-12 bg-oBlack z-50 border border-black-200 rounded-[5px]" style={styles.box}>
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(1);}} className="p-1.5 justify-center mx-2 border-b border-black-200 flex-row items-center gap-2">
                                     <Text className="text-white font-plight text-sm text-center">Publik</Text>
+                                    {postStatus === 1 && <Image 
+                                        source={icons.tick}
+                                        className="size-5"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />}
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(2);}} className="p-1.5 mx-2 border-b border-black-200">
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(2);}} className="p-1.5 mx-2 border-b border-black-200 flex-row items-center justify-center gap-2">
                                     <Text className="text-white font-plight text-sm text-center">Privat</Text>
+                                    {postStatus === 2 && <Image 
+                                        source={icons.tick}
+                                        className="size-5"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />}
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(3);}} className="p-1.5 mx-2">
+                                <TouchableOpacity onPress={() => {setOpenPostStatus(false); setPostStatus(3);}} className="p-1.5 mx-2 flex-row items-center justify-center gap-2">
                                     <Text className="text-white font-plight text-sm text-center">Vetem miqte</Text>
+                                    {postStatus === 3 && <Image 
+                                        source={icons.tick}
+                                        className="size-5"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />}
                                 </TouchableOpacity>
                             </Animatable.View>}
                             </View>
@@ -340,13 +377,15 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                 {inputFocused && <View>
 
                 {(imagesSelected.length > 0) && <View className="relative flex-1 gap-2 flex-row w-full mt-6 border border-black-200" onLayout={handleLayout}>
-                    {imagesSelected.map((item, index) => (
+                    {imagesSelected.slice(0, 3).map((item, index) => (
                         <View key={`image-${index}`} className="flex-1">
-                            <Image 
-                                source={{uri: item.image}}
-                                style={{width: "100%", height: 200}}
-                                resizeMode='contain'
+                            <TouchableOpacity onPress={() => setFullscreenModalOptions((prev) => ({...prev, visible: true, images: imagesSelected.map(img => img.image), index: index}))}>
+                                <Image
+                                    source={{uri: item.image}}
+                                    style={{width: "100%", height: 200}}
+                                    resizeMode='contain'
                                 />
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2"
                                 onPress={() => setImagesSelected((prevData) => prevData.filter((_, i) => i !== index))}
@@ -360,7 +399,14 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                             </TouchableOpacity>
                         </View>
                     ))}
+                    
                     </View>}
+                    {imagesSelected.length > 3 && (
+                        <TouchableOpacity onPress={() => setFullscreenModalOptions((prev) => ({...prev, images: imagesSelected.map(img => img.image), index: 3, visible: true}))} className="flex-1 bg-secondary border border-white p-2 items-center justify-center" style={styles.box}>
+                            <Text className="text-white font-psemibold text-xl">+{imagesSelected.length - 3}</Text>
+                            <Text className="text-white text-xs font-plight">Me shume</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>}
                 {/* photos */}
                 {inputFocused && <Animatable.View animation="fadeIn">
@@ -419,11 +465,23 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                 </Text>
                             </TouchableOpacity>
                             {openTagDialog && <Animatable.View animation="bounceIn" className="absolute right-0 bg-oBlack z-50 border border-black-200 rounded-[5px]" style={styles.box}>
-                                <TouchableOpacity onPress={() => {setAllTags(true); setAddTags(false); setOpenTagDialog(false);}} className="p-1.5 mx-2 border-b border-black-200">
-                                    <Text className="text-white font-plight text-sm text-center">Te gjitha</Text>
+                                <TouchableOpacity onPress={() => {setAllTags(true); setAddTags(false); setOpenTagDialog(false);}} className="p-1.5 flex-row items-center gap-2 justify-center mx-2 border-b border-black-200">
+                                    <Text className="text-white  font-plight text-sm text-center">Te gjitha</Text>
+                                    {allTags && <Image 
+                                        source={icons.tick}
+                                        className="size-5"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />}
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => {setAddTags(true); setAllTags(false); setOpenTagDialog(false);}} className="p-1.5 mx-2">
+                                <TouchableOpacity onPress={() => {setAddTags(true); setAllTags(false); setOpenTagDialog(false);}} className="p-1.5 mx-2 flex-row items-center gap-2 justify-center">
                                     <Text className="text-white font-plight text-sm text-center">Shto etiketime</Text>
+                                    {addTags && <Image 
+                                        source={icons.tick}
+                                        className="size-5"
+                                        resizeMode='contain'
+                                        tintColor={"#FF9C01"}
+                                    />}
                                 </TouchableOpacity>
                             </Animatable.View>}
                             {addTags && <View>
@@ -478,10 +536,23 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                         )}
                                     />}
                                 {openTags && <View className="p-2 border border-black-200 rounded-[5px] bottom-0 bg-oBlack mt-2" style={styles.box}>
+                                    <TextInput
+                                        className="bg-primary text-white p-2 rounded mb-2 border border-black-200"
+                                        placeholder="Search tags..."
+                                        style={styles.box}
+                                        placeholderTextColor="#999"
+                                        onChangeText={(text) => {
+                                            // Filter tags based on search text
+                                            const filtered = tagsData.filter(tag => 
+                                            tag.name.toLowerCase().includes(text.toLowerCase())
+                                            );
+                                            setFilteredTags(filtered);
+                                    }}
+                                    />
                                     <FlatList
                                         className="h-[60px]"
                                         scrollEnabled={true}
-                                        data={tagsData || []}
+                                        data={filteredTags || tagsData}
                                         keyExtractor={(item) => `selectTags-${item?.id}`}
                                         renderItem={({item}) => (
                                             <TouchableOpacity 
@@ -541,11 +612,17 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                     </View>
 
                     <View className="absolute bottom-0 right-0 left-0 bg-white self-start h-[0px]" >
-                        <TouchableOpacity onPress={createBlog} className="bg-secondary px-4 justify-center items-center mx-auto h-10 -mt-6 rounded-[2px]" >
+                        <TouchableOpacity disabled={blogCreating} onPress={createBlog} className={`bg-secondary px-4 justify-center items-center mx-auto h-10 -mt-6 rounded-[2px] ${blogCreating ? "opacity-50" : ""}`} >
                             <Text className="text-white font-pmedium text-sm">Postoni</Text>
                         </TouchableOpacity>
                     </View>
                 </Animatable.View>}
+                <FullScreenImage 
+                    visible={fullscreenModalOptions.visible}
+                    images={fullscreenModalOptions.images}
+                    initialIndex={fullscreenModalOptions.index}
+                    onClose={() => setFullscreenModalOptions({visible: false, images: [], index: 0})}
+                />
             </View>
             {/* </KeyboardAvoidingView> */}
         </TouchableWithoutFeedback>

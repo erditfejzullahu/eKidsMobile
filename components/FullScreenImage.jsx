@@ -169,7 +169,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width,
-    height: height * 0.7,
+    height: height - 85,
+    // height: "100%",
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   },
   indicatorContainer: {
     position: 'absolute',
-    top: 20,
+    top: 30,
     alignSelf: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 10,

@@ -28,7 +28,6 @@ const Blog = () => {
 
   const [allBlogs, setAllBlogs] = useState([])
   const [hasMoreBlogs, setHasMoreBlogs] = useState(false)
-  const [key, setKey] = useState(1)
 
   const [blogTagId, setBlogTagId] = useState(null)
   const [pagination, setPagination] = useState({
@@ -114,7 +113,7 @@ const Blog = () => {
   
   if((blogLoading || isLoading) && pagination.pageNumber === 1) return (<Loading />)
   return (
-    <View className="flex-1 h-full" key={key}>      
+    <View className="flex-1 h-full">      
         <KeyboardAwareFlatList
           behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
@@ -142,7 +141,7 @@ const Blog = () => {
                 </View>
               </View>
 
-              <AddBlogComponent userData={user} getUserOutside={passUserOutside} sendRefreshCall={() => setKey((prev) => prev + 1)}/>
+              <AddBlogComponent userData={user} getUserOutside={passUserOutside} sendRefreshCall={() => onRefresh()}/>
             </View>
             {blogTagId !== null && 
             <View className="-mb-2 mt-4 flex-row items-center gap-2">

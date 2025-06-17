@@ -15,7 +15,6 @@ import FullScreenImage from './FullScreenImage';
 
 
 const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => {
-    // console.log(currentUser);
     const router = useRouter();
     const {user, isLoading} = useGlobalContext();
     const categories = user?.data?.categories;
@@ -176,13 +175,13 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
-                                        {(renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson) ? (<Image 
-                                            source={{uri: renderItem?.course ? (renderItem?.course?.courseFeaturedImage || icons.courses) : renderItem?.lesson ? (renderItem?.lesson?.lessonFeaturedImage || icons.lectures) : renderItem?.blog ? (renderItem?.blog?.profilePictureUrl || icons.blogs) : renderItem?.discussion ? (renderItem?.discussion?.user?.profilePictureUrl || icons.discussion) : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.image || icons.lectures) : renderItem?.instructorCourse ? (renderItem?.instructorCourse?.image || icons.courses) : images.logoNew}}
+                                        {(renderItem?.course?.lessonFeaturedImage || renderItem?.lesson?.lessonFeaturedImage || renderItem?.blog?.profilePictureUrl || renderItem?.discussion?.user?.profilePictureUrl || renderItem?.instructor || renderItem?.instructorCourse?.image || renderItem?.instructorLesson?.image) ? (<Image 
+                                            source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson ? renderItem?.lesson?.courseFeaturedImage : renderItem?.blog ? renderItem?.blog?.profilePictureUrl : renderItem?.discussion ? renderItem?.discussion?.user?.profilePictureUrl : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? renderItem?.instructorLesson?.image : renderItem?.instructorCourse ? renderItem?.instructorCourse?.image : images.logoNew}}
                                             className="h-20 w-20 border border-secondary rounded-[5px]"
                                             resizeMode='cover'
                                         />) : (
                                             <Image 
-                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : images.logoNew}
+                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lesson : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'
@@ -274,13 +273,13 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                         <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
-                                        {(renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson) ? (<Image 
-                                            source={{uri: renderItem?.course ? (renderItem?.course?.courseFeaturedImage || icons.courses) : renderItem?.lesson ? (renderItem?.lesson?.lessonFeaturedImage || icons.lectures) : renderItem?.blog ? (renderItem?.blog?.profilePictureUrl || icons.blogs) : renderItem?.discussion ? (renderItem?.discussion?.user?.profilePictureUrl || icons.discussion) : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.image || icons.lectures) : renderItem?.instructorCourse ? (renderItem?.instructorCourse?.image || icons.courses) : images.logoNew}}
+                                        {(renderItem?.course?.lessonFeaturedImage || renderItem?.lesson?.lessonFeaturedImage || renderItem?.blog?.profilePictureUrl || renderItem?.discussion?.user?.profilePictureUrl || renderItem?.instructor || renderItem?.instructorCourse?.image || renderItem?.instructorLesson?.image) ? (<Image 
+                                            source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson ? renderItem?.lesson?.courseFeaturedImage : renderItem?.blog ? renderItem?.blog?.profilePictureUrl : renderItem?.discussion ? renderItem?.discussion?.user?.profilePictureUrl : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? renderItem?.instructorLesson?.image : renderItem?.instructorCourse ? renderItem?.instructorCourse?.image : images.logoNew}}
                                             className="h-20 w-20 border border-secondary rounded-[5px]"
                                             resizeMode='cover'
                                         />) : (
                                             <Image 
-                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : images.logoNew}
+                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lesson : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'

@@ -6,6 +6,7 @@ import { TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
 import BlogCardInteractions from './BlogCardInteractions';
 import { useRouter } from 'expo-router';
+import FullScreenImage from './FullScreenImage';
 
 const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false}) => {
     const router = useRouter();
@@ -21,16 +22,32 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         day: 'numeric',
     });
     // console.log(blog);
+    const [fullScreenModal, setFullScreenModal] = useState({
+        visible: false,
+        index: 0,
+        images: []
+    })
     
     useEffect(() => {
       if(blog?.imageUrls){
         setBlogImages(JSON.parse(blog?.imageUrls) || [])
       }
     }, [blog?.imageUrls])
+
+    useEffect(() => {
+        if(blogImages){
+            setFullScreenModal((prev) => ({
+                ...prev,
+                images: blogImages
+            }))
+        }
+    }, [blogImages])
+    
     
     // console.log(blogImages);
     
   return (
+    <>
     <View className="border relative border-black-200 bg-oBlack rounded-[5px]">
         {!fullBlogSection && <TouchableOpacity onPress={() => 
             router.push({
@@ -46,8 +63,16 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                 resizeMode='contain'
             />
         </TouchableOpacity>}
-        <View className="top-0 right-0 p-2 pt-1.5 bg-secondary absolute rounded-bl-[10px]">
-            <Text className="font-psemibold text-xs text-white">{getCourseCategories(categories, blog?.categoryId)}</Text>
+        <View className="top-0 right-0 absolute flex-row items-center gap-1.5" style={styles.box}>
+            {blog?.categoryId && <Text className={`font-psemibold rounded-bl-[10px] rounded-tr-[10px] p-2 py-1.5 bg-secondary text-xs text-white pr-8 `}>{getCourseCategories(categories, blog?.categoryId)}</Text>}
+            <TouchableOpacity className=" bg-primary p-1 absolute rounded-bl-md rounded-tr-md right-0 top-0 border-b border-l border-black-200" style={styles.box}>
+                <Image 
+                    source={icons.more}
+                    className="size-6"
+                    resizeMode='contain'
+                    tintColor={"#fff"}
+                />
+            </TouchableOpacity>
         </View>
         {/* user */}
         <View className="flex-row px-4 pt-4 gap-4 items-center mb-4">
@@ -77,13 +102,23 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
             {/* TODO: IN CLICK OF PHOTOS TO MAKE FULLSCREEN PHOTOS COMPONENT */}
             {blogImages.length > 0 && (
                 <View className="flex-1 flex flex-row gap-2 bg-primary rounded-lg p-2" style={styles.box}>
-                    {blogImages.map((img, idx) => (
+                    {blogImages.slice(0, 3).map((img, idx) => (
                         <View key={`${blog?.id}-${idx}`} className="flex-1 rounded-md overflow-hidden">
-                            <Image 
-                                source={{uri: img}}
-                                className="min-h-[200px]"
-                                resizeMode='cover'
-                            />
+                            <TouchableOpacity onPress={() => setFullScreenModal((prev) => ({...prev, index: idx}))}>
+                                <Image 
+                                    source={{uri: img}}
+                                    className="min-h-[200px]"
+                                    resizeMode='cover'
+                                />
+                            </TouchableOpacity>
+                            {idx === 2 && blogImages.length > 3 && (
+                                <TouchableOpacity 
+                                    onPress={() => setFullScreenModal((prev) => ({...prev, index: 0}))}
+                                    className="absolute inset-0 bg-black/50 flex items-center justify-center"
+                                >
+                                    <Text className="text-white font-bold text-lg">+{blogImages.length - 3} more</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     ))}
                 </View>
@@ -100,12 +135,9 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
             <View>
                 <Text className="text-gray-400 text-sm font-plight mb-1">Etiketimet:</Text>
                 <View className="flex-row gap-2 flex-1 flex-wrap">
-                    <TouchableOpacity onPress={() => fullBlogSection ? {} : filterByTagId(blog?.tags)} className="bg-secondary border-white rounded-[5px] px-4 py-1">
-                        <Text className="text-white font-pbold text-sm">{blog?.tags?.name}</Text>
-                    </TouchableOpacity>
-                    {blog?.tags?.children?.length > 0 && blog?.tags?.children.map((item) => (
-                        <TouchableOpacity onPress={() => fullBlogSection ? {} : filterByTagId(item)} className="bg-oBlack border border-black-200 rounded-[5px] px-4 py-1" key={`tag-${blog?.id}-${item?.tagId}`}>
-                            <Text className="text-secondary font-psemibold text-sm">{item?.name}</Text>
+                    {blog?.tags?.length > 0 && blog?.tags?.map((item, index) => (
+                        <TouchableOpacity onPress={() => fullBlogSection ? {} : filterByTagId(item)} className={`${index === 0 ? "bg-secondary border-white" : "bg-oBlack border-black-200"} border  rounded-[5px] px-4 py-1`} key={`tag-${blog?.id}-${item?.tagId}`}>
+                            <Text className={`${index === 0 ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{item?.name}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -116,6 +148,12 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
             <Text className="text-white font-plight text-xs">{formattedDate}</Text>
         </View>
     </View>
+    <FullScreenImage 
+        visible={fullScreenModal.visible}
+        images={fullScreenModal.images}
+        initialIndex={fullScreenModal.index}
+    />
+    </>
   )
 }
 const styles = StyleSheet.create({
