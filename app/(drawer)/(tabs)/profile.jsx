@@ -283,8 +283,6 @@ const router = useRouter();
 
   const changeProfilePicture = async (base64Data) => {
     // console.log(base64Data);
-    
-    
     const formattedBase64 = `${base64Data.type}${base64Data.base64}`;
     // console.log(formattedBase64);
     

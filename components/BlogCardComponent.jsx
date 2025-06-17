@@ -104,7 +104,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                 <View className="flex-1 flex flex-row gap-2 bg-primary rounded-lg p-2" style={styles.box}>
                     {blogImages.slice(0, 3).map((img, idx) => (
                         <View key={`${blog?.id}-${idx}`} className="flex-1 rounded-md overflow-hidden">
-                            <TouchableOpacity onPress={() => setFullScreenModal((prev) => ({...prev, index: idx}))}>
+                            <TouchableOpacity onPress={() => setFullScreenModal((prev) => ({...prev, index: idx, visible: true, images: blogImages}))}>
                                 <Image 
                                     source={{uri: img}}
                                     className="min-h-[200px]"
@@ -113,10 +113,11 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                             </TouchableOpacity>
                             {idx === 2 && blogImages.length > 3 && (
                                 <TouchableOpacity 
-                                    onPress={() => setFullScreenModal((prev) => ({...prev, index: 0}))}
+                                    onPress={() => setFullScreenModal((prev) => ({...prev, index: idx + 1, visible: true, images: blogImages}))}
                                     className="absolute inset-0 bg-black/50 flex items-center justify-center"
                                 >
-                                    <Text className="text-white font-bold text-lg">+{blogImages.length - 3} more</Text>
+                                    <Text className="text-white font-psemibold text-xl">+{blogImages.length - 3}</Text>
+                                    <Text className="text-white font-plight text-sm">Me shume</Text>
                                 </TouchableOpacity>
                             )}
                         </View>
@@ -152,6 +153,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         visible={fullScreenModal.visible}
         images={fullScreenModal.images}
         initialIndex={fullScreenModal.index}
+        onClose={() => setFullScreenModal({visible: false, images: [], index: 0})}
     />
     </>
   )

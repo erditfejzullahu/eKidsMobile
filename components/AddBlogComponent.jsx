@@ -99,6 +99,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                 base64: image.base64,
                 image: image.uri
             }))
+            
             setImagesSelected(selectedImages)
         }
     }
@@ -116,11 +117,11 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             base64: true
         })
         if(!result.canceled){
-            const newImage = {
+            const newImage = [{
                 type: `data:${result.assets[0].mimeType};base64,`,
                 base64: result.assets[0].base64,
                 image: result.assets[0].uri
-            }
+            }]
             setImagesSelected(newImage)
         }
     }
@@ -211,7 +212,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             userId: user.id,
             status: postStatus,
             content: blogContent,
-            images: imagesSelected.length > 0 ? imagesSelected.map(({image, type, base64 }) => [type + base64]) : null,
+            images: imagesSelected.length > 0 ? imagesSelected.map(({type, base64 }) => ({image: type + base64})) : null,
             tags: theTags
         }
 
@@ -404,7 +405,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                 />
                             </TouchableOpacity>
                             <TouchableOpacity
-                                className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2"
+                                className="bg-secondary border border-white rounded-full p-2 absolute -top-2 -right-2 z-50"
                                 onPress={() => setImagesSelected((prevData) => prevData.filter((_, i) => i !== index))}
                                 >
                                 <Image 
@@ -414,16 +415,25 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                                     tintColor={"#fff"}
                                     />
                             </TouchableOpacity>
+                            {index === 2 && imagesSelected.length > 3 && (
+                                <TouchableOpacity 
+                                    onPress={() => setFullscreenModalOptions((prev) => ({...prev, images: imagesSelected.map(img => img.image), index: 3, visible: true}))}
+                                    className="absolute inset-0 bg-black/50 flex items-center justify-center"
+                                >
+                                    <Text className="text-white font-psemibold text-xl">+{imagesSelected.length - 3}</Text>
+                                    <Text className="text-white font-plight text-sm">Me shume</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     ))}
                     
                     </View>}
-                    {imagesSelected.length > 3 && (
-                        <TouchableOpacity onPress={() => setFullscreenModalOptions((prev) => ({...prev, images: imagesSelected.map(img => img.image), index: 3, visible: true}))} className="flex-1 bg-secondary border border-white p-2 items-center justify-center" style={styles.box}>
+                    {/* {imagesSelected.length > 3 && (
+                        <TouchableOpacity  className="flex-1 bg-secondary border border-white p-2 items-center justify-center" style={styles.box}>
                             <Text className="text-white font-psemibold text-xl">+{imagesSelected.length - 3}</Text>
                             <Text className="text-white text-xs font-plight">Me shume</Text>
                         </TouchableOpacity>
-                    )}
+                    )} */}
                 </View>}
                 {/* photos */}
                 {inputFocused && <Animatable.View animation="fadeIn">
