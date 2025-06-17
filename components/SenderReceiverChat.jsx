@@ -161,7 +161,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                     />
                                 </TouchableOpacity>
                             </View>
-                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLessons || renderItem?.onlineMeeting) ? (
+                        ) : (renderItem?.quiz || renderItem?.course || renderItem?.lesson || renderItem?.blog || renderItem?.discussion || renderItem?.instructor || renderItem?.instructorCourse || renderItem?.instructorLesson || renderItem?.onlineMeeting) ? (
                             <>
                             <View className="bg-oBlack border border-black-200 p-4 rounded-[5px] mb-4 mt-2" style={styles.box}>
                                 <TouchableOpacity className="absolute top-0 right-0" onPress={() => handleGoToLocation(renderItem)}>
@@ -172,20 +172,26 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
+                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.content || "Duhet me shfaq a osht mbajt leksioni a ka mu mbajt a ka material") : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
-                                        {(renderItem?.course?.lessonFeaturedImage || renderItem?.lesson?.lessonFeaturedImage || renderItem?.blog?.profilePictureUrl || renderItem?.discussion?.user?.profilePictureUrl || renderItem?.instructor || renderItem?.instructorCourse?.image || renderItem?.instructorLesson?.image) ? (<Image 
-                                            source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson ? renderItem?.lesson?.courseFeaturedImage : renderItem?.blog ? renderItem?.blog?.profilePictureUrl : renderItem?.discussion ? renderItem?.discussion?.user?.profilePictureUrl : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? renderItem?.instructorLesson?.image : renderItem?.instructorCourse ? renderItem?.instructorCourse?.image : images.logoNew}}
-                                            className="h-20 w-20 border border-secondary rounded-[5px]"
-                                            resizeMode='cover'
-                                        />) : (
+                                        {(renderItem?.course?.lessonFeaturedImage || renderItem?.lesson?.lessonFeaturedImage || renderItem?.blog?.profilePictureUrl || renderItem?.discussion?.user?.profilePictureUrl || renderItem?.instructor || renderItem?.instructorCourse?.image || renderItem?.instructorLesson?.image) ? (
+                                            <>
                                             <Image 
-                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lesson : images.logoNew}
+                                                source={{uri: renderItem?.course ? renderItem?.course?.courseFeaturedImage : renderItem?.lesson ? renderItem?.lesson?.courseFeaturedImage : renderItem?.blog ? renderItem?.blog?.profilePictureUrl : renderItem?.discussion ? renderItem?.discussion?.user?.profilePictureUrl : renderItem?.instructor ? renderItem?.instructor?.profilePictureUrl : renderItem?.instructorLesson ? renderItem?.instructorLesson?.image : renderItem?.instructorCourse ? renderItem?.instructorCourse?.image : images.logoNew}}
+                                                className="h-20 w-20 border border-secondary rounded-[5px]"
+                                                resizeMode='cover'
+                                            />
+                                            </>
+                                        ) : (
+                                            <>
+                                            <Image 
+                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lectures : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'
                                             />
+                                            </>
                                         )}
                                     </View>
                                 </View>
@@ -270,7 +276,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                 </View>
                                 <View className="my-2 flex-row gap-2">
                                     <View className="flex-1">
-                                        <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? renderItem?.instructorLesson?.content : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
+                                    <Text className="text-gray-400 font-plight text-sm" numberOfLines={3}>{renderItem?.quiz ? renderItem?.quiz?.quizDescription : renderItem?.lesson ? renderItem?.lesson?.lessonExcerpt : renderItem?.course ? renderItem?.course?.courseDescription : renderItem?.blog ? renderItem?.blog?.content : renderItem?.discussion ? renderItem?.discussion?.content : renderItem?.instructor ? `Ndiq kurset e ${renderItem?.instructor?.name}` : renderItem?.instructorLesson ? (renderItem?.instructorLesson?.content || "Duhet me shfaq a osht mbajt leksioni a ka mu mbajt a ka material") : renderItem?.instructorCourse ? renderItem?.instructorCourse?.description : renderItem?.onlineMeeting ? renderItem?.onlineMeeting?.description : "None"}</Text>
                                     </View>
                                     <View>
                                         {(renderItem?.course?.lessonFeaturedImage || renderItem?.lesson?.lessonFeaturedImage || renderItem?.blog?.profilePictureUrl || renderItem?.discussion?.user?.profilePictureUrl || renderItem?.instructor || renderItem?.instructorCourse?.image || renderItem?.instructorLesson?.image) ? (<Image 
@@ -279,7 +285,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
                                             resizeMode='cover'
                                         />) : (
                                             <Image 
-                                                source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lesson : images.logoNew}
+                                            source={renderItem?.quiz ? icons.quiz : renderItem?.onlineMeeting ? icons.onlineMeeting : renderItem?.lesson ? icons.lectures : renderItem?.course ? icons.courses : renderItem?.blog ? icons.blogs : renderItem?.discussion ? icons.discussion : renderItem?.instructorCourse ? icons.courses : renderItem?.instructorLesson ? icons.lectures : images.logoNew}
                                                 className="h-20 w-20 p-2 border border-secondary rounded-[5px]"
                                                 tintColor={"#fff"}
                                                 resizeMode='cover'
