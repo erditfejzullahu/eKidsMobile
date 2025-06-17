@@ -71,16 +71,6 @@ const router = useRouter();
   const [showImportantDetails, setShowImportantDetails] = useState(true)
   const [showOtherDetails, setShowOtherDetails] = useState(false)
 
-  const [form, setForm] = useState({
-    firstname: '',
-    lastname: '',
-    password: '',
-    confirmPassword: '',
-    username: '',
-    email: '',
-    phone: '',
-  })
-
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(personalInformations),
     defaultValues: {
@@ -90,19 +80,23 @@ const router = useRouter();
       confirmPassword: "",
       username: "",
       email: "",
-      phone: ""
+      phone: "",
+      age: 13
     },
     mode: "onTouched"
   })
 
   useEffect(() => {
     if(userData){
+      console.log(userData, ' userdata');
+      
       reset({
         name: userData?.firstname,
         lastname: userData?.lastname,
         username: userData?.username,
         email: userData?.email,
-        phoneNumber: getMetaValue(userData.userMeta, "Phone")
+        phoneNumber: getMetaValue(userData.userMeta, "Phone"),
+        age: userData?.age
       })
 
     }
@@ -151,23 +145,7 @@ const router = useRouter();
 
   const togglePassword = () => {
     setChangePassword(!changePassword)
-    setForm({
-      ...form,
-      password: '',
-      confirmPassword: ''
-    })
   }
-
-  const {showNotification: alertPassword} = NotifierComponent({
-    title: "Mbushni fushat e kerkuara!",
-    description: "Ju lutem mbushni fushat e fjalëkalimeve dhe sigurohuni të shkruani fjalëkalimet e kërkuara!",
-    alertType: "warning"
-  })
-
-  const {showNotification: alertFields} = NotifierComponent({
-    title: "Ju lutem mbushni fushat e kërkuara!",
-    alertType: "warning"
-  })
 
   const {showNotification: updateSuccessful} = NotifierComponent({
     title: "Te dhenat u perditesuan me sukses!"
@@ -186,57 +164,25 @@ const router = useRouter();
 
 
 
-  const updateDetails = async () => {
-    const userId = await currentUserID();
-    if(changePassword){
-      if(!form.password || !form.confirmPassword || (form.password !== form.confirmPassword)){
-        alertPassword()
-      }else if(!form.firstname || !form.lastname || !form.username || !form.email || !form.phone){
-        alertFields();
-      }else{
-        try {
-          const response = await updateUserDetails(userId, "changePassword", {
-            "firstname": form.firstname,
-            "lastname": form.lastname,
-            "username": form.username,
-            "password": form.password,
-            "confirmPassword": form.confirmPassword,
-            "email": form.email,
-          })
-          if(response === 200){
-            updateSuccessful();
-            onRefresh()
-          }else{
-            updateFailed();
-          }
-        } catch (error) {
-          console.error(error);
-          
-        }
-      }
+  const updateDetails = async (data) => {
+    const age = parseInt(data.age);
+    
+    const response = await updateUserDetails({
+      "firstname": data.name,
+      "lastname": data.lastname,
+      "username": data.username,
+      "password": data?.password,
+      "confirmPassword": data?.confirmPassword,
+      "email": data.email,
+      "age": age,
+      "phone": data.phoneNumber
+    })
+
+    if(response === 200){
+      updateSuccessful();
+      onRefresh()
     }else{
-      if(!form.firstname || !form.lastname || !form.username || !form.email || !form.phone){
-        alertFields();
-      }else{
-        try {
-          const response = await updateUserDetails(userId, "", {
-            "firstname": form.firstname,
-            "lastname": form.lastname,
-            "username": form.username,
-            "password": form.password,
-            "confirmPassword": form.confirmPassword,
-            "email": form.email,
-          })
-          if(response === 200){
-            updateSuccessful();
-            onRefresh()
-          }else{
-            updateFailed();
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
+      updateFailed();
     }
   }
 
@@ -305,8 +251,12 @@ const router = useRouter();
     )
   }else{
     return (
-      <ScrollView 
+      <KeyboardAwareScrollView 
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableOnAndroid={true} // Ensures Android support
+        keyboardShouldPersistTaps="handled"
         className="h-full bg-primary"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         refreshControl={
           <RefreshControl 
             refreshing={refreshing}
@@ -416,12 +366,7 @@ const router = useRouter();
               </View>
           </View>
 
-          {showImportantDetails && <KeyboardAwareScrollView style={styles.container}
-          contentContainerStyle={{ flexGrow: 1 }}
-          enableOnAndroid={true} // Ensures Android support
-          extraScrollHeight={50} // Adjust the scroll height when the keyboard is open
-          keyboardShouldPersistTaps="handled"
-          >
+          {showImportantDetails && 
             <View className="px-4 mb-4 mt-4 gap-3">
               <View>
                 <Controller 
@@ -514,6 +459,25 @@ const router = useRouter();
                   <Text className="text-red-500 text-xs font-plight">{errors.phoneNumber.message}</Text>
                 )}
               </View>
+              <View>
+                <Controller 
+                  control={control}
+                  name="age"
+                  render={({field: {onChange, value}}) => (
+                    <FormField
+                      title={"Mosha juaj"}
+                      placeholder={"Shkruani moshen tuaj ketu"}
+                      value={value ? String(value) : ""}
+                      handleChangeText={(text) => onChange(parseInt(text))}
+                      keyboardType="phone-pad"
+                    />
+                  )}
+                />
+                <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni moshen tuaj reale.</Text>
+                {errors.age && (
+                  <Text className="text-red-500 text-xs font-plight">{errors.age.message}</Text>
+                )}
+              </View>
                 <View>
                   <TouchableOpacity
                     onPress={togglePassword}
@@ -569,8 +533,7 @@ const router = useRouter();
                   isLoading={isSubmitting}
                   handlePress={handleSubmit(updateDetails)}
                 />
-            </View>
-          </KeyboardAwareScrollView>}
+            </View>}
 
           {showOtherDetails && <ShowOtherDetailsProfile userId={userData?.id} />}
         </> : 
@@ -849,7 +812,7 @@ const router = useRouter();
         }
         {/* user details */}
         
-      </ScrollView>
+      </KeyboardAwareScrollView>
     )
   }
 }

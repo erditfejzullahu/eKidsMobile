@@ -18,6 +18,12 @@ export const personalInformations = z.object({
         .min(1, "Numri i telefonit është i detyrueshëm")
         .regex(/^\+?[0-9\s\-]+$/, "Ju lutem shkruani një numër telefoni valid")
         .transform(val => val.replace(/[\s\-]/g, '')), // Remove spaces and dashes
+    age: z.number({
+        required_error: "Mosha është e detyrueshme",
+        invalid_type_error: "Mosha duhet të jetë një numër",
+        })
+        .min(13, { message: "Mosha minimale e lejuar është 13 vjet" })
+        .max(120, { message: "Mosha nuk mund të jetë më shumë se 120 vjet" }),
     password: z.string()
         .min(8, "Fjalëkalimi duhet të ketë të paktën 8 karaktere")
         .regex(

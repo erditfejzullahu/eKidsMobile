@@ -286,13 +286,13 @@ export const reqCreateLessonLike = async (lessonId) => {
     }
 }
 
-export const updateUserDetails = async (userId, type, data) => {
+export const updateUserDetails = async (data) => {
     try {
-        const response = await apiClient.put(`/api/Users/${userId}?type=${type}`, data)
-        
+        const response = await apiClient.put(`/api/Users/UpdatePersonalData`, data)
         return response ? response.status : null
     } catch (error) {
-        console.error(error);
+        console.error(error.response.data);
+        return error.response.status
     }
 }
 
