@@ -18,6 +18,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
     const [commitmentSection, setCommitmentSection] = useState(false)
     const [commitsData, setCommitsData] = useState([])
     const [commitsDataLoading, setCommitsDataLoading] = useState(false)
+    const [updateDataLoading, setUpdateDataLoading] = useState(false)
     const currentYear = new Date().getFullYear();
     const startDate = new Date(`${currentYear}-01-01`); // January 1st
     const endDate = new Date(`${currentYear}-12-31`); // December 31st
@@ -88,6 +89,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
       if(Object.keys(userOtherData) !== 0){
         setUserInformationData((prevData) => ({
             ...prevData,
+            profession: userOtherData?.profession,
             birthDay: userOtherData?.birthday !== null ? new Date(userOtherData?.birthday) : new Date(),
             softSkills: userOtherData?.softSkills !== null ? (typeof userOtherData?.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [],
             professionalSkills: userOtherData?.skills !== null ? (typeof userOtherData?.skills === "string" ? JSON.parse(userOtherData.skills) : userOtherData.skills) : [],
@@ -279,6 +281,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
     }
 
     const updateInformations = async () => {
+        setUpdateDataLoading(true)
         if(userOtherData && Object.keys(userOtherData).length !== 0){            
             const birthday = userInformationData.birthDay;
             const formattedDate = birthday.toISOString().split("T")[0];
@@ -318,6 +321,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 fillFields()
             }
         }
+        setUpdateDataLoading(false)
     }
 
     // useEffect(() => {
@@ -438,10 +442,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
 
     {!commitmentSection && <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
       <View>
-        <View className="flex-row flex-wrap justify-between border-b border-black-200">
-            <View className="gap-2  pb-4 flex-1" style={styles.box}>
+        <View className="flex-row flex-wrap gap-4 justify-between border-b border-black-200">
+            <View className="gap-2 pb-4 " style={styles.box}>
                 <Text className="text-white text-sm font-plight">Data e lindjes</Text>
-                <View className="border border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
+                <View className="border-2 border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
                     <RNDateTimePicker
                         style={{marginLeft: -25}}
                         display="default"
@@ -454,10 +458,11 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
             <View className="flex-1">
                 <FormField 
                     title={"Profesioni juaj"}
-                    value={userInformationData.profession || ""}
+                    value={userInformationData.profession}
                     handleChangeText={(e) => setUserInformationData((prevData) => ({...prevData, profession: e}))}
                     inputParentStyle={"!h-11 !rounded-[10px] "}
                     placeholder={"Sh. Polic, Programer"}
+
                     titleStyle={"!text-sm !font-plight !text-white"}
                 />
             </View>
@@ -533,8 +538,8 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
             </TouchableOpacity>
         </View>
         <View className="my-4 bg-primary border border-black-200 rounded-[5px] overflow-hidden" style={styles.box}>
-            <TouchableOpacity onPress={updateInformations}>
-                <Text className="text-white font-psemibold text-center p-4">Perditeso te dhenat</Text>
+            <TouchableOpacity className={`${updateDataLoading ? "opacity-50" : ""}`} disabled={updateDataLoading} onPress={updateInformations}>
+                <Text className="text-white font-psemibold text-center p-4">{updateDataLoading ? "Duke u perditesuar..." : "Perditeso te dhenat"}</Text>
             </TouchableOpacity>
         </View>
       </View>
