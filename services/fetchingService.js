@@ -757,6 +757,7 @@ export const reqUpdateUserInformation = async (payload) => {
         const response = await apiClient.post(`/api/userInformation`, payload)
         return response && response.status
     } catch (error) {        
+        console.log(error.response.data);
         return error.response.status
     }
 }
@@ -775,6 +776,7 @@ export const updateUserOtherInformations = async (informationId, payload) => {
         const response = await apiClient.patch(`/api/UserInformation/${informationId}`, payload)
         return response && response.status
     } catch (error) {
+        console.log(error.response.data);
         return error.response.status
     }
 }

@@ -69,7 +69,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 userEducations: [
                     {
                         place_Name: "",
-                        school_Degree: '1',
+                        school_Degree: "1",
                         field: "",
                         start_Year: 0,
                         end_Year: null
@@ -102,8 +102,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
         ...prevData,
         education: userOtherData?.userEducations?.length > 0,
         jobs: userOtherData?.userJobs?.length > 0,
-        professionalSkills: userOtherData?.skills !== null,
-        softSkills: userOtherData?.softSkills !== null
+        professionalSkills: Boolean(userOtherData?.skills),
+        softSkills: Boolean(userOtherData?.softSkills)
       }))
       
     }, [userOtherData])
@@ -114,41 +114,119 @@ const ShowOtherDetailsProfile = ({userId}) => {
             const updatedUserEducations = [...prevData.userEducations]
             const updatedUserJobs = [...prevData.userJobs]
 
-            if(!updatedUserEducations[index]){
-                updatedUserEducations[index] = {
-                    place_Name: "",
-                    school_Degree: "1",
-                    field: "",
-                    start_Year: 0,
-                    end_Year: 0,
-                }
-            }
-            if(!updatedUserJobs[index]){
-                updatedUserJobs[index] = {
-                    job_Place: "",
-                    job_Title: "",
-                    start_Year: 0,
-                    end_Year: 0
-                }
-            }
+            // if(!updatedUserEducations[index]){
+            //     updatedUserEducations[index] = {
+            //         place_Name: "",
+            //         school_Degree: "1",
+            //         field: "",
+            //         start_Year: 0,
+            //         end_Year: 0,
+            //     }
+            // }
+
+            // if(!updatedUserJobs[index]){
+            //     updatedUserJobs[index] = {
+            //         job_Place: "",
+            //         job_Title: "",
+            //         start_Year: 0,
+            //         end_Year: 0
+            //     }
+            // }
 
             if(type === "emri"){
+                if(!updatedUserEducations[index]){
+                    updatedUserEducations[index] = {
+                        place_Name: "",
+                        school_Degree: "1",
+                        field: "",
+                        start_Year: 0,
+                        end_Year: 0,
+                    }
+                }
                 updatedUserEducations[index].place_Name = text;            
             }else if(type === "drejtimi"){
+                if(!updatedUserEducations[index]){
+                    updatedUserEducations[index] = {
+                        place_Name: "",
+                        school_Degree: "1",
+                        field: "",
+                        start_Year: 0,
+                        end_Year: 0,
+                    }
+                }
                 updatedUserEducations[index].field = text
             }else if(type === "mbaruat"){
+                if(!updatedUserEducations[index]){
+                    updatedUserEducations[index] = {
+                        place_Name: "",
+                        school_Degree: "1",
+                        field: "",
+                        start_Year: 0,
+                        end_Year: 0,
+                    }
+                }
                 updatedUserEducations[index].end_Year = text;
             }else if(type === "filluat"){
+                if(!updatedUserEducations[index]){
+                    updatedUserEducations[index] = {
+                        place_Name: "",
+                        school_Degree: "1",
+                        field: "",
+                        start_Year: 0,
+                        end_Year: 0,
+                    }
+                }
                 updatedUserEducations[index].start_Year = text;
             }else if(type === 'niveli'){
+                if(!updatedUserEducations[index]){
+                    updatedUserEducations[index] = {
+                        place_Name: "",
+                        school_Degree: "1",
+                        field: "",
+                        start_Year: 0,
+                        end_Year: 0,
+                    }
+                }
                 updatedUserEducations[index].school_Degree = parseInt(text);
             }else if(type === "emri_punes"){
+                if(!updatedUserJobs[index]){
+                    updatedUserJobs[index] = {
+                        job_Place: "",
+                        job_Title: "",
+                        start_Year: 0,
+                        end_Year: 0
+                    }
+                }
                 updatedUserJobs[index].job_Place = text;
             }else if(type === "titulli_punes"){
+                if(!updatedUserJobs[index]){
+                    updatedUserJobs[index] = {
+                        job_Place: "",
+                        job_Title: "",
+                        start_Year: 0,
+                        end_Year: 0
+                    }
+                }
                 updatedUserJobs[index].job_Title = text;
             }else if(type === "filluat_punen"){
+                if(!updatedUserJobs[index]){
+                    updatedUserJobs[index] = {
+                        job_Place: "",
+                        job_Title: "",
+                        start_Year: 0,
+                        end_Year: 0
+                    }
+                }
                 updatedUserJobs[index].start_Year = text;
             }else if(type === "mbaruat_punen"){
+                if(!updatedUserJobs[index]){
+                    updatedUserJobs[index] = {
+                        job_Place: "",
+                        job_Title: "",
+                        start_Year: 0,
+                        end_Year: 0
+                    }
+                }
                 updatedUserJobs[index].end_Year = text;
             }
             // console.log(updatedUserEducations);
@@ -225,13 +303,15 @@ const ShowOtherDetailsProfile = ({userId}) => {
 
     const checkIfDataValid = (type) => {
         if(type === "education"){
+            
             if(userInformationData.userEducations.every((education) => {
+                console.log(parseInt(education.school_Degree, 10));
                 return (
                     education.place_Name.trim() !== "" &&
-                    education.school_Degree > 0 &&
+                    parseInt(education.school_Degree) > 0 &&
                     education.field.trim() !== "" &&
                     (education.start_Year.toString().trim() !== "" || parseInt(education.start_Year) > 1930) &&
-                    (education.end_Year === null || parseInt(education.end_Year) > 1930)
+                    ((education.end_Year === null || education.end_Year.toString().trim() === "") || parseInt(education.end_Year) > 1930)
                 )
             })){
                 setShowModals({visibility: false, type: ""})
@@ -280,11 +360,23 @@ const ShowOtherDetailsProfile = ({userId}) => {
         }
     }
 
+    const formatDateOnlyForBackend = (date) => {
+        if(!(date instanceof Date) || isNaN(date)){
+            throw new Error("Invalid date object");
+        }
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0")
+        const day = String(date.getDate()).padStart(2, "0")
+        return `${year}-${month}-${day}`;
+    }
+
     const updateInformations = async () => {
         setUpdateDataLoading(true)
         if(userOtherData && Object.keys(userOtherData).length !== 0){            
             const birthday = userInformationData.birthDay;
-            const formattedDate = birthday.toISOString().split("T")[0];
+            
+            // const formattedDate = birthday.toISOString().split("T")[0];
+            const formattedDate = formatDateOnlyForBackend(birthday);
             
             const updatedUserInformation = {
                 ...userInformationData,
@@ -292,6 +384,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 birthDay: formattedDate,
                 skills: JSON.stringify(userInformationData.professionalSkills)
             }
+            console.log(updatedUserInformation);
+            
             const response = await updateUserOtherInformations(userOtherData?.id, updatedUserInformation);
             if(response === 200){
                 await refetch();
@@ -303,11 +397,12 @@ const ShowOtherDetailsProfile = ({userId}) => {
             if(showInformationStepTick.education === true && showInformationStepTick.jobs === true && showInformationStepTick.softSkills && showInformationStepTick.professionalSkills){
 
                 const birthday = userInformationData.birthDay;
-                const formattedDate = birthday.toISOString().split("T")[0];
+                // const formattedDate = birthday.toISOString().split("T")[0];
+                const formattedDate = formatDateOnlyForBackend(birthday);
                 const updatedData = {
                     ...userInformationData,
                     softSkills: JSON.stringify(userInformationData.softSkills),
-                    birthday: formattedDate,
+                    birthDay: formattedDate,
                     skills: JSON.stringify(userInformationData.professionalSkills)
                 }
                 
@@ -598,7 +693,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                     <Text className="text-gray-100 font-pmedium text-sm">Niveli shkolles</Text>
                                     <View className="-my-4">
                                         <Picker
-                                            selectedValue={userInformationData?.userEducations[index]?.school_Degree.toString()}
+                                            selectedValue={userInformationData?.userEducations[index]?.school_Degree?.toString()}
                                             onValueChange={(e) => arrangeData(e, 'niveli', index)}
                                             placeholder={{ label: "Zhgjidhni nivelin shkollor", value: '' }}
                                             style={[pickerSelectStyles, {width: widthForModal, height:180}]}
@@ -657,10 +752,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                             title={"Aftesia e bute " + (index + 1)}
                                             otherStyles={"w-full"}
                                             placeholder={"Shkruani ketu aftesine tuaj te bute..."}
-                                            value={userInformationData?.softSkills[index] || ""}
+                                            value={userInformationData?.softSkills?.[index] || ""}
                                             handleChangeText={(e) => {
                                                 setUserInformationData((prevData) => {
-                                                    const softSkillsArray = [...prevData.softSkills];
+                                                    const softSkillsArray = prevData.softSkills ? [...prevData.softSkills] : [];
                                                     softSkillsArray[index] = e;
                                                     return {...prevData, softSkills: softSkillsArray};
                                                 })
@@ -686,10 +781,10 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                             title={"Aftesia profesionale " + (index + 1)}
                                             otherStyles={"w-full"}
                                             placeholder={"Shkruani ketu aftesite tuaja profesionale..."}
-                                            value={userInformationData?.professionalSkills[index] || ""}
+                                            value={userInformationData?.professionalSkills?.[index] || ""}
                                             handleChangeText={(e) => {
                                                 setUserInformationData((prevData) => {
-                                                    const professionalSkillsArray = [...prevData.professionalSkills];
+                                                    const professionalSkillsArray = prevData.professionalSkills ? [...prevData.professionalSkills] : [];
                                                     professionalSkillsArray[index] = e;
                                                     return {...prevData, professionalSkills: professionalSkillsArray};
                                                 })
