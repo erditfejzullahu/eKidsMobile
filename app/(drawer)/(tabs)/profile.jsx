@@ -801,7 +801,7 @@ const router = useRouter();
                         titleStyle={"!font-pregular mb-2"}
                         subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo filloni shfletimin e ndonje Kursi Online duke klikuar ne butonin e meposhtem!"}
                         buttonTitle={"Shfletoni Kurse Online"}
-                        buttonFunction={() => router.replace('/all-quizzes')}
+                        buttonFunction={() => router.replace('/allOnlineMeetings')}
                         />
                     </View>
                   ))
