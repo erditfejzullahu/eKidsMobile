@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Image, ScrollView, KeyboardAvoidingView } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Image, ScrollView, KeyboardAvoidingView, TextInput, ActivityIndicator } from 'react-native'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import FormField from "./FormField"
 import * as Animatable from "react-native-animatable"
 import { icons } from '../constants'
@@ -11,8 +11,15 @@ import { createDiscussion, getTagsByTitle } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import { useRouter } from 'expo-router'
 import _ from 'lodash'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { addDiscussionSchema } from '../schemas/addDiscussionSchema'
+import useFetchFunction from "../hooks/useFetchFunction"
 
 const CreateDiscussionForm = () => {
+    const [searchTagQuery, setSearchTagQuery] = useState("")
+    const {data, refetch, isLoading: tagsLoading} = useFetchFunction(() => getTagsByTitle(searchTagQuery))
+
     const router = useRouter();
     const editor = useEditorBridge({
         bridgeExtensions: [
@@ -37,6 +44,8 @@ const CreateDiscussionForm = () => {
     const [tagInput, setTagInput] = useState("")
     const [showAnonimityInformation, setShowAnonimityInformation] = useState(false)
     const [showUrgentInformation, setShowUrgentInformation] = useState(false)
+
+    const [showTagSearcher, setSowTagSearcher] = useState(true)
     
     const [isLoading, setIsLoading] = useState(false)
     
@@ -46,6 +55,16 @@ const CreateDiscussionForm = () => {
     const [tagsResponse, setTagsResponse] = useState([])
     
     const editorContent = useEditorContent(editor, {type: "html"});
+
+    const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
+        resolver: zodResolver(addDiscussionSchema),
+        defaultValues: {
+            title: "",
+            tags: ""
+        },
+        mode: "onTouched"
+    })
+
     const removeTag = (tag) => {
         setTags((prevData) => prevData.filter((itm) => itm !== tag))
         setTagInput((prevInput) => prevInput.split(" ").filter((word) => word !== tag).join(" "))
@@ -56,25 +75,13 @@ const CreateDiscussionForm = () => {
         setTagInput((prevInput) => prevInput + ` ${tag}`)
     }
 
-    const handleGetTags = async () => {        
-        const response = await getTagsByTitle(tagInput);
-        if(response){
-            setTagsResponse(response)
-        }else{
-            setTagsResponse([])
-        }
-    }
-    const debounceTagData = _.debounce(() => handleGetTags(), 500);
-
-    useEffect(() => {
-      debounceTagData()
-    }, [tagInput])
-    
-
     useEffect(() => {
       const newTags = tagInput.trim().split(" ").filter(tag => tag.length > 0);
       if(newTags.length > 0 && newTags[newTags.length - 1] !== tags[tags.length - 1]){
         setTags(newTags);
+      }
+      if(tagInput.length === 0){
+        setTags([])
       }
     }, [tagInput])
 
@@ -102,6 +109,15 @@ const CreateDiscussionForm = () => {
     }, [showAnonimityInformation, showUrgentInformation])
 
     useEffect(() => {
+      refetch();
+    }, [searchTagQuery])
+    
+
+    useEffect(() => {
+      setTagsResponse(data || [])
+    }, [data])
+
+    useEffect(() => {
       editorContent && setContent(editorContent)
     }, [editorContent])
 
@@ -118,11 +134,28 @@ const CreateDiscussionForm = () => {
         alertType: "warning"
     })
 
-    const handleCreateDiscussion = async () => {
+    const {showNotification: contentRequired} = NotifierComponent({
+        title: "Gabim",
+        description: "Nevojitet permbajtje me e gjate(minimum 20 karaktere).",
+        alertType: "warning"
+    })
+
+    const debounceTagsSearchingRef = useRef();
+    const debounceTagsSearching = useMemo(() => {
+        const fn = _.debounce((text) => setSearchTagQuery(text), 500)
+        debounceTagsSearchingRef.current = fn;
+        return fn;
+    },[])
+
+    const handleCreateDiscussion = async (data) => {
+        if(content.trim() === "" || content === null || content === undefined || content.length < 20){
+            contentRequired()
+            return;
+        }
         setIsLoading(true)
         const userId = await currentUserID();
         const payload = {
-            "title": title,
+            "title": data.title,
             "content": content,
             "userId": userId,
             "isUrgent": isUrgent,
@@ -176,14 +209,23 @@ const CreateDiscussionForm = () => {
             <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-white font-psemibold text-sm">{isUrgent ? "Urgjente" : "Normale"}</Animatable.Text>
         </TouchableOpacity>
         <View className="mt-6">
-            <FormField 
-                title={"Titulli"}
-                placeholder={"Shkruani titullin e diskutimit ketu..."}
-                value={title}
-                handleChangeText={(text) => setTitle(text)}
-                titleStyle={"!font-psemibold"}
+            <Controller 
+                control={control}
+                name="title"
+                render={({field: {onChange, value}}) => (
+                    <FormField 
+                        title={"Titulli"}
+                        placeholder={"Shkruani titullin e diskutimit ketu..."}
+                        value={value}
+                        handleChangeText={onChange}
+                        titleStyle={"!font-psemibold"}
+                    />
+                )}
             />
-            <Text className="text-gray-400 mt-1 font-plight text-sm">Behuni specific ne krijimin e pyetjes/diskutimit tuaj.</Text>
+            <Text className="text-gray-400 mt-1 font-plight text-xs">Behuni specifik ne krijimin e pyetjes/diskutimit tuaj.</Text>
+            {errors.title && (
+                <Text className="text-red-500 text-xs font-plight">{errors.title.message}</Text>
+            )}
         </View>
         <View>
             <View className="border min-h-[200px] rounded-xl border-black-200 overflow-hidden">
@@ -192,30 +234,65 @@ const CreateDiscussionForm = () => {
                     <Toolbar editor={editor} />
                 </KeyboardAvoidingView>
             </View>
-            <Text className="text-gray-400 mt-1 font-plight text-sm">Perfshij te gjitha informacionet ne menyre te detajizuar.</Text>
+            <Text className="text-gray-400 mt-1 font-plight text-xs">Perfshij te gjitha informacionet ne menyre te detajizuar.</Text>
             
-            <Text className="text-secondary text-sm font-plight"><Text>Ndihmese!<View><Image source={icons.info} className="mx-0.5 -mb-1 h-4 w-4 " tintColor={"#FF9C01"}/></View>: </Text> <Text className="text-gray-400 mt-1 font-plight text-sm relative">Ne klikim te fushes do shfaqet shiriti per perdorime te ndryshme tekstuale.</Text></Text>
+            <Text className="text-secondary text-xs font-plight"><Text>Ndihmese!<View><Image source={icons.info} className="mx-0.5 -mb-1 h-4 w-4 " tintColor={"#FF9C01"}/></View>: </Text> <Text className="text-gray-400 mt-1 font-plight text-xs relative">Ne klikim te fushes do shfaqet shiriti per perdorime te ndryshme tekstuale.</Text></Text>
                 
             
         </View>
         <View>
             <View className="relative">
-                <FormField 
-                    title={"Etiketimet"}
-                    placeholder={"Shkruani etiketimet tuaj ketu..."}
-                    value={tagInput}
-                    handleChangeText={(text) => {setTagInput(text);}}
-                    titleStyle={"!font-psemibold"}
+                <Controller 
+                    control={control}
+                    name="tags"
+                    render={({field: {onChange, value}}) => (
+                        <FormField 
+                            title={"Etiketimet"}
+                            placeholder={"Shkruani etiketimet tuaj ketu..."}
+                            value={value}
+                            handleChangeText={(text) => {setTagInput(text); onChange(text)}}
+                            titleStyle={"!font-psemibold"}
+                        />
+                    )}
                 />
-                {tagsResponse.length > 0 && <ScrollView nestedScrollEnabled className="absolute w-[80%] bottom-0 -mb-20 z-20 bg-primary max-h-[70px] h-full rounded-lg border border-black-200" style={styles.box}>
-                    {tagsResponse.map((tag, idx) => (
-                        <TouchableOpacity key={`tag-${idx}`} className="border-t border-b border-black-200 px-2 py-2" onPress={() => addExistingTag(tag.title)}>
-                            <Text className="text-white font-psemibold text-sm">{tag.title}</Text>
-                        </TouchableOpacity>
-                    ))}
+                <TouchableOpacity onPress={() => setSowTagSearcher(!showTagSearcher)} className="absolute -right-2 border border-white rounded-full -top-2 p-1 bg-secondary z-50">
+                    <Image 
+                        source={showTagSearcher ? icons.upArrow : icons.downArrow}
+                        className="size-5"
+                        resizeMode='contain'
+                        tintColor={"#fff"}
+                    />
+                </TouchableOpacity>
+                {(tagsResponse.length > 0 && showTagSearcher) && <ScrollView nestedScrollEnabled className="z-20 p-2 bg-primary mt-1 max-h-[140px] rounded-lg border border-black-200" style={styles.box}>
+                    
+                    <TextInput
+                        className="bg-primary text-white font-plight text-sm p-2 rounded mb-2 border border-black-200"
+                        placeholder="Kerkoni etiketime..."
+                        style={styles.box}
+                        placeholderTextColor="#999"
+                        onChangeText={(text) => debounceTagsSearching(text)}
+                    />
+
+                    <Animatable.View animation="fadeIn" easing="ease-in-out">
+                        {tagsLoading ? (
+                            <View className="items-center justify-center py-4 pb-3">
+                                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                                <ActivityIndicator color={"#FF9C01"} size={24} />
+                            </View>
+                        ) : (
+                            (tagsResponse.map((tag, idx) => (
+                                <TouchableOpacity key={`tag-${idx}`} className="border-t border-b border-black-200 px-2 py-2" onPress={() => addExistingTag(tag.title)}>
+                                    <Text className="text-white font-psemibold text-sm">{tag.title}</Text>
+                                </TouchableOpacity>
+                            )))
+                        )}
+                    </Animatable.View>
                 </ScrollView>}
             </View>
-        <Text className="text-gray-400 mt-1 font-plight text-sm">Vemendje: Per qdo hapsire qe behet, krijohet nje etikitim i ri!</Text>
+        <Text className="text-gray-400 mt-1 font-plight text-xs">Vemendje: Per qdo hapsire qe behet, krijohet nje etikitim i ri!</Text>
+        {errors.tags && (
+            <Text className="text-red-500 text-xs font-plight">{errors.tags.message}</Text>
+        )}
         </View>
 
         
@@ -239,9 +316,9 @@ const CreateDiscussionForm = () => {
 
         <CustomButton 
             isLoading={isLoading}
-            title={"Krijoni"}
+            title={isLoading ? "Duke u krijuar" : "Krijoni diskutimin"}
             containerStyles={"!min-h-[60px]"}
-            handlePress={handleCreateDiscussion}
+            handlePress={handleSubmit(handleCreateDiscussion)}
         />
     </View>
   )

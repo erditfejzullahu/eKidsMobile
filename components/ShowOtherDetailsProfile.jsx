@@ -36,9 +36,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
         useShadowColorFromDataset: false // optional
     };
 
-    useEffect(() => {
-        console.log(data);
-        
+    useEffect(() => {        
       if(data){
         setUserOtherData(data)
       }else{
@@ -71,7 +69,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
+                        start_Year: new Date().getFullYear(),
                         end_Year: null
                     }
                 ],
@@ -79,7 +77,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     {
                         job_Place: "",
                         job_Title: "",
-                        start_Year: 0,
+                        start_Year: new Date().getFullYear(),
                         end_Year: null
                     }
                 ],
@@ -139,8 +137,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
-                        end_Year: 0,
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null,
                     }
                 }
                 updatedUserEducations[index].place_Name = text;            
@@ -150,8 +148,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
-                        end_Year: 0,
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null,
                     }
                 }
                 updatedUserEducations[index].field = text
@@ -161,8 +159,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
-                        end_Year: 0,
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null,
                     }
                 }
                 updatedUserEducations[index].end_Year = text;
@@ -172,8 +170,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
-                        end_Year: 0,
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null,
                     }
                 }
                 updatedUserEducations[index].start_Year = text;
@@ -183,8 +181,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                         place_Name: "",
                         school_Degree: "1",
                         field: "",
-                        start_Year: 0,
-                        end_Year: 0,
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null,
                     }
                 }
                 updatedUserEducations[index].school_Degree = parseInt(text);
@@ -193,8 +191,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     updatedUserJobs[index] = {
                         job_Place: "",
                         job_Title: "",
-                        start_Year: 0,
-                        end_Year: 0
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null
                     }
                 }
                 updatedUserJobs[index].job_Place = text;
@@ -203,8 +201,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     updatedUserJobs[index] = {
                         job_Place: "",
                         job_Title: "",
-                        start_Year: 0,
-                        end_Year: 0
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null
                     }
                 }
                 updatedUserJobs[index].job_Title = text;
@@ -213,8 +211,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     updatedUserJobs[index] = {
                         job_Place: "",
                         job_Title: "",
-                        start_Year: 0,
-                        end_Year: 0
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null
                     }
                 }
                 updatedUserJobs[index].start_Year = text;
@@ -223,8 +221,8 @@ const ShowOtherDetailsProfile = ({userId}) => {
                     updatedUserJobs[index] = {
                         job_Place: "",
                         job_Title: "",
-                        start_Year: 0,
-                        end_Year: 0
+                        start_Year: new Date().getFullYear(),
+                        end_Year: null
                     }
                 }
                 updatedUserJobs[index].end_Year = text;
@@ -384,7 +382,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 birthDay: formattedDate,
                 skills: JSON.stringify(userInformationData.professionalSkills)
             }
-            console.log(updatedUserInformation);
+            console.log(updatedUserInformation, " updated");
             
             const response = await updateUserOtherInformations(userOtherData?.id, updatedUserInformation);
             if(response === 200){
@@ -736,12 +734,13 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                             title={"Mbaruat"}
                                             otherStyles={"w-full"}
                                             value={showModals.type === "education" ? userInformationData?.userEducations[index]?.end_Year?.toString() : userInformationData?.userJobs[index]?.end_Year?.toString()}
-                                            placeholder={"2025...Ende?"}
+                                            placeholder={`${new Date().getFullYear()}...Ende?`}
                                             handleChangeText={showModals.type === "education" ? (e) => arrangeData(e, 'mbaruat', index) : (e) => arrangeData(e, 'mbaruat_punen', index)}
                                             titleStyle={"!text-sm"}
                                             inputParentStyle={"!h-14 !rounded-[10px] "}
                                             keyboardType="numeric"
                                         />
+                                        <Text className="text-[10px] text-gray-400 font-plight mt-1">Lere zbrazet nese {showModals.type === "education" ? "nuk e keni mbaruar" : "jeni ende te punesuar"}.</Text>
                                     </View>
                                 </View>
                                 </View>}
