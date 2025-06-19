@@ -1068,9 +1068,9 @@ export const GetAllMeetings = async (filters) => {
     }
 }
 
-export const GetInstructorsUserProfileProgresses = async () => {
+export const GetInstructorsUserProfileProgresses = async (userId) => {
     try {
-        const response = await apiClient.get(`/api/Instructors/GetInstructorsCoursesUserProgress`)
+        const response = await apiClient.get(`/api/Instructors/GetInstructorsCoursesUserProgress?userId=${userId}`)
         return response && response.data;
     } catch (error) {
         console.error(error.response.data);

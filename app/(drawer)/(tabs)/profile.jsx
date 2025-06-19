@@ -131,7 +131,8 @@ const router = useRouter();
   const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
   const showOnlineCoursesProgresses = async () => {
     setOnlineCoursesLoading(true)
-    const response = await GetInstructorsUserProfileProgresses()
+    
+    const response = await GetInstructorsUserProfileProgresses(userData?.id)
     
     setOnlineCoursesData(response)
     setOnlineCoursesLoading(false)

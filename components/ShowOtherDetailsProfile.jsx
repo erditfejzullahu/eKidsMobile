@@ -85,6 +85,18 @@ const ShowOtherDetailsProfile = ({userId}) => {
 
     useEffect(() => {
       if(Object.keys(userOtherData) !== 0){
+        setHowManySections((prevData) => {
+            const softSkills = userOtherData?.softSkills !== null ? (typeof userOtherData?.softSkills === 'string' ? JSON.parse(userOtherData.softSkills) : userOtherData.softSkills) : [];
+            const professionalSkills = userOtherData?.skills !== null ? (typeof userOtherData?.skills === "string" ? JSON.parse(userOtherData.skills) : userOtherData.skills) : [];
+            
+            return {
+                ...prevData,
+                howManyEducation: userOtherData?.userEducations?.length,
+                howManyJobs: userOtherData?.userJobs?.length || 1,
+                howManySoftSkills: softSkills?.length || 1,
+                howManyProfessionalSkills: professionalSkills?.length || 1
+            }
+        })
         setUserInformationData((prevData) => ({
             ...prevData,
             profession: userOtherData?.profession,

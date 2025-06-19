@@ -5,7 +5,6 @@ import { icons } from '../constants';
 
 const NotifierComponent = ({title, description, alertType = "success", onHideFunc = null, customImage = null}) => {
     const showNotification = () => {
-
         let imageSource;
 
         if (customImage) {

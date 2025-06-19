@@ -2,7 +2,7 @@ import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleS
 import React, { useEffect, useState } from 'react'
 import { Redirect, useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../hooks/useFetchFunction'
-import { acceptFriendRequest, getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
+import { acceptFriendRequest, GetInstructorsUserProfileProgresses, getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
 import Loading from "../../../components/Loading"
 import {useGlobalContext} from "../../../context/GlobalProvider"
 import { getMetaValue, reqGetAllUserTypes } from '../../../services/fetchingService'
@@ -25,6 +25,7 @@ import DiscussionsProfile from '../../../components/DiscussionsProfile'
 import { useCallback } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import * as Linking from "expo-linking"
+import OnlineClassesCard from '../../../components/OnlineClassesCard'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -45,6 +46,7 @@ const Profiles = () => {
 
     const {user, isLoading: userLoading} = useGlobalContext();
     const userData = user?.data?.userData;
+    const userCategories = user?.data?.categories;
     // if(parseInt(profile) === parseInt(userData?.id)) return <Redirect href={"/profile"}/>
     const router = useRouter();
 
@@ -74,6 +76,7 @@ const Profiles = () => {
     const [softSkills, setSoftSkills] = useState([])
     const [professionalSkills, setProfessionalSkills] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(true)
+    const [showOnlineCoursesProgress, setShowOnlineCoursesProgress] = useState(false)
 
     const currentYear = new Date().getFullYear();
     const startDate = new Date(`${currentYear}-01-01`); // January 1st
@@ -91,7 +94,7 @@ const Profiles = () => {
       barPercentage: 0.5,
       useShadowColorFromDataset: false // optional
     };
-    
+
     const [showQuizzes, setShowQuizzes] = useState(false)
     const [showCourses, setShowCourses] = useState(false)
     const [showCreatedQuizzes, setShowCreatedQuizzes] = useState(false)
@@ -155,6 +158,24 @@ const Profiles = () => {
         failedReq()
       }
     }
+
+    const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
+    const [onlineCoursesData, setOnlineCoursesData] = useState([])
+
+    const showOnlineCoursesProgresses = async () => {
+      setOnlineCoursesLoading(true)
+      
+      const response = await GetInstructorsUserProfileProgresses(profile)
+      
+      setOnlineCoursesData(response)
+      setOnlineCoursesLoading(false)
+    }
+  
+    useEffect(() => {
+      if(showOnlineCoursesProgress){
+        showOnlineCoursesProgresses()
+      }
+    }, [showOnlineCoursesProgress])
 
     const removeOnWaitingFriend = async () => {
       const response = await removeFriendRequestReq(profile);
@@ -304,7 +325,7 @@ const Profiles = () => {
     }
 
     useEffect(() => {
-      if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes){
+      if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes && !showOnlineCoursesProgress){
         setProfileAboutData(true)
       }else{
         setProfileAboutData(false)
@@ -314,7 +335,7 @@ const Profiles = () => {
         setPersonalInformation(false)
         setProfessionalInformation(true)
       }
-    }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes])
+    }, [showQuizzes, showCourses, showCreatedCourses, showCreatedQuizzes, showOnlineCoursesProgress])
     
     
     
@@ -397,7 +418,7 @@ const Profiles = () => {
           <View className="w-1/2  border-r border-black-200" style={{backgroundColor: showQuizzes ? "#13131a" : "transparent"}}>
             <TouchableOpacity 
               className="flex-row py-4 items-center gap-2 justify-center text-center"
-              onPress={() => {setShowQuizzes(!showQuizzes), setShowCourses(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
+              onPress={() => {setShowQuizzes(!showQuizzes), setShowCourses(false), setShowCreatedCourses(false),setShowOnlineCoursesProgress(false); setShowCreatedQuizzes(false)}}
             >
               <Image 
                 source={icons.quiz}
@@ -411,7 +432,7 @@ const Profiles = () => {
           <View className="w-1/2" style={{backgroundColor: showCourses ? "#13131a" : "transparent"}}>
             <TouchableOpacity 
               className="flex-row  py-4 items-center gap-2 justify-center text-center"
-              onPress={() => {setShowCourses(!showCourses), setShowQuizzes(false), setShowCreatedCourses(false), setShowCreatedQuizzes(false)}}
+              onPress={() => {setShowCourses(!showCourses), setShowQuizzes(false), setShowCreatedCourses(false),setShowOnlineCoursesProgress(false); setShowCreatedQuizzes(false)}}
               >
               <Image 
                 source={icons.progress}
@@ -427,9 +448,9 @@ const Profiles = () => {
       {/* toggle part */}
 
       {/* other toggle part */}
-      <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
-        <View className={` ${showCreatedQuizzes ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200`}>
-          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center gap-2 flex-row justify-center">
+      <View className={`flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 ${showOnlineCoursesProgress ? "mb-6" : ""}`} style={styles.box}>
+        <View className={` ${showCreatedQuizzes ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200 rounded-tl-md rounded-bl-md`}>
+          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowOnlineCoursesProgress(false); setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center gap-2 flex-row justify-center">
             <View>
               <Image 
                 source={images.mortarBoard} 
@@ -441,7 +462,7 @@ const Profiles = () => {
             <Text className="text-sm text-center text-white font-pregular">Kuize te krijuara</Text>
           </TouchableOpacity>
         </View>
-        <View className={`${showCreatedCourses ? "bg-oBlack" : ""} w-1/2 p-2`}>
+        <View className={`${showCreatedCourses ? "bg-oBlack" : ""} w-1/2 p-2 rounded-tr-md rounded-br-md`}>
           <TouchableOpacity onPress={() => {setShowCreatedCourses(!showCreatedCourses), setShowCourses(false), setShowQuizzes(false), setShowCreatedQuizzes(false)}} className="items-center gap-2 flex-row justify-center">
             <View>
               <Image 
@@ -454,10 +475,43 @@ const Profiles = () => {
             <Text className="text-sm text-center text-white font-pregular">Kurse te krijuara</Text>
           </TouchableOpacity>
         </View>
+        <View className="items-center justify-center absolute -bottom-7 right-0 left-0">
+          <TouchableOpacity onPress={() => {setShowOnlineCoursesProgress(!showOnlineCoursesProgress); setShowCreatedCourses(false); setShowQuizzes(false); setShowCourses(false); setShowCreatedQuizzes(false)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-oBlack" : "bg-primary"} border border-black-200 rounded-md p-2 py-1`} style={styles.box}>
+            <Image 
+              source={icons.parents} 
+              style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : "#fff"}} 
+              className="w-6 h-6"
+              resizeMode='contain'
+              />
+            <Text className="text-sm text-center text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {/* other toggle part */}
 
-      {showCourses && (profileData?.courseCompleted?.length > 0 ? <View>
+      {showOnlineCoursesProgress && (
+        (onlineCoursesLoading ? <View className="mt-8"><Loading /></View> : 
+          (onlineCoursesData.length > 0 ? (
+            (onlineCoursesData.map((item, idx) => (
+              <View key={`onlineprogress-${idx}`} className="mx-4 mt-8 mb-6">
+                <OnlineClassesCard classes={item} userCategories={userCategories} profilePlace={true} />
+              </View>
+          )))
+        ) : (
+          <View style={styles.box} className=" mx-4 my-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+            <EmptyState
+              title={"Nuk u gjet asnje progress i Takimeve Online"}
+              titleStyle={"!font-pregular mb-2"}
+              subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo filloni shfletimin e ndonje Kursi Online duke klikuar ne butonin e meposhtem!"}
+              buttonTitle={"Shfletoni Kurse Online"}
+              buttonFunction={() => router.replace('/allOnlineMeetings')}
+              />
+          </View>
+        ))
+      )
+      )}
+
+      {showCourses && (profileData?.courseCompleted?.length > 0 ? <View className="mt-8">
         <ProfileCoursesComponent 
           userDataId={profile}
           courseData={profileData?.courseCompleted}
@@ -473,7 +527,7 @@ const Profiles = () => {
         />
       </View>)}
 
-      {showQuizzes && (profileData?.quizzesCompleted?.length > 0 ? <View>
+      {showQuizzes && (profileData?.quizzesCompleted?.length > 0 ? <View className="mt-8">
         <ProfileQuizzesComponent 
           quizzesCompleted={profileData?.quizzesCompleted}
           userCategories={user?.data?.categories}
@@ -488,7 +542,7 @@ const Profiles = () => {
         />
       </View>)}
 
-      {showCreatedCourses && (profileData?.courseCreated?.length > 0 ? <View>
+      {showCreatedCourses && (profileData?.courseCreated?.length > 0 ? <View className="mt-8">
         <UserCourseCreated 
           userCourses={profileData?.courseCreated}
           userCategories={user?.data?.categories}
@@ -496,14 +550,14 @@ const Profiles = () => {
       </View> :
       <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
         <EmptyState 
-          title={"Nuk u gjet asnje kurs!"}
-          subtitle={"Perdoruesi nuk ka krijuar kurse ende!"}
+          title={"Nuk u gjet asnje kurs offline!"}
+          subtitle={"Perdoruesi nuk ka krijuar kurse offline ende!"}
           showButton={false}
           titleStyle={"!font-psemibold"}
         />
       </View>)}
 
-      {showCreatedQuizzes && (profileData?.quizzes?.length > 0 ? <View>
+      {showCreatedQuizzes && (profileData?.quizzes?.length > 0 ? <View className="mt-8">
         <UserQuizzesCreated 
           quizzesCreated={profileData?.quizzes}
           userCategories={user?.data?.categories}
@@ -519,7 +573,7 @@ const Profiles = () => {
       </View>)}
 
       {profileAboutData && 
-        <View>
+        <View className="mt-8">
           <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack border border-black-200 rounded-[10px] justify-between w-[260px]" style={styles.box}>
           <TouchableOpacity onPress={() => {setPersonalInformation(true), setProfessionalInformation(false)}} className="flex-1 items-center border-r border-black-200">
               <Text className={`${personalInformation ? "text-secondary font-pregular" : "text-white"} text-sm font-plight text-center`}>Informacione personale</Text>
@@ -533,32 +587,32 @@ const Profiles = () => {
           <View className="m-4 bg-oBlack border rounded-[10px] border-black-200" style={styles.box}>
           <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
             <View>
-              <Text className="text-white font-plight text-sm">Abonimi:</Text>
-              <Text className="text-secondary font-psemibold">Abonues rekurent</Text>
+              <Text className="text-secondary font-psemibold text-xs">Abonimi</Text>
+              <Text className="text-sm text-white font-plight">TODO:</Text>
             </View>
             <View>
-              <Text className="text-white font-plight text-sm text-right">Angazhimi:</Text>
-              <Text className="text-secondary font-psemibold text-right">Mesatar</Text>
+              <Text className="text-secondary font-psemibold text-xs text-right">Angazhimi</Text>
+              <Text className="text-sm text-white font-plight text-right">Mesatar</Text>
             </View>
           </View>
           <View className="m-4 my-2 flex-row justify-between border-b border-black-200">
             <View>
-              <Text className="text-white font-plight text-sm">Nofka:</Text>
-              <Text className="text-secondary font-psemibold">{profileData?.username}</Text>
+              <Text className="text-secondary font-psemibold text-xs">Emri perdoruesit</Text>
+              <Text className="text-sm text-white font-plight">{profileData?.username}</Text>
             </View>
             <View>
-              <Text className="text-white font-plight text-sm text-right">Roli i krijimit:</Text>
-              <Text className="text-secondary font-psemibold text-right">Pioner</Text>
+              <Text className="text-secondary font-psemibold text-xs text-right">Roli i krijimit</Text>
+              <Text className="text-sm text-white font-plight text-right">{profileData?.role}</Text>
             </View>
           </View>
-          <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
+          <View className="m-4 my-2 border-b-none border-black-200 flex-row justify-between">
             <View>
-              <Text className="text-white font-plight text-sm">Data lindjes:</Text>
-              <Text className="text-secondary font-psemibold">{new Date(profileData?.userInformation?.birthday).toLocaleDateString('sq-AL', {day: "2-digit", month: "long", year: "numeric"}) || "Nuk ka informate"}</Text>
+              <Text className="text-secondary font-psemibold text-xs">Data lindjes</Text>
+              <Text className="text-sm text-white font-plight">{new Date(profileData?.userInformation?.birthday).toLocaleDateString('sq-AL', {day: "2-digit", month: "long", year: "numeric"}) || "Nuk ka informate"}</Text>
             </View>
             <View>
-              <Text className="text-white font-plight text-sm text-right">Profesioni:</Text>
-              <Text className="text-secondary font-psemibold text-right">Programer</Text>
+              <Text className="text-secondary font-psemibold text-xs text-right">Profesioni</Text>
+              <Text className="text-sm text-white font-plight text-right">{profileData?.userInformation?.profession}</Text>
             </View>
           </View>
           </View>}
@@ -589,9 +643,9 @@ const Profiles = () => {
                 <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
                   <Text className="text-secondary font-psemibold text-xs">Edukimi shkollor:</Text>
                   {profileData?.userInformation?.userEducation?.length > 0 ? profileData?.userInformation?.userEducation.map((item, index) => (
-                    <View key={`usereducation-${index}`}>
-                      <Text className="text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
-                      <Text className="text-gray-400 text-sm font-plight">{item.field}</Text>
+                    <View className="border-b border-black-200 border-r rounded-br-sm mb-1" key={`usereducation-${index}`}>
+                      <Text className="text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
+                      <Text className="text-gray-400 text-xs font-plight">{item.field}</Text>
                     </View>
                   )) : <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
                   
@@ -600,9 +654,9 @@ const Profiles = () => {
                   <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
                   {profileData?.userInformation?.userJobs?.length > 0 ? (
                       (profileData?.userInformation?.userJobs.map((item, index) => (
-                        <View key={`userjobs-${index}`}>
-                          <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
-                          <Text className="text-gray-400 text-sm font-plight">{item.job_Place}</Text>
+                        <View className="border-b border-black-200 border-r rounded-br-sm mb-1" key={`userjobs-${index}`}>
+                          <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
+                          <Text className="text-gray-400 text-xs font-plight">{item.job_Place}</Text>
                         </View>
                       )))
                     ) : (
@@ -638,7 +692,20 @@ const Profiles = () => {
                   values={profileData?.commitsData || []}
                   showOutOfRangeDays={true}
                   width={1200}
-                  onDayPress={(date) => console.log(date)}
+                  onDayPress={(date) => {
+                    const formattedDate = new Date(date.date).toLocaleDateString('sq-AL', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    });
+                    const {showNotification: commitNotification} = NotifierComponent({
+                      title: `${date.count} angazhime`,
+                      description: `Te bera me date ${formattedDate}`,
+                      alertType: "success"
+                    })
+                    commitNotification();
+                  }}
                   endDate={endDate}
                   numDays={numDays}
                   height={220}
