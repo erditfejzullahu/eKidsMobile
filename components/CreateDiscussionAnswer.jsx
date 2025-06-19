@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor'
 import { createDiscussionAnswerAsync } from '../services/fetchingService'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -7,12 +7,17 @@ import { Platform } from 'react-native'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
 
-const CreateDiscussionAnswer = ({id, sentSuccessResponse}) => {
-    // console.log(id, ' idja');
-    
+const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
     const [commentSendLoading, setCommentSendLoading] = useState(false)
     const [answerContent, setAnswerContent] = useState("")
 
+    useImperativeHandle(ref, () => ({
+        blurEditor: () => {
+            if (editor && typeof editor.blur === 'function') {
+                editor.blur();
+            }
+        }
+    }))
 
     const editor = useEditorBridge({
         bridgeExtensions: [
@@ -26,8 +31,8 @@ const CreateDiscussionAnswer = ({id, sentSuccessResponse}) => {
                 placeholder: "Mbusheni pyetjen/diskutimin tuaj ketu"
             }),
         ],
-        autofocus: true,
-        avoidIosKeyboard: true,
+        // autofocus: true,
+        // avoidIosKeyboard: true,
         // dynamicHeight: true
     });
     // editor.setPlaceholder("test")
@@ -104,7 +109,7 @@ const CreateDiscussionAnswer = ({id, sentSuccessResponse}) => {
         </TouchableOpacity>
     </View>
   )
-}
+})
 
 export default CreateDiscussionAnswer
 
