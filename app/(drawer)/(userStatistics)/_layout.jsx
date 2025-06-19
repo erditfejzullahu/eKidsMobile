@@ -25,7 +25,7 @@ const DrawerContent = ({closeDrawer}) => {
                     </Text>
                 </View>
                 <View className={`ml-2 ${pathname === "/statistics/1" ? "mr-2": "mr-8"}`}>
-                    <TouchableOpacity onPress={() => {router.replace('(userStatistics)/statistics/1'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px] border border-black-200 gap-2" style={styles.box}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/1'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px] border border-black-200 gap-2" style={styles.box}>
                         <Text className="font-plight text-lg text-white">Kurset</Text>
                         <Image 
                             source={icons.courses}
@@ -35,7 +35,7 @@ const DrawerContent = ({closeDrawer}) => {
                     </TouchableOpacity>
                 </View>
                 <View className={`ml-2 ${pathname === "/statistics/2" ? "mr-2": "mr-8"}`}>
-                    <TouchableOpacity onPress={() => {router.replace('(userStatistics)/statistics/2'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/2'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
                         <Text className="font-plight text-lg text-white">Kuizet</Text>
                         <Image 
                             source={icons.quiz}
@@ -45,22 +45,42 @@ const DrawerContent = ({closeDrawer}) => {
                     </TouchableOpacity>
                 </View>
                 <View className={`ml-2 ${pathname === "/statistics/3" ? "mr-2": "mr-8"}`}>
-                    <TouchableOpacity onPress={() => {router.replace('(userStatistics)/statistics/3'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/3'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
                         <Text className="font-plight text-lg text-white">Blogjet</Text>
                         <Image 
-                            source={icons.news}
+                            source={icons.blogs}
                             className="h-6 w-6"
                             tintColor={pathname === "/statistics/3" ? "#FF9C01" : "#fff"}
                         />
                     </TouchableOpacity>
                 </View>
                 <View className={`ml-2 ${pathname === "/statistics/4" ? "mr-2": "mr-8"}`}>
-                    <TouchableOpacity onPress={() => {router.replace('(userStatistics)/statistics/4'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/4'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
+                        <Text className="font-plight text-lg text-white">Diskutimet</Text>
+                        <Image 
+                            source={icons.discussion}
+                            className="h-6 w-6"
+                            tintColor={pathname === "/statistics/4" ? "#FF9C01" : "#fff"}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <View className={`ml-2 ${pathname === "/statistics/5" ? "mr-2": "mr-8"}`}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/5'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
+                        <Text className="font-plight text-lg text-white">Takime Online</Text>
+                        <Image 
+                            source={icons.onlineMeeting}
+                            className="h-6 w-6"
+                            tintColor={pathname === "/statistics/5" ? "#FF9C01" : "#fff"}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <View className={`ml-2 ${pathname === "/statistics/6" ? "mr-2": "mr-8"}`}>
+                    <TouchableOpacity onPress={() => {router.replace('/statistics/6'); closeDrawer()}} className="flex-row items-center p-2 bg-oBlack rounded-[5px]  border border-black-200 gap-2" style={styles.box}>
                         <Text className="font-plight text-lg text-white">Nderveprimet</Text>
                         <Image 
                             source={icons.commitment}
                             className="h-6 w-6"
-                            tintColor={pathname === "/statistics/4" ? "#FF9C01" : "#fff"}
+                            tintColor={pathname === "/statistics/6" ? "#FF9C01" : "#fff"}
                         />
                     </TouchableOpacity>
                 </View>
@@ -68,7 +88,7 @@ const DrawerContent = ({closeDrawer}) => {
             <View>
                 <Image 
                     source={images.logoNew}
-                    className="w-[80%] m-auto"
+                    className="w-full m-auto px-4 pr-5"
                     resizeMode='contain'
                 />
                 <Text className="text-white font-plight text-lg mx-4 text-center">Platforma me e re per mesimin tuaj ditor online.</Text>

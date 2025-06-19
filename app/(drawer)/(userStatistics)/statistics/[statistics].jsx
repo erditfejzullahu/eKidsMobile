@@ -5,7 +5,7 @@ import { icons, images } from '../../../../constants';
 import { LineChart } from 'react-native-chart-kit';
 import * as Animatable from "react-native-animatable"
 
-const statistics = () => {
+const Statistics = () => {
   const {statistics} = useLocalSearchParams();  
   console.log(statistics);
 
@@ -38,7 +38,7 @@ const statistics = () => {
         strokeWidth: 2 // optional
       }
     ],
-    legend: [`${statistics === "1" ? "Kurset e krijuara" : statistics === "2" ? "Kuizet e krijuara" : statistics === "3" ? "Blogjet e krijuara" : "Nderveprimet e tua ne Shokun e Mesimit"}`] // optional
+    legend: [`${statistics === "1" ? "Kurset e krijuara" : statistics === "2" ? "Kuizet e krijuara" : statistics === "3" ? "Blogjet e krijuara" : statistics === "4" ? "Diskutimet e krijuara" : statistics === "5" ? "Takimet e ndjekura online" : "Nderveprimet e tua ne Shokun e Mesimit"}`] // optional
   };
   
   const chartWidth = Math.max(screenWidth, data.labels.length * 80); // 80px per label
@@ -46,7 +46,7 @@ const statistics = () => {
   return (
     <ScrollView className="h-full bg-primary px-4">
       <View className="my-4 relative">
-        <Text className="text-white font-psemibold text-2xl">Statistikat per <Text className="text-secondary">{statistics === '1' ? "Kurset" : statistics === '2' ? "Kuizet" : statistics === '3' ? "Blogs" : "Nderveprimet"}</Text>
+        <Text className="text-white font-psemibold text-2xl">Statistikat per <Text className="text-secondary">{statistics === '1' ? "Kurset" : statistics === '2' ? "Kuizet" : statistics === '3' ? "Blogs" : statistics === "4" ? "Diskutimet" : statistics === "5" ? "Takimet Online" : "Nderveprimet"}</Text>
         <View>
             <Image
                 source={images.path}
@@ -91,4 +91,4 @@ const statistics = () => {
   )
 }
 
-export default statistics
+export default Statistics
