@@ -71,6 +71,7 @@ const Profiles = () => {
     
     const [profileData, setProfileData] = useState(null)
     const [softSkills, setSoftSkills] = useState([])
+    const [professionalSkills, setProfessionalSkills] = useState([])
     const [isRefreshing, setIsRefreshing] = useState(true)
 
     const currentYear = new Date().getFullYear();
@@ -263,6 +264,21 @@ const Profiles = () => {
             })();
             
             return [...softSkills]
+          }
+          return currentData;
+        })
+        setProfessionalSkills((prevData) => {
+          const currentData = prevData || [];
+          if(data?.userInformation?.skills !== null){
+            const skills = (() => {
+              try {
+                const parsedData = JSON.parse(data?.userInformation?.skills)
+                return Array.isArray(parsedData) ? parsedData : data?.userInformation?.skills;
+              } catch (error) {
+                return []
+              }
+            })();
+            return [...skills];
           }
           return currentData;
         })
@@ -527,7 +543,7 @@ const Profiles = () => {
           <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
             <View>
               <Text className="text-white font-plight text-sm">Data lindjes:</Text>
-              <Text className="text-secondary font-psemibold">{profileData?.userInformation?.birthday || "Nuk ka informate"}</Text>
+              <Text className="text-secondary font-psemibold">{new Date(profileData?.userInformation?.birthday).toLocaleDateString('sq-AL', {day: "2-digit", month: "long", year: "numeric"}) || "Nuk ka informate"}</Text>
             </View>
             <View>
               <Text className="text-white font-plight text-sm text-right">Profesioni:</Text>
@@ -541,7 +557,7 @@ const Profiles = () => {
             <View className="flex-row flex-1 border-b border-black-200">
               <View className="flex-1 items-center border-r border-black-200">
                 <TouchableOpacity onPress={() => {setSkillsPart(true), setCommitmentPart(false), setProjectsPart(false)}} className="p-2">
-                  <Text className={`${skillsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Aftesite</Text>
+                  <Text className={`${skillsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Informacione</Text>
                 </TouchableOpacity>
               </View>
               <View className="flex-1 items-center border-r border-black-200">
@@ -559,35 +575,47 @@ const Profiles = () => {
             {skillsPart && 
             <View className="p-4">
               <View className="gap-3">
-                <View>
+                <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
                   <Text className="text-secondary font-psemibold text-xs">Edukimi shkollor:</Text>
                   {profileData?.userInformation?.userEducation?.length > 0 ? profileData?.userInformation?.userEducation.map((item, index) => (
                     <View key={`usereducation-${index}`}>
                       <Text className="text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
                       <Text className="text-gray-400 text-sm font-plight">{item.field}</Text>
                     </View>
-                  )) : <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>} 
+                  )) : <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
                   
                 </View>
-                {profileData?.userInformation?.userJobs?.length > 0 ? profileData?.userInformation?.userJobs.map((item, index) => (
-                  <View key={`userjobs-${index}`}>
-                    <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
-                    <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
-                    <Text className="text-gray-400 text-sm font-plight">{item.job_Place}</Text>
-                  </View>
-                )) : <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>} 
-                <View>
-                  <Text className="text-secondary font-psemibold text-xs">Aftesite:</Text>
-                  <View>
-                    <Text className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">1. </Text> HTML</Text>
-                  </View>
+                <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                  <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
+                  {profileData?.userInformation?.userJobs?.length > 0 ? (
+                      (profileData?.userInformation?.userJobs.map((item, index) => (
+                        <View key={`userjobs-${index}`}>
+                          <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : "(Ende)"}</Text>
+                          <Text className="text-gray-400 text-sm font-plight">{item.job_Place}</Text>
+                        </View>
+                      )))
+                    ) : (
+                      <View>
+                        <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>
+                      </View>
+                    )}
                 </View>
-                <View>
-                  <Text className="text-secondary font-psemibold text-xs">Aftesi te buta:</Text>
-                  {softSkills.length > 0 ? softSkills.map((item, index) => (
-                    <Text key={`softskills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400">{index + 1}.</Text> {item} </Text>
-                  )): <Text className="text-gray-400 text-sm font-plight">Nuk ka informata</Text>}
-                </View>
+                  <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                    <Text className="text-secondary font-psemibold text-xs">Aftesite:</Text>
+                    {professionalSkills.length > 0 ? professionalSkills.map((item, index) => (
+                      <Text key={`skills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">{index + 1}.</Text> {item}</Text>
+                    )) 
+                     : 
+                        <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>
+                      }
+                    </View>
+
+                  <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                    <Text className="text-secondary font-psemibold text-xs">Aftesi te buta:</Text>
+                    {softSkills.length > 0 ? softSkills.map((item, index) => (
+                      <Text key={`softskills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400">{index + 1}.</Text> {item} </Text>
+                    )): <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
+                  </View>
               </View>
             </View>}
 
@@ -608,6 +636,18 @@ const Profiles = () => {
                 />
               </ScrollView>
             </View>}
+
+            {projectsPart && (
+              <View className="flex-1 p-4 items-center justify-center">
+                <Text className="text-white text-lg font-psemibold mb-2">Se shpejti</Text>
+                <Image 
+                  source={icons.learning}
+                  className="size-16"
+                  resizeMode='contain'
+                  tintColor={"#FF9C01"}
+                />
+              </View>
+            )}
 
           </View>}
 

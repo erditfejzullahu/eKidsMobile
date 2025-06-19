@@ -22,76 +22,6 @@ import CreateDiscussionAnswer from '../../../../../components/CreateDiscussionAn
 import { useTopbarUpdater } from '../../../../../navigation/TopbarUpdater';
 import ShareToFriends from '../../../../../components/ShareToFriends';
 import { useGlobalContext } from '../../../../../context/GlobalProvider';
-const discussionComments = [
-  {
-    id: 1,
-    userId: 101,
-    username: "CodeMaster99",
-    avatar: "https://example.com/avatars/user1.png",
-    content: "You can fix this error by updating your React Native version to 0.73.2. It was a bug in older versions.",
-    createdAt: "2025-04-05T08:30:00Z",
-    upvotes: 15,
-    downvotes: 2,
-    isAnswer: true,
-    replies: [
-      {
-        id: 11,
-        userId: 102,
-        username: "DevGirl_21",
-        avatar: "https://example.com/avatars/user2.png",
-        content: "Yep, this worked for me. Also had to clear the cache!",
-        createdAt: "2025-04-05T09:15:00Z",
-        upvotes: 5,
-        downvotes: 0,
-      },
-      {
-        id: 12,
-        userId: 103,
-        username: "frontendFan",
-        avatar: "https://example.com/avatars/user3.png",
-        content: "React Native cache is always the hidden monster 😩",
-        createdAt: "2025-04-05T10:00:00Z",
-        upvotes: 3,
-        downvotes: 1,
-      }
-    ]
-  },
-  {
-    id: 2,
-    userId: 104,
-    username: "JS_Wizard",
-    avatar: "https://example.com/avatars/user4.png",
-    content: "You could also use Expo EAS build, it handles most native dependencies better.",
-    createdAt: "2025-04-05T08:45:00Z",
-    upvotes: 8,
-    downvotes: 1,
-    isAnswer: false,
-    replies: []
-  },
-  {
-    id: 3,
-    userId: 105,
-    username: "NoobCoder",
-    avatar: "https://example.com/avatars/user5.png",
-    content: "Still having this issue after updating, anyone else?",
-    createdAt: "2025-04-05T09:00:00Z",
-    upvotes: 2,
-    downvotes: 0,
-    isAnswer: false,
-    replies: [
-      {
-        id: 13,
-        userId: 106,
-        username: "StackPro",
-        avatar: "https://example.com/avatars/user6.png",
-        content: "Did you also run `npx react-native-clean-project`?",
-        createdAt: "2025-04-05T09:20:00Z",
-        upvotes: 4,
-        downvotes: 0,
-      }
-    ]
-  }
-];
 
 const Discussion = () => {
   const router = useRouter();
@@ -223,12 +153,12 @@ const Discussion = () => {
                   <View className="flex-row items-center gap-1 bg-primary self-start mx-auto px-2 py-1 border border-black-200 rounded-md z-20" style={styles.box}>
                     {discussionData?.user === null ? <Image 
                       source={icons.profile}
-                      className="h-3 w-3"
+                      className="h-4 w-4"
                       resizeMode='contain'
                     /> :
                     <Image 
-                      source={{uri: discussionData?.profilePictureUrl}}
-                      className="h-3 w-3"
+                      source={{uri: discussionData?.user?.profilePictureUrl}}
+                      className="h-4 rounded-sm w-4"
                       resizeMode='contain'
                     />}
                     <Text className="text-secondary font-plight text-sm">{discussionData?.user === null ? "Anonim" : discussionData?.user?.name}</Text>
@@ -295,7 +225,7 @@ const Discussion = () => {
               </Text>
 
               </View>
-              {discussionAnswerData.length > 0 &&<View>
+              {discussionAnswerData?.data?.length > 0 &&<View>
                 <DiscussionCommentsSort />
               </View>}
             </View>
