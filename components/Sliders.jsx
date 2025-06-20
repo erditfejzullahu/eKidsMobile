@@ -4,6 +4,7 @@ import * as Animatable from 'react-native-animatable';
 import { images } from '../constants';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
+import { useColorScheme } from 'nativewind';
 
 const zoomIn = {
     0: {
@@ -25,21 +26,21 @@ const zoomOut = {
 
 const SlidersItem = ({ activeItem, item, onPress }) => {
     // console.log(activeItem, ' ' , item.CategoryID);
-    
+    const {colorScheme} = useColorScheme();
     return (
         <TouchableOpacity onPress={() => onPress(item)} activeOpacity={0.8}>
             <Animatable.View
                 className="mr-2"
                 animation={activeItem == item.CategoryID ? zoomIn : zoomOut}
                 duration={500}
-                style={styles.box}
+                style={colorScheme === 'light' ? styles.lightBox : styles.darkBox}
             >
                 <ImageBackground
                     source={images.testimage}
-                    className="w-52 h-28 overflow-hidden rounded-[15px]  border-2 border-black-200"
+                    className={`w-52 h-28 overflow-hidden rounded-[15px] border-2 border-gray-200 dark:border-black-200`}
                     resizeMode="cover"
                 />
-                <Text className="text-white uppercase text-center mt-2 text-base font-pblack">{item.categoryName}</Text>
+                <Text className="text-oBlack dark:text-white uppercase text-center mt-2 text-base font-pbold">{item.categoryName}</Text>
             </Animatable.View>
         </TouchableOpacity>
     )
@@ -114,7 +115,20 @@ const Sliders = ({ posts = [], keyID, dataCategory }) => {
 }
 
 const styles = StyleSheet.create({
-    box: {
+    lightBox: {
+        ...Platform.select({
+            ios: {
+                shadowColor: "#b8e1ff",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.6,
+                shadowRadius: 10,
+              },
+              android: {
+                elevation: 8,
+              },
+        })
+    },
+    darkBox: {
         ...Platform.select({
             ios: {
                 shadowColor: '#000',

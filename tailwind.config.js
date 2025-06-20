@@ -13,9 +13,9 @@ module.exports = {
       },
       colors: {
         oBlack: "#13131a",
-        "oBlack-light": "f8f5f2",
+        "oBlack-light": "#fcf6f2",
         primary: "#161622",
-        "primary-light": "#f0ece8",
+        "primary-light": "#f8f5f2",
         secondary: {
           DEFAULT: "#FF9C01",
           100: "#FF9001",
@@ -26,8 +26,12 @@ module.exports = {
           100: "#1E1E2D",
           200: "#232533",
         },
+        blue: {
+          fancy: "#e0f2fe"
+        },
         gray: {
           100: "#CDCDE0",
+          fancy: "#e4e7eb"
         },
       },
       fontFamily: {

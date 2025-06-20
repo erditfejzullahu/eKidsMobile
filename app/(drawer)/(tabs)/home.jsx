@@ -15,8 +15,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
+import { useColorScheme } from 'nativewind'
 
 const Home = () => {  
+  const {colorScheme} = useColorScheme();
   const [refreshing, setRefreshing] = useState(false)
 
   const { user, isLoading: userDataLoading } = useGlobalContext()
@@ -143,10 +145,10 @@ const Home = () => {
             <View className="my-6 px-4 space-y-6">
               <View className="justify-between items-start flex-row mb-6">
                 <View>
-                <Text className={`font-pmedium text-sm text-oBlack dark:text-gray-100 `}>
+                <Text className={`font-pmedium text-sm text-gray-600 dark:text-gray-100 `}>
                   Mirë se erdhët përsëri
                 </Text>
-                <Text className="relative text-2xl font-psemibold text-white">
+                <Text className="relative text-2xl font-psemibold text-oBlack dark:text-white">
                   {userData?.firstname + ' ' + userData?.lastname}
                   <View>
                     <Image 
@@ -172,8 +174,8 @@ const Home = () => {
                 valueData={searchData}
               />
   
-              <View className="w-full flex-1 pt-6 pb-3">
-                <Text className="text-gray-100 text-lg font-pregular ">
+              <View className="w-full flex-1 pt-6 pb-0 dark:pb-3">
+                <Text className="text-oBlack -mb-4 dark:mb-0 dark:text-gray-100 text-lg font-pregular ">
                   Të gjitha kategoritë
                 </Text>
                 <Sliders 
@@ -184,7 +186,7 @@ const Home = () => {
               </View>
   
               <View className={`w-full flex-row justify-between mb-2`}>
-                <Text className="text-gray-100 text-lg font-pregular">
+                <Text className="text-oBlack dark:text-gray-100 text-lg font-pregular">
                   Kurset mësimore të fundit
                 </Text>
               </View>
@@ -219,7 +221,7 @@ const Home = () => {
         
 
 
-      <StatusBar backgroundColor='#161622' style='light'/>
+      <StatusBar backgroundColor='#161622' style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
       </View>
       
     )

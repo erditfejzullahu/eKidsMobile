@@ -19,8 +19,9 @@ import { useGlobalContext } from '../context/GlobalProvider'
 import CustomButton from './CustomButton'
 import NotifierComponent from './NotifierComponent'
 import ShowDiscussionsQuery from './ShowDiscussionsQuery'
-
+import { useColorScheme } from 'nativewind'
 const Topbar = () => {
+    const {colorScheme} = useColorScheme();
     const {user, isLoading} = useGlobalContext();
     const router = useRouter()
     const navigator = useNavigation();
@@ -93,7 +94,7 @@ const Topbar = () => {
     
     
   return (
-    <SafeAreaView className="relative h-[90px]" style={{backgroundColor: "#13131a", borderBottomColor: "#232533", borderBottomWidth: 1}}>
+    <SafeAreaView className="relative h-[90px] bg-oBlack-light dark:bg-oBlack border-b border-gray-200 dark:border-black-200">
       <View className="flex-row justify-between" style={{height:40}}>
         <View className="justify-center items-end">
             <TouchableOpacity
@@ -129,7 +130,7 @@ const Topbar = () => {
                     source={icons.share}
                     className="h-6 w-6 p-1"
                     resizeMode='contain'
-                    tintColor={shareOpened ? "#FF9C01" : "#CDCDE0"}
+                    tintColor={shareOpened ? "#FF9C01" : colorScheme === "light" ? "#000" : "#CDCDE0"}
                 />
             </TouchableOpacity>}
             <View>
@@ -142,9 +143,9 @@ const Topbar = () => {
                     </View>}
                     <Image 
                         source={icons.notifications}
-                        className="h-6 w-6"
+                        className={`${colorScheme === 'light' ? "bg-gray-200 rounded-md p-1 h-7 w-7" : "h-6 w-6"}`}
                         resizeMode='contain'
-                        tintColor={isOpened ? "#FF9C01" : "#CDCDE0"}
+                        tintColor={isOpened ? "#FF9C01" : colorScheme === 'light' ? "#000" : "#CDCDE0"}
                     />
                 </TouchableOpacity>
             </View>
@@ -155,8 +156,8 @@ const Topbar = () => {
                     <Image 
                         source={images.hamburger}
                         resizeMode="contain"
-                        className="h-6 w-6 mr-4"
-                        tintColor={"#CDCDE0"}
+                        className={` mr-4 ${colorScheme === 'light' ? "bg-gray-200 rounded-md p-1 h-7 w-7" : "h-6 w-6"}`}
+                        tintColor={colorScheme === 'light' ? "#000" : "#CDCDE0"}
                     />
                 </TouchableOpacity>
             </View>

@@ -4,9 +4,10 @@ import { icons } from '../constants'
 import CustomButton from './CustomButton'
 import * as Animatable from 'react-native-animatable'
 import { SlideInUp } from 'react-native-reanimated'
+import { useColorScheme } from 'nativewind'
 
 const SorterComponent = ({ showSorter, sortButton }) => {
-
+    const {colorScheme} = useColorScheme();
     // export example
     // {"data": null, "emri": "asc", "shikime": null}
     const [paginationOptions, setPaginationOptions] = useState({
@@ -181,8 +182,8 @@ const SorterComponent = ({ showSorter, sortButton }) => {
         {paginationOptions.showPaginationOptions && <Animatable.View animation={"slideInLeft"} duration={500} className="flex-row flex-1">
             {/* <Text className=""></Text> */}
             {paginationOptions.pageSizeOptions.map((item, index) => (
-                <TouchableOpacity key={index} onPress={() => {setData((prev) => ({...prev, pageSize: item})); setLoadedFirst(true)}} className={`flex-1 ${item == sendData.pageSize ? "bg-oBlack" : "bg-primary"} flex-row gap-1 justify-center p-2 border-b-0 border items-center border-black-200 ${(index === 1 || index === 2) ? "border-l-0" : ""}`}>
-                    <Text className="text-white text-sm font-plight"><Text className="text-secondary">{item}</Text> artikuj</Text>
+                <TouchableOpacity key={index} onPress={() => {setData((prev) => ({...prev, pageSize: item})); setLoadedFirst(true)}} className={`flex-1 ${colorScheme === 'dark' ? (item == sendData.pageSize ? "bg-oBlack" : "bg-primary") : (item == sendData.pageSize ? "bg-gray-200" : "bg-oBlack-light")} flex-row gap-1 justify-center p-2 border-b-0 border items-center border-black-200 ${(index === 1 || index === 2) ? "border-l-0" : ""}`}>
+                    <Text className="text-oBlack dark:text-white text-sm font-plight"><Text className="text-secondary">{item}</Text> artikuj</Text>
                     {item == sendData.pageSize &&  <Image 
                         source={icons.tick}
                         className="size-5"
@@ -200,32 +201,31 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                         {sortableOptions.map((option, index) => (
                             <View 
                                 key={option.id}
-                                className={`flex-1 border ${index === 1 || index === 2 ? "border-l-0" : ""} border-black-200 items-center p-2`}
+                                className={`flex-1 border ${index === 1 || index === 2 ? "border-l-0" : ""} border-gray-200 dark:border-black-200 items-center`}
                                 style={{
                                     borderRightWidth: index < sortableOptions.length - 1 ? 1 : 0,
-                                    borderColor: "#232533",
-                                    backgroundColor: option.ticked ? "#13131a" : "transparent"
+                                    // backgroundColor: option.ticked ? "#13131a" : "transparent"
                                 }}
                             >
                                 <TouchableOpacity
-                                    className="flex-row items-center gap-2"
+                                    className={`flex-row items-center justify-center gap-2 py-2 flex-1 w-full ${colorScheme === 'dark' ? (option.ticked ? "bg-oBlack" : "bg-primary") : (option.ticked ? "bg-gray-200" : "bg-oBlack-light")} `}
                                     onPress={() => {setActiveButton(option.id)}}
                                 >
-                                    <Text className="text-white text-sm font-plight">
+                                    <Text className="text-oBlack dark:text-white text-sm font-plight">
                                         {option.name}
                                     </Text>
                                     <Image 
                                         source={icons[option.selIcon]}
                                         className="h-4 w-4"
                                         resizeMode='contain'
-                                        style={{tintColor: option.ticked ? "#ff9c01" : "#fff"}}
+                                        style={{tintColor: option.ticked ? "#ff9c01" : (colorScheme === 'dark' ? "#fff" : "#000")}}
                                     />
                                 </TouchableOpacity>
                                 
                                 
                             </View> 
                         ))}
-                        <TouchableOpacity className="border border-black-200 p-2" onPress={() => setPaginationOptions((prev) => ({...prev, showPaginationOptions: !prev.showPaginationOptions}))}>
+                        <TouchableOpacity className="border border-gray-200 dark:border-black-200 p-2" onPress={() => setPaginationOptions((prev) => ({...prev, showPaginationOptions: !prev.showPaginationOptions}))}>
                             <Image 
                                 source={icons.equalizer}
                                 className="size-5"
@@ -237,31 +237,29 @@ const SorterComponent = ({ showSorter, sortButton }) => {
 
             {activeOptionId && (
                 <>
-                <View className={`w-full flex-row ${sortableOptions.find(option => option.id === activeOptionId && option.ticked) ? "border-b" : ""} border-l border-r border-black-200`}>
+                <View className={`w-full flex-row ${sortableOptions.find(option => option.id === activeOptionId && option.ticked) ? "border-b" : ""} border-l border-r border-gray-200 dark:border-black-200`}>
                     {sortableOptions
                         .find(option => option.id === activeOptionId && option.ticked)
                         ?.underObj.map((subOption, subIndex) => (
                         <View
                             key={subOption.id}
-                            className="border-black-200 items-center flex-1"
+                            className="items-center flex-1 border-gray-200 dark:border-black-200"
                             style={{
                                 borderRightWidth: subIndex < sortableOptions[0].underObj.length - 1 ? 1 : 0,
-                                borderColor: "#232533",
-                                backgroundColor: subOption.ticked ? "#13131a" : "transparent"
                             }}
                         >
                             <TouchableOpacity
-                                className="flex-row items-center gap-2"
+                                className={`flex-row items-center gap-2 w-full justify-center ${colorScheme === 'dark' ? (subOption.ticked ? "bg-oBlack" : "bg-primary") : (subOption.ticked ? "bg-gray-200" : "bg-oBlack-light")} `}
                                 onPress={() => setActiveUnderButton(activeOptionId, subOption.id)}
                                 >
-                                <Text className="text-white text-xs font-plight py-2">
+                                <Text className="text-oBlack dark:text-white text-xs font-plight py-2">
                                     {subOption.name}
                                 </Text>
                                 <Image 
                                     source={icons[subOption.selIcon]}
                                     className="h-4 w-4"
                                     resizeMode='contain'
-                                    style={{tintColor: subOption.ticked ? "#ff9c01" : "#fff"}}
+                                    style={{tintColor: subOption.ticked ? "#ff9c01" : (colorScheme === 'dark' ? "#fff" : "#000")}}
                                 />
                             </TouchableOpacity>
                         </View>
