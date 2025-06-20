@@ -77,7 +77,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
       ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end", position: discussionSection ? "absolute" : "static", bottom: "0", width: discussionSection ? "100%" : "auto"}}
       ListFooterComponent={() => (
         <View className={`py-2 border-t border-black-200 mb-2 `}>
-          <Text className="text-white font-plight text-xs">Realizuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
+          <Text className="text-white font-plight text-xs">Realizuar nga <Link href={"https://murrizi.org"} accessibilityRole="link" className="text-secondary font-psemibold">Murrizi Co.</Link></Text>
         </View>
       )}
       ListEmptyComponent={() => (

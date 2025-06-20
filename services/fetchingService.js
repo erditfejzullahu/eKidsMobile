@@ -1177,3 +1177,13 @@ export const CreateSupportReportTicket = async (payload) => {
         return error.response.status;
     }
 }
+
+export const GetStatisticsBasedOfType = async (userId, year, type) => {
+    try {
+        const response = await apiClient.get(`/api/Users/GetUserStatisticsBasedOfType?userId=${userId}&year=${year}&type=${type}`)
+        return response && response.data;
+    } catch (error) {
+        console.error(error.response.data)
+        return []
+    }
+}

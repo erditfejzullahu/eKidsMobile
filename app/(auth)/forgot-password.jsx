@@ -7,7 +7,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import CustomButton from '../../components/CustomButton'
 import { ForgotPasswordReq } from '../../services/fetchingService'
 import NotifierComponent from '../../components/NotifierComponent'
-import { useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 
 const ForgotPassword = () => {
     const router = useRouter();
@@ -91,7 +91,7 @@ const ForgotPassword = () => {
                 </View>
             </View>
             <View className="w-full justify-end border-t border-black-200 pt-3">
-                <Text className="text-white font-psemibold text-sm">Realizuar nga <Text className="text-secondary">Murrizi Co.</Text></Text>
+                <Text className="text-white font-psemibold text-sm">Realizuar nga <Link href={"https://murrizi.org"} accessibilityRole="link" className="text-secondary">Murrizi Co.</Link></Text>
             </View>
         </KeyboardAwareScrollView>
     </SafeAreaView>
