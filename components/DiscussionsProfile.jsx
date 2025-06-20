@@ -58,7 +58,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
                     :
                     <View className="border-b border-black-200 flex-1">
                         <FlatList
-                            refreshControl={<RefreshControl refreshing={discussionsLoading} onRefresh={async () => await getDiscussions()}/>}
+                            refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={discussionsLoading} onRefresh={async () => await getDiscussions()}/>}
                             scrollEnabled={true}
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{gap: 24, paddingLeft: 16, paddingRight: 16}}

@@ -63,7 +63,7 @@ const ForgotPassword = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-        <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" extraScrollHeight={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />} className="h-full px-4" contentContainerStyle={{flexGrow: 1, justifyContent: "space-between", alignItems: "center"}}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" extraScrollHeight={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />} className="h-full px-4" contentContainerStyle={{flexGrow: 1, justifyContent: "space-between", alignItems: "center"}}>
             <View className="w-full flex-1 justify-center">
                 <View>
                     <Image 

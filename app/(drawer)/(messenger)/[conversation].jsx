@@ -563,8 +563,7 @@ const Conversation = () => {
                 </View>
                 <View className="flex-1">
                     <FlatList
-                        // refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing}/>}
-                        // className="flex-1"
+                        
                         extraScrollHeight={15}
                         ref={flatListRef}
                         onEndReached={onEndReached}

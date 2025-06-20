@@ -112,7 +112,7 @@ const OnlineClass = () => {
   return (
     <ScrollView
     ref={scrollViewRef}
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+      refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
       className="h-full bg-primary"
     >
       <View className="h-[200px] relative border-b border-r border-l border-black-200" style={styles.box}>

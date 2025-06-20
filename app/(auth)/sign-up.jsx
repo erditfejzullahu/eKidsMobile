@@ -86,7 +86,7 @@ if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">
         <KeyboardAwareScrollView
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
           className="my-6"
           contentContainerStyle={{ flexGrow: 1 }}
           enableOnAndroid={true} // Ensures Android support

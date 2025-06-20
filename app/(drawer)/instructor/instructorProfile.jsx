@@ -44,7 +44,7 @@ const InstructorProfile = () => {
   if(isLoading || instructorLoading) return <Loading />
   return (
     <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary"
-    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+    refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
       <View className="relative">
         <BlogsProfile userData={user}/>

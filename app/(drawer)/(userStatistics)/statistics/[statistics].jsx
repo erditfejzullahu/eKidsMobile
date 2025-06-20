@@ -69,7 +69,7 @@ const Statistics = () => {
   return (
     <ScrollView 
       className="h-full bg-primary px-4"
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
+      refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}>
       <View className="my-4 relative">
         <Text className="text-white font-pmedium text-2xl">Statistikat per <Text className="text-secondary">{statistics === '1' ? "Kurset e kryera" : statistics === '2' ? "Kurset offline e krijuara" : statistics === '3' ? "Kuizet e kryera" : statistics === "4" ? "Kuizet e krijuara" : statistics === "5" ? "Blogjet" : statistics === "6" ? "Diskutimet" : statistics === "7" ? "Takimet online" : statistics === "8" ? "Nderveprimet" : "Undefined"}</Text>
         <View>

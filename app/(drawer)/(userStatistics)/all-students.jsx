@@ -42,7 +42,7 @@ const AllStudentsStatistics = () => {
   return (
     <ScrollView 
         className="h-full bg-primary"
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}>
+        refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}>
         <View className="my-4 px-4 mb-6">
                 <Text className="text-2xl text-white font-pmedium">Statistikat e perdoruesve
                 <View>

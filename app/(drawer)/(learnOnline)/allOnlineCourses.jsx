@@ -99,7 +99,7 @@ const AllOnlineCourses = () => {
   return (
     <View className="flex-1 bg-primary">
         <FlatList
-            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
             data={coursesData?.courses}
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}

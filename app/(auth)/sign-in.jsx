@@ -103,7 +103,7 @@ if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary h-full">
       <KeyboardAwareScrollView style={styles.container}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid={true} // Ensures Android support
         extraScrollHeight={50} // Adjust the scroll height when the keyboard is open

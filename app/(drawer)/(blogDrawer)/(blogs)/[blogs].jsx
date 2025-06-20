@@ -44,7 +44,7 @@ const Blogs = () => {
             className="bg-primary"
             data={blogData}
             keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
-            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
             ListHeaderComponent={
                 <View className="bg-oBlack border-b border-t border-black-200 flex-row items-center" style={styles.box}>
                     <View className="border-r border-black-200 p-2 flex-[0.25] items-center">

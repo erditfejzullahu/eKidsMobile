@@ -180,7 +180,7 @@ const AddCourse = () => {
 
 if(isRefreshing) return <Loading />
   return (
-    <KeyboardAwareScrollView className="h-full px-4 bg-primary" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>} >
+    <KeyboardAwareScrollView className="h-full px-4 bg-primary" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>} >
         <DefaultHeader headerTitle={ isUpdateMode ? "Perditesoni kursin" : "Shto nje kurs"} showBorderBottom={true} bottomSubtitle={"Nga kjo forme mund te shtoni kurse te cilat do shfaqen me pas si planprogram se si do kete ecurine kursi juaj! Kjo shfaqet tek shfletimi nga studentet tek seksioni i intruktoreve."}/>
         <Text className="absolute top-0 -right-4 font-psemibold text-gray-400 bg-oBlack text-xs rounded-md px-2 py-1 border border-black-200" style={styles.box}>Hapi <Text className="text-secondary">{step}</Text> nga <Text className="text-secondary">{maxSteps}</Text></Text>
         <Animatable.View animation="pulse" iterationCount="infinite" duration={1000} className="ml-auto">

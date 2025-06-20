@@ -32,7 +32,7 @@ const becomeInstructor = () => {
     
     if(isRefreshing) return <Loading />
   return (
-    <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => {setIsRefreshing(true); setExpertise(""); setBio(""); setHasInteractedBio(false); setHasInteractedExpertise(false); setTimeout(() => {setIsRefreshing(false)}, 300)}} />}>
+    <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={() => {setIsRefreshing(true); setExpertise(""); setBio(""); setHasInteractedBio(false); setHasInteractedExpertise(false); setTimeout(() => {setIsRefreshing(false)}, 300)}} />}>
         <DefaultHeader headerTitle={"Behuni instruktor"} showBorderBottom={true} bottomSubtitle={"Nga shnderrimi i llogarise tuaj ne Instruktor, je keni hapesira te posacshme per navigimin tuaj si Instruktor. Disa nga hapesirat sic jane: Vijimi i kurseve, leksioneve, kuizeve, favoritet dhe disa nga pjeset te cilat jane te krijuara per rolin e Studentit nuk do mund te jene te posacshme nga ana juaj!"}/>
         <View className="mt-3 gap-3">
             <View>

@@ -129,7 +129,7 @@ const AllQuizzes = () => {
       className="bg-primary h-full px-4"
       onEndReached={loadMore}
       onEndReachedThreshold={0.1}
-      refreshControl={<RefreshControl onRefresh={onRefresh} refreshing={isRefreshing} />}
+      refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} refreshing={isRefreshing} />}
       data={quizesData?.result}
       keyExtractor={(item) => 'Quiz-' + item?.id?.toString()}
       renderItem={({item}) => (

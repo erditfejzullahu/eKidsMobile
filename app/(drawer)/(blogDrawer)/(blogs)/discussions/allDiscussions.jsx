@@ -105,7 +105,7 @@ if(isLoading && !loadedFirst) return <Loading />
         keyExtractor={(item) => item.id}
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
         renderItem={({item}) => (
             <DiscussionsCard discussion={item}/>
         )}

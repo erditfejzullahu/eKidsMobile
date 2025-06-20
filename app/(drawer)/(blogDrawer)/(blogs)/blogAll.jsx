@@ -115,7 +115,7 @@ const Blog = () => {
     <View className="flex-1 h-full">      
         <KeyboardAwareFlatList
           behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
+          refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}
           className="p-4 h-full bg-primary flex-1"
           data={allBlogs}
           contentContainerStyle={{gap: 20}}

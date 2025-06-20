@@ -103,7 +103,7 @@ const Discussion = () => {
           scrollEnabled={true}
           className="h-full flex-1 z-50"
           // contentContainerStyle={{paddingLeft: 16, paddingRight: 16}}
-          refreshControl={<RefreshControl refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
+          refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={discussionRefreshing} onRefresh={onRefresh}/>}
           contentContainerStyle={{gap:24}}
           data={discussionAnswerData?.data}
           keyExtractor={(item) => item.id}

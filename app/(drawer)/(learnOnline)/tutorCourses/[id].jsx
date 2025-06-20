@@ -91,7 +91,7 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
     <View className="flex-1">
         <FlatList 
             className="h-full bg-primary px-4"
-            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+            refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}
             data={coursesData?.courses}

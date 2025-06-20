@@ -93,7 +93,7 @@ if(isLoading || isRefreshing) return <Loading />
         key={refreshKey}
         className="h-full bg-primary px-4"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
         <DefaultHeader 
             headerTitle={"Paneli ndihmes"}

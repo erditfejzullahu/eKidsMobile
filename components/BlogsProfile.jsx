@@ -59,7 +59,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
                 :
                 <View className="border-b border-black-200 flex-1 px-4">
                     <FlatList 
-                        refreshControl={<RefreshControl refreshing={blogsLoading} onRefresh={onRefresh}/>}
+                        refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={blogsLoading} onRefresh={onRefresh}/>}
                         scrollEnabled={true}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{gap: 24}}

@@ -61,7 +61,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
   return (
     //tek pjesa e ketij hederi i qes krejt etiketimet me accordions ne baze te kategorive // etiketimet duhet me pas mundesin me pas underetiketime
     <FlatList
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>}
+      refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}
       className="flex-1 bg-oBlack p-4 border-r overflow-hidden border-black-200"
       contentContainerStyle={{flexGrow: 1, gap: 6}}
       columnWrapperStyle={{gap: 6, overflow: "scroll"}}

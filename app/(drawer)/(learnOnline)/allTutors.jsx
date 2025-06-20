@@ -99,7 +99,7 @@ const AllTutors = () => {
   return (
     <View className="flex-1">
         <FlatList 
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
           className="h-full bg-primary"
           onEndReached={loadMore}
           onEndReachedThreshold={0.1}

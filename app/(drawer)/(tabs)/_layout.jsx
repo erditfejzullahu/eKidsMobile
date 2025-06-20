@@ -55,7 +55,7 @@ const TabsLayout = () => {
       <View
         className="absolute mx-auto items-center justify-center left-0 right-0 bottom-0"
       >
-          <Animatable.View className="flex-row z-20 border-t border-l border-r border-black-200 rounded-t-[10px]" style={{marginBottom: 89}}
+          <Animatable.View className="flex-row z-20 border-t border-l border-r border-gray-200 dark:border-black-200 rounded-t-[10px]" style={{marginBottom: 89}}
             duration={1000}
             animation="pulse"
             iterationCount="infinite"
@@ -64,14 +64,14 @@ const TabsLayout = () => {
         <TouchableOpacity onPress={() => router.replace("(blogDrawer)/(blogs)/blogAll")} >
             <View className="flex-row gap-2 p-2.5">
               <View>
-                <Text className="text-white ">Lajmet tona</Text>
+                <Text className="text-oBlack dark:text-white ">Lajmet tona</Text>
               </View>
               <View>
                 <Image 
                   source={icons.news}
                   className="h-6 w-6"
                   resizeMode='contain'
-                  tintColor={pathname.includes('/blog') ? "#FFA001" : "#CDCDE0"}
+                  tintColor={pathname.includes('/blog') ? "#FFA001" : colorScheme === 'dark' ? "#CDCDE0" : "#000"}
                 />
               </View>
             </View>

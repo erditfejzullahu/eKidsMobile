@@ -221,7 +221,7 @@ const Home = () => {
         
 
 
-      <StatusBar backgroundColor='#161622' style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
+      <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
       </View>
       
     )

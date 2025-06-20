@@ -202,7 +202,7 @@ const Meetings = () => {
   return (
     <>
     <ScrollView 
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+      refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
       className="h-full bg-primary"
       >
         <View className="h-[140px] bg-oBlack border-b border-l border-r items-center justify-center relative border-black-200" style={styles.box}>

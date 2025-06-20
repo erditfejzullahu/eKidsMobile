@@ -97,7 +97,7 @@ const bookmark = () => {
     return (
       <ScrollView 
         className="h-full bg-primary px-4 w-full"
-        refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl  refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
         >
         <View>
           <Text className="text-white font-pmedium text-2xl mt-4">Favoritet tuaj!

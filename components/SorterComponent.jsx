@@ -270,7 +270,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
             {showButton && 
             <CustomButton 
                 title={"Ruaj të dhënat"}
-                containerStyles={"!min-h-[30px] !rounded-none !border-l !border-b !border-r !border-black-200"}
+                containerStyles={"!min-h-[30px] !rounded-none !border-l !border-b !border-r  border-gray-200 dark:border-black-200"}
                 textStyles={"!text-white !text-sm !font-plight"}
                 handlePress={sendSortData}
             />}
