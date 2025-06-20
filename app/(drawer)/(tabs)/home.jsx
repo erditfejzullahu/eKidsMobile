@@ -16,8 +16,7 @@ import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 
-const Home = () => {
-
+const Home = () => {  
   const [refreshing, setRefreshing] = useState(false)
 
   const { user, isLoading: userDataLoading } = useGlobalContext()
@@ -129,7 +128,7 @@ const Home = () => {
     );
   }else{
     return (
-      <View className="bg-primary h-full">
+      <View className={`bg-primary-light dark:bg-primary h-full`}>
         <FlatList 
           data={allCourses.courses}
           keyExtractor={(item) => "courses-" + item?.id}
@@ -144,7 +143,7 @@ const Home = () => {
             <View className="my-6 px-4 space-y-6">
               <View className="justify-between items-start flex-row mb-6">
                 <View>
-                <Text className="font-pmedium text-sm text-gray-100">
+                <Text className={`font-pmedium text-sm text-oBlack dark:text-gray-100 `}>
                   Mirë se erdhët përsëri
                 </Text>
                 <Text className="relative text-2xl font-psemibold text-white">

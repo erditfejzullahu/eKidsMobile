@@ -11,7 +11,6 @@ export const fetchCourses = async (filters) => {
             }
         })
         const queryString = new URLSearchParams(queryParams).toString()        
-        console.log(queryString);
         const response = await apiClient.get(`/getCoursesP?${queryString}`)
         return response.data;
     } catch (error) {

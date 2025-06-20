@@ -13,7 +13,9 @@ module.exports = {
       },
       colors: {
         oBlack: "#13131a",
+        "oBlack-light": "f8f5f2",
         primary: "#161622",
+        "primary-light": "#f0ece8",
         secondary: {
           DEFAULT: "#FF9C01",
           100: "#FF9001",
@@ -42,4 +44,5 @@ module.exports = {
     },
   },
   plugins: [],
+  darkMode: 'class',
 };

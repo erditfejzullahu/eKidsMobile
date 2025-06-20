@@ -14,11 +14,10 @@ import NotificationProvider from '../context/NotificationState';
 import BlogsDrawerProvider from '../context/BlogsDrawerProvider';
 import LessonCommentsProvider from '../context/LessonCommentsProvider';
 
-
 import DonationModal from '../components/DonationModal'; 
 import { RoleProvider } from '../navigation/RoleProvider';
-// enableScreens();
-
+import { ThemeProvider } from '../context/ThemeContext';
+enableScreens();
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
@@ -53,6 +52,7 @@ const RootLayout = () => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
+            {/* <ThemeProvider> */}
             <RoleProvider>
             <GlobalProvider>
                 <NotifierWrapper>
@@ -65,8 +65,6 @@ const RootLayout = () => {
                                             <Stack.Screen name="index" options={{ headerShown: false }} />
                                             <Stack.Screen name="(auth)" options={{ headerShown: false}} />
                                             <Stack.Screen name="(drawer)" options={{ headerShown: false, gestureEnabled: true }}/>
-                                            {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
-                                            {/* <Stack.Screen name="(drawer)/(tabs)" options={{ headerShown: false }} /> */}
                                         </Stack>
                                     </LessonCommentsProvider>
                                 </BlogsDrawerProvider>
@@ -77,6 +75,7 @@ const RootLayout = () => {
             </GlobalProvider>
             </RoleProvider>
             <DonationModal open={modalOpen} setOpen={setModalOpen}/>
+            {/* </ThemeProvider> */}
         </GestureHandlerRootView>
     )
 }

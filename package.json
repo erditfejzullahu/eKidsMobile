@@ -60,7 +60,8 @@
     "react-native-uuid": "^2.0.3",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
-    "zod": "^3.24.3"
+    "zod": "^3.24.3",
+    "expo-system-ui": "~5.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

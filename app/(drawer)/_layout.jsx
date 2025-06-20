@@ -21,6 +21,7 @@ import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
 import { useRole } from '../../navigation/RoleProvider'
 import { useNavigation } from 'expo-router'
 import { CommonActions } from '@react-navigation/native'
+import ThemeToggle from '../../components/ThemeToggle'
 
 const showIcons = (icon, size, color) => {
     return(
@@ -86,9 +87,9 @@ const CustomHeader = (props) => {
             
             // console.log(drawerProps);
             // console.log(path);
-            setTimeout(() => {
+            // setTimeout(() => {
                 drawerProps.closeDrawer();
-            }, 50);
+            // }, 50);
         }
         return (
             <>
@@ -112,7 +113,9 @@ const CustomHeader = (props) => {
     <View className="h-full bg-primary border-r-1 border-cyan-950 pt-6">
         <DrawerContentScrollView {...props} contentContainerStyle={{height:'100%'}}>
             <View className="flex-col h-full justify-between">
-                
+                <View className="absolute right-0 -top-4 z-50">
+                    <ThemeToggle />
+                </View>
                 <View className="border-b-2 border-black-200 pb-6">
 
                     <View className="justify-center items-center mb-6 pb-6 border-b-2 border-black-200">
