@@ -26,6 +26,7 @@ import { useCallback } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import * as Linking from "expo-linking"
 import OnlineClassesCard from '../../../components/OnlineClassesCard'
+import { useColorScheme } from 'nativewind'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -34,7 +35,7 @@ export const unstable_settings = {
 const Profiles = () => {
     const {profile} = useLocalSearchParams();
     // console.log(profile, " profili");
-    
+    const {colorScheme} = useColorScheme();
     useEffect(() => {
       setProfileData(null);
       setRelationStatus(null)
@@ -128,17 +129,20 @@ const Profiles = () => {
     const { showNotification: successFriendReq } = NotifierComponent({
       title: "Kerkesa shkoi me sukes!",
       description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
+      theme: colorScheme
     })
 
     const {showNotification: successFriendDeletion} = NotifierComponent({
       title: "Kerkesa shkoi me sukses!",
-      description: `Sapo e larguat ${profileData?.firstname} ${profileData?.lastname} nga statusi juaj miqesor me perdorues!`
+      description: `Sapo e larguat ${profileData?.firstname} ${profileData?.lastname} nga statusi juaj miqesor me perdorues!`,
+      theme: colorScheme
     })
 
     const { showNotification: failedReq } = NotifierComponent({
       title: "Dicka shkoi gabim!",
       description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-      alertType: "warning"
+      alertType: "warning",
+      theme: colorScheme
     })
 
     const makeFriend = async () => {
@@ -702,7 +706,8 @@ const Profiles = () => {
                     const {showNotification: commitNotification} = NotifierComponent({
                       title: `${date.count} angazhime`,
                       description: `Te bera me date ${formattedDate}`,
-                      alertType: "success"
+                      alertType: "success",
+                      theme: colorScheme
                     })
                     commitNotification();
                   }}

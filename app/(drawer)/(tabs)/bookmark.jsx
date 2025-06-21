@@ -10,8 +10,10 @@ import { TouchableOpacity } from 'react-native'
 import * as Animatable from "react-native-animatable"
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
+import { useColorScheme } from 'nativewind'
 
 const bookmark = () => {
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false)
   const [showCourses, setShowCourses] = useState(true)
@@ -56,12 +58,14 @@ const bookmark = () => {
   const {showNotification: bookmarkDeleted} = NotifierComponent({
     title: "Njoftim mbi favoritin tuaj!",
     description: "Favoriti juaj eshte fshire me sukses!",
+    theme: colorScheme
   })
 
   const {showNotification: bookmarkNotDeleted} = NotifierComponent({
     title: "Njoftim mbi favoritin tuaj!",
     alertType: "warning",
-    description: "Problem ne fshirjen e favoritit tuaj! Provoni perseri!"
+    description: "Problem ne fshirjen e favoritit tuaj! Provoni perseri!",
+    theme: colorScheme
   })
 
   const delBookmark = async (id) => {

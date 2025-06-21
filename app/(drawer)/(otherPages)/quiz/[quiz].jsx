@@ -16,8 +16,10 @@ import NotifierComponent from '../../../../components/NotifierComponent'
 import { useTopbarUpdater } from '../../../../navigation/TopbarUpdater'
 import ShareToFriends from '../../../../components/ShareToFriends'
 import { useRole } from '../../../../navigation/RoleProvider'
+import { useColorScheme } from 'nativewind'
 
 const Quiz = () => {
+    const {colorScheme} = useColorScheme();
     const {role} = useRole();
     if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
     const { quiz } = useLocalSearchParams();
@@ -55,7 +57,8 @@ const Quiz = () => {
     const {showNotification} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const validateQuestions = async (answerItem, questionType, isEnd) => {        

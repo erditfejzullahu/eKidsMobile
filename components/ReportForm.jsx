@@ -15,9 +15,9 @@ import { currentUserID } from '../services/authService'
 import { CreateSupportReportTicket, reqUsersBySearch } from '../services/fetchingService'
 import _ from 'lodash'
 import { icons } from '../constants'
-
+import { useColorScheme } from 'nativewind'
 const ReportForm = ({onSuccess, availableTickets = []}) => {
-
+    const {colorScheme} = useColorScheme();
     const [showResults, setShowResults] = useState(false);
     const [resultLoading, setResultLoading] = useState(false)
     const [searchResults, setSearchResults] = useState([])
@@ -74,12 +74,14 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
         description: "Raportimi juaj shkoj me sukses. Do te njoftoheni ne emailin tuaj sa me shpejt qe eshte e mundur.",
+        theme: colorScheme
     })
 
     const {showNotification: error} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const submitReport = async (data) => {
@@ -108,13 +110,15 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {showNotification: requestPermission} = NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Na nevojitet akses ne librarine e fotove tuaja.",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: UserIdNotSaved} = NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Klikoni personin qe deshironi te raportoni!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const pickImage = async (onChange) => {
@@ -156,7 +160,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     onValueChange={onChange}
                     placeholder={{ label: "Zgjidhni kategorine e problemit", value: '' }}
                     style={pickerSelectStyles}
-                    itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+                    itemStyle={{color: colorScheme === "dark" ? "#fff" : "#13131a", fontFamily: "Poppins-Regular"}}
                     >
                     {availableTickets.map((item) => (
                         <Picker.Item label={item.ticketTitle} key={item.id} value={item.id} />

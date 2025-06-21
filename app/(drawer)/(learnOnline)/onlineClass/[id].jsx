@@ -14,8 +14,10 @@ import { currentUserID } from '../../../../services/authService'
 import CustomModal from '../../../../components/Modal'
 import ShareToFriends from '../../../../components/ShareToFriends'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
+import { useColorScheme } from 'nativewind'
 
 const OnlineClass = () => {
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {id} = useLocalSearchParams()
   
@@ -40,19 +42,22 @@ const OnlineClass = () => {
 
   const {showNotification: success} = NotifierComponent({
     title: "Sukses",
-    description: `Sapo filluat kursin ${courseData?.courseName}. Tani do te ridrejtoheni tek leksionet vijuese`
+    description: `Sapo filluat kursin ${courseData?.courseName}. Tani do te ridrejtoheni tek leksionet vijuese`,
+    theme: colorScheme
   })
 
   const {showNotification: failed} = NotifierComponent({
     title: "Gabim",
     description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const {showNotification: becomeStudent} = NotifierComponent({
     title: "Gabim",
     description: "Per te proceduar tek leksioni i klikuar, ju duhet te filloni kursin",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const handleCourseStart = async () => {

@@ -22,8 +22,10 @@ import { noop } from 'lodash';
 import CustomModal from '../../../components/Modal';
 import NotifierComponent from '../../../components/NotifierComponent';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
+import { useColorScheme } from 'nativewind';
 
 const Conversation = () => {
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const conversation = useLocalSearchParams();
     const [paginationState, setPaginationState] = useState({pageNumber: 1, pageSize: 15})
@@ -386,17 +388,20 @@ const Conversation = () => {
     const { showNotification: successFriendReq } = NotifierComponent({
         title: "Kerkesa shkoi me sukes!",
         description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
+        theme: colorScheme
     })
 
     const {showNotification: successFriendDeletion} = NotifierComponent({
         title: "Kerkesa shkoi me sukses!",
-        description: `Sapo e larguat ${conversation?.receiverFirstname} ${conversation?.receiverLastname} nga statusi juaj miqesor me perdorues!`
+        description: `Sapo e larguat ${conversation?.receiverFirstname} ${conversation?.receiverLastname} nga statusi juaj miqesor me perdorues!`,
+        theme: colorScheme
     })
 
     const { showNotification: failedReq } = NotifierComponent({
     title: "Dicka shkoi gabim!",
     description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
     })
 
     const makeFriend = async () => {

@@ -8,8 +8,10 @@ import { ScrollView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useGlobalContext } from '../../../context/GlobalProvider';
 import QuizCreate from '../../../components/QuizCreate';
+import { useColorScheme } from 'nativewind';
 
 const AddQuiz = () => {
+  const {colorScheme} = useColorScheme();
   const [form, setForm] = useState({
     category: '',
     quizName: '',
@@ -73,14 +75,14 @@ const AddQuiz = () => {
   return (
     <KeyboardAwareScrollView 
       style={styles.container}
-      className="h-full bg-primary px-4"
+      className="h-full bg-primary-light dark:bg-primary px-4"
       contentContainerStyle={{ flexGrow: 1 }}
       enableOnAndroid={true}
       extraScrollHeight={50}
       keyboardShouldPersistTaps="handled"
     >
-      <View className="mt-4 border-b pb-4 mb-4 border-black-200">
-        <Text className="text-2xl font-pmedium text-white mb-6">
+      <View className="mt-4 border-b pb-4 mb-4 border-gray-200 dark:border-black-200">
+        <Text className="text-2xl font-pmedium text-oBlack dark:text-white mb-6">
           Shtoni kuizet tuaja!
           <View>
             <Image 
@@ -90,17 +92,17 @@ const AddQuiz = () => {
             />
           </View>
         </Text>
-        <Text className="text-gray-400 text-xs font-plight mb-2">
+        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight mb-2">
           Duke plotesuar fushat e meposhtme ju beni kerkesen per paraqitjen e kuizit tuaj tek 
           <Text className="text-secondary font-pmedium"> ShokuMesimit</Text>
         </Text>
-        <Text className="text-gray-400 text-xs font-plight">
+        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">
           Pas verifikimit nga ana jone, ju arrini rolin e 
           <Text className="text-secondary font-pmedium"> Pionerit</Text> dhe perfitoni nga angazhimet e studenteve tone!
         </Text>
       </View>
 
-      <View className="border-b border-black-200 mb-5 pb-1">
+      <View className="border-b border-gray-200 dark:border-black-200 mb-5 pb-1">
         <FormField 
           title={"Emri i kuizit tuaj"}
           placeholder={"Shkruani ketu emrin e kuizit tuaj"}
@@ -108,7 +110,7 @@ const AddQuiz = () => {
           handleChangeText={(e) => handleFieldChange('quizName', e)}
           onBlur={() => handleBlur('quizName')}
         />
-        <Text className="text-xs text-gray-400 font-plight mt-1">
+        <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">
           Emri qe do shfaqet ne shfletim te kurseve.
         </Text>
         {touchedFields.quizName && formErrors.quizName && (
@@ -129,7 +131,7 @@ const AddQuiz = () => {
           multiline={true}
           numberOfLines={4}
         />
-        <Text className="text-xs text-gray-400 font-plight mt-1">
+        <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">
           Pershkrim i shkurte i kuizit.
         </Text>
         {touchedFields.quizDescription && formErrors.quizDescription && (
@@ -140,14 +142,14 @@ const AddQuiz = () => {
           </Text>
         )}
 
-        <Text className="text-base text-gray-100 font-pmedium mt-7">
+        <Text className="text-base text-gray-700 dark:text-gray-100 font-pmedium mt-7">
           Kategorizimi i kuizit tuaj
         </Text>
         <Picker
           selectedValue={form.category}
           onValueChange={(value) => handleFieldChange('category', value)}
           style={pickerSelectStyles}
-          itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+          itemStyle={{color: colorScheme === "dark" ? "#fff" : "#13131a", fontFamily: "Poppins-Regular"}}
         >
           <Picker.Item label="Zgjidhni kategorinë" value="" />
           {userCategories.map((category) => (
@@ -158,7 +160,7 @@ const AddQuiz = () => {
             />
           ))}
         </Picker>
-        <Text className="text-xs text-gray-400 font-plight mt-1">
+        <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">
           Zgjidhni se cfare kategorizimi i perket kuizit.
         </Text>
         {touchedFields.category && formErrors.category && (
@@ -169,7 +171,7 @@ const AddQuiz = () => {
       </View>
 
       <View>
-        <Text className="text-white text-xl mb-4 font-pmedium">
+        <Text className="text-oBlack dark:text-white text-xl mb-4 font-pmedium">
           Paraqitni detajet e kuizit!
           <View>
             <Image 
@@ -179,7 +181,7 @@ const AddQuiz = () => {
             />
           </View>
         </Text>
-        <Text className="text-gray-400 text-xs font-plight mb-2">
+        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight mb-2">
           Plotesoni fushat perkatese ne te cilat jane te mundesuara 
           <Text className="text-secondary font-pmedium"> Pyetjet</Text>, 
           <Text className="text-secondary font-pmedium"> Pergjigjjet</Text> dhe 

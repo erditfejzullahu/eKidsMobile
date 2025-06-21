@@ -13,10 +13,10 @@ import { icons } from '../constants'
 import { navigateToMessenger } from '../hooks/useFetchFunction'
 import { useRouter } from 'expo-router'
 import CustomModal from '../components/Modal'
+import { useColorScheme } from 'nativewind'
 
 const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefetch}) => {
-    console.log(data);
-    console.log(relationStatus)
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const [courseModal, setCourseModal] = useState(false)
     const [coursesData, setCoursesData] = useState([])
@@ -39,13 +39,15 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
 
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
-        description: `Sapo filluat kursin e zgjedhur. Mund te drejtoheni tek kursi duke naviguar tek Profili juaj/Progresi ose tek seksioni Mesoni Online`
+        description: `Sapo filluat kursin e zgjedhur. Mund te drejtoheni tek kursi duke naviguar tek Profili juaj/Progresi ose tek seksioni Mesoni Online`,
+        theme: colorScheme
       })
     
       const {showNotification: failed} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
       })
 
     const handleBeStudentCourseId = async (item) => {
@@ -85,17 +87,20 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     const { showNotification: successFriendReq } = NotifierComponent({
         title: "Kerkesa shkoi me sukes!",
         description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
+        theme: colorScheme
     })
 
     const {showNotification: successFriendDeletion} = NotifierComponent({
-    title: "Kerkesa shkoi me sukses!",
-    description: `Sapo e larguat ${data?.instructorName} nga statusi juaj miqesor me perdorues!`
+        title: "Kerkesa shkoi me sukses!",
+        description: `Sapo e larguat ${data?.instructorName} nga statusi juaj miqesor me perdorues!`,
+        theme: colorScheme
     })
 
     const { showNotification: failedReq } = NotifierComponent({
-    title: "Dicka shkoi gabim!",
-    description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-    alertType: "warning"
+        title: "Dicka shkoi gabim!",
+        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const makeFriend = async () => {

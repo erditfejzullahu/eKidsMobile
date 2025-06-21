@@ -31,7 +31,8 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
     const {showNotification: errorLesson} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const delBookmark = async () => {

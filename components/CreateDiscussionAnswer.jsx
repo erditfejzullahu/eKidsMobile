@@ -6,8 +6,10 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { Platform } from 'react-native'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
+import { useColorScheme } from 'nativewind'
 
 const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
+    const {colorScheme} = useColorScheme();
     const [commentSendLoading, setCommentSendLoading] = useState(false)
     const [answerContent, setAnswerContent] = useState("")
 
@@ -42,17 +44,20 @@ const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
     const {showNotification: underThreeChars} = NotifierComponent({
         title: "Gabim",
         description: "Nuk pranohen komente/pergjigjje me me pak se 3 karaktere",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: successComment} = NotifierComponent({
         title: "Sukses",
         description: "Sapo komentuat/pergjigjjet ne diskutim",
+        theme: colorScheme
     })
 
     const {showNotification: unSuccessComment} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+        theme: colorScheme
     })
 
     const createAnswer = async () => {

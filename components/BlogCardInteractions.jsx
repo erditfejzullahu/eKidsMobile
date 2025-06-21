@@ -14,10 +14,11 @@ import { createBlogComment, getCommentsByBlog, reqGetAllUserTypes, reqLikeBlog, 
 import _ from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
+import { useColorScheme } from 'nativewind'
 
 const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
-    
+    const {colorScheme} = useColorScheme();
     const [openComments, setOpenComments] = useState(false)
     const [commentWritten, setCommentWritten] = useState("")
     const [commentData, setCommentData] = useState([])
@@ -141,11 +142,13 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
 
     const {showNotification: successComment} = NotifierComponent({
         title: "Sapo keni komentuar me sukses",
+        theme: colorScheme
     })
     const {showNotification: unsuccessfulComment} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ne krijimin e komentit tuaj dicka shkoi gabim. Ju lutem provoni perseri",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const createComment = async (parentId) => {
@@ -261,7 +264,8 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const {showNotification: unsuccessBlogLike} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Dicka shkoi gabim ne ndryshimin e statutit te pelqimit, provoni perseri!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const likeBlog = async (blogId, userId) => {
@@ -308,12 +312,14 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
 
     const {showNotification: successSender} = NotifierComponent({
         title: "Sapo derguat Blogun me sukses",
-        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!"
+        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!",
+        theme: colorScheme
     })
     const {showNotification: errorShare} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const handleShareToUser = async (sendToUser) => {

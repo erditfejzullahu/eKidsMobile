@@ -6,8 +6,10 @@ import { currentUserID, logout } from '../services/authService'
 import { becomeInstructor } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import CustomButton from './CustomButton'
+import { useColorScheme } from 'nativewind'
 
 const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
+    const {colorScheme} = useColorScheme();
     const [socialsData, setSocialsData] = useState([{}])
     const [socialsError, setSocialsError] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -71,17 +73,20 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
 
     const {showNotification: success} = NotifierComponent({
         title: "Sukses!",
-        description: "Ne vazhdim do behen disa kontrollime. Deri atehere mund te veproni ne fushen tuaj perkatese. Kycuni perseri per te vazhduar me tutje!"
+        description: "Ne vazhdim do behen disa kontrollime. Deri atehere mund te veproni ne fushen tuaj perkatese. Kycuni perseri per te vazhduar me tutje!",
+        theme: colorScheme
     })
     const {showNotification: unsuccess} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
     const {showNotification: fillfields} = NotifierComponent({
         title: "Gabim",
         description: "Ju lutem mbushini te gjitha fushat e kerkuara.",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const submit = async () => {

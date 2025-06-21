@@ -15,8 +15,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDiscussionSchema } from '../schemas/addDiscussionSchema'
 import useFetchFunction from "../hooks/useFetchFunction"
+import { useColorScheme } from 'nativewind'
 
 const CreateDiscussionForm = () => {
+    const {colorScheme} = useColorScheme();
     const [searchTagQuery, setSearchTagQuery] = useState("")
     const {data, refetch, isLoading: tagsLoading} = useFetchFunction(() => getTagsByTitle(searchTagQuery))
 
@@ -125,19 +127,22 @@ const CreateDiscussionForm = () => {
     
     const {showNotification: successCreation} = NotifierComponent({
         title: "Sukses",
-        description: "Sapo krijuat pyetjen/diskutimin me sukses! Mund ta percillni gjendjen e saj tek profili juaj poashtu."
+        description: "Sapo krijuat pyetjen/diskutimin me sukses! Mund ta percillni gjendjen e saj tek profili juaj poashtu.",
+        theme: colorScheme
     })
 
     const {showNotification: failedCreation} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: contentRequired} = NotifierComponent({
         title: "Gabim",
         description: "Nevojitet permbajtje me e gjate(minimum 20 karaktere).",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const debounceTagsSearchingRef = useRef();

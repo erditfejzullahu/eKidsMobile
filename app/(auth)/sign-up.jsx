@@ -17,23 +17,14 @@ import Loading from '../../components/Loading'
 import { useRole } from '../../navigation/RoleProvider'
 import { userDetails } from '../../services/necessaryDetails'
 import { useGlobalContext } from '../../context/GlobalProvider'
-
-const {showNotification: errorr} = NotifierComponent({
-  title: "Gabim",
-  description: "Dicka shkoi gabim, ju lutem provoni perseri",
-  alertType: "warning"
-})
-
-const {showNotification: success} = NotifierComponent({
-  title: "Sukses",
-  description: "Sapo u regjistruat me sukses, tani do te ridrejtoheni!",
-})
+import { useColorScheme } from 'nativewind'
 
 const SignUp = () => {
+  const {colorScheme} = useColorScheme();
   const {role, isLoading, refreshRole} = useRole();
   const [isRefreshing, setIsRefreshing] = useState(false)
   const { setUser, setIsLoggedIn } = useGlobalContext();
-
+  
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(registerUserSchema),
     defaultValues: {
@@ -47,7 +38,20 @@ const SignUp = () => {
     },
     mode: "onTouched"
   })
-
+  
+  const {showNotification: errorr} = NotifierComponent({
+    title: "Gabim",
+    description: "Dicka shkoi gabim, ju lutem provoni perseri",
+    alertType: "warning",
+    theme: colorScheme
+  })
+  
+  const {showNotification: success} = NotifierComponent({
+    title: "Sukses",
+    description: "Sapo, u regjistruat me sukses, tani do te ridrejtoheni!",
+    theme: colorScheme
+  })
+  
   const onRefresh = () => {
     setIsRefreshing(true)
     reset();
@@ -84,7 +88,7 @@ const SignUp = () => {
   }
 if(isRefreshing) return <Loading />
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary-light dark:bg-primary h-full">
         <KeyboardAwareScrollView
           refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
           className="my-6"
@@ -99,10 +103,10 @@ if(isRefreshing) return <Loading />
               source={images.logoNew}
               resizeMode="contain" className="h-[100px] items-center justify-center m-auto"
             />
-            <Text className="text-white text-center font-pblack text-xl mt-4">
+            <Text className="text-oBlack dark:text-white text-center font-pbold text-xl mt-4">
               Regjistrohuni falas tek
             </Text>
-            <Text className="text-secondary text-center font-pblack text-xl">
+            <Text className="text-secondary text-center font-pbold text-xl">
               Shoku juaj i Mësimit
             </Text>
           </View>
@@ -120,7 +124,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani emrin tuaj valid.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani emrin tuaj valid.</Text>
               {errors.firstname && (
                 <Text className="text-red-500 text-xs font-plight">{errors.firstname.message}</Text>
               )}
@@ -138,7 +142,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani mbiemrin tuaj valid.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani mbiemrin tuaj valid.</Text>
               {errors.lastname && (
                 <Text className="text-red-500 text-xs font-plight">{errors.lastname.message}</Text>
               )}
@@ -157,7 +161,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Paraqisni nje email valid, per shkak se ky email do perdoret per verifikim dhe kycje te llogarise suaj.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Paraqisni nje email valid, per shkak se ky email do perdoret per verifikim dhe kycje te llogarise suaj.</Text>
               {errors.email && (
                 <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
               )}
@@ -175,7 +179,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani nje emer tuaj te preferuar per qasje te shpejte.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani nje emer tuaj te preferuar per qasje te shpejte.</Text>
               {errors.username && (
                 <Text className="text-red-500 text-xs font-plight">{errors.username.message}</Text>
               )}
@@ -194,13 +198,13 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Paraqisni moshen tuaj aktuale.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Paraqisni moshen tuaj aktuale.</Text>
               {errors.age && (
                 <Text className="text-red-500 text-xs font-plight">{errors.age.message}</Text>
               )}
             </View>
             <View>
-              <Text className="text-base text-gray-100 font-pmedium">Roli juaj</Text>
+              <Text className="text-base text-gray-700 dark:text-gray-100 font-pmedium">Roli juaj</Text>
               <Controller 
                 control={control}
                 name="role"
@@ -212,14 +216,14 @@ if(isRefreshing) return <Loading />
                     }
                     placeholder={{ label: "Zgjidhni rolin tuaj", value: '' }}
                     style={pickerSelectStyles}
-                    itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+                    itemStyle={{color: colorScheme === "dark" ? "#fff" : "#13131a", fontFamily: "Poppins-Regular"}}
                   >
                       <Picker.Item label="Student" value="student" />
                       <Picker.Item label="Instruktor" value="instructor" />
                   </Picker>
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Zgjidhni rolin tuaj ne mes te Studentit dhe Instruktorit. Nese zgjidhni rolin Student, ju mund te beni aplikimin per Instruktor.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Zgjidhni rolin tuaj ne mes te Studentit dhe Instruktorit. Nese zgjidhni rolin Student, ju mund te beni aplikimin per Instruktor.</Text>
               {errors.role && (
                 <Text className="text-red-500 text-xs font-plight">{errors.role.message}</Text>
               )}
@@ -245,7 +249,7 @@ if(isRefreshing) return <Loading />
             </View>
           </View>
           <View className="justify-center items-center flex-row gap-2 mb-2">
-          <Text className="text-lg text-gray-100 font-pregular">
+          <Text className="text-lg text-gray-700 dark:text-gray-100 font-pregular">
             Keni llogari?
           </Text>
           <Link href="/sign-in" className="text-lg font-semibold text-secondary">Kyçuni</Link>

@@ -28,8 +28,10 @@ import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { personalInformations } from '../../../schemas/profileSchema'
+import { useColorScheme } from 'nativewind'
 
 const Profile = () => {
+  const {colorScheme} = useColorScheme();
   const {role} = useRole()
   if(role === "Instructor") return <Redirect href={'/instructor/instructorProfile'}/>
 const router = useRouter();
@@ -155,11 +157,13 @@ const router = useRouter();
   const {showNotification: updateFailed} = NotifierComponent({
     tite: "Dicka shkoi gabim!",
     description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const {showNotification: profileUpdateSuccess} = NotifierComponent({
-    title: "Fotoja juaj e profilit u perditesua me sukses!"
+    title: "Fotoja juaj e profilit u perditesua me sukses!",
+    theme: colorScheme
   }) 
 
 

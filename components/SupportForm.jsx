@@ -13,9 +13,9 @@ import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
 import { currentUserID } from '../services/authService'
 import { CreateSupportReportTicket } from '../services/fetchingService'
-
+import { useColorScheme } from 'nativewind'
 const SupportForm = ({onSuccess, availableTickets = []}) => {
-
+    const {colorScheme} = useColorScheme();
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(supportSectionSchema),
         defaultValues: {
@@ -35,12 +35,14 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
     const {showNotification: success} = NotifierComponent({
         title: "Sukses",
         description: "Kerkesa shkoj me sukses. Do te njoftoheni ne emailin tuaj sa me shpejt qe eshte e mundur.",
+        theme: colorScheme
     })
 
     const {showNotification: error} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const pickImage = async (onChange) => {
@@ -129,7 +131,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                         onValueChange={onChange}
                         placeholder={{ label: "Zgjidhni kategorine e ndihmes", value: '' }}
                         style={pickerSelectStyles}
-                        itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+                        itemStyle={{color: colorScheme === "dark" ? "#fff" : "#13131a", fontFamily: "Poppins-Regular"}}
                     >
                         {availableTickets.map((item) => (
                             <Picker.Item key={item.id} label={item.ticketTitle} value={item.id} />

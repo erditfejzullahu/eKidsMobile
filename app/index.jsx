@@ -12,8 +12,10 @@ import { useRole } from '../navigation/RoleProvider';
 import { useEffect } from 'react';
 import { useNavigation } from 'expo-router';
 import { CommonActions } from '@react-navigation/native';
+import { useColorScheme } from 'nativewind';
 
 export default function App() {
+  const {colorScheme} = useColorScheme();
   const {role, refreshRole, isLoading: roleLoading} = useRole();
   const {isLoading, isLoggedIn} = useGlobalContext();
   // const router = useRouter();
@@ -56,7 +58,7 @@ export default function App() {
     }
 
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary-light dark:bg-primary h-full">
       <ScrollView contentContainerStyle={{height: '100%'}}>
         <View className="w-full justify-center items-center h-full px-4">
           <Image 
@@ -73,7 +75,7 @@ export default function App() {
 
           <View className="relative w-full">
             <View className="relative mt-5">
-              <Text className="text-2xl text-white text-center font-pblack">Mësimi kurrë nuk ka qenë më efektiv me {' '}
+              <Text className="text-2xl text-oBlack dark:text-white text-center font-pblack">Mësimi kurrë nuk ka qenë më efektiv me {' '}
               <Text className="text-secondary-200">Shokun e Mësimit</Text>
               </Text>
 
@@ -84,9 +86,9 @@ export default function App() {
               />
             </View>
             <View>
-              <Text className="text-sm text-center font-pregular text-white mt-6 relative">Aty ku çertifikimi i fushave të ndryshme nuk ka qenë kurrë më i lehtë!</Text>
+              <Text className="text-sm text-center font-pregular text-gray-600 dark:text-white mt-6 relative">Aty ku çertifikimi i fushave të ndryshme nuk ka qenë kurrë më i lehtë!</Text>
             </View>
-            <View className="absolute border-b border-black-200 w-1/2 items-center justify-center left-[25%] -bottom-3"></View>
+            <View className="absolute border-b border-white dark:border-black-200 w-1/2 items-center justify-center left-[25%] -bottom-3"></View>
           </View>
           <CustomButton 
             title="Vazhdoni me Kyçjen"
@@ -97,7 +99,7 @@ export default function App() {
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor='#161622' style='light'/>
+      <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
 
     </SafeAreaView>
   );

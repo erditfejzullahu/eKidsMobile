@@ -19,8 +19,10 @@ import * as ImagePicker from "expo-image-picker"
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
+import { useColorScheme } from 'nativewind'
 
 const AddCourse = () => {
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const {role, isLoading} = useRole();
     useEffect(() => {
@@ -110,19 +112,22 @@ const AddCourse = () => {
     const {showNotification: error} = NotifierComponent({
         title: "Gabim!",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: success} = NotifierComponent({
         title: "Sukses!",
         description: "Sapo shtuat nje kurs me planprogram te detajizuar! Tani mund te krijoni kohe te takimeve online! Do ridrejtoheni pas pak.",
+        theme: colorScheme
     })
 
     const {showNotification: requestPermission} = NotifierComponent({
-            tite: "Dicka shkoi gabim!",
-            description: "Na nevojitet akses ne librarine e fotove tuaja.",
-            alertType: "warning"
-          })
+        tite: "Dicka shkoi gabim!",
+        description: "Na nevojitet akses ne librarine e fotove tuaja.",
+        alertType: "warning",
+        theme: colorScheme
+    })
 
     const pickImage = async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()

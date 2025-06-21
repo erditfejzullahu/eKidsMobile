@@ -12,8 +12,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import CustomButton from '../../../../components/CustomButton'
 import apiClient from '../../../../services/apiClient'
 import NotifierComponent from '../../../../components/NotifierComponent'
+import { useColorScheme } from 'nativewind'
 
 const course = () => {
+    const {colorScheme} = useColorScheme();
     const {course} = useLocalSearchParams();
     const {user, isLoading} = useGlobalContext();
     const [refreshing, setRefreshing] = useState(false)
@@ -40,13 +42,15 @@ const course = () => {
 
     const {showNotification: successNotifier} = NotifierComponent({
         title: "Veprimi u krye me sukses!",
-        description: "Deshmia u dergua me sukses... Ne shkarkim do paraqitet edhe deshmia juaj, dhe poashtu mund te perdoret nga ana jone!"
+        description: "Deshmia u dergua me sukses... Ne shkarkim do paraqitet edhe deshmia juaj, dhe poashtu mund te perdoret nga ana jone!",
+        theme: colorScheme
     })
 
     const {showNotification: errorNotifier} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const sendTestimonial = async () => {

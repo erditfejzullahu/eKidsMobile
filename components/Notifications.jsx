@@ -23,6 +23,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import NotifierComponent from './NotifierComponent';
 import { useRouter } from 'expo-router';
 import { useShadowStyles } from '../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 
 const Notifications = ({ onClose }) => {
     const router = useRouter();
@@ -30,6 +31,7 @@ const Notifications = ({ onClose }) => {
         pageSize: 15,
         pageNumber: 1
     })
+    const {colorScheme} = useColorScheme();
     const {shadowStyle} = useShadowStyles();
     const {data, isLoading, refetch} = useFetchFunction(() => getNotifications(paginationParams))
     // const {data: readStatus, isLoading: readLoading, refetch: readRefetch} = useFetchFunction(() => reqMakeNotificationsRead())
@@ -124,21 +126,20 @@ const Notifications = ({ onClose }) => {
     const {showNotification: errorInRequests} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: acceptedFriendRequest} = NotifierComponent({
         title: "Sapo keni pranuar kerkesen e miqesise me sukses",
+        theme: colorScheme
     })
 
     const {showNotification: comingSoon} = NotifierComponent({
         title: "Se shpejti do implementohet Dritarja e Njoftimeve",
+        theme: colorScheme
     })
-
-    const {showNotification: removedFriendRequest} = NotifierComponent({
-        title: "Sapo keni pranuar kerkesen e miqesise me sukses",
-    })
-    
+ 
     const acceptFriendReq = async (item) => {
         const response = await acceptFriendRequest(item.userId);
         if(response === 200){

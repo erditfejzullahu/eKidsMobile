@@ -9,10 +9,11 @@ import { useRouter } from 'expo-router';
 import NotifierComponent from './NotifierComponent';
 import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import ShareToFriends from './ShareToFriends';
+import { useColorScheme } from 'nativewind';
 
 
 const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) => {
-      
+    const {colorScheme} = useColorScheme();
     const userCategories = user?.data?.categories;
     const userData = user?.data?.userData;
     const router = useRouter();
@@ -24,13 +25,15 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
 
     const {showNotification: successDelete} = NotifierComponent({
         title: "Me sukses!",
-        description: `Sapo keni fshirë me sukses kuizin me emër ${quizData?.quizName}`
+        description: `Sapo keni fshirë me sukses kuizin me emër ${quizData?.quizName}`,
+        theme: colorScheme
     })
 
     const {showNotification: unsuccessDelete} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const goToQuiz = () => {
@@ -74,11 +77,13 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
     const {showNotification: successNotification} = NotifierComponent({
       title: "Me sukses!",
       description: "Sapo startuat kuizin me sukes! Mund te percillni kuizet e startuara tek pjesa e Progresit tuaj tek Profili juaj!",
+      theme: colorScheme
     })
 
     const {showNotification: unSuccessNotification} = NotifierComponent({
       title: "Dicka shkoi gabim!",
-      description: "Ju lutem provoni perseri duke klikuar mbi kuizin ose kontaktoni Panelin e Ndihmes!"
+      description: "Ju lutem provoni perseri duke klikuar mbi kuizin ose kontaktoni Panelin e Ndihmes!",
+      theme: colorScheme
     })
 
     const handleQuizStart = async () => {

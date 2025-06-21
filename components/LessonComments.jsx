@@ -33,12 +33,14 @@ const LessonComments = ({lesson}) => {
     const {showNotification: commentMade} = NotifierComponent({
         title: "Komenti u shtua me sukses!",
         description: "Interaktiviteti mes jush krijon mesim me funksional",
+        theme: colorScheme
       });
   
     const {showNotification: commentNotMade} = NotifierComponent({
-    title: "Problem ne krijim te komentit!",
-    description: "Ju lutem provoni perseri ose kontaktoni panelin e ndihmes",
-    alertType: "warning"
+        title: "Problem ne krijim te komentit!",
+        description: "Ju lutem provoni perseri ose kontaktoni panelin e ndihmes",
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const createComment = async () => {

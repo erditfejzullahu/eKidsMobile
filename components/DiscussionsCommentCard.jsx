@@ -9,8 +9,10 @@ import * as Animatable from "react-native-animatable"
 import { createDiscussionAnswerAsync } from '../services/fetchingService'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
+import { useColorScheme } from 'nativewind'
 
 const DiscussionsCommentCard = ({item}) => {
+    const {colorScheme} = useColorScheme();
     console.log(item, ' commentcard');
     const [replyContent, setReplyContent] = useState("")
     const [openReply, setOpenReply] = useState(false)
@@ -28,13 +30,15 @@ const DiscussionsCommentCard = ({item}) => {
     const {showNotification: unsuccessComment} = NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontakotni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: threeCharUnsuccess} = NotifierComponent({
         title: "Gabim",
         description: "Shkruani replikim me te gjate se 3 karaktere",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const makeReplyComment = async () => {

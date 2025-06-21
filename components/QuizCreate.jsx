@@ -7,8 +7,12 @@ import CustomModal from './Modal'
 import { reqCreateQuiz } from '../services/fetchingService'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
+import { useShadowStyles } from '../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
+    const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     const [quizParents, setQuizParents] = useState([1])
     const [quizForm, setQuizForm] = useState({})
     const [showModal, setShowModal] = useState([])
@@ -23,19 +27,22 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
     // Notification handlers
     const {showNotification: successQuiz} = NotifierComponent({
         title: "Kuizi u krijua me sukes!",
-        description: "Sapo krijuat kursin tuaj me sukses! Ecurine mund ta percillni tek pjesa e navigimit; 'Kuizet e mia'"
+        description: "Sapo krijuat kursin tuaj me sukses! Ecurine mund ta percillni tek pjesa e navigimit; 'Kuizet e mia'",
+        theme: colorScheme
     })
 
     const {showNotification: failedQuiz} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Dicka shkoi gabim ne krijimin e kursit tuaj! Nese problemi vazhdon kontaktoni Panelin e ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: validationError} = NotifierComponent({
         title: "Plotesoni te gjitha fushat!",
         description: "Ju lutem plotesoni te gjitha fushat e kerkuara per te krijuar kuizin!",
-        alertType: "error"
+        alertType: "error",
+        theme: colorScheme
     })
 
     // Validate the entire quiz form
@@ -290,7 +297,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         <>
             <View className="">
                 {quizParents.map((item, index) => (
-                    <View key={`parent_${item}`} className="mt-4 border-b border-black-200 pb-5" style={styles.box}>
+                    <View key={`parent_${item}`} className="mt-4 border-b border-gray-200 dark:border-black-200 pb-5" style={shadowStyle}>
                         {/* Question Title */}
                         <View className="">
                             <FormField 
@@ -313,7 +320,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                                 onPress={() => setShowModal({ ...showModal, [item]: true })}
                                 className={`w-auto max-w-[200px] ml-auto -mb-8 ${shouldShowError(`quiz_parent_${item}_type`) ? "border border-red-500 rounded-[5px]" : ""}`}
                             >
-                                <Text className={`text-white p-4 py-2 rounded-[5px] text-center font-pregular text-sm ${shouldShowError(`quiz_parent_${item}_type`) ? "bg-red-500/20" : "bg-secondary"}`}>
+                                <Text className={`text-white p-4 py-2 border dark:border-0 border-white rounded-[5px] text-center font-pregular text-sm ${shouldShowError(`quiz_parent_${item}_type`) ? "bg-red-500/20" : "bg-secondary"}`}>
                                     {quizForm[`quiz_parent_${item}_type`] === "single" ? "Nje pergjigje te sakte" : 
                                      quizForm[`quiz_parent_${item}_type`] === "multiple" ? "Me shume se nje pergjigjje e sakte" : 
                                      quizForm[`quiz_parent_${item}_type`] === "textual" ? "Pergjigjje tekstuale (Lerini Fushat Zbrazet)" : 
@@ -333,7 +340,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                                 showButtons={false}
                             >
                                 <View>
-                                    <Text className="text-white font-pregular text-sm text-center my-2">
+                                    <Text className="text-oBlack dark:text-white font-pregular text-sm text-center my-2">
                                         Nga zgjedhja e meposhtme ju vendosni se si do duket dhe do veprohet ne pyetesorin/kuizin tuaj.
                                     </Text>
                                 </View>
@@ -341,7 +348,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                                     {["single", "multiple", "textual"].map(type => (
                                         <View key={type}>
                                             <TouchableOpacity 
-                                                className="bg-secondary rounded-[5px] p-4 py-2 flex-row items-center justify-center gap-2" 
+                                                className="bg-secondary rounded-none dark:rounded-[5px] border dark:border-0 border-white p-4 py-2 flex-row items-center justify-center gap-2" 
                                                 onPress={() => setQuizType(item, type)}
                                             >
                                                 <Text className="text-white font-pregular text-sm">
@@ -360,9 +367,9 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                                         </View>
                                     ))}
                                 </View>
-                                <View className="pt-4 border-t border-black-200 w-full">
+                                <View className="pt-4 border-t border-white dark:border-black-200 w-full">
                                     <TouchableOpacity 
-                                        className="bg-secondary rounded-[5px] p-4 py-2 flex-row items-center justify-center" 
+                                        className="bg-secondary rounded-none border dark:border-0 border-white dark:rounded-[5px] p-4 py-2 flex-row items-center justify-center" 
                                         onPress={() => setShowModal(prev => ({ ...prev, [item]: false }))}
                                     >
                                         <Text className="text-white font-pregular text-sm">Mendohuni me shume!</Text>
@@ -428,7 +435,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                             {index === quizParents.length - 1 && (
                                 <View className="flex-1 items-center justify-center">
                                     <TouchableOpacity onPress={handleQuestionAdd}>
-                                        <Text className="text-white font-pregular text-sm bg-oBlack rounded-[5px] p-6 py-2">
+                                        <Text className="text-white font-pregular border dark:border-0 border-gray-200 text-sm bg-oBlack rounded-[5px] p-6 py-2">
                                             Shto pyetje
                                         </Text>
                                     </TouchableOpacity>
@@ -438,7 +445,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
                             {/* Add Answer Button */}
                             <View className="flex-1 items-center justify-center">
                                 <TouchableOpacity onPress={() => handleAnswerAdd(item)}>
-                                    <Text className="text-white font-pregular text-sm bg-secondary p-6 py-2 rounded-[5px]">
+                                    <Text className="text-white font-pregular border dark:border-0 border-white text-sm bg-secondary p-6 py-2 rounded-[5px]">
                                         Shto pergjigjje
                                     </Text>
                                 </TouchableOpacity>

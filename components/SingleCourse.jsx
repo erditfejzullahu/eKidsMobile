@@ -8,8 +8,10 @@ import NotifierComponent from './NotifierComponent';
 import { bookmarkStatus, startCourseProgress, deleteBookmark, makeBookmark } from '../services/fetchingService';
 import { currentUserID } from '../services/authService';
 import CustomModal from './Modal';
+import { useColorScheme } from 'nativewind';
 
 const SingleCourse = ({course}) => {
+    const {colorScheme} = useColorScheme();
     const [toggleContent, setToggleContent] = useState(false)
     const [courseData, setCourseData] = useState(null)
     const [isBookmarked, setIsBookmarked] = useState(false)
@@ -26,11 +28,13 @@ const SingleCourse = ({course}) => {
         title: "Shfletim me sukses",
         description: `Detajet per ecurine tuaj mbi ${courseData?.courseName} mund t'i gjeni tek profili juaj!`,
         alertType: "success",
+        theme: colorScheme
     })
     const {showNotification: errorNotification } = NotifierComponent({
         title: "Pengese ne shfletimin e kursit",
         description: "Ju lutem provoni perseri ose kontaktoni Panelin e Ndihmes",
-        alertType: "error"
+        alertType: "error",
+        theme: colorScheme
     })
 
     const startCourse = async () => {

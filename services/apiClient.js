@@ -24,7 +24,7 @@ apiClient.interceptors.request.use(
 const {showNotification} = NotifierComponent({
     title: "Sesioni juaj ka mbaruar!",
     alertType: "error",
-    description: "Ju lutem kyçuni përsëri"
+    description: "Ju lutem kyçuni përsëri",
 })
 
 let requestCounter = 0;

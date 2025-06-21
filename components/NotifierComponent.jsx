@@ -3,7 +3,8 @@ import React from 'react'
 import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
 import { icons } from '../constants';
 
-const NotifierComponent = ({title, description, alertType = "success", onHideFunc = null, customImage = null}) => {
+const NotifierComponent = ({title, description, alertType = "success", onHideFunc = null, customImage = null, theme = 'dark'}) => {
+    //theme can be dark or light
     const showNotification = () => {
         let imageSource;
 
@@ -25,9 +26,9 @@ const NotifierComponent = ({title, description, alertType = "success", onHideFun
             componentProps: {
                 maxDescriptionLines: customImage ? 2 : undefined,
                 alertType: alertType, // Can also be 'error' "warning" or 'info'
-                titleStyle: { color: '#fff', fontFamily: "Poppins-SemiBold" }, 
-                descriptionStyle: { color: '#9ca3af', fontFamily: "Poppins-Light" },
-                containerStyle: { backgroundColor: '#161622' },
+                titleStyle: { color: theme === "dark" ? '#fff' : "#13131a", fontFamily: "Poppins-SemiBold" }, 
+                descriptionStyle: { color: theme === "dark" ? '#9ca3af' : "#4b5563", fontFamily: "Poppins-Light" },
+                containerStyle: { backgroundColor: theme === "dark" ? '#161622' : "#f8f5f2"},
                 imageSource: imageSource,
                 imageStyle: {
                     tintColor: '#ff9c01',

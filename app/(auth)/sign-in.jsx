@@ -17,8 +17,9 @@ import { loginUserSchema } from '../../schemas/registerUserSchema'
 import Loading from '../../components/Loading'
 import { useNavigation } from 'expo-router'
 import { CommonActions } from '@react-navigation/native'
-
+import { useColorScheme } from 'nativewind'
 const SignIn = () => {
+  const {colorScheme} = useColorScheme();
   const navigation = useNavigation();
   const styles = StyleSheet.create({
     container: {
@@ -44,18 +45,15 @@ const SignIn = () => {
   }
 
   const {showNotification} = NotifierComponent({
-    title: "Sapo u identifikuat me sukses"
-  })
-
-  const {showNotification: alertNotification} = NotifierComponent({
-    alertType: "warning",
-    title: "Ju lutem mbushni të fushat e kërkuara!"
+    title: "Sapo u identifikuat me sukses",
+    theme: colorScheme
   })
 
   const {showNotification: error} = NotifierComponent({
     alertType: "warning",
     title: "Gabim",
-    description: "Dicka shkoi gabim, ju lutem provoni perseri!"
+    description: "Dicka shkoi gabim, ju lutem provoni perseri!",
+    theme: colorScheme
   })
 
   const {control, reset, formState: {errors, isSubmitting}, handleSubmit} = useForm({
@@ -101,7 +99,7 @@ const SignIn = () => {
   
 if(isRefreshing) return <Loading />
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary-light dark:bg-primary h-full">
       <KeyboardAwareScrollView style={styles.container}
         refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -114,7 +112,7 @@ if(isRefreshing) return <Loading />
             source={images.logoNew}
             resizeMode='contain' className="h-[100px]"
           />
-          <Text className="text-white font-psemibold text-xl mt-4 text-center">Kyçuni tek Shoku juaj i Mësimit</Text>
+          <Text className="text-oBlack dark:text-white font-psemibold text-xl mt-4 text-center">Kyçuni tek Shoku juaj i Mësimit</Text>
           <View className="gap-3 mt-6">
             <View>
               <Controller 
@@ -130,7 +128,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Emaili juaj i verifikuar apo emri i perdoruesit. <Text className="text-secondary">Jo EMRI/MBIEMRI JUAJ!</Text></Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Emaili juaj i verifikuar apo emri i perdoruesit. <Text className="text-secondary">Jo EMRI/MBIEMRI JUAJ!</Text></Text>
               {errors.email && (
                 <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
               )}
@@ -148,7 +146,7 @@ if(isRefreshing) return <Loading />
                   />
                 )}
               />
-              <Text className="text-xs text-gray-400 font-plight mt-1">Fjalekalimi juaj.</Text>
+              <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Fjalekalimi juaj.</Text>
               {errors.password && (
                 <Text className="text-red-500 text-xs font-plight">{errors.password.message}</Text>
               )}
@@ -162,13 +160,16 @@ if(isRefreshing) return <Loading />
             </View>
           </View>
           <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg text-gray-100 font-pregular">
+            <Text className="text-lg text-gray-700 dark:text-gray-100 font-pregular">
               Nuk keni llogari?
             </Text>
             <Link href="/sign-up" className="text-lg font-semibold text-secondary">Regjistrohuni</Link>
           </View>
-          <View>
-            <Link href="/forgot-password" className="text-secondary font-semibold text-center underline">Keni harruar fjalekalimin?</Link>
+          <View className="flex-row items-center gap-1.5 justify-center flex-wrap">
+            <Text className="text-lg text-gray-700 dark:text-gray-100 font-pregular">
+              Keni harruar fjalekalimin?
+            </Text>
+            <Link href="/forgot-password" className="text-lg font-semibold text-secondary">Ridrejtohu</Link>
           </View>
 
         </View>

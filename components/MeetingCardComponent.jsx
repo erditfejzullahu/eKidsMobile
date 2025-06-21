@@ -7,8 +7,10 @@ import { useNavigation } from 'expo-router';
 import { useRouter } from 'expo-router';
 import NotifierComponent from './NotifierComponent';
 import CountdownTimer from "./CountdownTimer"
+import { useColorScheme } from 'nativewind';
 
 const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = false, userActiveUpcomingMeetingsSection = false}) => {
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const navigation = useNavigation();
     const [showDetails, setShowDetails] = useState(false)
@@ -59,7 +61,8 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
     const {showNotification: editNotification} = NotifierComponent({
         title: "Gabim!",
         description: "Per shkak qe statusi i takimit nuk eshte ne kohen e ardhshme, ky takim nuk mund te perditesohet!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const editPress = () => {

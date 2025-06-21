@@ -21,8 +21,10 @@ import Loading from '../../../components/Loading'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
+import { useColorScheme } from 'nativewind'
 
 const AddScheduleMeeting = () => {
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {role, isLoading: roleLoading} = useRole();
   useEffect(() => {
@@ -149,24 +151,28 @@ const AddScheduleMeeting = () => {
   const {showNotification: pickCourse} = NotifierComponent({
     title: "Gabim",
     description: "Zgjidhni takim pa permbajtje nese deshironi te mos selektoni kurs!",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const {showNotification: pickLesson} = NotifierComponent({
     title: "Gabim",
     description: "Zgjidhni leksion i lire nese deshironi te mos selektoni leksion!",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const {showNotification: errorMeeting} = NotifierComponent({
     title: "Gabim",
     description: "Dicka shkoi gabim ne krijimin e mledhjes online. Ju lutem provoni perseri!",
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const {showNotification: success} = NotifierComponent({
     title: "Sukses",
     description: "Sapo krijuat takimin online me sukses. Per te shikuar informacionet e takimeve tuaja online, drejtohuni tek Profili!",
+    theme: colorScheme
   })
 
   const onSubmit = async (data) => {

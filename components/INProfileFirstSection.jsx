@@ -5,9 +5,10 @@ import { useRole } from '../navigation/RoleProvider'
 import * as ImagePicker from "expo-image-picker"
 import { updateProfilePicture } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
-
+import { useColorScheme } from 'nativewind'
 
 const INProfileFirstSection = ({data}) => {
+  const {colorScheme} = useColorScheme();
     const {role} = useRole();
     const [userData, setUserData] = useState(data)    
     const [imageChoosen, setImageChoosen] = useState({
@@ -19,7 +20,8 @@ const INProfileFirstSection = ({data}) => {
     const {showNotification: requestPermission} = NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Na nevojitet akses ne librarine e fotove tuaja.",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
       })
 
     const uploadPicture = async () => {
@@ -49,11 +51,13 @@ const INProfileFirstSection = ({data}) => {
     const {showNotification: updateFailed} = NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
       })
     
       const {showNotification: profileUpdateSuccess} = NotifierComponent({
-        title: "Fotoja juaj e profilit u perditesua me sukses!"
+        title: "Fotoja juaj e profilit u perditesua me sukses!",
+        theme: colorScheme
       }) 
 
     const changeProfilePicture = async (base64Data) => {

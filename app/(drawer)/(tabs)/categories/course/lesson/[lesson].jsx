@@ -97,13 +97,15 @@ const lessonContent = () => {
 
     const {showNotification: completedLesson} = NotifierComponent({
       title: "Sapo perfunduat me sukses leksionin!",
-      description: "Tani do te drejtoheni tek leksioni tjeter ne vijim..."
+      description: "Tani do te drejtoheni tek leksioni tjeter ne vijim...",
+      theme: colorScheme
     })
 
     const {showNotification: errorLesson} = NotifierComponent({
       title: "Dicka shkoi gabim!",
       description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-      alertType: "warning"
+      alertType: "warning",
+      theme: colorScheme
     })
 
     

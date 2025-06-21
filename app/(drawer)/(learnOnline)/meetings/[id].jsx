@@ -17,8 +17,10 @@ import FullscreenWebViewModal from '../../../../components/FullscreenWebViewModa
 import { useRouter } from 'expo-router'
 import { useNavigateToSupport } from '../../../../hooks/goToSupportType'
 import ShareToFriends from '../../../../components/ShareToFriends'
+import { useColorScheme } from 'nativewind'
 
 const Meetings = () => {
+  const {colorScheme} = useColorScheme();
   const {id} = useLocalSearchParams();
   const {user, isLoading: userLoading} = useGlobalContext();
   const router = useRouter();
@@ -166,13 +168,15 @@ const Meetings = () => {
 
   const {showNotification: success} = NotifierComponent({
     title: "Sukses",
-    description: `Ju tani mund te kyceni ne te gjithe permbajtjen e instruktorit ${meetingData?.instructor}`
+    description: `Ju tani mund te kyceni ne te gjithe permbajtjen e instruktorit ${meetingData?.instructor}`,
+    theme: colorScheme
   })
 
   const {showNotification: failed} = NotifierComponent({
     title: "Gabim",
     description: `Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes`,
-    alertType: "warning"
+    alertType: "warning",
+    theme: colorScheme
   })
 
   const becomeStudentOfInstructor = async () => {

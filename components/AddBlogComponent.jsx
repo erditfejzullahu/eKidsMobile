@@ -12,9 +12,10 @@ import NotifierComponent from './NotifierComponent'
 import useFetchFunction from "../hooks/useFetchFunction"
 import _, { flatMap, flatten, flattenDeep, noop } from 'lodash'
 import FullScreenImage from './FullScreenImage'
+import { useColorScheme } from 'nativewind'
 
 const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
-
+    const {colorScheme} = useColorScheme();
     //tagsselected is select by click from all tags,
     //outputtags is written
 
@@ -156,29 +157,34 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
 
     const {showNotification: successNotification} = NotifierComponent({
         title: "Blogu i postua me sukses",
-        description: "Per te pare postimet e tua mund te drejtoheni tek pjesa e profilit!"
+        description: "Per te pare postimet e tua mund te drejtoheni tek pjesa e profilit!",
+        theme: colorScheme
     })
 
     const {showNotification: failedNotification} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri ne krijimin e postimit tuaj apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })   
 
     const {showNotification: titleContentError} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem mbushni titullin dhe permbajtjen e blogut",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })   
     const {showNotification: tagsSelectedError} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem zgjidhni nje ose me shume etiketime, apo krijoni tuajat",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })   
     const {showNotification: outputTagsError} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem shkruani nje ose me shume etiketime, apo zgjidhni nga egzistueset",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })   
 
     const createBlog = async () => {

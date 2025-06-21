@@ -54,13 +54,15 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
 
     const {showNotification: successShare} = NotifierComponent({
         title: `Sapo derguat ${outputText()} me sukses`,
-        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!"
+        description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!",
+        theme: colorScheme
     })
 
     const {showNotification: errorShare} = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
     
     const shareToUser = async (receiverUser) => {       

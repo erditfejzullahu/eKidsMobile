@@ -10,9 +10,10 @@ import NotifierComponent from './NotifierComponent'
 import useFetchFunction from '../hooks/useFetchFunction'
 import Loading from './Loading'
 import { ContributionGraph } from 'react-native-chart-kit'
+import { useColorScheme } from 'nativewind'
 
 const ShowOtherDetailsProfile = ({userId}) => {
-
+    const {colorScheme} = useColorScheme();
     const {data, isLoading, refetch} = useFetchFunction(() => getUserOtherInformations(userId))
     const [userOtherData, setUserOtherData] = useState({})
     const [commitmentSection, setCommitmentSection] = useState(false)
@@ -290,18 +291,21 @@ const ShowOtherDetailsProfile = ({userId}) => {
     }
 
     const {showNotification: successUpdate} = NotifierComponent({
-        title: "Sapo perditesuat te dhenat tuaja me sukses!"
+        title: "Sapo perditesuat te dhenat tuaja me sukses!",
+        theme: colorScheme
     })
 
     const {showNotification: unsuccessfulUpdate} = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const {showNotification: fillFields} = NotifierComponent({
         title: "Ju lutem mbushini te gjitha fushat!",
-        alertType: "warning"
+        alertType: "warning",
+        theme: colorScheme
     })
 
     const [showInformationStepTick, setShowInformationStepTick] = useState({
@@ -707,7 +711,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                             onValueChange={(e) => arrangeData(e, 'niveli', index)}
                                             placeholder={{ label: "Zhgjidhni nivelin shkollor", value: '' }}
                                             style={[pickerSelectStyles, {width: widthForModal, height:180}]}
-                                            itemStyle={{color: "#fff", fontFamily: "Poppins-Regular"}}
+                                            itemStyle={{color: colorScheme === "dark" ? "#fff" : "#13131a", fontFamily: "Poppins-Regular"}}
                                         >
                                             <Picker.Item key={1} label='Shkolla Fillore' value='1'/>
                                             <Picker.Item key={2} label='Shkolla E Mesme' value='2'/>
