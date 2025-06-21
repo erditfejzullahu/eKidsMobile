@@ -1,8 +1,8 @@
 import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback,StyleSheet, Platform } from 'react-native'
 import React, { useEffect } from 'react'
-
+import { useShadowStyles } from '../hooks/useShadowStyles'
 const CustomModal = ({visible, onClose, onProcced, title, children, proceedButtonText, cancelButtonText, showButtons = true, autoCloseDuration = null, onlyProceedButton = false, onlyCancelButton = false}) => {
-
+    const {shadowStyle} = useShadowStyles();
     useEffect(() => {
       if(visible && autoCloseDuration){
         const timeout = setTimeout(() => {
@@ -21,9 +21,9 @@ const CustomModal = ({visible, onClose, onProcced, title, children, proceedButto
         onRequestClose={onClose}
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-            <View style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[80%] items-center">
+            <View style={shadowStyle} className="bg-primary-light dark:bg-primary p-4 dark:rounded-[5px] border border-gray-200 dark:border-black-200 w-[80%] items-center">
                 <View className="w-full items-center">
-                    <Text className="font-pbold text-xl text-white mb-2 border-b border-secondary">{title}</Text>
+                    <Text className="font-pbold text-xl text-oBlack dark:text-white mb-2 border-b border-secondary">{title}</Text>
                 </View>
                 <View className="w-full items-center">
                     {children}
@@ -32,7 +32,7 @@ const CustomModal = ({visible, onClose, onProcced, title, children, proceedButto
                     {!onlyCancelButton && <View>
                         <TouchableOpacity 
                             onPress={onProcced}
-                            className="bg-secondary p-1.5 px-2.5 rounded-[5px]"
+                            className="bg-secondary p-1.5 px-2.5 border border-gray-200 dark:border-0 dark:rounded-[5px]"
                         >
                             <Text className="text-white text-sm font-pregular">{proceedButtonText}</Text>
                         </TouchableOpacity>
@@ -40,7 +40,7 @@ const CustomModal = ({visible, onClose, onProcced, title, children, proceedButto
                     {!onlyProceedButton && <View>
                         <TouchableOpacity 
                             onPress={onClose}
-                            className=" bg-secondary p-1.5 px-2.5 rounded-[5px]"
+                            className=" bg-secondary p-1.5 px-2.5 border border-white dark:border-0 dark:rounded-[5px]"
                         >
                             <Text className="text-white text-sm font-pregular">{cancelButtonText}</Text>
                         </TouchableOpacity>

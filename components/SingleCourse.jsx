@@ -129,23 +129,23 @@ const SingleCourse = ({course}) => {
                 </TouchableOpacity>
             </View>
         </View>
-        <View className="flex-row border-t border-b border-black-200" style={{backgroundColor: "#13131a"}}>
-            <View className="flex-1 items-center py-2 border-r border-black-200">
-                <Text className="text-xs text-white font-pregular">Autori:</Text>
-                <Text className="text-sm text-secondary font-pblack">Anonim</Text>
+        <View className="flex-row border-t bg-primary-light dark:bg-oBlack border-b border-white dark:border-black-200">
+            <View className="flex-1 items-center py-2 border-r border-white dark:border-black-200">
+                <Text className="text-xs text-oBlack dark:text-white font-pregular">Autori:</Text>
+                <Text className="text-sm text-secondary font-pbold">Anonim</Text>
             </View>
             <View className="flex-1 items-center py-2">
-                <Text className="text-xs text-white font-pregular">Data e leshimit:</Text>
-                <Text className="text-sm text-secondary font-pblack">{formattedDate}</Text>
+                <Text className="text-xs text-oBlack dark:text-white font-pregular">Data e leshimit:</Text>
+                <Text className="text-sm text-secondary font-pbold">{formattedDate}</Text>
             </View>
         </View>
 
         <View className="flex-row w-full relative">
             <View className="w-full flex-row justify-between items-center">
-                <View className="bg-primary p-4 max-w-[70%]">
-                    <Text className="text-white text-xl font-pregular w-max"  numberOfLines={2} >{courseData?.courseName}</Text>
+                <View className="bg-primary-light dark:bg-primary p-4 max-w-[70%]">
+                    <Text className="text-oBlack dark:text-white text-xl font-pregular w-max"  numberOfLines={2} >{courseData?.courseName}</Text>
                 </View>
-                <View className="p-4 bg-primary max-w-[30%] justify-end items-start">
+                <View className="p-4 bg-primary-light dark:bg-primary max-w-[30%] justify-end items-start">
                     <View className="w-max">
                         <TouchableOpacity
                             onPress={startCourse}
@@ -156,7 +156,7 @@ const SingleCourse = ({course}) => {
                                 easing="ease-in-out" 
                                 source={icons.play}
                                 resizeMode='contain'
-                                className="h-12 w-12 border-2 border-black-200 rounded-full "
+                                className="h-12 w-12 border-2 border-white dark:border-black-200 rounded-full "
                                 style={{tintColor: "#ff9c01"}}
                             />
                         </TouchableOpacity>
@@ -168,15 +168,15 @@ const SingleCourse = ({course}) => {
             </View>
         </View>
 
-        <View className="w-full bg-oBlack">
-            <View className={`justify-between relative  p-4 border-t border-black-200 ${ !toggleContent ? "border-b " : ""}`}>
+        <View className="w-full bg-oBlack-light dark:bg-oBlack">
+            <View className={`justify-between relative  p-4 border-t border-white dark:border-black-200 ${ !toggleContent ? "border-b " : ""}`}>
             {toggleContent && <View className="absolute border-b border-black-200 w-[100%] ml-4 bottom-0 justify-center items-center" />}
                 <TouchableOpacity
                     className="flex-row items-center justify-between"
                     onPress={() => setToggleContent(!toggleContent)}
                 >
                     <View>
-                        <Text className="text-white font-pregular text-lg ">Permbajtja</Text>
+                        <Text className="text-oBlack dark:text-white font-pregular text-lg ">Permbajtja</Text>
                     </View>
                     <View>
                         <Image 
@@ -189,18 +189,18 @@ const SingleCourse = ({course}) => {
                 </TouchableOpacity>
             </View>
 
-            <View>
+            <View className={`${toggleContent ? "border-b border-white dark:border-black-200" : ""}`}>
                 {toggleContent && courseData.lessons.map((lessonItem, index) => (
               <View
                 className="p-2 my-2 relative justify-between flex-row items-center z-10"
                 key={index}>
                     <View className="max-w-[60%]">
-                        <View className="flex-row items-center justify-start bg-oBlack">
-                            <Text className="text-secondary text-base font-pregular text-right min-w-[20px] bg-oBlack">{index + 1}.</Text><Text className="text-white px-2 bg-oBlack font-psemibold text-lg w-full" numberOfLines={1}>{lessonItem.lessonName}{lessonItem.lessonName}{lessonItem.lessonName}{lessonItem.lessonName}</Text>
+                        <View className="flex-row items-center justify-start bg-oBlack-light dark:bg-oBlack">
+                            <Text className="text-secondary text-base font-pregular text-right min-w-[20px] bg-oBlack-light dark:bg-oBlack">{index + 1}.</Text><Text className="text-oBlack dark:text-white px-2 bg-oBlack-light dark:bg-oBlack font-psemibold text-lg w-full" numberOfLines={1}>{lessonItem.lessonName}</Text>
                         </View>
                     </View>
                 
-                <View className="flex-row gap-2 bg-oBlack pr-2">
+                <View className="flex-row gap-2 border dark:border-0 border-white bg-gray-200 p-2 rounded-md dark:p-0 dark:rounded-none dark:bg-oBlack pr-2">
                     <View>
                         <TouchableOpacity onPress={() => showModal(lessonItem, 'video')}>
                             <Animatable.Image
@@ -251,15 +251,15 @@ const SingleCourse = ({course}) => {
             </View>
         </View>
         <View className="w-full p-4">
-            <Text className="text-gray-400 text-xs font-plight">Aplikoni per poziten e <Link href="/add-quiz" className="text-secondary font-pmedium underline">Pionerit</Link> duke shtuar materiale/kuize mesimore dhe perfitoni nga angazhimet e studenteve tone!</Text>
-            <Text className="text-gray-400 text-xs font-plight mt-4">Per cdo pacartesi apo raportim te materialeve ose problemeve kontaktoni <Link href="/" className="text-secondary font-pmedium underline">Panelin e Ndihmes</Link> apo <Link className="text-secondary font-pmedium underline" href="/">Raporto Problemin</Link></Text>
+            <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Aplikoni per poziten e <Link href="/add-quiz" className="text-secondary font-pmedium underline">Pionerit</Link> duke shtuar materiale/kuize mesimore dhe perfitoni nga angazhimet e studenteve tone!</Text>
+            <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight mt-4">Per cdo pacartesi apo raportim te materialeve ose problemeve kontaktoni <Link href="/support?type=support" className="text-secondary font-pmedium underline">Panelin e Ndihmes</Link> apo <Link className="text-secondary font-pmedium underline" href="/support?type=report">Raporto Problemin</Link></Text>
         </View>
 
         <CustomModal
             visible={modalVisible.visibility}
             onClose={() => setModalVisible({visibility: false, type: null, lessonName: null})}
             showButtons={true}
-            autoCloseDuration={4000}
+            // autoCloseDuration={4000}
             title={"Informacione shtese!"}
             cancelButtonText={"Largo dritaren"}
             proceedButtonText={"Vazhdo me veprimin"}
@@ -267,15 +267,15 @@ const SingleCourse = ({course}) => {
         >   
             {modalVisible.type === 'video' 
                 ? (
-                    <Text className="text-white font-plight text-sm text-center">
+                    <Text className="text-oBlack dark:text-white font-plight text-sm text-center">
                         Gjate vijushmerise suaj ne leksionin <Text className="text-secondary font-psemibold">{modalVisible.lessonName}</Text>, do keni permbajtje visuale!
                     </Text>
                 ) : modalVisible.type === 'textual' ? (
-                    <Text className="text-white font-plight text-sm text-center">
+                    <Text className="text-oBlack dark:text-white font-plight text-sm text-center">
                         Gjate vijushmerise suaj ne leksionin <Text className="text-secondary font-psemibold">{modalVisible.lessonName}</Text>, do keni permbajtje tekstuale!
                     </Text>
                 ) : modalVisible.type === 'quiz' ? (
-                    <Text className="text-white font-plight text-sm text-center">
+                    <Text className="text-oBlack dark:text-white font-plight text-sm text-center">
                         Gjate vijushmerise suaj ne leksionin <Text className="text-secondary font-psemibold">{modalVisible.lessonName}</Text>, do keni testime pas intervaleve te caktuara te progresit tuaj!
                     </Text>
                 ) : null

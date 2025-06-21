@@ -2,7 +2,7 @@ import { View, Text, ScrollView, RefreshControl, Image, TouchableOpacity, FlatLi
 import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { useLocalSearchParams, useRouter, useSegments, usePathname, useFocusEffect } from 'expo-router';
 import useFetchFunction from '../../../../../../hooks/useFetchFunction';
-import { deleteBookmark, fetchLesson, getLessonComments, getUserCourseStatus, makeBookmark, reqCreateComment, reqCreateLessonLike, reqCreateLike, reqCreateReply, updateUserLessonStatus } from '../../../../../../services/fetchingService';
+import { fetchLesson, getUserCourseStatus, reqCreateLessonLike, updateUserLessonStatus } from '../../../../../../services/fetchingService';
 import Loading from '../../../../../../components/Loading';
 import { images, icons } from '../../../../../../constants';
 import ClockComponent from '../../../../../../components/ClockComponent';
@@ -30,11 +30,15 @@ import LessonInteractions from '../../../../../../components/LessonInteractions'
 import LessonComments from '../../../../../../components/LessonComments';
 import { useLessonCommentsContext } from '../../../../../../context/LessonCommentsProvider';
 import LessonVideoContent from '../../../../../../components/LessonVideoContent';
-
+import { useShadowStyles } from '../../../../../../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 const lessonContent = () => {
     const { lesson } = useLocalSearchParams(); 
     const {user} = useGlobalContext();
     const {width} = useWindowDimensions();
+
+    const {shadowStyle} = useShadowStyles();
+    const {colorScheme} = useColorScheme();
 
     const {updateCourseData, drawerItemLoading: loading}  = useDrawerUpdater();
     const {setHideHalfVideo, hideHalfVideo} = useLessonCommentsContext();
@@ -301,7 +305,7 @@ const lessonContent = () => {
     }
 
     
-    
+    //TODO: FIX PLAYER ERROR WHEN LEAVE SCREEN AND STUFF.
 
     
     if(isLoading || refreshing){
@@ -312,10 +316,10 @@ const lessonContent = () => {
       return (
         <>
         {/* absolute */}
-        <View className="absolute bottom-0  bg-primary border-t border-black-200 border-l border-r right-0 w-full z-20">
+        <View className="absolute bottom-0  bg-primary-light dark:bg-primary border-t border-gray-200 dark:border-black-200 border-l border-r right-0 w-full z-20">
           <View className="flex-1 flex-row items-center justify-center">
-            {lessonData?.navigation?.hasPreviousLesson && <TouchableOpacity onPress={goLessonBack} className="flex-1 items-center h-14 border-r border-black-200"><View className="items-center justify-center flex-1 ">
-              <Text className="text-white text-base font-psemibold">Mbrapa</Text>
+            {lessonData?.navigation?.hasPreviousLesson && <TouchableOpacity onPress={goLessonBack} className="flex-1 items-center h-14 border-r border-gray-200 dark:border-black-200"><View className="items-center justify-center flex-1 ">
+              <Text className="text-oBlack dark:text-white text-base font-psemibold">Mbrapa</Text>
             </View></TouchableOpacity>}
               <TouchableOpacity onPress={goLessonFront} className="flex-1 items-center h-14">
 
@@ -332,12 +336,12 @@ const lessonContent = () => {
         <View className="flex-1 flex-col">
           <View className={`${hideHalfVideo ? "max-h-[200px]" : ""}`}>
             <View className="flex-row w-full">
-              <View className="flex-[0.5] border border-l-0 border-b border-black-200 p-2 py-3 items-center justify-center bg-oBlack">
-                <Text className="text-white font-pregular text-sm text-center">{formattedDate}</Text>
+              <View className="flex-[0.5] border border-l-0 border-b border-gray-200 dark:border-black-200 p-2 py-3 items-center justify-center bg-oBlack-light dark:bg-oBlack">
+                <Text className="text-oBlack dark:text-white font-pregular text-sm text-center">{formattedDate}</Text>
               </View>
               <LessonTitle lessonData={lessonData}/>
-              <View className="flex-[0.5] border border-r-0 border-b border-black-200 p-2 py-3 items-center justify-center bg-oBlack">
-                <Text className="text-white font-pregular text-sm text-center"><ClockComponent onTimeChange={timeChange}/></Text>
+              <View className="flex-[0.5] border border-r-0 border-b border-gray-200 dark:border-black-200 p-2 py-3 items-center justify-center bg-oBlack-light dark:bg-oBlack">
+                <Text className="text-oBlack dark:text-white font-pregular text-sm text-center"><ClockComponent onTimeChange={timeChange}/></Text>
               </View>
             </View>
             

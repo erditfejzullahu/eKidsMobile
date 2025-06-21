@@ -9,8 +9,10 @@ import { Image, RefreshControl, TextInput, TouchableOpacity, View } from 'react-
 import { icons } from '../constants'
 import EmptyState from './EmptyState'
 import { useLessonCommentsContext } from '../context/LessonCommentsProvider'
+import { useColorScheme } from 'nativewind'
 
 const LessonComments = ({lesson}) => {
+    const {colorScheme} = useColorScheme();
     const [commentData, setCommentData] = useState([])
     const [refreshing, setRefreshing] = useState(false)
     const flatListRef = useRef(null)
@@ -187,7 +189,7 @@ const LessonComments = ({lesson}) => {
                   source={hasCrossed ? icons.upArrow : icons.downArrow}
                   className=' h-6 w-6'
                   resizeMode='contain'
-                  tintColor={"#FF9C01"}
+                  tintColor={colorScheme === "dark" ? "#FF9C01" : "#000"}
                 />
               </TouchableOpacity>
             {/* butoni per top edhe bottom */}
@@ -212,12 +214,12 @@ const LessonComments = ({lesson}) => {
              scrollEventThrottle={16}
             onEndReached={loadMoreComments}
             onEndReachedThreshold={0.1}
-            className="h-full bg-primary w-full"
+            className="h-full bg-primary-light dark:bg-primary w-full"
             refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
             ListFooterComponent={() => (
             <>
-            <View className="border-t border-b flex-row justify-center items-center gap-2 p-2 py-4 bg-oBlack border-black-200 flex-1 -mt-4 mb-[50px]">
-            <View className="flex-[0.2] items-center justify-center h-full bg-primary border border-black-200 rounded-[10px]">
+            <View className="border-t border-b flex-row justify-center items-center gap-2 p-2 py-4 bg-oBlack-light dark:bg-oBlack border-gray-200 dark:border-black-200 flex-1 -mt-4 mb-[50px]">
+            <View className="flex-[0.2] items-center justify-center h-full bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 rounded-[10px]">
                 <View>
                 <Image 
                     source={icons.profile}
@@ -229,7 +231,7 @@ const LessonComments = ({lesson}) => {
             <View className="flex-1">
                 <TextInput
                 ref={commentValueRef}
-                className="text-white font-pregular flex-1 border border-black-200 p-4 rounded-[10px] bg-primary"
+                className="text-oBlack placeholder:text-gray-400 dark:placeholder:text-gray-700 dark:text-white font-pregular flex-1 border border-gray-200 dark:border-black-200 p-4 rounded-[10px] bg-primary-light dark:bg-primary"
                 placeholder='Shprehe mendimin tend...'
                 placeholderTextColor="rgba(255,255,255,0.2)"
                 onChangeText={text => setCommentValue(text)}

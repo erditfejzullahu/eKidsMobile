@@ -11,12 +11,13 @@ import CustomModal from './Modal';
 import LessonContent from './LessonContent';
 import NotifierComponent from './NotifierComponent';
 import { useFocusEffect } from 'expo-router';
+import { useColorScheme } from 'nativewind';
 
 const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBookmarkDelete, successBookmarkMade}) => {
     const [videoCompleted, setVideoCompleted] = useState(false)
     const [showVideo, setShowVideo] = useState(true)
     const [isChecked, setIsChecked] = useState(false)
-
+    const {colorScheme} = useColorScheme();
 
     const player = useVideoPlayer(videoContent, player => {
         if (player) {
@@ -123,13 +124,13 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
 
   return (
     <>
-    <View className="bg-oBlack p-2 border-b border-black-200 flex-row items-center justify-between ">
+    <View className="bg-oBlack-light dark:bg-oBlack p-2 border-b border-gray-200 dark:border-black-200 flex-row items-center justify-between ">
         <View className="flex-row items-center gap-1 flex-1">
-        <TouchableOpacity onPress={lessonData?.isBookmarked ? delBookmark : reqBookmark}><Text className={`text-sm ${lessonData?.isBookmarked ? "text-secondary border-secondary" : "text-white border-white"} font-psemibold border-b`}>{lessonData?.isBookmarked ? "Largo nga favoritet" : "Shto tek favoritet"}</Text></TouchableOpacity>
+        <TouchableOpacity onPress={lessonData?.isBookmarked ? () => delBookmark : () => reqBookmark}><Text className={`text-sm ${lessonData?.isBookmarked ? "text-secondary border-secondary" : "text-oBlack dark:text-white border-black-200 dark:border-white"} font-psemibold border-b`}>{lessonData?.isBookmarked ? "Largo nga favoritet" : "Shto tek favoritet"}</Text></TouchableOpacity>
         <Image 
             source={icons.heart}
             className="w-4 h-4"
-            style={{tintColor: lessonData?.isBookmarked ? "#FF9C01" : "#fff"}}
+            style={{tintColor: lessonData?.isBookmarked ? "#FF9C01" : colorScheme  === "light" ? "#000" : "#fff"}}
         />
         </View>
         <View className="flex-1">
@@ -140,7 +141,7 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
             color={isChecked ? "#ff9c01" : "#232533"}
             className="mr-2"
             />
-            <Text className="text-white text-sm font-psemibold">
+            <Text className="text-oBlack dark:text-white text-sm font-psemibold">
             Kaloni tek permbajtja
             </Text>
         </TouchableOpacity>
@@ -171,7 +172,7 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
         cancelButtonText={"Largo dritaren"}
     >
         <View className="mt-2">
-            <Text className="text-white text-sm font-plight text-center">
+            <Text className="text-oBlack dark:text-white text-sm font-plight text-center">
             {lessonData?.currentProgress?.isCompleted 
             ? <>
                 {"Materiali visual sapo perfundoj! Ju mund te shikoni nese autori ka lene permbajtje tekstuale apo mund te procedoni me tutje duke permbyllur kursin me butonin "}

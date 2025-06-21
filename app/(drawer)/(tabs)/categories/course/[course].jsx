@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import ShareToFriends from '../../../../../components/ShareToFriends';
 import { useGlobalContext } from '../../../../../context/GlobalProvider';
 
-const course = () => {
+const Course = () => {
   const router = useRouter();
   const { course } = useLocalSearchParams();
   const {data, refetch, isLoading} = useFetchFunction(() => fetchCourse(course))
@@ -98,13 +98,13 @@ const course = () => {
     return (
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
-        className="h-full bg-primary"
+        className="h-full bg-primary-light dark:bg-primary"
       >
         {!userStartedCourse ? (
           <SingleCourse course={courseData} />
           ) : (
           <View>
-            <Text className="text-white font-pregular text-base p-4">Ju keni filluar shfletimin e ketij kursi! Duke u ridrejtuar...</Text>
+            <Text className="text-oBlack dark:text-white font-pregular text-base p-4">Ju keni filluar shfletimin e ketij kursi! Duke u ridrejtuar...</Text>
           </View>
         )}
         <ShareToFriends 
@@ -117,4 +117,4 @@ const course = () => {
   }
 }
 
-export default course
+export default Course

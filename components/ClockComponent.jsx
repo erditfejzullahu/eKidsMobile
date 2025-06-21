@@ -31,7 +31,7 @@ const ClockComponent = ({ onTimeChange }) => {
 
     const formatTime = (num) => (num < 10 ? `0${num}` : num);
     
-  return <Text className="text-white font-pregular text-sm text-center">{formatTime(time.minutes)}:{formatTime(time.seconds)}</Text>
+  return <Text className="text-oBlack dark:text-white font-pregular text-sm text-center">{formatTime(time.minutes)}:{formatTime(time.seconds)}</Text>
 }
 
 export default ClockComponent

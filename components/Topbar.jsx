@@ -125,10 +125,10 @@ const Topbar = () => {
         </View>} 
 
         <View className="justify-center flex-row gap-4 items-center" style={{height:40}}>
-            {(showQuizOrCourseSharer || showInstructorCourseSharer || showInstructorSharer || showOnlineMeetingSharer) && <TouchableOpacity onPress={() => setShareOpened(!shareOpened)} className={`justify-center items-center border ${shareOpened ? "border-[#FF9C01]" : "border-[#CDCDE0]"} rounded-full`}>
+            {(showQuizOrCourseSharer || showInstructorCourseSharer || showInstructorSharer || showOnlineMeetingSharer) && <TouchableOpacity onPress={() => setShareOpened(!shareOpened)} className={`justify-center items-center dark:border ${shareOpened ? "border-[#FF9C01]" : "border-[#CDCDE0]"} dark:rounded-full`}>
                 <Image 
                     source={icons.share}
-                    className="h-6 w-6 p-1"
+                    className={`${shareOpened && colorScheme === 'light' ? "border border-secondary" : ""} ${colorScheme === 'light' ? "bg-gray-200 rounded-md p-1 h-7 w-7" : "h-6 w-6 p-1"}`}
                     resizeMode='contain'
                     tintColor={shareOpened ? "#FF9C01" : colorScheme === "light" ? "#000" : "#CDCDE0"}
                 />

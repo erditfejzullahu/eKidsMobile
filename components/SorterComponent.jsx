@@ -182,7 +182,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
         {paginationOptions.showPaginationOptions && <Animatable.View animation={"slideInLeft"} duration={500} className="flex-row flex-1">
             {/* <Text className=""></Text> */}
             {paginationOptions.pageSizeOptions.map((item, index) => (
-                <TouchableOpacity key={index} onPress={() => {setData((prev) => ({...prev, pageSize: item})); setLoadedFirst(true)}} className={`flex-1 ${colorScheme === 'dark' ? (item == sendData.pageSize ? "bg-oBlack" : "bg-primary") : (item == sendData.pageSize ? "bg-gray-200" : "bg-oBlack-light")} flex-row gap-1 justify-center p-2 border-b-0 border items-center border-black-200 ${(index === 1 || index === 2) ? "border-l-0" : ""}`}>
+                <TouchableOpacity key={index} onPress={() => {setData((prev) => ({...prev, pageSize: item})); setLoadedFirst(true)}} className={`flex-1 ${colorScheme === 'dark' ? (item == sendData.pageSize ? "bg-oBlack" : "bg-primary") : (item == sendData.pageSize ? "bg-gray-200" : "bg-oBlack-light")} flex-row gap-1 justify-center p-2 border-b-0 border items-center border-gray-200 dark:border-black-200 ${(index === 1 || index === 2) ? "border-l-0" : ""}`}>
                     <Text className="text-oBlack dark:text-white text-sm font-plight"><Text className="text-secondary">{item}</Text> artikuj</Text>
                     {item == sendData.pageSize &&  <Image 
                         source={icons.tick}
@@ -225,7 +225,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                                 
                             </View> 
                         ))}
-                        <TouchableOpacity className="border border-gray-200 dark:border-black-200 p-2" onPress={() => setPaginationOptions((prev) => ({...prev, showPaginationOptions: !prev.showPaginationOptions}))}>
+                        <TouchableOpacity className="border bg-oBlack-light dark:bg-primary border-gray-200 dark:border-black-200 p-2" onPress={() => setPaginationOptions((prev) => ({...prev, showPaginationOptions: !prev.showPaginationOptions}))}>
                             <Image 
                                 source={icons.equalizer}
                                 className="size-5"

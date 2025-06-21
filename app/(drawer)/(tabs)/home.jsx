@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList, Image, RefreshControl, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, FlatList, Image, RefreshControl, ActivityIndicator, StyleSheet, Platform } from 'react-native'
 import React, {useState, useEffect, useCallback, useRef} from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import { images, icons } from '../../../constants'
@@ -132,7 +132,8 @@ const Home = () => {
     return (
       <View className={`bg-primary-light dark:bg-primary h-full`}>
         <FlatList 
-          data={allCourses.courses}
+        showsVerticalScrollIndicator={false}
+          data={allCourses?.courses}
           keyExtractor={(item) => "courses-" + item?.id}
           renderItem={({ item }) => (
             <Courses 
@@ -200,19 +201,22 @@ const Home = () => {
             </View>
           )}
           ListEmptyComponent={() => (
-            <EmptyState 
-              title={"Nuk është gjetur ndonjë përmbajtje"}
-              subtitle={"Ju lutem kontaktoni Seksionin e Ndihmës apo bëni kërkesën e krijimit të një materiali të ri mësimor të specifikuar!"}
-              buttonTitle={"Vazhdoni me veprimin!"}
-              isSearchPage={false}
-              buttonFunction={() => useNavigateToSupport("report")}
-            />
+            <View className="bg-oBlack-light dark:bg-oBlack mx-4 py-2 pt-4 border border-gray-200 dark:border-black-200 mb-4" style={colorScheme === 'dark' ? styles.darkBox : styles.lightBox}>
+              <EmptyState 
+                title={"Nuk është gjetur ndonjë përmbajtje"}
+                subtitle={"Ju lutem kontaktoni Seksionin e Ndihmës apo bëni kërkesën e krijimit të një materiali të ri mësimor të specifikuar!"}
+                buttonTitle={"Vazhdoni me veprimin!"}
+                buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
+                isSearchPage={false}
+                buttonFunction={() => useNavigateToSupport("report")}
+              />
+            </View>
           )}
           refreshControl={<RefreshControl refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
           ListFooterComponent={() =>
             showLoadMore ? (
               <View className="px-4 justify-center pb-4 -mt-5 flex-row items-center gap-2">
-                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                 <ActivityIndicator color={"#FF9C01"} size={24} />
               </View>
             ) : null
@@ -231,3 +235,32 @@ const Home = () => {
 }
 
 export default Home
+
+const styles = StyleSheet.create({
+    lightBox: {
+        ...Platform.select({
+            ios: {
+                shadowColor: "#b8e1ff",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.6,
+                shadowRadius: 10,
+              },
+              android: {
+                elevation: 8,
+              },
+        })
+    },
+    darkBox: {
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.6,
+                shadowRadius: 10,
+              },
+              android: {
+                elevation: 8,
+              },
+        })
+    },
+})

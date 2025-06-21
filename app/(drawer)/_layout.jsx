@@ -22,6 +22,7 @@ import { useRole } from '../../navigation/RoleProvider'
 import { useNavigation } from 'expo-router'
 import { CommonActions } from '@react-navigation/native'
 import ThemeToggle from '../../components/ThemeToggle'
+import { useColorScheme } from 'nativewind'
 
 const showIcons = (icon, size, color) => {
     return(
@@ -34,6 +35,7 @@ const showIcons = (icon, size, color) => {
 }
 
 const CustomHeader = (props) => {
+    const {colorScheme} = useColorScheme();
     const navigation = useNavigation();
 
     const {role} = useRole();
@@ -52,7 +54,7 @@ const CustomHeader = (props) => {
     const userData = user?.data?.userData;    
 
     const changeIconColor = (path) => {
-        return path === pathname ? "#FFA001" : "#fff";
+        return path === pathname ? "#FFA001" : colorScheme === 'dark' ? "#fff" : "#000";
     }
 
     const handleLogout = async () => {
@@ -98,7 +100,7 @@ const CustomHeader = (props) => {
                         key={index}
                         icon={({ color, size }) => showIcons(item.icon, 22, changeIconColor(item.path, pathname))}
                         label={item.label}
-                        labelStyle={style.labelItem}
+                        labelStyle={colorScheme === 'dark' ? style.labelItemDark : style.labelItemWhite}
                         onPress={() => routerToSpecificFix(routerProps, item.path, item.icon)}
                         // onPress={() => router.replace(item.path)}
                     />
@@ -110,16 +112,16 @@ const CustomHeader = (props) => {
     
     return(
         <>
-    <View className="h-full bg-primary border-r-1 border-cyan-950 pt-6">
+    <View className="h-full bg-primary-light dark:bg-primary border-l border-gray-200 dark:border-black-200 pt-6">
         <DrawerContentScrollView {...props} contentContainerStyle={{height:'100%'}}>
             <View className="flex-col h-full justify-between">
                 <View className="absolute right-0 -top-4 z-50">
                     <ThemeToggle />
                 </View>
-                <View className="border-b-2 border-black-200 pb-6">
+                <View className="border-b-2 border-white dark:border-black-200 pb-6">
 
-                    <View className="justify-center items-center mb-6 pb-6 border-b-2 border-black-200">
-                        <View className="bg-secondary h-14 w-14 align-middle items-center justify-center rounded-[15px] mt-2">
+                    <View className="justify-center items-center mb-6 pb-6 border-b-2 border-white dark:border-black-200">
+                        <View className="bg-secondary dark:bg-secondary h-14 w-14 align-middle items-center justify-center rounded-[15px] mt-2">
                             <Image 
                                 source={{uri: userData?.profilePictureUrl || icons.userProfile}}
                                 className="h-12 w-12 rounded-[10px]"
@@ -127,10 +129,10 @@ const CustomHeader = (props) => {
                             />
                         </View>
                         <View className="mt-4 mb-3">
-                            <Text className="text-white text-xl font-psemibold text-center">{userData?.firstname} {userData?.lastname}</Text>
-                            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{userData?.email}</Text>
+                            <Text className="text-oBlack dark:text-white text-xl font-psemibold text-center">{userData?.firstname} {userData?.lastname}</Text>
+                            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{userData?.email}</Text>
                             {/* <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(userData?.userMeta, "UserRole")}</Text> */}
-                            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{role === "Instructor" ? "Instruktor" : role === "Student" ? "Student" : "Administrator"}</Text>
+                            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{role === "Instructor" ? "Instruktor" : role === "Student" ? "Student" : "Administrator"}</Text>
                         </View>
                     </View>
 
@@ -139,16 +141,16 @@ const CustomHeader = (props) => {
                 </ScrollView>
                 </View>
                 <View className="pl-4 items-end justify-end m-4 " style={{height: "140px"}}>
-                    <TouchableOpacity className="flex-row items-center gap-2 rounded-xl max-w-max w-max p-4 border-2 border-white pb-5"
-                    style={{backgroundColor: "#13131a"}}
+                    <TouchableOpacity className="flex-row bg-gray-200 dark:bg-oBlack items-center gap-2 rounded-xl max-w-max w-max p-4 border-2 border-white dark:border-white pb-5"
+                    // style={{backgroundColor: "#13131a"}}
                     onPress={handleLogout}
                     >
                             <Image 
                                 source={icons.logout}
-                                style={{tintColor: "white", height:22, width:22}}
+                                style={{tintColor: colorScheme === 'dark' ? "#fff" : "#000", height:22, width:22}}
                                 resizeMode='contain'
                             />
-                            <Text className="text-white text-base font-pmedium m-0 p-0 max-w-max w-max">
+                            <Text className="text-oBlack dark:text-white text-base font-pmedium m-0 p-0 max-w-max w-max">
                                 Shkyçuni
                             </Text>
                     </TouchableOpacity>
@@ -166,7 +168,7 @@ const CustomHeader = (props) => {
                 onClose={() => setModalVisible(false)}
             >
                 <View>
-                    <Text className="text-sm font-plight text-white text-center">Ju lutem procedoni me vazhdimesine e perfundimit te leksioneve me rradhe! Eshte per te miren tuaj! Ne rast te ndonje problemi kontaktoni panelin e ndihmes!</Text>
+                    <Text className="text-sm font-plight text-oBlack dark:text-white text-center">Ju lutem procedoni me vazhdimesine e perfundimit te leksioneve me rradhe! Eshte per te miren tuaj! Ne rast te ndonje problemi kontaktoni panelin e ndihmes!</Text>
                 </View>
             </CustomModal>
         </>
@@ -316,11 +318,17 @@ const style = StyleSheet.create({
     sliderContainer:{
         backgroundColor: "#13131a"
     },
-    labelItem: {
+    labelItemDark: {
         marginLeft: 5,
         fontSize:16,
         fontFamily: "Poppins-Medium",
         color: "#fff"
+    },
+    labelItemWhite: {
+        marginLeft: 5,
+        fontSize:16,
+        fontFamily: "Poppins-Medium",
+        color: "#000"
     }
 })
 

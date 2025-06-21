@@ -7,8 +7,12 @@ import { useState } from 'react';
 import { reqGetAllUserTypes, reqShareToUser } from '../services/fetchingService';
 import { icons } from '../constants';
 import NotifierComponent from './NotifierComponent';
+import { useColorScheme } from 'nativewind';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
+    const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     // console.log(shareType);
     // console.log(passedItemId);
     // console.log(currentUserData);
@@ -108,11 +112,11 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         onRequestClose={() => setShareOpened(false)}
     >
         <View className="flex-1 justify-center items-center" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
-            <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={styles.box}>
+            <View className="h-[80%] w-[80%] bg-oBlack-light dark:bg-oBlack rounded-md border border-gray-200 dark:border-black-200 justify-between" style={shadowStyle}>
             {userFriendLoading ?
                 <View className="flex-1"><Loading /></View>
             : 
-                <View className="border-b border-black-200 flex-1">
+                <View className="border-b border-gray-200 dark:border-black-200 flex-1">
                     <FlatList
                         scrollEnabled={true}
                         contentContainerStyle={{ gap: 6 }}
@@ -120,27 +124,27 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
                         keyExtractor={(item) => `userfriends-${item.id}`}
                         ListHeaderComponent={() => (
                             <>
-                            <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px]" style={styles.box}>
-                                <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
+                            <View className="mx-auto my-4 border-b border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack rounded-b-md" style={shadowStyle}>
+                                <Text className="text-oBlack px-4 dark:text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
                             </View>
                             <View className="ml-2">
-                                <Text className="text-xs text-white font-plight">Shperndaje tek:</Text>
+                                <Text className="text-xs text-oBlack dark:text-white font-plight">Shperndaje tek:</Text>
                             </View>
                             </>
                         )}
                         renderItem={({ item }) => (
-                            <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>
+                            <View className="border-b border-t p-2 border-gray-200 dark:border-black-200 flex-row gap-2 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
                                 <View>
                                     <Image
                                         source={{uri: item?.profilePictureUrl}}
-                                        className="h-14 w-14 border border-black-200 rounded-[10px]"
+                                        className="h-14 w-14 border border-white dark:border-black-200 rounded-md"
                                         resizeMode='contain'
                                     />
                                 </View>
                                 <View className="flex-row items-center justify-between flex-1 relative">
                                     <View>
-                                        <Text className="text-white font-psemibold text-lg mb-1">{item?.firstname} {item?.lastname}</Text>
-                                        <Text className="text-gray-400 font-plight text-xs">Student</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-lg mb-1">{item?.firstname} {item?.lastname}</Text>
+                                        <Text className="text-gray-600 dark:text-gray-400 font-plight text-xs">Student</Text>
                                     </View>
                                     <View>
                                         <TouchableOpacity disabled={shareLoading} onPress={() => shareToUser(item)} className={`mr-2 ${shareLoading ? "opacity-50" : ""}`}>
@@ -158,8 +162,8 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
                     />
                 </View>}
                 <View className="h-[60px]">
-                    <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" style={styles.box} onPress={() => { setShareOpened(false), setUserFriendData([]) }}>
-                        <Text className="text-sm font-psemibold text-white">Largoni dritaren</Text>
+                    <TouchableOpacity className="bg-oBlack-light dark:bg-oBlack rounded-b-md border-t-none items-center justify-center flex-1 border-gray-200 dark:border-black-200" style={shadowStyle} onPress={() => { setShareOpened(false), setUserFriendData([]) }}>
+                        <Text className="text-sm font-psemibold text-oBlack dark:text-white">Largoni dritaren</Text>
                     </TouchableOpacity>
                 </View>
             </View>

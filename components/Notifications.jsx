@@ -22,6 +22,7 @@ import Loading from './Loading';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import NotifierComponent from './NotifierComponent';
 import { useRouter } from 'expo-router';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const Notifications = ({ onClose }) => {
     const router = useRouter();
@@ -29,6 +30,7 @@ const Notifications = ({ onClose }) => {
         pageSize: 15,
         pageNumber: 1
     })
+    const {shadowStyle} = useShadowStyles();
     const {data, isLoading, refetch} = useFetchFunction(() => getNotifications(paginationParams))
     // const {data: readStatus, isLoading: readLoading, refetch: readRefetch} = useFetchFunction(() => reqMakeNotificationsRead())
     const [notificationData, setNotificationData] = useState({notifications: [], hasMore: false})
@@ -206,8 +208,8 @@ const Notifications = ({ onClose }) => {
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
-                        <Text className="font-plight text-xs text-gray-400">{item.information}</Text>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg" numberOfLines={2}>{item.notificationReceiver.name}</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">{item.information}</Text>
                     </View>
                 </>
             case 13:
@@ -225,10 +227,10 @@ const Notifications = ({ onClose }) => {
                         
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
-                        <Text className="font-plight text-xs text-gray-400">Ju keni derguar nje ftese miqesie tek <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">Ju keni derguar nje ftese miqesie tek <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
                         <View className="mt-2">
-                            <TouchableOpacity onPress={() => handleRemoveFriendRequest(item)} className="bg-oBlack self-start px-4 py-0.5 rounded-md border-black-200 border" style={styles.box}>
+                            <TouchableOpacity onPress={() => handleRemoveFriendRequest(item)} className="bg-oBlack-light dark:bg-oBlack self-start px-4 py-0.5 rounded-md border-gray-200 dark:border-black-200 border" style={shadowStyle}>
                                 <Text className="font-psemibold text-sm text-secondary text-center">Anuloni</Text>
                             </TouchableOpacity>
                         </View>
@@ -266,8 +268,8 @@ const Notifications = ({ onClose }) => {
                     </View>
                 </View>
                 <View className="flex-1">
-                    <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
-                    <Text className="font-plight text-xs text-gray-400">Hej {item.notificationReceiver.name.split(" ")[0]}, <Text className="text-secondary">{item.notificationSender?.name}</Text> ju ka derguar ftese miqesie... Nderveproni ne baze te butonave poshte imazhit.</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                    <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">Hej {item.notificationReceiver.name.split(" ")[0]}, <Text className="text-secondary">{item.notificationSender?.name}</Text> ju ka derguar ftese miqesie... Nderveproni ne baze te butonave poshte imazhit.</Text>
                 </View>
                 </>
             case 15:
@@ -284,8 +286,8 @@ const Notifications = ({ onClose }) => {
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
-                        <Text className="font-plight text-xs text-gray-400"><Text className="text-secondary">{item.notificationSender?.name}</Text> ka pranuar kerkesen tende te miqesise</Text>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400"><Text className="text-secondary">{item.notificationSender?.name}</Text> ka pranuar kerkesen tende te miqesise</Text>
                     </View>
                 </>
             case 16:
@@ -302,12 +304,12 @@ const Notifications = ({ onClose }) => {
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
-                        <Text className="font-plight text-xs text-gray-400">Ju keni pranuar kerkesen e miqesise me <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg" numberOfLines={2}>Njoftim social</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">Ju keni pranuar kerkesen e miqesise me <Text className="text-secondary">{item.notificationSender?.name}</Text></Text>
                     </View>
                 </>
             default:
-                <Text className="p-4">asdasdasdasdasd</Text>
+                <Text className="p-4">Null?</Text>
                 break;
             }
     }
@@ -329,17 +331,17 @@ const Notifications = ({ onClose }) => {
                 animation="pulse"
                 duration={400}
                 className="w-full absolute h-full right-0 left-0"
-                style={[{ backgroundColor: "rgba(0, 0, 0, 0.5)" }, styles.box]}
+                style={[{ backgroundColor: "rgba(0, 0, 0, 0.5)" }, shadowStyle]}
             >
                 {isLoading && !loadedFirst
                 ? 
-                    <View className="w-[95%] h-[60%] mt-[100px] z-20 m-auto border border-black-200 bg-oBlack rounded-[10px]">
+                    <View className="w-[95%] h-[60%] mt-[100px] z-20 m-auto border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack rounded-[10px]">
                         <Loading />
                     </View> 
                 : 
                     <View className="flex-1">
-                        <TouchableWithoutFeedback style={styles.box}>
-                            <View className="w-[95%] max-h-[70%] mt-[100px] z-20 m-auto border border-black-200 bg-oBlack rounded-md">
+                        <TouchableWithoutFeedback style={shadowStyle}>
+                            <View className="w-[95%] max-h-[70%] mt-[100px] z-20 m-auto border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack rounded-md">
                                 <SwipeListView
                                     className="h-full rounded-md"
                                     refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
@@ -369,8 +371,8 @@ const Notifications = ({ onClose }) => {
                                             >
                                                 <TouchableOpacity 
                                                 onPress={() => handleNotificationClick(item)}
-                                                style={styles.box} 
-                                                className={`border-b border-black-200 p-3 flex-row gap-2 flex-1 relative ${item?.type === 14 ? "bg-oBlack" : (item?.type === 15 || item?.type === 16) ? "bg-black" : "bg-primary"}`}
+                                                style={shadowStyle} 
+                                                className={`border-b border-gray-200 dark:border-black-200 p-3 flex-row gap-2 flex-1 relative ${item?.type === 14 ? "bg-oBlack-light dark:bg-oBlack" : (item?.type === 15 || item?.type === 16) ? "bg-oBlack-light dark:bg-black" : "bg-primary-light dark:bg-primary"}`}
                                                 // onPress={}
                                                 >
                                                     
@@ -396,13 +398,13 @@ const Notifications = ({ onClose }) => {
                                     rightOpenValue={-75}
                                     ListEmptyComponent={() => (
                                         <View className="p-4 border-b border-black-200">
-                                            <Text className="font-psemibold text-white text-lg">Nuk keni njoftime...</Text>
-                                            <Text className="font-plight text-gray-400 text-xs">Nese mendoni qe ka ndodhur nje gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes!</Text>
+                                            <Text className="font-psemibold text-oBlack dark:text-white text-lg">Nuk keni njoftime...</Text>
+                                            <Text className="font-plight text-gray-600 dark:text-gray-400 text-xs">Nese mendoni qe ka ndodhur nje gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes!</Text>
                                         </View>
                                     )}
                                 />
-                                <TouchableOpacity onPress={() => undefined} className="border-t border-black-200 items-center justify-center min-h-[50px] z-50 bg-primary rounded-b-md" style={styles.box}>
-                                    <Text className="font-psemibold text-base text-white">Shiko te gjitha</Text>
+                                <TouchableOpacity onPress={() => undefined} className="border-t border-gray-200 dark:border-black-200 items-center justify-center min-h-[50px] z-50 bg-primary-light dark:bg-primary rounded-b-md" style={shadowStyle}>
+                                    <Text className="font-psemibold text-base text-oBlack dark:text-white">Shiko te gjitha</Text>
                                 </TouchableOpacity>
                             </View>
                         </TouchableWithoutFeedback>

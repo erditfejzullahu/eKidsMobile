@@ -11,8 +11,8 @@ const EmptyState = ({title, titleStyle, subtitle, subtitleStyle, buttonTitle, bu
         className="w-[270px] h-[215px]"
         resizeMode="contain"
       />) : null}
-      <Text className={`text-2xl font-psemibold text-white text-center ${titleStyle}`}>{title}</Text>
-      <Text className={`font-pmedium text-sm text-gray-100 text-center mt-2 ${subtitleStyle}`}>{subtitle}</Text>
+      <Text className={`text-2xl font-pmedium text-oBlack dark:text-white text-center ${titleStyle}`}>{title}</Text>
+      <Text className={`font-plight text-sm text-gray-600 dark:text-gray-400 text-center mt-2 ${subtitleStyle}`}>{subtitle}</Text>
       {isBookMarkPage ? (<View className="my-6">
         <Image
         source={images.breakHeart}

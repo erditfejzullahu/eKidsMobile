@@ -15,9 +15,12 @@ import {useGlobalContext} from '../../../../context/GlobalProvider'
 import SorterComponent from '../../../../components/SorterComponent'
 import { initialFilterData } from '../../../../services/filterConfig';
 import { useNavigateToSupport } from '../../../../hooks/goToSupportType';
+import { useShadowStyles } from '../../../../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 
 const Categories = () => {
   const { categories } = useLocalSearchParams();
+  const {colorScheme} = useColorScheme();
   const [showAllCategories, setShowAllCategories] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [allData, setAllData] = useState([])
@@ -28,7 +31,7 @@ const Categories = () => {
   })
   const [loadedFirst, setLoadedFirst] = useState(false)
   const [showLoadingMore, setShowLoadingMore] = useState(false)
-
+  const {shadowStyle} = useShadowStyles();
   const {user} = useGlobalContext(); //show category information no matter what
   
   const updateSearchData = (data) => {
@@ -150,7 +153,7 @@ const Categories = () => {
   const catHeader = () => {
     return (
       <View className="px-4">
-          <Text className="text-white font-pmedium text-2xl mt-4">
+          <Text className="text-oBlack dark:text-white font-pmedium text-2xl mt-4">
             {showAllCategories ? "Të gjitha kategoritë" : `Të gjitha kurset për kategorinë ${getCourseCategories(user?.data?.categories, parseInt(categories))}`}
             <View>
               <Image
@@ -160,7 +163,7 @@ const Categories = () => {
               />
             </View>
           </Text>
-          <View className="mt-6 pb-5 border-b border-black-200">
+          <View className="mt-6 pb-5 border-b border-gray-200 dark:border-black-200">
             <SearchInput 
                 // value={searchInput.searchData}
                 searchFunc={updateSearchData}
@@ -185,14 +188,14 @@ const Categories = () => {
     )
   }else{
     return (
-      <View className="bg-primary h-full">
+      <View className="bg-primary-light dark:bg-primary h-full">
         <View>
           {showAllCategories ? 
           <FlatList 
             className="h-full"
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}
-            data={allData.categories}
+            data={allData?.categories}
             keyExtractor={(item) => item?.CategoryID?.toString()}
             renderItem={({ item }) => (
               <AllCategories
@@ -203,11 +206,12 @@ const Categories = () => {
               catHeader()
             )}
             ListEmptyComponent={() => (
-              <View className="mt-6">
+              <View className="bg-oBlack-light dark:bg-oBlack m-4 py-2 pt-4 border border-gray-200 dark:border-black-200" style={shadowStyle}>
                 <EmptyState 
                   title={"Nuk është gjetur ndonjë kategori"}
                   subtitle={"Nëse problemi vazhdon të shfaqet, bëni paraqitjen e rastit tek Seksioni i Ndihmës"}
                   buttonTitle={"Vazhdoni me veprimin!"}
+                  buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
                   buttonFunction={() => useNavigateToSupport("report")}
                   isSearchPage={false}
                 />
@@ -218,7 +222,7 @@ const Categories = () => {
               {!showLoadingMore && <View className="my-4" />}
               {showLoadingMore && (
                 <View className="px-4 justify-center py-4 flex-row items-center gap-2">
-                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                   <ActivityIndicator color={"#FF9C01"} size={24} />
                 </View>
               )}
@@ -231,7 +235,7 @@ const Categories = () => {
             className="h-full"
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}
-            data={allData.courses || []}
+            data={allData?.courses}
             keyExtractor={(item) => item?.id.toString() || ''}
             renderItem={({item}) => (
               <FilteredCourses 
@@ -242,14 +246,15 @@ const Categories = () => {
               catHeader()
             )}
             ListEmptyComponent={() => (
-              <View className="mt-6">
-              <EmptyState 
-                title={"Nuk është gjetur ndonje kurs mesimor"}
-                subtitle={"Nëse problemi vazhdon të shfaqet, bëni paraqitjen e rastit tek Seksioni i Ndihmës"}
-                buttonTitle={"Vazhdoni me veprimin!"}
-                buttonFunction={() => useNavigateToSupport("report")}
-                isSearchPage={false}
-              />
+              <View className="bg-oBlack-light dark:bg-oBlack m-4 py-2 pt-4 border border-gray-200 dark:border-black-200" style={shadowStyle}>
+                <EmptyState 
+                  title={"Nuk është gjetur ndonje kurs mesimor"}
+                  subtitle={"Nëse problemi vazhdon të shfaqet, bëni paraqitjen e rastit tek Seksioni i Ndihmës"}
+                  buttonTitle={"Vazhdoni me veprimin!"}
+                  buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
+                  buttonFunction={() => useNavigateToSupport("report")}
+                  isSearchPage={false}
+                />
               </View>
             )}
             ListFooterComponent={() => (
@@ -257,7 +262,7 @@ const Categories = () => {
               {!showLoadingMore && <View className="my-4" />}
               {showLoadingMore && (
                 <View className="px-4 justify-center py-4 flex-row items-center gap-2">
-                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                   <ActivityIndicator color={"#FF9C01"} size={24} />
                 </View>
               )}

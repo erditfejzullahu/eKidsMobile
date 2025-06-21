@@ -32,14 +32,14 @@ const ThemeToggle = () => {
       onPress={handleToggle}
       className="w-16 h-8 rounded-full px-1 justify-center"
       style={{
-        backgroundColor: currentThemeSelected === 'dark' ? '#1e293b' : '#d9d9d9',
+        backgroundColor: currentThemeSelected === 'dark' ? '#1e293b' : '#e5e7eb',
       }}
     >
       <Animated.View 
         className="w-7 h-7 rounded-full absolute items-center justify-center"
         style={{
           transform: [{ translateX }],
-          backgroundColor: currentThemeSelected === '' ? '#f8fafc' : '#f59e0b',
+          backgroundColor: currentThemeSelected === 'dark' ? '#f8fafc' : '#f59e0b',
         }}
       >
         {currentThemeSelected === 'dark' ? (

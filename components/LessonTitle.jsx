@@ -11,8 +11,8 @@ const LessonTitle = ({lessonData}) => {
   
   return (
     <>
-        <View className="flex-[1] flex-row gap-2 border-b border-t border-black-200 items-center justify-center p-2 py-3 bg-primary">
-          <Text className="text-white font-pbold text-sm text-center">{lessonData?.lesson?.lessonName}</Text>
+        <View className="flex-[1] flex-row gap-2 border-b border-t border-gray-200 dark:border-black-200 items-center justify-center p-2 py-3 bg-primary-light dark:bg-primary">
+          <Text className="text-oBlack dark:text-white font-pbold text-sm text-center">{lessonData?.lesson?.lessonName}</Text>
           <Animatable.View animation="pulse" iterationCount="infinite">
               <TouchableOpacity onPress={() => setVisibleCurrentProgressModal(true)}>
               <Image 
@@ -35,7 +35,7 @@ const LessonTitle = ({lessonData}) => {
           autoCloseDuration={3000}
         >
           <View className="mt-2">
-            <Text className="text-white text-sm font-plight text-center">{lessonData?.currentProgress?.isCompleted ? "Ky imazh indikon se ky leksion ka perfunduar me sukes!" : "Ky imazh indikon se ky leksion eshte ne perfundim e siper!"}</Text>
+            <Text className="text-oBlack dark:text-white text-sm font-plight text-center">{lessonData?.currentProgress?.isCompleted ? "Ky imazh indikon se ky leksion ka perfunduar me sukes!" : "Ky imazh indikon se ky leksion eshte ne perfundim e siper!"}</Text>
           </View>
         </CustomModal>
         {/* njoftim mbi imazh ne top scr */}

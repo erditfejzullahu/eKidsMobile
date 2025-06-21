@@ -9,10 +9,10 @@ const LessonInteractions = ({lessonData, handleLessonLike, handleLessonComment})
     const {setFireUpEndScroll} = useLessonCommentsContext();
     
   return (
-    <View className="flex-row w-full border border-black-200">
-        <View className="flex-1 bg-oBlack">
-            <TouchableOpacity onPress={handleLessonLike} className="flex-row items-center justify-center gap-1 border-r border-black-200 p-2.5">
-                <Text className={`${lessonData?.isLiked ? "text-secondary" : "text-white"} font-pregular text-sm text-center `}>{lessonData?.isLiked ? "I Pelqyer" : "Pelqeni"} 
+    <View className="flex-row w-full border border-gray-200 dark:border-black-200">
+        <View className="flex-1 bg-oBlack-light dark:bg-oBlack">
+            <TouchableOpacity onPress={handleLessonLike} className="flex-row items-center justify-center gap-1 border-r border-gray-200 dark:border-black-200 p-2.5">
+                <Text className={`${lessonData?.isLiked ? "text-secondary" : "text-oBlack dark:text-white"} font-pregular text-sm text-center `}>{lessonData?.isLiked ? "I Pelqyer" : "Pelqeni"} 
                 </Text>
                 <View className="flex-row items-center justify-center">
                     <Image
@@ -27,9 +27,9 @@ const LessonInteractions = ({lessonData, handleLessonLike, handleLessonComment})
                 </View>
             </TouchableOpacity>
         </View>
-        <View className="flex-1 bg-oBlack ">
+        <View className="flex-1 bg-oBlack-light dark:bg-oBlack ">
             <TouchableOpacity onPress={() => setFireUpEndScroll(true)} className="flex-row items-center justify-center gap-1 p-2.5">
-                <Text className="text-white font-pregular text-sm text-center">Komento</Text>
+                <Text className="text-oBlack dark:text-white font-pregular text-sm text-center">Komento</Text>
                 <View className="flex-row items-center justify-center">
                     <Image 
                     source={icons.chat}
