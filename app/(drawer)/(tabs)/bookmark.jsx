@@ -11,9 +11,11 @@ import * as Animatable from "react-native-animatable"
 import NotifierComponent from '../../../components/NotifierComponent'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 import { useColorScheme } from 'nativewind'
+import {useShadowStyles} from "../../../hooks/useShadowStyles"
 
-const bookmark = () => {
+const Bookmark = () => {
   const {colorScheme} = useColorScheme();
+  const {shadowStyle} = useShadowStyles()
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false)
   const [showCourses, setShowCourses] = useState(true)
@@ -100,11 +102,11 @@ const bookmark = () => {
   }else{
     return (
       <ScrollView 
-        className="h-full bg-primary px-4 w-full"
+        className="h-full bg-primary-light dark:bg-primary px-4 w-full"
         refreshControl={<RefreshControl  refreshing={refreshing} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} />}
         >
         <View>
-          <Text className="text-white font-pmedium text-2xl mt-4">Favoritet tuaj!
+          <Text className="text-oBlack dark:text-white font-pmedium text-2xl mt-4">Favoritet tuaj!
             <View>
               <Image
                 source={images.path}
@@ -115,13 +117,13 @@ const bookmark = () => {
           </Text>
         </View>
 
-        <View className="flex-row w-full items-center border border-black-200 mt-6 mb-4">
+        <View className="flex-row w-full items-center border border-gray-200 dark:border-black-200 mt-6 mb-4">
           <TouchableOpacity
-            className={` w-1/2 items-center border-r border-black-200 p-2 ${showCourses ? "bg-oBlack" : ""}`}
+            className={` w-1/2 items-center border-r border-gray-200 dark:border-black-200 p-2 ${showCourses ? "bg-[#d9d9d9] dark:bg-oBlack" : ""}`}
             onPress={() => setShowCourses(true)}
           >
             <View className="flex-row items-center justify-center gap-2">
-              <Text className="text-white font-regular text-sm">Kurset</Text>
+              <Text className="text-oBlack dark:text-white font-regular text-sm">Kurset</Text>
               <Image 
                 source={icons.courses}
                 resizeMode='contain'
@@ -131,11 +133,11 @@ const bookmark = () => {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`w-1/2 items-center p-2 ${!showCourses ? "bg-oBlack" : ""}`}
+            className={`w-1/2 items-center p-2 ${!showCourses ? "bg-[#d9d9d9] dark:bg-oBlack" : ""}`}
             onPress={() => setShowCourses(false)}
           >
             <View className="flex-row items-center justify-center gap-2">
-              <Text className="text-white font-regular text-sm">Leksionet</Text>
+              <Text className="text-oBlack dark:text-white font-regular text-sm">Leksionet</Text>
               <Image 
                 source={icons.lectures}
                 resizeMode='contain'
@@ -159,7 +161,7 @@ const bookmark = () => {
             return showCourses ? (
               (filterData().courseLength === 0) ? (
                 (index < 1 && <View
-                  className="mt-12 border border-black-200 p-4 pt-6 rounded-[10px] w-full"
+                  className="border border-gray-200 dark:border-black-200 p-4 pt-6 rounded-[10px] w-full"
                 >
                   <EmptyState 
                     title={"Nuk keni ndonje favorit aktual te kurseve!"}
@@ -173,8 +175,8 @@ const bookmark = () => {
               ) : (
                 (bookItem?.course && <View
                   key={bookItem?.id}
-                  className="border border-black-200 rounded-[10px] p-4 relative w-full mb-6"
-                  style={styles.box}
+                  className="border border-gray-200 dark:border-black-200 rounded-[10px] p-4 relative w-full mb-6"
+                  style={shadowStyle}
                 >
                   <View className="absolute -right-2 -top-2 bg-oBlack rounded-[5px] p-2 px-8 border border-black-200">
                     <Text className="text-white font-pregular text-sm">Kurs favorit</Text>
@@ -182,10 +184,10 @@ const bookmark = () => {
                   <View  className="flex-row w-full">
                     <View className="flex-col gap-4 w-[75%]">
                       <View>
-                        <Text className="text-white font-pregular text-xl">{bookItem.course?.courseName}</Text>
+                        <Text className="text-oBlack dark:text-white font-pregular text-xl">{bookItem.course?.courseName}</Text>
                       </View>
                       <View>
-                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={3}>{bookItem?.course?.courseDescription}</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight" numberOfLines={3}>{bookItem?.course?.courseDescription}</Text>
                         <TouchableOpacity onPress={() => proceedLearning(bookItem, 'course')}><Text className="text-secondary font-psemibold text-xs underline mt-2">Vazhdo kursin</Text></TouchableOpacity>
                       </View>
                     </View>
@@ -205,7 +207,7 @@ const bookmark = () => {
                     </View>
                   </View>
                   <View className="mt-2 justify-end items-end relative">
-                    <Text className="text-sm font-psemibold text-white">{formattedDate}</Text>
+                    <Text className="text-sm font-psemibold text-oBlack dark:text-white">{formattedDate}</Text>
                     <View className="absolute -left-6 -bottom-6 bg-secondary rounded-[5px] p-2 px-8">
                       <Text className="text-white font-pregular text-sm">{bookItem?.course?.category?.categoryName}</Text>
                     </View>
@@ -215,7 +217,7 @@ const bookmark = () => {
             ) : (
               (filterData().lessonLength === 0) ? (
                 (index < 1 && <View
-                  className="mt-12 border border-black-200 p-4 pt-6 rounded-[10px] w-full"
+                  className="border border-gray-200 dark:border-black-200 p-4 pt-6 rounded-[10px] w-full"
                 >
                   <EmptyState 
                     title={"Nuk keni ndonje favorit aktual te leksioneve!"}
@@ -229,8 +231,8 @@ const bookmark = () => {
               ) : (
                   (bookItem?.lesson && <View
                     key={bookItem?.id}
-                    className="border border-black-200 rounded-[10px] p-4  w-full relative mb-6"
-                    style={styles.box}
+                    className="border border-gray-200 dark:border-black-200 rounded-[10px] p-4  w-full relative mb-6"
+                    style={shadowStyle}
                   >
                     <View className="absolute -right-2 -top-2 bg-oBlack rounded-[5px] p-2 px-8 border border-black-200">
                       <Text className="text-white font-pregular text-sm">Leksion favorit</Text>
@@ -238,10 +240,10 @@ const bookmark = () => {
                     <View className="flex-row">
                       <View className="flex-col gap-4 w-[75%]">
                         <View>
-                          <Text className="text-white font-pregular text-xl">{bookItem?.lesson?.lessonName}</Text>
+                          <Text className="text-oBlack dark:text-white font-pregular text-xl">{bookItem?.lesson?.lessonName}</Text>
                         </View>
                         <View>
-                          <Text className="text-gray-400 text-xs font-plight" numberOfLines={3}>{bookItem?.lesson?.lessonExcerpt}</Text>
+                          <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight" numberOfLines={3}>{bookItem?.lesson?.lessonExcerpt}</Text>
                           <TouchableOpacity onPress={() => proceedLearning(bookItem, 'lession')}><Text className="text-secondary font-psemibold text-xs underline mt-2">Vazhdo ligjeraten</Text></TouchableOpacity>
 
                         </View>
@@ -262,7 +264,7 @@ const bookmark = () => {
                       </View>
                     </View>
                     <View className="mt-2 justify-end items-end relative">
-                      <Text className="text-sm font-psemibold text-white">{formattedDate}</Text>
+                      <Text className="text-sm font-psemibold text-oBlack dark:text-white">{formattedDate}</Text>
                       <View className="absolute -left-6 -bottom-6 bg-secondary rounded-[5px] p-2 px-8">
                         <Text className="text-white font-pregular text-sm">{bookItem?.lesson?.course?.category?.categoryName}</Text>
                       </View>
@@ -274,7 +276,7 @@ const bookmark = () => {
 
           </View>
         </View> ) : (
-          <View className="mt-12 border border-black-200 p-4 pt-6 rounded-[10px]">
+          <View className="border border-gray-200 dark:border-black-200 p-4 pt-6 rounded-[10px]">
             <EmptyState 
               title={"Nuk keni ndonje favorit aktual!"}
               titleStyle={"font-pmedium text-xl"}
@@ -305,4 +307,4 @@ const styles = StyleSheet.create({
       })
   },
 })
-export default bookmark
+export default Bookmark

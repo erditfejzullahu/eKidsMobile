@@ -8,10 +8,11 @@ import * as Progress from 'react-native-progress';
 import * as Animatable from 'react-native-animatable'
 import { useRouter } from 'expo-router'
 import EmptyState from "./EmptyState";
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const UserProgressComponent = ({userDataId}) => {
     // console.log(userDataId, ' ?');
-    
+    const {shadowStyle} = useShadowStyles();
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(false)
     const {data, refetch, isLoading} = useFetchFunction(() => userActualProgresses(userDataId))
@@ -68,25 +69,25 @@ const UserProgressComponent = ({userDataId}) => {
         return (
             <View className="p-4">
                 <View className="mb-4">
-                    <Text className="text-white font-pregular text-base">Kurset e shfletuara deri me tani</Text>
+                    <Text className="text-oBlack dark:text-white font-pregular text-base">Kurset e shfletuara deri me tani</Text>
                 </View>
                 <View className="flex-col w-full gap-4">
-                    {(userDataId && theData?.length !== 0) ?  
+                    {(userDataId && theData?.length > 0) ?  
                     theData.map((progressItem, index) => {
                         const courseProgress = calculateProgress(progressItem?.lessonDetails);
                         const ProgressID = progressItem?.lessonDetails[0]?.progress[0]?.progressId;
                         return (
                         <View
-                            className="  w-full border border-black-200 rounded-[10px] bg-oBlack"
+                            className="  w-full border border-gray-200 dark:border-black-200 rounded-[10px] bg-oBlack-light dark:bg-oBlack"
                             key={index}
-                            style={styles.box}
+                            style={shadowStyle}
                         >
                             <TouchableOpacity
                             onPress={() => toggleProgress(ProgressID)}
                             >
                                 <View className="p-4 flex-row relative">
                                     <View className="w-[90%] relative">
-                                        <Text className="text-white font-psemibold text-base mb-2">{progressItem?.courseName}</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-base mb-2">{progressItem?.courseName}</Text>
                                         <Progress.Bar progress={courseProgress} unfilledColor='#d9d9d9' color="#ff9c01" borderWidth={0} height={12}  width={null} />
                                         <Text className="text-oBlock absolute -bottom-[2px] items-center justify-center w-full right-0 left-0 m-auto text-center font-psemibold text-xs">{courseProgress === 1 ? 100 : parseFloat(courseProgress * 100).toFixed(2)} %</Text>
                                     </View>
@@ -102,7 +103,7 @@ const UserProgressComponent = ({userDataId}) => {
                                         />
                                     </View>
 
-                                    {courseToggled.includes(ProgressID) && <View className="absolute w-[100%] -ml-[-5%] border-b-2 border-black-200 bottom-0" />}
+                                    {courseToggled.includes(ProgressID) && <View className="absolute w-[100%] -ml-[-5%] border-b-2 border-white dark:border-black-200 bottom-0" />}
 
                                 </View>
                             </TouchableOpacity>
@@ -123,10 +124,10 @@ const UserProgressComponent = ({userDataId}) => {
                                                 className="w-full"
                                                 
                                             >
-                                                <View className="flex-row items-center w-full p-4 border border-black-200 rounded-[10px]">
+                                                <View className="flex-row items-center w-full p-4 border border-gray-200 dark:border-black-200 rounded-[10px]">
                                                     <View className="flex-row w-[90%]">
                                                         <Text className="text-secondary text-base font-pregular min-w-[20px]">{lessonIndex + 1}. </Text>
-                                                        <Text className="text-white text-base font-psemibold pr-2">{lessonItem?.lessonName}</Text>
+                                                        <Text className="text-oBlack dark:text-white text-base font-psemibold pr-2">{lessonItem?.lessonName}</Text>
                                                     </View>
                                                     <View className="flex-col w-[10%]">
                                                         <Animatable.Image
@@ -150,7 +151,7 @@ const UserProgressComponent = ({userDataId}) => {
                             }
                         </View>
                     )}
-                ) : <View style={styles.box} className=" bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                ) : <View style={shadowStyle} className=" bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
                         <EmptyState
                             title={"Nuk u gjet asnje vijushmeri"}
                             titleStyle={"!font-pregular mb-2"}

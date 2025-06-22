@@ -11,8 +11,10 @@ import useFetchFunction from '../hooks/useFetchFunction'
 import Loading from './Loading'
 import { ContributionGraph } from 'react-native-chart-kit'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const ShowOtherDetailsProfile = ({userId}) => {
+    const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const {data, isLoading, refetch} = useFetchFunction(() => getUserOtherInformations(userId))
     const [userOtherData, setUserOtherData] = useState({})
@@ -511,25 +513,25 @@ const ShowOtherDetailsProfile = ({userId}) => {
     }, [commitmentSection])
     
     
-if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 rounded-[5px] mx-4 p-4"><Loading /></View>)
+if(isLoading) return (<View className="mt-6 mb-4 flex-1 border border-gray-200 dark:border-black-200 rounded-[5px] mx-4 p-4"><Loading /></View>)
   return (
     <>
-    <View className="m-4 mb-2" style={styles.box}>
-        <TouchableOpacity onPress={() => setCommitmentSection(!commitmentSection)} className={`${commitmentSection ? "bg-oBlack" : "bg-primary"} border items-center justify-center flex-row-reverse gap-2 border-black-200 rounded-[5px] p-2 w-[50%] mx-auto`}>
-            <Text className="text-sm font-plight text-white">Angazhimi juaj</Text>
+    <View className="m-4 mb-2" style={shadowStyle}>
+        <TouchableOpacity onPress={() => setCommitmentSection(!commitmentSection)} className={`${commitmentSection ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} border items-center justify-center flex-row-reverse gap-2 border-gray-200 dark:border-black-200 rounded-[5px] p-2 w-[50%] mx-auto`}>
+            <Text className="text-sm font-plight text-oBlack dark:text-white">Angazhimi juaj</Text>
             <View>
                 <Image 
                     source={icons.commitment}
                     className="h-6 w-6"
-                    tintColor={commitmentSection ? "#ff9c01" : "#fff"}
+                    tintColor={commitmentSection ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}
                 />
             </View>
         </TouchableOpacity>
     </View>
 
     {commitmentSection && (!commitsDataLoading ? 
-        <View className="flex-1 mx-4 border border-black-200 rounded-[5px] overflow-hidden mb-4">
-            <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
+        <View className="flex-1 mx-4 border border-gray-200 dark:border-black-200 rounded-[5px] overflow-hidden mb-4">
+            <Text className="text-oBlack dark:text-white font-plight text-sm p-2 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
             <ScrollView horizontal>
             <ContributionGraph 
                 values={commitsData}
@@ -549,12 +551,12 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
     </View>
     )}
 
-    {!commitmentSection && <View className="m-4 p-4 bg-oBlack border border-black-200 rounded-[10px]">
+    {!commitmentSection && <View className="m-4 p-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[10px]">
       <View>
-        <View className="flex-row flex-wrap gap-4 justify-between border-b border-black-200">
-            <View className="gap-2 pb-4 " style={styles.box}>
-                <Text className="text-white text-sm font-plight">Data e lindjes</Text>
-                <View className="border-2 border-black-200 bg-oBlack self-start rounded-[10px] overflow-hidden" >
+        <View className="flex-row flex-wrap gap-4 justify-between border-b border-gray-200 dark:border-black-200">
+            <View className="gap-2 pb-4 " style={shadowStyle}>
+                <Text className="text-oBlack dark:text-white text-sm font-plight">Data e lindjes</Text>
+                <View className="border-2 border-gray-200 dark:border-black-200 bg-oBlack-light pl-2 dark:bg-oBlack self-start rounded-[10px] overflow-hidden" >
                     <RNDateTimePicker
                         style={{marginLeft: -25}}
                         display="default"
@@ -565,27 +567,26 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 </View>
             </View>
             <View className="flex-1">
-                <FormField 
+                <FormField
                     title={"Profesioni juaj"}
                     value={userInformationData.profession}
                     handleChangeText={(e) => setUserInformationData((prevData) => ({...prevData, profession: e}))}
                     inputParentStyle={"!h-11 !rounded-[10px] "}
                     placeholder={"Sh. Polic, Programer"}
-
-                    titleStyle={"!text-sm !font-plight !text-white"}
+                    titleStyle={"!text-sm !font-plight text-oBlack dark:text-white"}
                 />
             </View>
         </View>
-        <View className="gap-2 border-b border-black-200 py-4">
+        <View className="gap-2 border-b border-gray-200 dark:border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white font-plight text-sm">Edukimi shkollor</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm">Edukimi shkollor</Text>
                 {showInformationStepTick.education && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
                     tintColor={"#ff9c01"}
                 />}
             </View>
-            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "education"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "education"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={shadowStyle}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
@@ -594,16 +595,16 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
             </TouchableOpacity>
         </View>
         
-        <View className="gap-2 border-b border-black-200 py-4">
+        <View className="gap-2 border-b border-gray-200 dark:border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white font-plight text-sm">Aftesi te buta</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm">Aftesi te buta</Text>
                 {showInformationStepTick.softSkills && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
                     tintColor={"#ff9c01"}
                 />}
             </View>
-            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "softSkills"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "softSkills"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={shadowStyle}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
@@ -612,16 +613,16 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
             </TouchableOpacity>
         </View>
 
-        <View className="gap-2 border-b border-black-200 py-4">
+        <View className="gap-2 border-b border-gray-200 dark:border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white font-plight text-sm">Punesimi</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm">Punesimi</Text>
                 {showInformationStepTick.jobs && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
                     tintColor={"#ff9c01"}
                 />}
             </View>
-            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "jobs"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "jobs"})} className="flex-1 bg-secondary items-center justify-center p-1.5 rounded-[10px]" style={shadowStyle}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
@@ -629,16 +630,16 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 />
             </TouchableOpacity>
         </View>
-        <View className="gap-2 border-b border-black-200 py-4">
+        <View className="gap-2 border-b border-gray-200 dark:border-black-200 py-4">
             <View className="flex-row">
-                <Text className="text-white font-plight text-sm">Aftesite profesionale</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm">Aftesite profesionale</Text>
                 {showInformationStepTick.professionalSkills && <Image 
                     source={icons.tick}
                     className="w-6 h-6"
                     tintColor={"#ff9c01"}
                 />}
             </View>
-            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "professionalSkills"})} className="flex-1 bg-secondary items-center justify-center !p-1.5 rounded-[10px]" style={styles.box}>
+            <TouchableOpacity onPress={() => setShowModals({visibility: true, type: "professionalSkills"})} className="flex-1 bg-secondary items-center justify-center !p-1.5 rounded-[10px]" style={shadowStyle}>
                 <Image 
                     source={icons.plus}
                     className="h-10 border-2 border-secondary-100  rounded-full w-10"
@@ -646,9 +647,9 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                 />
             </TouchableOpacity>
         </View>
-        <View className="my-4 bg-primary border border-black-200 rounded-[5px] overflow-hidden" style={styles.box}>
+        <View className="my-4 bg-[#d9d9d9] dark:bg-primary border border-gray-200 dark:border-black-200 rounded-[5px] overflow-hidden" style={shadowStyle}>
             <TouchableOpacity className={`${updateDataLoading ? "opacity-50" : ""}`} disabled={updateDataLoading} onPress={updateInformations}>
-                <Text className="text-white font-psemibold text-center p-4">{updateDataLoading ? "Duke u perditesuar..." : "Perditeso te dhenat"}</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-center p-4">{updateDataLoading ? "Duke u perditesuar..." : "Perditeso te dhenat"}</Text>
             </TouchableOpacity>
         </View>
       </View>
@@ -661,9 +662,9 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
     animationType='fade'
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-            <ScrollView style={styles.box} className="bg-primary p-4 rounded-[5px] border border-black-200 w-[85%] max-h-[80vh]" contentContainerStyle={{alignItems: "center"}}>
-                <View className="bg-oBlack w-full p-2 rounded border border-black-200 mb-3" style={styles.box}>
-                    <Text className="text-white font-pregular text-center text-2xl">{showModals.type === "education" ? "Edukimi shkollor" : showModals.type === "jobs" ? "Eksperienca profesionale" : showModals.type === "softSkills" ? "Aftesi te buta" : "Aftesi profesionale"}</Text>
+            <ScrollView style={shadowStyle} className="bg-primary-light dark:bg-primary p-4 rounded-[5px] border border-gray-200 dark:border-black-200 w-[85%] max-h-[80vh]" contentContainerStyle={{alignItems: "center"}}>
+                <View className="bg-oBlack-light dark:bg-oBlack w-full p-2 rounded border border-gray-200 dark:border-black-200 mb-3" style={shadowStyle}>
+                    <Text className="text-oBlack dark:text-white font-pregular text-center text-2xl">{showModals.type === "education" ? "Edukimi shkollor" : showModals.type === "jobs" ? "Eksperienca profesionale" : showModals.type === "softSkills" ? "Aftesi te buta" : "Aftesi profesionale"}</Text>
                 </View>
 
                 {[...Array(showModals.type === "education" ? howManySections.howManyEducation : showModals.type === "jobs" ? howManySections.howManyJobs : showModals.type === "softSkills" ? howManySections.howManySoftSkills : howManySections.howManyProfessionalSkills)].map((_, index) => {
@@ -678,7 +679,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                     // console.log(howManySections, ' seksionet');
                     return (
                         <View key={`informations-${index}`}>
-                            <View className="w-full items-start gap-6 mt-4 border-b border-black-200 pb-4">
+                            <View className="w-full items-start gap-6 mt-4 border-b border-white dark:border-black-200 pb-4">
                                 {(showModals.type === "education" || showModals.type === "jobs") &&
                                 <View className="w-full gap-2">
                                 <View className="flex-row gap-2 w-full">
@@ -704,7 +705,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                     </View>
                                 </View>
                                 {showModals.type === "education" && <View>
-                                    <Text className="text-gray-100 font-pmedium text-sm">Niveli shkolles</Text>
+                                    <Text className="text-gray-700 dark:text-gray-100 font-pmedium text-sm">Niveli shkolles</Text>
                                     <View className="-my-4">
                                         <Picker
                                             selectedValue={userInformationData?.userEducations[index]?.school_Degree?.toString()}
@@ -756,7 +757,7 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
                                             inputParentStyle={"!h-14 !rounded-[10px] "}
                                             keyboardType="numeric"
                                         />
-                                        <Text className="text-[10px] text-gray-400 font-plight mt-1">Lere zbrazet nese {showModals.type === "education" ? "nuk e keni mbaruar" : "jeni ende te punesuar"}.</Text>
+                                        <Text className="text-[10px] text-gray-600 dark:text-gray-400 font-plight mt-1">Lere zbrazet nese {showModals.type === "education" ? "nuk e keni mbaruar" : "jeni ende te punesuar"}.</Text>
                                     </View>
                                 </View>
                                 </View>}
@@ -826,9 +827,9 @@ if(isLoading) return (<View className="mt-6 flex-1 border border-black-200 round
 
                 <View className="flex-row items-center justify-between w-full flex-wrap my-6">
                     <TouchableOpacity onPress={() => clearData(showModals.type) }
-                        className="bg-oBlack border-2 border-black-200 rounded-[10px] p-3 py-4"
+                        className="bg-[#d9d9d9] dark:bg-oBlack border-2 border-gray-200 dark:border-black-200 rounded-[10px] p-3 py-4"
                         >
-                        <Text className="text-white text-sm font-psemibold">Largo dritaren</Text>
+                        <Text className="text-oBlack dark:text-white text-sm font-psemibold">Largo dritaren</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => checkIfDataValid(showModals.type)} className="bg-secondary rounded-[10px] p-3 py-4 border-2 border-white">
                         <Text className="text-white text-sm font-psemibold">Ruaj te dhenat</Text>

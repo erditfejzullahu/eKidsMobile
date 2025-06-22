@@ -29,9 +29,11 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { personalInformations } from '../../../schemas/profileSchema'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const Profile = () => {
   const {colorScheme} = useColorScheme();
+  const {shadowStyle} = useShadowStyles();
   const {role} = useRole()
   if(role === "Instructor") return <Redirect href={'/instructor/instructorProfile'}/>
 const router = useRouter();
@@ -260,7 +262,7 @@ const router = useRouter();
         contentContainerStyle={{ flexGrow: 1 }}
         enableOnAndroid={true} // Ensures Android support
         keyboardShouldPersistTaps="handled"
-        className="h-full bg-primary"
+        className="h-full bg-primary-light dark:bg-primary"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         refreshControl={
           <RefreshControl 
@@ -270,7 +272,7 @@ const router = useRouter();
         }
       >
         {/* profile part */}
-        <View className="w-full items-center justify-center mb-8 relative" style={styles.box}>
+        <View className="w-full items-center justify-center mb-8 relative" style={shadowStyle}>
           <DiscussionsProfile userData={user}/>
           <BlogsProfile userData={user}/>
 
@@ -286,18 +288,18 @@ const router = useRouter();
             </TouchableOpacity>
           </View>
           <View className="mt-4">
-            <Text className="text-white text-xl font-psemibold text-center">{userData?.firstname} {userData?.lastname}</Text>
-            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{userData?.email}</Text>
-            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(userData?.userMeta, "UserRole")}</Text>
-            <View className="flex-row justify-between w-[250px] mt-6">
-              <View>
-                <Text className="text-gray-200 text-base font-pregular text-center">Të kryera:</Text>
+            <Text className="text-oBlack dark:text-white text-xl font-psemibold text-center">{userData?.firstname} {userData?.lastname}</Text>
+            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{userData?.email}</Text>
+            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(userData?.userMeta, "UserRole")}</Text>
+            <View className="flex-row justify-between w-[80%] mt-6">
+              <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 p-4 py-2 rounded-xl">
+                <Text className="text-gray-600 dark:text-gray-200 text-base font-pregular text-center">Të kryera:</Text>
                 {/* <Text className="text-secondary text-lg font-psemibold text-center">{getMetaValue(userData?.userMeta, "LessonsCompleted")}</Text> */}
                 <Text className="text-secondary text-lg font-psemibold text-center">{completedCourseData?.length}</Text>
 
               </View>
-              <View>
-                <Text className="text-gray-200 text-base font-pregular text-center">Telefoni:</Text>
+              <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 p-4 py-2 rounded-xl">
+                <Text className="text-gray-600 dark:text-gray-200 text-base font-pregular text-center">Telefoni:</Text>
                 <Text className="text-secondary text-lg font-psemibold text-center">{getMetaValue(userData?.userMeta, "Phone")}</Text>
               </View>
             </View>
@@ -306,23 +308,23 @@ const router = useRouter();
         {/* profile part */}
   
         {/* toggle part */}
-        <View className="w-full border-t border-black-200 ">
-          <View className="flex-row justify-between w-full border-b border-black-200">
-            <View className="w-1/2 py-4 border-r border-black-200" style={{backgroundColor: showDetails ? "#13131a" : "transparent"}}>
+        <View className="w-full border-t border-gray-200 dark:border-black-200">
+          <View className="flex-row justify-between w-full border-b border-gray-200 dark:border-black-200">
+            <View className={`w-1/2 py-4 border-r border-gray-200 dark:border-black-200 ${showDetails ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
               <TouchableOpacity 
                 className="flex-row items-center gap-2 justify-center text-center"
                 onPress={() => setShowDetails(true)}
               >
                 <Image 
                   source={icons.resume}
-                  style={{tintColor: showDetails ? "#ff9c01" : "#fff"}}
+                  style={{tintColor: showDetails ? "#ff9c01" : colorScheme === 'dark' ? "#fff" : "#000"}}
                   className="h-6 w-6 bg-secon"
                   resizeMode="contain"
                 />
-                <Text className="text-sm text-white font-pregular">Detajet e llogarisë</Text>
+                <Text className="text-sm text-oBlack dark:text-white font-pregular">Detajet e llogarisë</Text>
               </TouchableOpacity>
             </View>
-            <View className="w-1/2 py-4" style={{backgroundColor: !showDetails ? "#13131a" : "transparent"}}>
+            <View className={`w-1/2 py-4 ${!showDetails ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
               <TouchableOpacity 
                 className="flex-row items-center gap-2 justify-center text-center"
                 onPress={() => setShowDetails(false)}
@@ -331,9 +333,9 @@ const router = useRouter();
                   source={icons.progress}
                   className="h-6 w-6"
                   resizeMode="contain"
-                  style={{tintColor: !showDetails ? "#ff9c01" : "#FFF"}}
+                  style={{tintColor: !showDetails ? "#ff9c01" : colorScheme === "dark" ? "#FFF" : "#000"}}
                 />
-                <Text className="text-sm text-white font-pregular">Progresi juaj</Text>
+                <Text className="text-sm text-oBlack dark:text-white font-pregular">Progresi juaj</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -342,31 +344,31 @@ const router = useRouter();
   
         {/* user details */}
         { showDetails ? <>
-          <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 overflow-hidden" style={styles.box}>
-              <View className={` ${showImportantDetails ? "bg-oBlack" : ""} p-2 border-r border-black-200 flex-1`}>
+          <View className="flex-row items-center w-[98%] mx-auto border border-gray-200 dark:border-black-200 rounded-lg mt-2 overflow-hidden" style={shadowStyle}>
+              <View className={` ${showImportantDetails ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} p-2 border-r border-gray-200 dark:border-black-200 flex-1`}>
                 <TouchableOpacity onPress={() => {setShowImportantDetails(true), setShowOtherDetails(false)}} className="items-center gap-2 flex-row justify-center">
                   <View>
                     <Image 
                       source={icons.info} 
-                      style={{tintColor: showImportantDetails ? "#FF9C01" : "#fff"}} 
+                      style={{tintColor: showImportantDetails ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}} 
                       className="w-6 h-6"
                       resizeMode='contain'
                       />
                   </View>
-                  <Text className="text-sm text-center text-white font-pregular">Te dhenat kryesore</Text>
+                  <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Te dhenat kryesore</Text>
                 </TouchableOpacity>
               </View>
-              <View className={`${showOtherDetails ? "bg-oBlack" : ""} flex-1 p-2`}>
+              <View className={`${showOtherDetails ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} flex-1 p-2`}>
                 <TouchableOpacity onPress={() => {setShowOtherDetails(true), setShowImportantDetails(false)}} className="items-center gap-2 flex-row justify-center">
                   <View>
                     <Image 
                       source={icons.infoFilled} 
-                      style={{tintColor: showOtherDetails ? "#FF9C01" : "#fff"}}
+                      style={{tintColor: showOtherDetails ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}}
                       className="w-6 h-6"
                       resizeMode='contain'
                       />
                   </View>
-                  <Text className="text-sm text-center text-white font-pregular">Informacione te tjera</Text>
+                  <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Informacione te tjera</Text>
                 </TouchableOpacity>
               </View>
           </View>
@@ -386,7 +388,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani emrin tuaj te vertete.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani emrin tuaj te vertete.</Text>
                 {errors.name && (
                   <Text className="text-red-500 text-xs font-plight">{errors.name.message}</Text>
                 )}
@@ -404,7 +406,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani mbiemrin tuaj te vertete.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Per kualitet me te mire te veprimit ne platforme, shkruani mbiemrin tuaj te vertete.</Text>
                 {errors.lastname && (
                   <Text className="text-red-500 text-xs font-plight">{errors.lastname.message}</Text>
                 )}
@@ -422,7 +424,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani se si deshironi te paraqiteni ju ne platforme.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani se si deshironi te paraqiteni ju ne platforme.</Text>
                 {errors.username && (
                   <Text className="text-red-500 text-xs font-plight">{errors.username.message}</Text>
                 )}
@@ -440,7 +442,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1"><Text className="text-secondary">Vemendje:</Text> Ne ndryshim te emailit, ju duhet te verifikoni emailin e ri.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1"><Text className="text-secondary">Vemendje:</Text> Ne ndryshim te emailit, ju duhet te verifikoni emailin e ri.</Text>
                 {errors.email && (
                   <Text className="text-red-500 text-xs font-plight">{errors.email.message}</Text>
                 )}
@@ -459,7 +461,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni numrin tuaj ne perdorim aktual.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Paraqitni numrin tuaj ne perdorim aktual.</Text>
                 {errors.phoneNumber && (
                   <Text className="text-red-500 text-xs font-plight">{errors.phoneNumber.message}</Text>
                 )}
@@ -478,7 +480,7 @@ const router = useRouter();
                     />
                   )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni moshen tuaj reale.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Paraqitni moshen tuaj reale.</Text>
                 {errors.age && (
                   <Text className="text-red-500 text-xs font-plight">{errors.age.message}</Text>
                 )}
@@ -507,7 +509,7 @@ const router = useRouter();
                       />
                     )}
                   />
-                  <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani nje fjalekalim te forte.</Text>
+                  <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani nje fjalekalim te forte.</Text>
                   {errors.password && (
                     <Text className="text-red-500 text-xs font-plight">{errors.password.message}</Text>
                   )}
@@ -526,7 +528,7 @@ const router = useRouter();
                       />
                     )}
                   />
-                  <Text className="text-xs text-gray-400 font-plight mt-1">Konfirmoni fjalekalimin e shkruar me larte.</Text>
+                  <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Konfirmoni fjalekalimin e shkruar me larte.</Text>
                   {errors.confirmPassword && (
                     <Text className="text-red-500 text-xs font-plight">{errors.confirmPassword.message}</Text>
                   )}
@@ -543,48 +545,48 @@ const router = useRouter();
           {showOtherDetails && <ShowOtherDetailsProfile userId={userData?.id} />}
         </> : 
             <>
-              <View className="flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 mb-4 relative" style={styles.box}>
-                <View className={` ${completedCourses ? "bg-oBlack" : ""}  w-1/2 border-r border-black-200`}>
+              <View className="flex-row items-center w-[98%] mx-auto border border-gray-200 dark:border-black-200 rounded-lg mt-2 mb-4 relative" style={shadowStyle}>
+                <View className={` rounded-l-md ${completedCourses ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}  w-1/2 border-r border-gray-200 dark:border-black-200`}>
                   <TouchableOpacity onPress={() => {setCompletedCourses(!completedCourses), setShowCompletedQuizzes(false), setShowOnlineCoursesProgress(false)}} className="items-center gap-2 p-2 flex-row justify-center">
                     <View>
                       <Image 
                         source={images.mortarBoard} 
-                        style={{tintColor: completedCourses ? "#FF9C01" : "#fff"}} 
+                        style={{tintColor: completedCourses ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}} 
                         className="w-6 h-6"
                         resizeMode='contain'
                         />
                     </View>
-                    <Text className="text-sm text-center text-white font-pregular">Kurse te perfunduara</Text>
+                    <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Kurse te perfunduara</Text>
                   </TouchableOpacity>
                 </View>
 
 
                 <View className="absolute right-0 left-0 -bottom-6 items-center z-50 justify-center mx-auto">
                   <Animatable.View animation="pulse" iterationCount="infinite">
-                    <TouchableOpacity onPress={() => {setShowCompletedQuizzes(false), setCompletedCourses(false), setShowOnlineCoursesProgress(!showOnlineCoursesProgress)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-oBlack" : "bg-primary"} border border-black-200 rounded-md p-2 py-1`} style={styles.box}>
+                    <TouchableOpacity onPress={() => {setShowCompletedQuizzes(false), setCompletedCourses(false), setShowOnlineCoursesProgress(!showOnlineCoursesProgress)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} border border-gray-200 dark:border-black-200 rounded-md p-2 py-1`} style={shadowStyle}>
                       <Image 
                         source={icons.parents} 
-                        style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : "#fff"}} 
+                        style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}} 
                         className="w-6 h-6"
                         resizeMode='contain'
                         />
-                      <Text className="text-sm text-center text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
+                      <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
                     </TouchableOpacity>
                   </Animatable.View>
                 </View>
 
 
-                <View className={`${showCompletedQuizzes ? "bg-oBlack" : ""} w-1/2 `}>
+                <View className={`rounded-r-md ${showCompletedQuizzes ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} w-1/2 `}>
                   <TouchableOpacity onPress={() => {setShowCompletedQuizzes(!showCompletedQuizzes), setCompletedCourses(false), setShowOnlineCoursesProgress(false)}} className="items-center gap-2 p-2 flex-row justify-center">
                     <View>
                       <Image 
                         source={icons.quiz} 
-                        style={{tintColor: showCompletedQuizzes ? "#FF9C01" : "#fff"}}
+                        style={{tintColor: showCompletedQuizzes ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}}
                         className="w-6 h-6"
                         resizeMode='contain'
                         />
                     </View>
-                    <Text className="text-sm text-center text-white font-pregular">Kuize te perfunduara</Text>
+                    <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Kuize te perfunduara</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -602,24 +604,24 @@ const router = useRouter();
                     return(
                       <View 
                         key={"progressItem-" + item?.id}
-                        style={styles.box}
-                        className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
+                        style={shadowStyle}
+                        className="bg-oBlack-light dark:bg-oBlack rounded-[10px] border border-gray-200 dark:border-black-200 m-4 p-4 relative"
                       >
-                        <View className="flex-row justify-between border-b border-black-200 pb-4 items-center gap-2">
+                        <View className="flex-row justify-between border-b border-gray-200 dark:border-black-200 pb-4 items-center gap-2">
                           <View className="gap-4 flex-col flex-[0.5]">
                             <View>
-                              <Text className="text-xs font-plight text-white">Emri i kursit:</Text>
-                              <Text className="text-base font-psemibold text-white">{item?.course?.courseName}</Text>
+                              <Text className="text-xs font-plight text-oBlack dark:text-white">Emri i kursit:</Text>
+                              <Text className="text-base font-psemibold text-oBlack dark:text-white">{item?.course?.courseName}</Text>
                             </View>
                             <View>
-                              <Text className="text-xs font-plight text-white">Kategoria:</Text>
-                              <Text className="text-base font-psemibold text-white">{getCourseCategories(userCategories, item?.course?.courseCategory)}</Text>
+                              <Text className="text-xs font-plight text-oBlack dark:text-white">Kategoria:</Text>
+                              <Text className="text-base font-psemibold text-oBlack dark:text-white">{getCourseCategories(userCategories, item?.course?.courseCategory)}</Text>
                             </View>
                           </View>
                           <View className="flex-[0.5] rounded-[10px]  overflow-hidden">
                             <Image 
                               source={images.testimage}
-                              className="h-[100px] w-full border border-black-200 rounded-[10px]"
+                              className="h-[100px] w-full border border-white dark:border-black-200 rounded-[10px]"
                               resizeMode='cover'
                             />
                           </View>
@@ -657,8 +659,8 @@ const router = useRouter();
                           animation="fadeInLeft"
                           duration={700}
                           >
-                            <Text className="text-base font-psemibold text-white">Pershkrimi i kursit:</Text>
-                            <Text className="text-xs font-light text-white">{item?.course?.courseDescription}</Text>
+                            <Text className="text-base font-psemibold text-oBlack dark:text-white">Pershkrimi i kursit:</Text>
+                            <Text className="text-xs font-light text-gray-600 dark:text-gray-400">{item?.course?.courseDescription}</Text>
                           </Animatable.View>
                           <View className="flex-row items-end justify-between overflow-hidden">
                             <View className="flex-1">
@@ -669,8 +671,8 @@ const router = useRouter();
                               animation="fadeInRight"
                               duration={700}
                             >
-                              <Text className="text-xs font-light text-white text-right">Perfunduar me:</Text>
-                              <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
+                              <Text className="text-xs font-light text-oBlack dark:text-white text-right">Perfunduar me:</Text>
+                              <Text className="text-base font-psemibold text-oBlack dark:text-white text-right">{formattedDate}</Text>
                             </Animatable.View>
                           </View>
                         </View>}
@@ -678,7 +680,7 @@ const router = useRouter();
                       </View>
                     )
                   })}
-                </View> : (completedCourses && <View style={styles.box} className=" mx-4 mt-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                </View> : (completedCourses && <View style={shadowStyle} className=" mx-4 mt-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
                   <EmptyState
                       title={"Nuk u gjet asnje kurs i perfunduar"}
                       titleStyle={"!font-pregular mb-2"}
@@ -704,28 +706,28 @@ const router = useRouter();
                       return(
                         <View 
                           key={"quizCompleted-" + item?.id}
-                          style={styles.box}
-                          className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
+                          style={shadowStyle}
+                          className="bg-oBlack-light dark:bg-oBlack rounded-[10px] border border-gray-200 dark:border-black-200 m-4 p-4 relative"
                         >
                           <View className="flex-row justify-between border-b border-black-200 pb-4 items-center gap-2">
                             <View className="gap-4 flex-col flex-[0.5]">
                               <View>
-                                <Text className="text-xs font-plight text-white">Emri i kuizit:</Text>
-                                <Text className="text-base font-psemibold text-white">{item?.quiz?.quizName}</Text>
+                                <Text className="text-xs font-plight text-oBlack dark:text-white">Emri i kuizit:</Text>
+                                <Text className="text-base font-psemibold text-oBlack dark:text-white">{item?.quiz?.quizName}</Text>
                               </View>
                               <View>
-                                <Text className="text-xs font-plight text-white">Kategoria:</Text>
-                                <Text className="text-base font-psemibold text-white">{getCourseCategories(userCategories, item?.quiz?.quizCategory)}</Text>
+                                <Text className="text-xs font-plight text-oBlack dark:text-white">Kategoria:</Text>
+                                <Text className="text-base font-psemibold text-oBlack dark:text-white">{getCourseCategories(userCategories, item?.quiz?.quizCategory)}</Text>
                               </View>
                             </View>
                             <View className="gap-4 flex-col flex-[0.5]">
                               <View>
-                                <Text className="text-xs font-plight text-white">Gabimet:</Text>
-                                <Text className="text-base font-psemibold text-white"><Text className="text-secondary">{item?.mistakes}</Text> {item?.mistakes === 1 ? "Gabim" : "Gabime"} </Text>
+                                <Text className="text-xs font-plight text-oBlack dark:text-white">Gabimet:</Text>
+                                <Text className="text-base font-psemibold text-oBlack dark:text-white"><Text className="text-secondary">{item?.mistakes}</Text> {item?.mistakes === 1 ? "Gabim" : "Gabime"} </Text>
                               </View>
                               <View>
-                                <Text className="text-xs font-plight text-white">Koha:</Text>
-                                <Text className="text-base font-psemibold text-white">{item?.duration}</Text>
+                                <Text className="text-xs font-plight text-oBlack dark:text-white">Koha:</Text>
+                                <Text className="text-base font-psemibold text-oBlack dark:text-white">{item?.duration}</Text>
                               </View>
                             </View>
                           </View>
@@ -759,8 +761,8 @@ const router = useRouter();
                                 animation="fadeInLeft"
                                 duration={700}
                               >
-                                <Text className="text-base font-psemibold text-white">Pershkrimi i kuizit:</Text>
-                                <Text className="text-xs font-light text-white">{item?.quiz?.quizDescription}</Text>
+                                <Text className="text-base font-psemibold text-oBlack dark:text-white">Pershkrimi i kuizit:</Text>
+                                <Text className="text-xs font-light text-gray-600 dark:text-gray-400">{item?.quiz?.quizDescription}</Text>
                               </Animatable.View>
 
                               <View className="flex-row items-end justify-between overflow-hidden">
@@ -772,8 +774,8 @@ const router = useRouter();
                                   animation="fadeInRight"
                                   duration={700}
                                 >
-                                  <Text className="text-xs font-light text-white text-right">Perfunduar me:</Text>
-                                  <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
+                                  <Text className="text-xs font-light text-oBlack dark:text-white text-right">Perfunduar me:</Text>
+                                  <Text className="text-base font-psemibold text-oBlack dark:text-white text-right">{formattedDate}</Text>
                                 </Animatable.View>
                               </View>
                           </View>}
@@ -781,7 +783,7 @@ const router = useRouter();
                       )
                     })}
                 </View> : 
-                (showCompletedQuizzes &&  <View style={styles.box} className=" mx-4 mt-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                (showCompletedQuizzes &&  <View style={shadowStyle} className=" mx-4 mt-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 mb-4 dark:border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
                   <EmptyState
                       title={"Nuk u gjet asnje kuiz i perfunduar"}
                       titleStyle={"!font-pregular mb-2"}
@@ -800,7 +802,7 @@ const router = useRouter();
                         </View>
                     )))
                   ) : (
-                    <View style={styles.box} className=" mx-4 my-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+                    <View style={shadowStyle} className=" mx-4 my-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
                       <EmptyState
                         title={"Nuk u gjet asnje progress i Takimeve Online"}
                         titleStyle={"!font-pregular mb-2"}
