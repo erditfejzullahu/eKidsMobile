@@ -14,6 +14,7 @@ import _, { flatMap, flatten, flattenDeep, noop } from 'lodash'
 import FullScreenImage from './FullScreenImage'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
 
 const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const {colorScheme} = useColorScheme();
@@ -81,10 +82,19 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         })
     }
 
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
+        alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
+        theme: colorScheme
+    })
+
     const addImages = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(!permissionResult){
-            console.log("permission");
+            permissionNotification();
+            return
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -112,7 +122,8 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
     const addCameraImage = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         if(!permissionResult){
-            console.log("no persmission");
+            permissionNotification();
+            return;
         }
         let result = await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],

@@ -3,7 +3,7 @@ import React from 'react'
 import { Notifier, NotifierComponents, Easing } from 'react-native-notifier';
 import { icons } from '../constants';
 
-const NotifierComponent = ({title, description, alertType = "success", onHideFunc = null, customImage = null, theme = 'dark'}) => {
+const NotifierComponent = ({title, description, alertType = "success", onHideFunc = null, customImage = null, theme = 'dark', onPressFunc = {}}) => {
     //theme can be dark or light
     const showNotification = () => {
         let imageSource;
@@ -36,7 +36,8 @@ const NotifierComponent = ({title, description, alertType = "success", onHideFun
                 },
             },
             easing: Easing.bounce,
-            onHidden: onHideFunc
+            onHidden: onHideFunc,
+            onPress: onPressFunc
         });
     }
   return {showNotification}

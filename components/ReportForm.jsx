@@ -17,6 +17,8 @@ import _ from 'lodash'
 import { icons } from '../constants'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
+
 const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {colorScheme} = useColorScheme();
         const {shadowStyle} = useShadowStyles();
@@ -109,10 +111,11 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         }
     }
 
-    const {showNotification: requestPermission} = NotifierComponent({
-        tite: "Dicka shkoi gabim!",
-        description: "Na nevojitet akses ne librarine e fotove tuaja.",
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
     })
 
@@ -126,7 +129,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     const pickImage = async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
-            requestPermission();
+            permissionNotification();
             return;
         }
         let image = await ImagePicker.launchImageLibraryAsync({

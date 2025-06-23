@@ -15,6 +15,7 @@ import { currentUserID } from '../services/authService'
 import { CreateSupportReportTicket } from '../services/fetchingService'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
 
 const SupportForm = ({onSuccess, availableTickets = []}) => {
     const {colorScheme} = useColorScheme();
@@ -48,10 +49,18 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
         theme: colorScheme
     })
 
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
+        alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
+        theme: colorScheme
+    })
+
     const pickImage = async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
-            requestPermission();
+            permissionNotification();
             return;
         }
         let image = await ImagePicker.launchImageLibraryAsync({

@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
 
 const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
@@ -208,9 +209,18 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }
     }
 
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
+        alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
+        theme: colorScheme
+    })
+
     const openCamera = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync()
         if(!permissionResult){
+            permissionNotification();
             return;
         }
 
@@ -238,6 +248,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const addImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(!permissionResult){
+            permissionNotification();
             return;
         }
 

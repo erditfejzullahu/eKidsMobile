@@ -24,6 +24,7 @@ import NotifierComponent from '../../../components/NotifierComponent';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 import { useColorScheme } from 'nativewind';
 import { useShadowStyles } from '../../../hooks/useShadowStyles';
+import * as Linking from "expo-linking"
 
 const Conversation = () => {
     const conversation = useLocalSearchParams();
@@ -59,10 +60,19 @@ const Conversation = () => {
         fileName: ''
     })
 
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
+        alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
+        theme: colorScheme
+    })
+
     const sendImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if(!permissionResult){
-            console.log('show smth se se ka bo permission');
+            permissionNotification()
+            return;
         }
         //TODO: implementim per kamera poashtu me shtu
         let result = await ImagePicker.launchImageLibraryAsync({

@@ -30,6 +30,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { personalInformations } from '../../../schemas/profileSchema'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
 
 const Profile = () => {
   const {colorScheme} = useColorScheme();
@@ -198,12 +199,20 @@ const router = useRouter();
     base64: '',
   });
 
+  const {showNotification: permissionNotification} = NotifierComponent({
+    title: "Nevojitet leje!",
+    description: "Klikoni per te shtuar lejet e posacshme",
+    alertType: "warning",
+    onPressFunc: () => Linking.openSettings(),
+    theme: colorScheme
+  })
+
   const profileImage = async () => {
     
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if(!permissionResult){
-      // console.log(permissionResult);
-      
+      permissionNotification();
+      return;
     }
 
     let result = await ImagePicker.launchImageLibraryAsync({

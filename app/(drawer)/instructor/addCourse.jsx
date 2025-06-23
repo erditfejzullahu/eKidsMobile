@@ -21,6 +21,7 @@ import { useNavigation } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
+import * as Linking from "expo-linking"
 
 const AddCourse = () => {
     const {colorScheme} = useColorScheme();
@@ -124,17 +125,18 @@ const AddCourse = () => {
         theme: colorScheme
     })
 
-    const {showNotification: requestPermission} = NotifierComponent({
-        tite: "Dicka shkoi gabim!",
-        description: "Na nevojitet akses ne librarine e fotove tuaja.",
+    const {showNotification: permissionNotification} = NotifierComponent({
+        title: "Nevojitet leje!",
+        description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
+        onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
     })
 
     const pickImage = async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
-            requestPermission();
+            permissionNotification();
             return;
         }
         let image = await ImagePicker.launchImageLibraryAsync({

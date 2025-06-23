@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker"
 import { updateProfilePicture } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import { useColorScheme } from 'nativewind'
+import * as Linking from "expo-linking"
 
 const INProfileFirstSection = ({data}) => {
   const {colorScheme} = useColorScheme();
@@ -17,17 +18,18 @@ const INProfileFirstSection = ({data}) => {
         file: null
     })
 
-    const {showNotification: requestPermission} = NotifierComponent({
-        tite: "Dicka shkoi gabim!",
-        description: "Na nevojitet akses ne librarine e fotove tuaja.",
-        alertType: "warning",
-        theme: colorScheme
-      })
+    const {showNotification: permissionNotification} = NotifierComponent({
+            title: "Nevojitet leje!",
+            description: "Klikoni per te shtuar lejet e posacshme",
+            alertType: "warning",
+            onPressFunc: () => Linking.openSettings(),
+            theme: colorScheme
+        })
 
     const uploadPicture = async () => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
-            requestPermission()
+            permissionNotification()
             return;
         }
         let image = await ImagePicker.launchImageLibraryAsync({
