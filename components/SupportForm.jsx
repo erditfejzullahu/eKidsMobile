@@ -14,8 +14,11 @@ import * as ImagePicker from "expo-image-picker"
 import { currentUserID } from '../services/authService'
 import { CreateSupportReportTicket } from '../services/fetchingService'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
+
 const SupportForm = ({onSuccess, availableTickets = []}) => {
     const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(supportSectionSchema),
         defaultValues: {
@@ -84,7 +87,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
     }
 
   return (
-    <View className="gap-3" style={styles.box}>
+    <View className="gap-3" style={shadowStyle}>
         <View>
             <Controller 
                 control={control}
@@ -98,7 +101,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Subjekti i paraqitur ne kete forme, do vije ne email si titull emaili.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Subjekti i paraqitur ne kete forme, do vije ne email si titull emaili.</Text>
             {errors.subject && (
                 <Text className="text-red-500 text-xs font-plight">{errors.subject.message}</Text>
             )}
@@ -116,7 +119,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Pershkrim mund te jete ecuria se si shkuat deri ne ate faze ku nuk mund te ndihmoheshit vetem ne aplikacion.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Pershkrim mund te jete ecuria se si shkuat deri ne ate faze ku nuk mund te ndihmoheshit vetem ne aplikacion.</Text>
             {errors.description && (
                 <Text className="text-red-500 text-xs font-plight">{errors.description.message}</Text>
             )}
@@ -139,7 +142,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     </Picker>
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Zgjidh nje nga rubrikat me larte.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Zgjidh nje nga rubrikat me larte.</Text>
             {errors.topicType && (
                 <Text className="text-red-500 font-plight text-xs">{errors.topicType.message}</Text>
             )}
@@ -158,7 +161,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani tematiken tjeter.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani tematiken tjeter.</Text>
             {errors.otherTopic && (
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
@@ -169,12 +172,12 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                 name="image"
                 render={({field: {value, onChange}}) => (
                     <>
-                        <Text className={`text-base text-gray-100 font-pmedium mb-2`}>Paraqitni imazhin /Opsionale</Text>
-                        <TouchableOpacity className="bg-oBlack border-2 border-black-200 rounded-xl py-3" onPress={() => pickImage(onChange)}>
+                        <Text className={`text-base text-gray-700 dark:text-gray-100 font-pmedium mb-2`}>Paraqitni imazhin /Opsionale</Text>
+                        <TouchableOpacity className="bg-oBlack border-2 border-gray-200 dark:border-black-200 rounded-xl py-3" onPress={() => pickImage(onChange)}>
                             <Text className="text-white text-center font-psemibold ">{value ? "Ndrysho imazhin" : "Zgjidh imazhin"}</Text>
                         </TouchableOpacity>
                         {value ? (
-                            <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>
+                            <View className="border mt-2 rounded-xl border-gray-200 dark:border-black-200 max-h-[200px]" style={shadowStyle}>
                                 <Image
                                     source={{uri: value}}
                                     className="w-full h-full"
@@ -185,7 +188,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
                     </>
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Per vleresim me te mire te raportimit tuaj paraqitni screenshots(SC) te problemit/raportimit.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Per vleresim me te mire te raportimit tuaj paraqitni screenshots(SC) te problemit/raportimit.</Text>
             {errors.image && (
                 <Text className="text-red-500 font-plight text-xs">{errors.image.message}</Text>
             )}

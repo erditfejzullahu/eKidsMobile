@@ -25,12 +25,14 @@ const defaultMenuItems = [
     { label: 'Profili im', icon: icons.profile, path: '/profile' },
     { label: 'Mesoni Online', icon: icons.parents, path: '/allOnlineCourses' },
     { label: 'Lajmetari', icon: icons.messenger, path: '/all-messages'},
+    { label: "Lajmet tona", icon: icons.blogs, path: "/blogAll" },
     { label: 'Statistikat studentore', icon: icons.students, path: '/all-students' },
     { label: 'Shto një kuiz', icon: icons.plus, path: '/add-quiz' },
     { label: 'Kuizet e mia', icon: icons.quiz, path: '/my-quizzes'},
     { label: 'Statistikat e mia', icon: icons.statistics, path: '/statistics/1' },
     { label: 'Perfundo kuize', icon: icons.closure, path: '/all-quizzes' },
-    { label: 'Behuni instruktor', icon: icons.tutor, path: '/become-instructor'}
+    { label: 'Behuni instruktor', icon: icons.tutor, path: '/become-instructor'},
+    { label: "Support(working)", icon: icons.customerSupport, path: "/support" },
 ];
 
 const DrawerUpdaterProvider = ({children}) => {

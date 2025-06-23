@@ -12,8 +12,12 @@ import EmptyState from "../../../components/EmptyState"
 import { useRouter } from 'expo-router';
 import { initialFilterData } from '../../../services/filterConfig';
 import { useRole } from '../../../navigation/RoleProvider';
+import { useShadowStyles } from '../../../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 
 const InstructorHome = () => {
+  const {shadowStyle} = useShadowStyles();
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {role, isLoading: roleLoading} = useRole();
   useEffect(() => {
@@ -101,7 +105,7 @@ const InstructorHome = () => {
     <View className="flex-1">
       <FlatList 
         refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
-        className="h-full bg-primary"
+        className="h-full bg-primary-light dark:bg-primary"
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
         contentContainerStyle={{paddingLeft: 16, paddingRight: 16, gap:24}}
@@ -112,7 +116,7 @@ const InstructorHome = () => {
         )}
         ListHeaderComponent={() => (
           <>
-          <View className="flex-row items-center gap-2 border-b border-black-200">
+          <View className="flex-row items-center gap-2 border-b border-gray-200 dark:border-black-200">
             <View className="flex-1">
               <DefaultHeader showBorderBottom={false} headerTitle={`${userData?.firstname + " " + userData?.lastname}`} topSubtitle={"Miresevjen perseri,"} bottomSubtitle={"Ju jeni duke vepruar ne baze te rolit te instruktorit. Per cdo pakjartesi mund te kontaktoni Panelin e Ndihmes!"}/>
             </View>
@@ -126,7 +130,7 @@ const InstructorHome = () => {
           </View>
 
           <View className="mt-2 flex-row items-center justify-between">
-            <Text className="font-pregular text-gray-100 text-lg">Kurse nga koleget tuaj</Text>
+            <Text className="font-pregular text-gray-700 dark:text-gray-100 text-lg">Kurse nga koleget tuaj</Text>
           </View>
 
           <View className="mt-2">
@@ -140,12 +144,12 @@ const InstructorHome = () => {
               <View className="justify-center -mt-2 flex-row items-center gap-2">
               {coursesData?.hasMore ? (
                 <>
-                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                 <ActivityIndicator color={"#FF9C01"} size={24} />
                 </>
               ) : (
                 <>
-                <Text className="text-white font-psemibold text-sm">Nuk ka me kurse...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me kurse...</Text>
                 <Image
                     source={images.breakHeart}
                     className="size-5"
@@ -158,12 +162,13 @@ const InstructorHome = () => {
           </>
         )}
         ListEmptyComponent={() => (
-          <View className="bg-oBlack border border-black-200" style={styles.box}>
+          <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200" style={shadowStyle}>
             <EmptyState 
               title={"Nuk ka kurse ende!"}
               subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
               isSearchPage={true}
               buttonTitle={"Krijo kurse"}
+              buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
               buttonFunction={() => router.replace('/instructor/addCourse')}
             />
           </View>

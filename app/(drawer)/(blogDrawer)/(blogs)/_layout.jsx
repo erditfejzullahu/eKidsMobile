@@ -2,6 +2,7 @@ import { View, Text, Image } from 'react-native'
 import React from 'react'
 import { Link, Tabs } from 'expo-router'
 import { icons } from '../../../../constants'
+import { useColorScheme } from 'nativewind'
 
 const TabIcon = ({icon, color, name, focused}) => {
     return (
@@ -15,35 +16,27 @@ const TabIcon = ({icon, color, name, focused}) => {
                 />
             </View>
             <View className="w-full">
-                <Text className={`${focused ? "font-psemibold" : "font-pregular"} text-sm text-white w-full`}>{name}</Text>
+                <Text className={`${focused ? "font-psemibold" : "font-pregular"} text-sm text-oBlack dark:text-white w-full`}>{name}</Text>
             </View>
         </View>
     )
 }
 
 const BlogsLayout = () => {
+    const {colorScheme} = useColorScheme();
   return (
     <>
-    <View className="items-center justify-center bg-oBlack absolute " style={{bottom: "0", left: 0, right: 0}}>
-        <View style={{marginBottom: 89}} className="z-20 mx-auto items-center justify-center bg-oBlack p-2.5 rounded-t-[20px] border-t border-l border-r border-black-200">
-            <Image
-                source={icons.plus}
-                className="h-7 w-7"
-                resizeMode='contain'
-            />
-        </View>
-    </View>
     <Tabs
         backBehavior="history"
         screenOptions={{
             tabBarShowLabel: false,
             tabBarActiveTintColor: '#FFA001',
-            tabBarInactiveTintColor: '#CDCDE0',
+            tabBarInactiveTintColor: colorScheme === "light" ? "#000" : '#CDCDE0',
             tabBarStyle: {
-            backgroundColor: "#13131a",
-            borderTopWidth: 1,
-            borderTopColor: '#232533',
-            height: 90,
+              backgroundColor: colorScheme === 'light' ? "#fcf6f2" : "#13131a",
+              borderTopWidth: 1,
+              borderTopColor: colorScheme === 'light' ? "#e5e7eb" : '#232533',
+              height: 90,
             },
         }}
     >

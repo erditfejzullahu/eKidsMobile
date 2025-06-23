@@ -18,8 +18,10 @@ import { initialFilterData } from '../../../services/filterConfig'
 import { useRouter } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
 import StudentsItemComponent from '../../../components/StudentsItemComponent'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const InstructorManage = () => {
+    const {shadowStyle} = useShadowStyles();
     const router = useRouter();
     const {role, isLoading: roleLoading} = useRole();
     useEffect(() => {
@@ -107,8 +109,8 @@ const InstructorManage = () => {
     <View className="flex-1">
     <FlatList 
         refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
-        className="h-full bg-primary"
-        style={styles.box}
+        className="h-full bg-primary-light dark:bg-primary"
+        style={shadowStyle}
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
         contentContainerStyle={{paddingLeft: 16, paddingRight: 16, gap: 24}}
@@ -127,7 +129,7 @@ const InstructorManage = () => {
             }
         }}
         ListEmptyComponent={() => (
-            <View className="border border-black-200 bg-oBlack " style={styles.box}>
+            <View className="border border-black-200 bg-oBlack " style={shadowStyle}>
                 <EmptyState 
                     title={`Nuk u gjet asnje ${manageType === "Kurseve" ? "e dhene e ndonje Kursi" : manageType === "Studenteve" ? "e dhene Studentore" : manageType === "Takimeve" ? "e dhene e Takimeve" : "e dhene"}`}
                     subtitle={"Nese mendoni qe eshte gabim, rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
@@ -157,12 +159,12 @@ const InstructorManage = () => {
             <View className="justify-center -mt-2 flex-row items-center gap-2">
             {manageData?.hasMore ? (
                 <>
-                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                 <ActivityIndicator color={"#FF9C01"} size={24} />
                 </>
                 ) : (
                 <>
-                <Text className="text-white font-psemibold text-sm">Nuk ka me {manageType === "Kurseve" ? "kurse" : manageType === "Studenteve" ? "studente" : "takime"}...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me {manageType === "Kurseve" ? "kurse" : manageType === "Studenteve" ? "studente" : "takime"}...</Text>
                 <Image
                     source={images.breakHeart}
                     className="size-5"

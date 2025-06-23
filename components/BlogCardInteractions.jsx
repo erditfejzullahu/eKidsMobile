@@ -15,9 +15,11 @@ import _ from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
+    const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const [openComments, setOpenComments] = useState(false)
     const [commentWritten, setCommentWritten] = useState("")
@@ -347,17 +349,17 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
   return (
     <>
     <View className="flex-1">
-        <View className="flex-row items-center justify-center gap-4 bg-primary mx-4 -mb-4 z-50 border border-black-200 rounded-[5px] flex-1" style={styles.box}>
-            <View className="border-r pr-1.5 border-black-200 flex-1">
+        <View className="flex-row items-center justify-center gap-4 bg-primary-light dark:bg-primary mx-4 -mb-4 z-50 border border-gray-200 dark:border-black-200 rounded-[5px] flex-1" style={shadowStyle}>
+            <View className="border-r pr-1.5 border-gray-200 dark:border-black-200 flex-1">
                 <TouchableOpacity onPress={() => likeBlog(blog?.id, user?.id)} className="flex-row items-center justify-center gap-1.5 py-2">
-                    <Text className={`${(blog?.isLiked || blogTemporaryLike) ? "text-secondary" : "text-white"} font-psemibold text-xs`}>{(blog?.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
+                    <Text className={`${(blog?.isLiked || blogTemporaryLike) ? "text-secondary" : "text-oBlack dark:text-white"} font-psemibold text-xs`}>{(blog?.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
                     <View className="relative">
                         <View>
                         <Image
                             source={icons.star}
                             className="w-4 h-4 mb-0.5"
                             resizeMode='contain'
-                            tintColor={`${(blog?.isLiked || blogTemporaryLike) ? "#FF9C01" : "#fff"}`}
+                            tintColor={`${(blog?.isLiked || blogTemporaryLike) ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}`}
                         />
                         </View>
                         <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
@@ -366,37 +368,37 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                     </View>
                 </TouchableOpacity>
             </View>
-            <View className="border-r pr-1.5 border-black-200 items-center flex-1 justify-center">
+            <View className="border-r pr-1.5 border-gray-200 dark:border-black-200 items-center flex-1 justify-center">
                 <TouchableOpacity onPress={handleCommentVisibility} className="flex-row items-center justify-center gap-1.5 py-2">
-                    <Text className={`${openComments ? "text-secondary" : "text-white"}  font-psemibold text-xs`}>Komentoni</Text>
+                    <Text className={`${openComments ? "text-secondary" : "text-oBlack dark:text-white"}  font-psemibold text-xs`}>Komentoni</Text>
                     <View className="relative">
                         <View>
                         <Image
                             source={icons.chat}
                             className="w-4 h-4 mb-0.5"
                             resizeMode='contain'
-                            tintColor={openComments ? "#FF9C01" : "#fff"}
+                            tintColor={openComments ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}
                         />
                         </View>
                         <View className="absolute -right-2 left-0 -bottom-2 items-center justify-center">
-                            <Text className={`${openComments ? "text-white" : "text-secondary"} font-psemibold text-sm`}>{blog?.commentsCount}</Text>
+                            <Text className={`${openComments ? "text-oBlack dark:text-white" : "text-secondary"} font-psemibold text-sm`}>{blog?.commentsCount}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
             </View>
             <View className="items-center justify-center flex-1">
                 <TouchableOpacity onPress={() => setSendToFriends(true)} className="flex-row items-center justify-center gap-1.5 py-2">
-                    <Text className="text-white font-psemibold text-xs">Shperndaje</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-xs">Shperndaje</Text>
                     <Image 
                         source={icons.friends}
                         className="w-4 h-4 mb-0.5"
                         resizeMode='contain'
-                        tintColor={"#fff"}
+                        tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                     />
                 </TouchableOpacity>
             </View>
         </View>
-        {openComments && <Animatable.View animation="fadeIn" className={`mt-6 bg-primary mx-4 rounded-[5px] border border-black-200 flex-1 ${commentData?.length > 0 ? "h-[300px]" : "h-auto"}`}>
+        {openComments && <Animatable.View animation="fadeIn" className={`mt-6 bg-primary-light dark:bg-primary mx-4 rounded-[5px] border border-gray-200 dark:border-black-200 flex-1 ${commentData?.length > 0 ? "h-[300px]" : "h-auto"}`}>
             <FlatList
                 ref={commentsRef}
                 data={commentData}
@@ -420,7 +422,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                     
                     return (
                         <>
-                        <View style={styles.box} className={`${item.depth === 1 ? "ml-8" : item.depth > 1 ? "ml-16" : ""} flex-row h-full gap-4 flex-1 bg-oBlack m-2 mb-0.5 items-center p-4 pt-3 border border-black-200 rounded-[5px]`}>
+                        <View style={shadowStyle} className={`${item.depth === 1 ? "ml-8" : item.depth > 1 ? "ml-16" : ""} flex-row h-full gap-4 flex-1 bg-oBlack-light dark:bg-oBlack m-2 mb-0.5 items-center p-4 pt-3 border border-gray-200 dark:border-black-200 rounded-[5px]`}>
                             <View>
                                 <Image 
                                     source={{uri: item.user.profilePicture}}
@@ -430,43 +432,43 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             </View>
                             <View className="flex-1 justify-center relative">
                                 <View className="flex-1 justify-center">
-                                    <Text className="font-psemibold text-base text-white">{item.user.name}</Text>
+                                    <Text className="font-psemibold text-base text-oBlack dark:text-white">{item.user.name}</Text>
                                 </View>
                                 <View className="flex-1 mb-1">
-                                    <Text className="font-plight text-gray-400 text-xs">{getParentId ? <><Text className="font-psemibold text-secondary">@{getParentId.user.name}</Text> {item.comment_Content}</> : item.comment_Content}</Text>
+                                    <Text className="font-plight text-gray-600 dark:text-gray-400 text-xs">{getParentId ? <><Text className="font-psemibold text-secondary">@{getParentId.user.name}</Text> {item.comment_Content}</> : item.comment_Content}</Text>
                                 </View>
 
                             <View className="absolute left-0 flex-row gap-4 -bottom-5 -mb-1">
-                                <View style={styles.box}>
-                                    <TouchableOpacity onPress={() => likeBlogComment(item.commentId, user.id, blog.id)} className={`${(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "bg-secondary" : "bg-oBlack"} relative border border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
-                                        <Text className={`font-pmedium text-xs text-white`}>{(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "Pelqyer" : "Pelqe"}</Text>                                            
+                                <View style={shadowStyle}>
+                                    <TouchableOpacity onPress={() => likeBlogComment(item.commentId, user.id, blog.id)} className={`${(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "bg-secondary" : "bg-oBlack-light dark:bg-oBlack"} relative border border-gray-200 dark:border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
+                                        <Text className={`font-pmedium text-xs text-oBlack dark:text-white`}>{(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "Pelqyer" : "Pelqe"}</Text>                                            
                                             <Image 
                                                 source={icons.star}
                                                 className="h-4 w-4"
                                                 resizeMode='contain'
-                                                tintColor={"#fff"}
+                                                tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                             />
                                             <View className="absolute right-1 -bottom-2 items-center justify-center">
                                                 <Text className={`${(item.isLiked || commentTemporaryLike.includes(item.commentId)) ? "text-white" : "text-secondary"} z-50 font-psemibold text-xs`}>{commentTemporaryLike.includes(item.commentId) ? item.likes + 1 : item.likes}</Text>
                                             </View>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={styles.box}>
-                                    <TouchableOpacity onPress={() => handleReplies(item.commentId)} className={`${openReplies.includes(item.commentId) ? "bg-secondary" : "bg-oBlack"}  border border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
-                                        <Text className="font-pmedium text-xs text-white">Repliko</Text>
+                                <View style={shadowStyle}>
+                                    <TouchableOpacity onPress={() => handleReplies(item.commentId)} className={`${openReplies.includes(item.commentId) ? "bg-secondary" : "bg-oBlack-light dark:bg-oBlack"}  border border-gray-200 dark:border-black-200 rounded-[5px] py-0.5 px-1.5 items-center flex-row gap-0.5`}>
+                                        <Text className="font-pmedium text-xs text-oBlack dark:text-white">Repliko</Text>
                                         <Image
                                             source={icons.chat}
                                             className="h-4 w-4"
                                             resizeMode='contain'
-                                            tintColor={"#fff"}
+                                            tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                         />
                                     </TouchableOpacity>
                                 </View>
                             </View>
 
-                            <View className="absolute -right-5 -top-4" style={styles.box}>
-                                <TouchableOpacity className="bg-primary border border-black-200 rounded-[5px] px-2 py-1">
-                                    <Text className="text-white font-plight text-xs">{formattedDate}</Text>
+                            <View className="absolute -right-5 -top-4" style={shadowStyle}>
+                                <TouchableOpacity className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 rounded-[5px] px-2 py-1">
+                                    <Text className="text-oBlack dark:text-white font-plight text-xs">{formattedDate}</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -474,10 +476,10 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                         </View>
 
                             {/* replies */}
-                        {openReplies.includes(item.commentId) && (<View className={`${item.depth === 0 ? "ml-4" : item.depth === 1 ? "ml-12" : "ml-20"} flex-row items-center gap-4 bg-primary border rounded-[5px] border-black-200 p-3 pt-4 pb-2 m-2 mt-4 relative`} style={styles.box}>
-                            <View className="absolute -right-2 -top-2 bg-oBlack border gap-1  p-1 border-black-200 rounded-[5px] flex-row items-center">
+                        {openReplies.includes(item.commentId) && (<View className={`${item.depth === 0 ? "ml-4" : item.depth === 1 ? "ml-12" : "ml-20"} flex-row items-center gap-4 bg-primary-light dark:bg-primary border rounded-[5px] border-gray-200 dark:border-black-200 p-3 pt-4 pb-2 m-2 mt-4 relative`} style={shadowStyle}>
+                            <View className="absolute -right-2 -top-2 bg-oBlack-light dark:bg-oBlack border gap-1  p-1 border-gray-200 dark:border-black-200 rounded-[5px] flex-row items-center">
                                 <View>
-                                    <Image source={icons.upArrow} className="h-4 w-4" tintColor={"#fff"}/>
+                                    <Image source={icons.upArrow} className="h-4 w-4" tintColor={colorScheme === "dark" ? "#fff" : "#000"}/>
                                 </View>
                                 <View>
                                     <Text className="font-psemibold text-secondary text-xs">{item.user.name}</Text>
@@ -490,9 +492,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                                 />
                             </View>
                             <View className="flex-1 gap-2">
-                                <Text className="font-psemibold text-base text-white">{user.firstname} {user.lastname}</Text>
+                                <Text className="font-psemibold text-base text-oBlack dark:text-white">{user.firstname} {user.lastname}</Text>
                                 <TextInput 
-                                    className="border text-gray-400 font-plight text-xs border-black-200 bg-oBlack rounded-[5px] p-2 flex-1"
+                                    className="border text-gray-600 dark:text-gray-400 font-plight text-xs border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack rounded-[5px] p-2 flex-1"
                                     placeholder={`Replikoni tek ${item.user.name}`}
                                     value={replyComment}
                                     onChangeText={(e) => setReplyComment(e)}
@@ -517,9 +519,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                     </View>
                 )}
             />
-            <View className="bg-oBlack border-t px-2 py-3 rounded-b-[5px] z-50 border-black-200 gap-4 flex-row relative" style={styles.box}>
+            <View className="bg-oBlack-light dark:bg-oBlack border-t px-2 py-3 rounded-b-[5px] z-50 border-white dark:border-black-200 gap-4 flex-row relative" style={shadowStyle}>
 
-                {pickedItem.type !== '' && pickedItem.base64 !== '' && <View className="absolute z-50 gap-4 items-center justify-center right-[8px] bottom-[44] bg-oBlack border border-black-200 rounded-[5px] p-4 w-[160px]">
+                {pickedItem.type !== '' && pickedItem.base64 !== '' && <View className="absolute z-50 gap-4 items-center justify-center right-[8px] bottom-[44] bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-4 w-[160px]">
                 <View>
                     {pickedItem.type.includes('image') ? (
                         <Image 
@@ -532,19 +534,19 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             source={icons.documents}
                             className="h-20 rounded-[2px]"
                             resizeMode='contain'
-                            tintColor={"#fff"}
+                            tintColor={ colorScheme === "dark" ? "#fff" : "#000"}
                         />
                     )}
                 </View>
                 <View>
-                        <Text className="text-white font-pmedium text-center text-xs" numberOfLines={2}>{pickedItem.fileName || 'random'}</Text>
+                        <Text className="text-oBlack dark:text-white font-pmedium text-center text-xs" numberOfLines={2}>{pickedItem.fileName || 'random'}</Text>
                     </View>
                     <View className="absolute -right-1 -top-1">
-                        <TouchableOpacity className="bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteItem}>
+                        <TouchableOpacity className="bg-secondary dark:bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteItem}>
                             <Image
                                 source={icons.close}
-                                tintColor={"#000"}
                                 className="w-2 h-2"
+                                tintColor={ colorScheme === "dark" ? "#000" : "#fff"}
                             />
                         </TouchableOpacity>
                     </View>
@@ -556,7 +558,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             source={icons.imageGallery}
                             className="h-5 w-5"
                             resizeMode='contain'
-                            tintColor={"#fff"}
+                            tintColor={ colorScheme === "dark" ? "#fff" : "#000"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={openCamera}>
@@ -564,7 +566,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             source={icons.camera}
                             className="h-5 w-5"
                             resizeMode='contain'
-                            tintColor={"#fff"}
+                            tintColor={ colorScheme === "dark" ? "#fff" : "#000"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={pickDocument}>
@@ -572,13 +574,13 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             source={icons.documents}
                             className="h-5 w-5"
                             resizeMode='contain'
-                            tintColor={"#fff"}
+                            tintColor={ colorScheme === "dark" ? "#fff" : "#000"}
                         />
                     </TouchableOpacity>
                 </View>
                 <View className="flex-1">
                     <TextInput 
-                        className="text-white font-pmedium text-sm border border-black-200 rounded-[5px] p-1 bg-primary"
+                        className="text-white font-pmedium text-sm border border-gray-200 dark:border-black-200 rounded-[5px] p-1 bg-primary-light dark:bg-primary"
                         placeholder='Shkruani nje koment...'
                         onChangeText={(e) => setCommentWritten(e)}
                         value={commentWritten}
@@ -596,7 +598,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         onRequestClose={() => setSendToFriends(false)}
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-            <View className="h-[80%] w-[80%] bg-primary rounded-[10px] border border-black-200" style={styles.box}>
+            <View className="h-[80%] w-[80%] bg-primary-light dark:bg-primary rounded-[10px] border border-gray-200 dark:border-black-200" style={shadowStyle}>
                 {allFriendsLoading && <Loading />}
                 {!allFriendsLoading && <View className="flex-1 justify-between">
                     <View className="flex-1">
@@ -605,7 +607,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                             contentContainerStyle={{flexGrow: 1, gap:10, padding:10}}
                             ListHeaderComponent={() => (
                             <View className="pb-6">
-                                <Text className="font-psemibold text-2xl text-white">Lista e miqve
+                                <Text className="font-psemibold text-2xl text-oBlack dark:text-white">Lista e miqve
                                     <View>
                                         <Image 
                                             source={images.path}
@@ -621,7 +623,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                                 // console.log(item);
                                 return (
                                     <TouchableOpacity 
-                                        className="bg-oBlack border p-3 border-black-200 rounded-[5px] flex-row items-center justify-between" style={styles.box}
+                                        className="bg-oBlack-light dark:bg-oBlack border p-3 border-gray-200 dark:border-black-200 rounded-[5px] flex-row items-center justify-between" style={shadowStyle}
                                         onPress={() => handleShareToUser(item)}
                                         >
                                         <View className="flex-row items-center gap-4">
@@ -633,8 +635,8 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                                                 />
                                             </View>
                                             <View>  
-                                                <Text className="text-white font-psemibold text-sm">{item.firstname} {item.lastname}</Text>
-                                                <Text className="text-gray-400 font-plight text-xs">{item.username}</Text>
+                                                <Text className="text-oBlack dark:text-white font-psemibold text-sm">{item.firstname} {item.lastname}</Text>
+                                                <Text className="text-gray-600 dark:text-gray-400 font-plight text-xs">{item.username}</Text>
                                                 <Text className="text-secondary font-plight text-xs">Mik</Text>
                                             </View>
                                         </View>
@@ -649,8 +651,8 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                                 )
                             }}
                         />
-                        <TouchableOpacity className="items-center p-4 justify-center bg-oBlack border-t border-black-200" onPress={() => setSendToFriends(false)}>
-                            <Text className="font-pregular text-white text-sm">Largoni dritaren</Text>
+                        <TouchableOpacity className="items-center p-4 rounded-b-md justify-center bg-oBlack-light dark:bg-oBlack border-t border-gray-200 dark:border-black-200" onPress={() => setSendToFriends(false)}>
+                            <Text className="font-pregular text-oBlack dark:text-white text-sm">Largoni dritaren</Text>
                         </TouchableOpacity>
                     </View>
                 </View>}

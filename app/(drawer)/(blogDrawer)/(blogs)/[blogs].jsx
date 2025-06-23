@@ -8,8 +8,10 @@ import Loading from '../../../../components/Loading';
 import { useGlobalContext } from '../../../../context/GlobalProvider';
 import BlogCardComponent from '../../../../components/BlogCardComponent';
 import * as Animatable from "react-native-animatable";
+import { useShadowStyles } from '../../../../hooks/useShadowStyles';
 
 const Blogs = () => {
+    const {shadowStyle} = useShadowStyles();
     const { blogs, userId, userPhoto } = useLocalSearchParams();
     const router = useRouter();
     const { user } = useGlobalContext();
@@ -41,13 +43,13 @@ const Blogs = () => {
 
     return (
         <FlatList
-            className="bg-primary"
+            className="bg-primary-light dark:bg-primary"
             data={blogData}
             keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
             refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
             ListHeaderComponent={
-                <View className="bg-oBlack border-b border-t border-black-200 flex-row items-center" style={styles.box}>
-                    <View className="border-r border-black-200 p-2 flex-[0.25] items-center">
+                <View className="bg-oBlack-light dark:bg-oBlack border-b border-t border-gray-200 dark:border-black-200 flex-row items-center" style={shadowStyle}>
+                    <View className="border-r border-gray-200 dark:border-black-200 p-2 flex-[0.25] items-center">
                         <TouchableOpacity onPress={() => router.back()}>
                             <Image
                                 source={icons.leftArrow}
@@ -57,8 +59,8 @@ const Blogs = () => {
                             />
                         </TouchableOpacity>
                     </View>
-                    <View className="flex-1 flex-row items-center gap-2 p-2 justify-center border-r border-black-200">
-                        <Text className="text-white font-psemibold text-lg">ShokuMesimit</Text>
+                    <View className="flex-1 flex-row items-center gap-2 p-2 justify-center border-r border-gray-200 dark:border-black-200">
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg">ShokuMesimit</Text>
                         <Image 
                             source={icons.star}
                             className="h-4 w-4"
@@ -87,9 +89,9 @@ const Blogs = () => {
                 </View>
             )}
             ListFooterComponent={
-                <Animatable.View animation="fadeInLeft" duration={1000} className="mb-4 mx-4 pt-3 mt-3 border-t border-black-200">
+                <Animatable.View animation="fadeInLeft" duration={1000} className="mb-4 mx-4 pt-3 mt-3 border-t border-gray-200 dark:border-black-200">
                     <View className="flex-row items-center gap-2">
-                        <Text className="text-white text-xl font-psemibold">Permbledhja e blogut</Text>
+                        <Text className="text-oBlack dark:text-white text-xl font-psemibold">Permbledhja e blogut</Text>
                         <Image 
                             source={icons.star}
                             className="size-4"
@@ -97,8 +99,8 @@ const Blogs = () => {
                         />
                         <Text className="text-secondary font-pblack text-lg">AI</Text>
                     </View>
-                    <View className="p-4 border-black-200 border rounded-md mt-2">
-                        <Text className="text-gray-400 text-sm">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deleniti saepe vero quasi sit quod minima aut dicta quae possimus cumque, ratione perferendis tempore dolor accusantium placeat, error, delectus nisi ducimus?</Text>
+                    <View className="p-4  border-gray-200 dark:border-black-200 border rounded-md mt-2">
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deleniti saepe vero quasi sit quod minima aut dicta quae possimus cumque, ratione perferendis tempore dolor accusantium placeat, error, delectus nisi ducimus?</Text>
                     </View>
                 </Animatable.View>
             }

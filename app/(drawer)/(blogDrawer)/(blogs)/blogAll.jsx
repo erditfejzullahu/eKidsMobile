@@ -10,8 +10,10 @@ import { ActivityIndicator } from 'react-native'
 import { icons, images } from '../../../../constants'
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view'
 import { useRoute } from '@react-navigation/native'
+import {useShadowStyles} from "../../../../hooks/useShadowStyles"
 
 const Blog = () => {
+  const {shadowStyle} = useShadowStyles();
   const route = useRoute();
   const {tagId, name} = route.params || {}
   
@@ -116,7 +118,7 @@ const Blog = () => {
         <KeyboardAwareFlatList
           behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} style={{flex: 1}}
           refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}
-          className="p-4 h-full bg-primary flex-1"
+          className="p-4 h-full bg-primary-light dark:bg-primary flex-1"
           data={allBlogs}
           contentContainerStyle={{gap: 20}}
           keyExtractor={(item) => `ParentBlog-${item.id}`}
@@ -127,15 +129,15 @@ const Blog = () => {
           onEndReachedThreshold={0.1}
           ListHeaderComponent={() => (
             <>
-            <View className={`${blogTagId === null ? "-mb-2" : ""} border-b border-black-200 pb-4`}>
+            <View className={`${blogTagId === null ? "-mb-2" : ""} border-b border-gray-200 dark:border-black-200 pb-4`}>
 
               <View className="absolute z-10 left-0 right-0 -top-2.5 items-center">
-                <View className="flex-row items-center gap-4" style={styles.box}>
-                  <TouchableOpacity onPress={() => setForYouToggle(2)} className={`bg-primary py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle === 2 ? "bg-oBlack" : "bg-primary"}`}>
-                    <Text className={`font-psemibold text-sm ${forYouToggle === 2 ? "text-secondary" : "text-white"}`}>Miqte tuaj</Text>
+                <View className="flex-row items-center gap-4" style={shadowStyle}>
+                  <TouchableOpacity onPress={() => setForYouToggle(2)} className={` py-0.5 px-3 items-center border border-white dark:border-black-200 rounded-md ${forYouToggle === 2 ? "bg-gray-200 dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${forYouToggle === 2 ? "text-secondary" : "text-oBlack dark:text-white"}`}>Miqte tuaj</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setForYouToggle(1)} className={`py-0.5 px-3 items-center border border-black-200 rounded-md ${forYouToggle === 1 ? "bg-oBlack" : "bg-primary"}`}>
-                    <Text className={`font-psemibold text-sm ${forYouToggle === 1 ? "text-secondary" : "text-white"}`}>Per ty</Text>
+                  <TouchableOpacity onPress={() => setForYouToggle(1)} className={`py-0.5 px-3 items-center border border-white dark:border-black-200 rounded-md ${forYouToggle === 1 ? "bg-gray-200 dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
+                    <Text className={`font-psemibold text-sm ${forYouToggle === 1 ? "text-secondary" : "text-oBlack dark:text-white"}`}>Per ty</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -145,10 +147,10 @@ const Blog = () => {
             {blogTagId !== null && 
             <View className="-mb-2 mt-4 flex-row items-center gap-2">
               <View>
-                <Text className="text-gray-400 font-plight text-sm">Etiketimi i zgjedhur:</Text>
+                <Text className="text-gray-600 dark:text-gray-400 font-plight text-sm">Etiketimi i zgjedhur:</Text>
               </View>
               <View className="bg-secondary border border-white px-2 py-0.5 rounded-[5px]">
-                <Text className="text-white font-psemibold text-sm">{blogTagId.name}</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">{blogTagId.name}</Text>
               </View>
             </View>}
             </>

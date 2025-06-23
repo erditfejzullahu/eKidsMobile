@@ -16,8 +16,10 @@ import { CreateSupportReportTicket, reqUsersBySearch } from '../services/fetchin
 import _ from 'lodash'
 import { icons } from '../constants'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 const ReportForm = ({onSuccess, availableTickets = []}) => {
     const {colorScheme} = useColorScheme();
+        const {shadowStyle} = useShadowStyles();
     const [showResults, setShowResults] = useState(false);
     const [resultLoading, setResultLoading] = useState(false)
     const [searchResults, setSearchResults] = useState([])
@@ -149,7 +151,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     
 
   return (
-    <View className="gap-3" style={styles.box}>
+    <View className="gap-3" style={shadowStyle}>
       <View>
         <Controller 
             control={control}
@@ -168,7 +170,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                 </Picker>
             )}
         />
-        <Text className="text-xs text-gray-400 font-plight mt-1">Zgjidh nje nga rubrikat me larte.</Text>
+        <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Zgjidh nje nga rubrikat me larte.</Text>
         {errors.issueType && (
             <Text className="text-red-500 font-plight text-xs">{errors.issueType.message}</Text>
         )}
@@ -193,30 +195,30 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     />
                     {showResults && (resultLoading ? (
                         <View className="flex-row items-center gap-1 py-1">
-                            <Text className="text-white text-sm font-psemibold py-2">Duke kërkuar...</Text>
+                            <Text className="text-oBlack dark:text-white text-sm font-psemibold py-2">Duke kërkuar...</Text>
                             <ActivityIndicator color={"#FF9C01"} size={24} />
                         </View>
                     ) : searchResults.length > 0 ? (
-                        <View className="mt-1 bg-gray-800 rounded-lg max-h-40">
-                            <ScrollView className="h-[80px] bg-oBlack border z-50 border-black-200 rounded-md" style={styles.box} scrollEnabled>
+                        <View className="mt-1 bg-primary-light dark:bg-gray-800 rounded-lg max-h-40">
+                            <ScrollView className="h-[80px] bg-oBlack-light dark:bg-oBlack border z-50 border-gray-200 dark:border-black-200 rounded-md" style={shadowStyle} scrollEnabled>
                                 {searchResults.map((item) => (
                                     <TouchableOpacity 
                                         key={item.id}
-                                        className="p-3 bg-oBlack flex-row items-center justify-between border-b border-black-200"
+                                        className="p-3 bg-oBlack-light dark:bg-oBlack flex-row items-center justify-between border-b border-gray-200 dark:border-black-200"
                                         onPress={() => handleUserSelect(item, onChange)}
-                                        style={styles.box}
+                                        style={shadowStyle}
                                     >
                                         <View className="flex-row items-center gap-2">
                                             <View>
                                                 <Image 
                                                     source={{uri: item.profilePictureUrl}}
-                                                    className="size-12 rounded-md border border-black-200 p-1"
+                                                    className="size-12 rounded-md border border-gray-200 dark:border-black-200 p-1"
                                                     resizeMode='contain'
                                                 />
                                             </View>
                                             <View>
-                                                <Text className="text-white font-psemibold text-base">{item.name}</Text>
-                                                <Text className="text-gray-400 font-plight text-xs">{item.isCloseFiend === false && item.isFriend === false ? "Perdorues" : "Mik"}</Text>
+                                                <Text className="text-oBlack dark:text-white font-psemibold text-base">{item.name}</Text>
+                                                <Text className="text-gray-600 dark:text-gray-400 font-plight text-xs">{item.isCloseFiend === false && item.isFriend === false ? "Perdorues" : "Mik"}</Text>
                                             </View>
                                         </View>
                                         <View>
@@ -232,13 +234,13 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                             </ScrollView>
                         </View>
                     ) : value.length >= 3 && (
-                        <Text className="text-white text-sm font-psemibold py-2">Nuk u gjet asnjë përdorues</Text>
+                        <Text className="text-oBlack dark:text-white text-sm font-psemibold py-2">Nuk u gjet asnjë përdorues</Text>
                     ))}
                     </>
                 )}
             />
 
-            <Text className="text-xs text-gray-400 font-plight mt-1">Paraqitni emrin e perdoruesit qe deshironi te raportoni per X arsye. Ne shkrim e siper, perdoruesit qe perputhen me shkrimin tuaj do paraqiten ne dritare.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Paraqitni emrin e perdoruesit qe deshironi te raportoni per X arsye. Ne shkrim e siper, perdoruesit qe perputhen me shkrimin tuaj do paraqiten ne dritare.</Text>
             {errors.reportUser && (
                 <Text className="text-red-500 font-plight text-xs">{errors.reportUser.message}</Text>
             )}
@@ -258,7 +260,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">{selectedTopic === 25 ? "Shkruani raportimin tjeter." : "Parqitni arsyjen e raportimit te personit ne fjale."}</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">{selectedTopic === 25 ? "Shkruani raportimin tjeter." : "Parqitni arsyjen e raportimit te personit ne fjale."}</Text>
             {errors.otherTopic && (
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
@@ -278,7 +280,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     />
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Pershkruani raportimin e problemit ose te ndonje perdoruesi.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Pershkruani raportimin e problemit ose te ndonje perdoruesi.</Text>
             {errors.otherTopic && (
                 <Text className="text-red-500 font-plight text-xs">{errors.otherTopic.message}</Text>
             )}
@@ -294,7 +296,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                             <Text className="text-white text-center font-psemibold ">{value ? "Ndrysho imazhin" : "Zgjidh imazhin"}</Text>
                         </TouchableOpacity>
                         {value ? (
-                            <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>
+                            <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={shadowStyle}>
                                 <Image
                                     source={{uri: value}}
                                     className="w-full h-full"
@@ -305,7 +307,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
                     </>
                 )}
             />
-            <Text className="text-xs text-gray-400 font-plight mt-1">Per vleresim me te mire te raportimit tuaj paraqitni screenshots(SC) te problemit/raportimit.</Text>
+            <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Per vleresim me te mire te raportimit tuaj paraqitni screenshots(SC) te problemit/raportimit.</Text>
             {errors.image && (
                 <Text className="text-red-500 font-plight text-xs">{errors.image.message}</Text>
             )}

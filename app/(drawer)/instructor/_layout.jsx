@@ -5,6 +5,8 @@ import { TouchableOpacity } from 'react-native'
 import { useEffect } from 'react'
 import { useRole } from '../../../navigation/RoleProvider'
 import { useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { useColorScheme } from 'nativewind'
 
 const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
   return (
@@ -30,6 +32,7 @@ const TabIcon = ({ icon, color, name, focused, onPress, extraImageStyle}) => {
 
 
 const InstructorLayout = () => {
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
     const {role, refreshRole, isLoading} = useRole();
     useEffect(() => {
@@ -52,11 +55,11 @@ const InstructorLayout = () => {
           screenOptions={{
             tabBarShowLabel: false,
             tabBarActiveTintColor: '#FFA001',
-            tabBarInactiveTintColor: '#CDCDE0',
+            tabBarInactiveTintColor: colorScheme === "light" ? "#000" : '#CDCDE0',
             tabBarStyle: {
-              backgroundColor: "#13131a",
+              backgroundColor: colorScheme === 'light' ? "#fcf6f2" : "#13131a",
               borderTopWidth: 1,
-              borderTopColor: '#232533',
+              borderTopColor: colorScheme === 'light' ? "#e5e7eb" : '#232533',
               height: 90,
             },
             // header: () => <Topbar />,
@@ -122,6 +125,7 @@ const InstructorLayout = () => {
               options={{href: null, headerShown: false}}
             />
         </Tabs>
+        <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
     </>
   )
 }

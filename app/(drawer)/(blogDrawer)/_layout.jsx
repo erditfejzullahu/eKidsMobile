@@ -16,6 +16,8 @@ import AllTagsLayoutForDiscussionOrBlogs from '../../../components/AllTagsLayout
 import Loading from '../../../components/Loading';
 import EmptyState from '../../../components/EmptyState';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
+import { useColorScheme } from 'nativewind';
+import { StatusBar } from 'expo-status-bar';
 
 const TagsHeader = ({isOpened, passRouteClicked}) => {
   const {user, isLoading} = useGlobalContext();
@@ -98,6 +100,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
 };
 
 const _layout = () => {
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {isDrawerOpened, setIsDrawerOpened} = useBlogsDrawerContext();
   const {setDiscussionSection} = useTopbarUpdater();
@@ -134,6 +137,7 @@ const _layout = () => {
       >
             <Stack screenOptions={{gestureEnabled: true, headerShown: false}}></Stack>
       </Drawer>
+      <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
       </>
   );
 };

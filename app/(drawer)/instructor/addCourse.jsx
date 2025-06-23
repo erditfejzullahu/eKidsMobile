@@ -20,9 +20,11 @@ import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const AddCourse = () => {
     const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     const router = useRouter();
     const {role, isLoading} = useRole();
     useEffect(() => {
@@ -185,9 +187,9 @@ const AddCourse = () => {
 
 if(isRefreshing) return <Loading />
   return (
-    <KeyboardAwareScrollView className="h-full px-4 bg-primary" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>} >
+    <KeyboardAwareScrollView className="h-full px-4 bg-primary-light dark:bg-primary" behavior={Platform.OS === 'ios' ? 'padding' : 'height'} refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>} >
         <DefaultHeader headerTitle={ isUpdateMode ? "Perditesoni kursin" : "Shto nje kurs"} showBorderBottom={true} bottomSubtitle={"Nga kjo forme mund te shtoni kurse te cilat do shfaqen me pas si planprogram se si do kete ecurine kursi juaj! Kjo shfaqet tek shfletimi nga studentet tek seksioni i intruktoreve."}/>
-        <Text className="absolute top-0 -right-4 font-psemibold text-gray-400 bg-oBlack text-xs rounded-md px-2 py-1 border border-black-200" style={styles.box}>Hapi <Text className="text-secondary">{step}</Text> nga <Text className="text-secondary">{maxSteps}</Text></Text>
+        <Text className="absolute top-0 -right-4 font-psemibold text-gray-600 dark:text-gray-400 bg-oBlack-light dark:bg-oBlack text-xs rounded-md px-2 py-1 border border-gray-200 dark:border-black-200" style={shadowStyle}>Hapi <Text className="text-secondary">{step}</Text> nga <Text className="text-secondary">{maxSteps}</Text></Text>
         <Animatable.View animation="pulse" iterationCount="infinite" duration={1000} className="ml-auto">
             <TouchableOpacity className="flex-row items-center gap-1.5">
                 <Image 
@@ -196,10 +198,10 @@ if(isRefreshing) return <Loading />
                     resizeMode='contain'
                     tintColor={"#FF9C01"}
                 />
-                <Text className="text-gray-400 font-psemibold text-xs">Drejtohuni tek versioni WEB</Text>
+                <Text className="text-gray-600 dark:text-gray-400 font-psemibold text-xs">Drejtohuni tek versioni WEB</Text>
             </TouchableOpacity>
         </Animatable.View>
-        {step === 1 && (<View className="gap-3 mb-4" style={styles.box}>
+        {step === 1 && (<View className="gap-3 mb-4" style={shadowStyle}>
             <View>
                 <Controller 
                     control={control}
@@ -213,7 +215,7 @@ if(isRefreshing) return <Loading />
                         />
                     )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Ne baze te ketij emri studentet tuaj mund te identifikojne kursin tuaj.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Ne baze te ketij emri studentet tuaj mund te identifikojne kursin tuaj.</Text>
                 {errors.name && (
                     <Text className="text-red-500 text-xs font-plight">{errors.name.message}</Text>
                 )}
@@ -231,7 +233,7 @@ if(isRefreshing) return <Loading />
                         />
                     )}
                 />
-                <Text className="text-xs text-gray-400 font-plight mt-1">Nje pershkrim i shkurte i kursit. Cka behet fjale ne te, sa zgjat etj.</Text>
+                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Nje pershkrim i shkurte i kursit. Cka behet fjale ne te, sa zgjat etj.</Text>
                 {errors.description && (
                     <Text className="text-red-500 text-xs font-plight">{errors.description.message}</Text>
                 )}
@@ -246,7 +248,7 @@ if(isRefreshing) return <Loading />
                                 <Text className="text-oBlack text-center font-psemibold ">{value ? "Ndrysho foton" : "Zgjidh foton"}</Text>
                             </TouchableOpacity>
                             {value ? (
-                                <View className="border mt-2 rounded-xl border-black-200 max-h-[200px]" style={styles.box}>
+                                <View className="border mt-2 rounded-xl border-gray-200 dark:border-black-200 max-h-[200px]" style={shadowStyle}>
                                     <Image 
                                         source={{uri: value}}
                                         className="w-full h-full"
@@ -270,7 +272,7 @@ if(isRefreshing) return <Loading />
                         value={topic}
                         handleChangeText={(e) => setTopic(e)}
                     />
-                    <Text className="text-xs text-gray-400 font-plight mt-1">Shkruani se cka do jete i afte te beje studenti ne fund.</Text>
+                    <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Shkruani se cka do jete i afte te beje studenti ne fund.</Text>
                     {errors.topicsCovered && (
                     <Text className="text-red-500 text-xs font-plight -mt-2">
                         {errors.topicsCovered.message}
@@ -284,15 +286,15 @@ if(isRefreshing) return <Loading />
                         }
                         }}
                         className="bg-secondary rounded-md items-center self-start px-4 py-2 mx-auto mt-2"
-                        style={styles.box}
+                        style={shadowStyle}
                     >
                     <Text className="text-white font-psemibold text-sm">Shto tematike</Text>
                     </TouchableOpacity>
                     {field?.value?.length > 0 && field?.value.map((t, i) => (
-                        <View key={i} className="flex-row justify-between items-center bg-oBlack border border-black-200 px-3 py-2 rounded-md mt-2">
+                        <View key={i} className="flex-row justify-between items-center bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 px-3 py-2 rounded-md mt-2">
                             <View className="flex-row items-center gap-1.5">
-                                <Text className="text-white font-psemibold text-sm">{i + 1}.</Text>
-                                <Text className="text-white font-psemibold text-sm">{t}</Text>
+                                <Text className="text-oBlack dark:text-white font-psemibold text-sm">{i + 1}.</Text>
+                                <Text className="text-oBlack dark:text-white font-psemibold text-sm">{t}</Text>
                             </View>
                         <TouchableOpacity
                             onPress={() => {
@@ -313,7 +315,7 @@ if(isRefreshing) return <Loading />
         </View>)}
         
         {step === 2 && (
-            <View className="gap-3 mb-4" style={styles.box}>
+            <View className="gap-3 mb-4" style={shadowStyle}>
                 <View>
                     <Controller 
                         control={control}
@@ -326,7 +328,7 @@ if(isRefreshing) return <Loading />
                                     value={sections}
                                     handleChangeText={(e) => setSections(e)}
                                 />
-                                <Text className="text-xs text-gray-400 font-plight mt-1">Ne baze te seksionit te dhene, ju do paraqisni titujt e literatures qe do mesohen.</Text>
+                                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Ne baze te seksionit te dhene, ju do paraqisni titujt e literatures qe do mesohen.</Text>
                                 {errors.sectionTitles && (
                                 <Text className="text-red-500 text-xs font-plight -mt-2">
                                     {errors.sectionTitles.message}
@@ -339,21 +341,21 @@ if(isRefreshing) return <Loading />
                                     }
                                     }}
                                     className="bg-secondary rounded-md items-center self-start px-4 py-2 mx-auto mt-2"
-                                    style={styles.box}
+                                    style={shadowStyle}
                                 >
                                 <Text className="text-white font-psemibold text-sm">Shto seksion</Text>
                                 </TouchableOpacity>
                                 {field?.value?.length > 0 && (
                                     <View className="gap-6 flex-1">
                                         {field?.value?.length > 0 && field?.value.map((t, i) => (
-                                            <View key={i} className="flex-row justify-between flex-1 w-full relative items-center bg-oBlack border border-black-200 px-3 py-2 rounded-md mt-2">
+                                            <View key={i} className="flex-row justify-between flex-1 w-full relative items-center bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 px-3 py-2 rounded-md mt-2">
                                                 <View className="absolute left-0 right-0 -bottom-4 justify-center items-center">
                                                 {/* Your content here */}
-                                                    <Text className="text-white font-plight text-xs bg-primary rounded-md text-center px-1 py-0.5 border border-black-200" style={styles.box}>Llogaritni qe poshte ketij seksioni do shtoni tituj te literatures</Text>
+                                                    <Text className="text-oBlack dark:text-white font-plight text-xs bg-primary-light dark:bg-primary rounded-md text-center px-1 py-0.5 border border-gray-200 dark:border-black-200" style={shadowStyle}>Llogaritni qe poshte ketij seksioni do shtoni tituj te literatures</Text>
                                                 </View>
                                                 <View className="flex-row items-center gap-1.5 flex-1">
-                                                    <Text className="text-white font-psemibold text-sm">{i + 1}.</Text>
-                                                    <Text className="text-white font-psemibold text-sm">{t}</Text>
+                                                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">{i + 1}.</Text>
+                                                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">{t}</Text>
                                                 </View>
                                             <TouchableOpacity
                                                 onPress={() => {
@@ -375,12 +377,12 @@ if(isRefreshing) return <Loading />
         )}
 
         {step === 3 && (
-            <View className="gap-3 my-4" style={styles.box}>
+            <View className="gap-3 my-4" style={shadowStyle}>
                 <View className="gap-4 ">
                     {watch("sectionTitles").map((section, index) => (
-                        <View key={index} className={`gap-3 border-b border-black-200 ${sectionLessonsTouched.includes(index) ? "pb-5" : "pb-2"}`}>
+                        <View key={index} className={`gap-3 border-b border-gray-200 dark:border-black-200 ${sectionLessonsTouched.includes(index) ? "pb-5" : "pb-2"}`}>
                             <TouchableOpacity 
-                                className="flex-row justify-between flex-1 w-full relative items-center bg-oBlack border border-black-200 px-3 py-2 rounded-md mt-2"
+                                className="flex-row justify-between flex-1 w-full relative items-center bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 px-3 py-2 rounded-md mt-2"
                                 onPress={() => setSectionLessonsTouched((prevData) => {
                                     if(prevData.includes(index)){
                                         return prevData.filter(idx => idx !== index);
@@ -390,7 +392,7 @@ if(isRefreshing) return <Loading />
                                 })}
                                 >
                                 <Animatable.View animation="pulse" duration={1000} iterationCount="infinite" className="absolute right-0 left-0 -top-2 items-center justify-center mx-auto">
-                                    <View className="bg-primary rounded-full p-1 items-center justify-center border border-black-200" style={styles.box}>
+                                    <View className="bg-primary-light dark:bg-primary rounded-full p-1 items-center justify-center border border-gray-200 dark:border-black-200" style={shadowStyle}>
                                         <Image 
                                             source={icons.plusnotfilled}
                                             className="size-4"
@@ -400,8 +402,8 @@ if(isRefreshing) return <Loading />
                                     </View>
                                 </Animatable.View>
                                 <View className="flex-row items-center gap-1.5 flex-1">
-                                        <Text className="text-white font-psemibold text-sm">{index + 1}.</Text>
-                                        <Text className="text-white font-psemibold text-sm">{section}</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">{index + 1}.</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">{section}</Text>
                                     </View>
                                 <TouchableOpacity
                                     
@@ -418,10 +420,10 @@ if(isRefreshing) return <Loading />
                                         <View className="gap-2">
                                             <View className={`gap-4 mx-4 ${field?.value[index]?.length > 0 ? "mb-4" : ""}`}>
                                                 {field?.value[index]?.length > 0 && field?.value[index].map((lesson, i) => (
-                                                <View key={i} className="flex-row justify-between flex-1 w-full relative items-center bg-primary border border-black-200 px-3 py-2 rounded-xl -mt-2">
+                                                <View key={i} className="flex-row justify-between flex-1 w-full relative items-center bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 px-3 py-2 rounded-xl -mt-2">
                                                     <View className="flex-row items-center gap-1.5 flex-1">
-                                                        <Text className="text-white font-psemibold text-sm">{i + 1}.</Text>
-                                                        <Text className="text-white font-psemibold text-sm">{lesson}</Text>
+                                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">{i + 1}.</Text>
+                                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">{lesson}</Text>
                                                     </View>
                                                     <TouchableOpacity
                                                         onPress={() => {
@@ -446,7 +448,7 @@ if(isRefreshing) return <Loading />
                                                         return newData;
                                                     })}
                                                 />
-                                                <Text className="text-xs text-gray-400 font-plight mt-1">Keto leksione do paraqiten si lloj planprogrami se cka do i informoni studentet tuaj potencial.</Text>
+                                                <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Keto leksione do paraqiten si lloj planprogrami se cka do i informoni studentet tuaj potencial.</Text>
                                                 {errors.sectionLessons && (
                                                     <Text className="text-red-500 text-xs font-plight mt-1">
                                                         {errors.sectionLessons[index]?.message}
@@ -468,7 +470,7 @@ if(isRefreshing) return <Loading />
                                                         }
                                                     }}
                                                     className="bg-secondary rounded-md items-center self-start px-4 py-2 mx-auto mt-3"
-                                                    style={styles.box}
+                                                    style={shadowStyle}
                                                 >
                                                 <Text className="text-white font-psemibold text-sm">Shto leksion</Text>
                                                 </TouchableOpacity>
@@ -484,7 +486,7 @@ if(isRefreshing) return <Loading />
         )}
 
         <View className="my-4 flex-row items-center gap-2">
-            {step !== 1 && <View className="flex-1" style={styles.box}>
+            {step !== 1 && <View className="flex-1" style={shadowStyle}>
                 <CustomButton 
                     title={`${step === 2 ? "Kthehu tek hapi 1" : "Kthehu tek hapi 2"}`}
                     containerStyles={"!min-h-[55px]"}
@@ -492,7 +494,7 @@ if(isRefreshing) return <Loading />
                     handlePress={prevStep}
                 />
             </View>}
-            <View className="flex-1" style={styles.box}>
+            <View className="flex-1" style={shadowStyle}>
                 <CustomButton 
                     title={`${step === 1 ? "Vazhdo tek hapi 2" : step === 2 ? "Vazhdo tek hapi 3" : `${isUpdateMode ? "Perditesoni kursin" : "Krijoni kursin"}`}`}
                     containerStyles={"!min-h-[55px]"}

@@ -12,8 +12,12 @@ import { useFocusEffect, useNavigation } from 'expo-router'
 import useFetchFunction from "../../../hooks/useFetchFunction"
 import { GetAvailableTickets } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const Support = () => {
+    const {shadowStyle} = useShadowStyles()
+    const {colorScheme} = useColorScheme();
     const route = useRoute();
     const navigation = useNavigation();
     const {type} = route.params || {} //accept support, report, chatSupport
@@ -91,7 +95,7 @@ if(isLoading || isRefreshing) return <Loading />
     <KeyboardAwareScrollView
     
         key={refreshKey}
-        className="h-full bg-primary px-4"
+        className="h-full bg-primary-light dark:bg-primary px-4"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
@@ -101,31 +105,31 @@ if(isLoading || isRefreshing) return <Loading />
             showBorderBottom={true}
             topSubtitle={"Identifikoni apo Raportoni problemin"}
         />
-        <View className="border border-black-200 flex-1 flex-row items-center justify-between" style={styles.box}>
-            <TouchableOpacity onPress={() => handleSectionPress('supportSection')} className={`border-r flex-row gap-1 flex-1 justify-center items-center border-black-200 py-2 ${sectionEnabled.supportSection ? "bg-oBlack" : "bg-primary"}`}>
-                <Text className="font-plight text-white text-sm">Support</Text>
+        <View className="border border-gray-200 dark:border-black-200 flex-1 flex-row items-center justify-between" style={shadowStyle}>
+            <TouchableOpacity onPress={() => handleSectionPress('supportSection')} className={`border-r flex-row gap-1 flex-1 justify-center items-center border-gray-200 dark:border-black-200 py-2 ${sectionEnabled.supportSection ? "bg-gray-200 dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
+                <Text className="font-plight text-oBlack dark:text-white text-sm">Support</Text>
                 <Image 
                     source={icons.customerSupport}
                     className="size-5"
-                    style={{tintColor: sectionEnabled.supportSection ? "#ff9c01" : "#fff"}}
+                    style={{tintColor: sectionEnabled.supportSection ? "#ff9c01" :colorScheme === "dark" ? "#fff" : "#000"}}
                     resizeMode='contain'
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSectionPress('reportSection')} className={`border-r flex-row gap-1 flex-1 justify-center items-center border-black-200 py-2 ${sectionEnabled.reportSection ? "bg-oBlack" : "bg-primary"}`}>
-                <Text className="font-plight text-white text-sm">Raportoni</Text>
+            <TouchableOpacity onPress={() => handleSectionPress('reportSection')} className={`border-r flex-row gap-1 flex-1 justify-center items-center border-gray-200 dark:border-black-200 py-2 ${sectionEnabled.reportSection ? "bg-gray-200 dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
+                <Text className="font-plight text-oBlack dark:text-white text-sm">Raportoni</Text>
                 <Image 
                     source={icons.report}
                     className="size-5"
-                    style={{tintColor: sectionEnabled.reportSection ? "#ff9c01" : "#fff"}}
+                    style={{tintColor: sectionEnabled.reportSection ? "#ff9c01" :colorScheme === "dark" ? "#fff" : "#000"}}
                     resizeMode='contain'
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleSectionPress('chatSupportSection')} className={`flex-1 flex-row gap-1 justify-center items-center border-black-200 py-2 ${sectionEnabled.chatSupportSection ? "bg-oBlack" : "bg-primary"}`}>
-                <Text className="font-plight text-white text-sm">Chat Support</Text>
+            <TouchableOpacity onPress={() => handleSectionPress('chatSupportSection')} className={`flex-1 flex-row gap-1 justify-center items-center border-gray-200 dark:border-black-200 py-2 ${sectionEnabled.chatSupportSection ? "bg-gray-200 dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
+                <Text className="font-plight text-oBlack dark:text-white text-sm">Chat Support</Text>
                 <Image 
                     source={icons.chat}
                     className="size-5"
-                    style={{tintColor: sectionEnabled.chatSupportSection ? "#ff9c01" : "#fff"}}
+                    style={{tintColor: sectionEnabled.chatSupportSection ? "#ff9c01" :colorScheme === "dark" ? "#fff" : "#000"}}
                     resizeMode='contain'
                 />
             </TouchableOpacity>

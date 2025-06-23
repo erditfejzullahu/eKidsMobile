@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, PlatformColor } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, PlatformColor, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import uuid from 'react-native-uuid';
 import FormField from './FormField';
+import { useShadowStyles } from '../hooks/useShadowStyles';
+import { icons } from '../constants';
 
 //TODO: create chat system
 
 export default function SupportChatForm() {
+  const {shadowStyle} = useShadowStyles()
   const [messages, setMessages] = useState([
     { id: uuid.v4(), text: "Hi there! Ask me anything about your app.", sender: "bot" },
   ]);
@@ -49,7 +52,15 @@ export default function SupportChatForm() {
         </Text>
       </View>
     ));
-
+    return <View className="bg-oBlack-light items-center justify-center dark:bg-oBlack border border-gray-200 dark:border-black-200 p-4" style={shadowStyle}>
+      <Image 
+        source={icons.upcoming}
+        className="size-10"
+        resizeMode='contain'
+        tintColor={"#FF9C01"}
+      />
+      <Text className="text-lg text-oBlack dark:text-white">Se shpejti</Text>
+    </View>
   return (
     <View className="bg-oBlack rounded-md border border-black-200" style={styles.box}>
         <ScrollView

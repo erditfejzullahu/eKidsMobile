@@ -22,8 +22,10 @@ import { useRoute } from '@react-navigation/native'
 import { useNavigation } from 'expo-router'
 import { useRole } from '../../../navigation/RoleProvider'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const AddScheduleMeeting = () => {
+  const {shadowStyle} = useShadowStyles();
   const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {role, isLoading: roleLoading} = useRole();
@@ -214,9 +216,9 @@ const AddScheduleMeeting = () => {
 
 if(isLoading || isRefreshing) return <Loading />
   return (
-    <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary px-4" refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}>
+    <KeyboardAwareScrollView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="h-full bg-primary-light dark:bg-primary px-4" refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}>
       <DefaultHeader headerTitle={ isUpdateMode ? "Perditeso takimin tuaj" : "Shto nje takim mesimi"} showBorderBottom={true} bottomSubtitle={"Me ane te ketij seksioni ju mund te shtoni kohe te ndryshme te mesimeve Online. Nga te gjithe kurset ose leksionet egzistuese ju mund te zgjidhni kohen dhe daten e caktuar se kur do mbahet ligjerata. Te gjithe studentet tuaj do njoftohen permes dritareve te tyre perkatese."}/>
-      <View className="gap-3 mb-4" style={styles.box}>
+      <View className="gap-3 mb-4" style={shadowStyle}>
         <View>
           <Controller 
             control={control}
@@ -230,7 +232,7 @@ if(isLoading || isRefreshing) return <Loading />
               />
             )}
           />
-          <Text className="text-xs text-gray-400 font-plight mt-1">Ne baze te ketij emri studentet tuaj mund te identifikojne ligjeraten tuaj.</Text>
+          <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Ne baze te ketij emri studentet tuaj mund te identifikojne ligjeraten tuaj.</Text>
           {errors.title && (
             <Text className="text-red-500 text-xs font-plight">{errors.title.message}</Text>
           )}
@@ -242,10 +244,10 @@ if(isLoading || isRefreshing) return <Loading />
             value={description}
             handleChangeText={(e) => setDescription(e)}
           />
-          <Text className="text-xs text-gray-400 font-plight mt-1">Pershkrim mund te jete, arsya e takimit, permbajtja e takimit, permbajtje mesimore etj.</Text>
+          <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Pershkrim mund te jete, arsya e takimit, permbajtja e takimit, permbajtje mesimore etj.</Text>
         </View>
         <View>
-          <Text className="text-base text-gray-100 font-pmedium mb-1.5">Data e takimit</Text>
+          <Text className="text-base text-gray-700 dark:text-gray-100 font-pmedium mb-1.5">Data e takimit</Text>
           <Controller 
             control={control}
             name="scheduledDate"
@@ -264,7 +266,7 @@ if(isLoading || isRefreshing) return <Loading />
               />
             )}
           />
-          <Text className="text-xs text-gray-400 font-plight mt-1">Ky seksion tregon daten se kur do mbahet takimi (tregohuni konsistent).</Text>
+          <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Ky seksion tregon daten se kur do mbahet takimi (tregohuni konsistent).</Text>
           {errors.scheduledDate && (
             <Text className="text-red-500 text-xs font-plight">{errors.scheduledDate.message}</Text>
           )}
@@ -277,11 +279,11 @@ if(isLoading || isRefreshing) return <Loading />
             value={durationTime}
             handleChangeText={(e) => setDurationTime(e)}
           />
-          <Text className="text-xs text-gray-400 font-plight mt-1">Mund te caktoni cfaredo kohezgjatje qe deshironi. Mjafton te jete me minuta. P.sh 1.5ore = 90min.</Text>
+          <Text className="text-xs text-gray-600 dark:text-gray-400 font-plight mt-1">Mund te caktoni cfaredo kohezgjatje qe deshironi. Mjafton te jete me minuta. P.sh 1.5ore = 90min.</Text>
         </View>
         <View>
           <View className="flex-row justify-between items-center">
-            <Text className="text-base text-gray-100 font-pmedium mb-1.5">Zgjidhni kursin</Text>
+            <Text className="text-base text-gray-700 dark:text-gray-100 font-pmedium mb-1.5">Zgjidhni kursin</Text>
             <TouchableOpacity className="flex-row items-center justify-center gap-1 mb-2" onPress={() => setNonCourseChecked(!nonCourseChecked)}>
               <Checkbox
                 value={nonCourseChecked}
@@ -289,14 +291,14 @@ if(isLoading || isRefreshing) return <Loading />
                 color={nonCourseChecked ? "#ff9c01" : "#232533"}
                 className="mr-2"
                 />
-                <Text className="text-gray-100 font-pmedium">Takim pa permbajtje</Text>
+                <Text className="text-gray-700 dark:text-gray-100 font-pmedium">Takim pa permbajtje</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView className={`h-[100px] border-2 border-black-200 rounded-xl ${nonCourseChecked ? "pointer-events-none opacity-30" : ""}`}>
+          <ScrollView className={`h-[100px] border-2 border-gray-200 dark:border-black-200 rounded-xl ${nonCourseChecked ? "pointer-events-none opacity-30" : ""}`}>
             {coursesData.length > 0 ? (
               (coursesData.map((item) => (
-                <TouchableOpacity onPress={() => setCourseSelected(item.id)} key={item.id} className={`p-3 bg-oBlack border-b border-black-200 rounded-md ${courseSelected === item.id ? "flex-row items-center justify-between" : ""}`}>
-                  <Text className={`font-psemibold ${courseSelected === item.id ? "text-secondary" : "text-white"}`}>{item.name}</Text>
+                <TouchableOpacity onPress={() => setCourseSelected(item.id)} key={item.id} className={`p-3 bg-oBlack-light dark:bg-oBlack border-b border-gray-200 dark:border-black-200 rounded-md ${courseSelected === item.id ? "flex-row items-center justify-between" : ""}`}>
+                  <Text className={`font-psemibold ${courseSelected === item.id ? "text-secondary" : "text-oBlack dark:text-white"}`}>{item.name}</Text>
                   {courseSelected === item.id && (
                     <Image 
                       source={icons.tick}
@@ -318,7 +320,7 @@ if(isLoading || isRefreshing) return <Loading />
                       resizeMode='contain'
                       tintColor={"#ff9c01"}
                     />
-                    <Text className="text-white font-psemibold text-sm">Ju nuk keni kurse ende</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju nuk keni kurse ende</Text>
                   </Animatable.View>
                 </TouchableOpacity>
               )}
@@ -328,7 +330,7 @@ if(isLoading || isRefreshing) return <Loading />
           {(courseSelected && lessonsData.length > 0) && (
             <>
             <View className="flex-row justify-between items-center mt-4">
-            <Text className="text-base text-gray-100 font-pmedium mb-1.5">Zgjidhni leksionin</Text>
+            <Text className="text-base text-gray-700 dark:text-gray-100 font-pmedium mb-1.5">Zgjidhni leksionin</Text>
             <TouchableOpacity className="flex-row items-center justify-center gap-1 mb-2" onPress={() => setNonLessonChecked(!nonLessonChecked)}>
               <Checkbox
                 value={nonCourseChecked}
@@ -336,14 +338,14 @@ if(isLoading || isRefreshing) return <Loading />
                 color={nonCourseChecked ? "#ff9c01" : "#232533"}
                 className="mr-2"
                 />
-                <Text className="text-gray-100 font-pmedium">Leksion i lire</Text>
+                <Text className="text-gray-700 dark:text-gray-100 font-pmedium">Leksion i lire</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView className={`h-[100px] border-2 border-black-200 rounded-xl ${nonLessonChecked ? "pointer-events-none opacity-30" : ""}`}>
+          <ScrollView className={`h-[100px] border-2 border-gray-200 dark:border-black-200 rounded-xl ${nonLessonChecked ? "pointer-events-none opacity-30" : ""}`}>
             {lessonsData.length > 0 ? (
               (lessonsData.map((item) => (
-                <TouchableOpacity onPress={() => setLessonSelected(item.lessonId)} key={item.lessonId} className={`p-3 bg-oBlack border-b border-black-200 rounded-md ${lessonSelected === item.lessonId ? "flex-row items-center justify-between" : ""}`}>
-                  <Text className={`font-psemibold ${lessonSelected === item.lessonId ? "text-secondary" : "text-white"}`}>{item.title}</Text>
+                <TouchableOpacity onPress={() => setLessonSelected(item.lessonId)} key={item.lessonId} className={`p-3 bg-oBlack-light dark:bg-oBlack border-b border-gray-200 dark:border-black-200 rounded-md ${lessonSelected === item.lessonId ? "flex-row items-center justify-between" : ""}`}>
+                  <Text className={`font-psemibold ${lessonSelected === item.lessonId ? "text-secondary" : "text-oBlack dark:text-white"}`}>{item.title}</Text>
                   {lessonSelected === item.lessonId && (
                     <Image 
                       source={icons.tick}
@@ -365,7 +367,7 @@ if(isLoading || isRefreshing) return <Loading />
                       resizeMode='contain'
                       tintColor={"#ff9c01"}
                     />
-                    <Text className="text-white font-psemibold text-sm">Ky kurs nuk ka permbajtje te leksioneve</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ky kurs nuk ka permbajtje te leksioneve</Text>
                   </Animatable.View>
                 </TouchableOpacity>
               )}
@@ -375,7 +377,7 @@ if(isLoading || isRefreshing) return <Loading />
 
         </View>
       </View>
-      <View className="mb-4" style={styles.box}>
+      <View className="mb-4" style={shadowStyle}>
         <CustomButton 
           title={isUpdateMode ? "Perditesoni takimin tuaj online" : "Paraqitni takimin online"}
           isLoading={isSubmitting}
