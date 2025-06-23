@@ -10,13 +10,28 @@ import FullScreenImage from './FullScreenImage';
 import { useShadowStyles } from '../hooks/useShadowStyles';
 import { useColorScheme } from 'nativewind';
 
+
 const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false}) => {
+    
+    console.log(blog)
+    const [moreOptions, setMoreOptions] = useState(false)
     const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const router = useRouter();
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
 
+    const moreOptionsItems = [
+        {label: "Detajet", action: {}, show: true, icon: icons.edit},
+        {label: "Shko tek blogu", action: {}, show: true, icon: icons.blogs},
+        {label: "Shto tek favoritet", action: {}, show: true, icon: icons.star},
+        {label: "Raporto", action: {}, show: true, icon: icons.report},
+        {label: "Dukshmeria", action: {}, show: blog?.userId === user?.id, icon: icons.earth},
+        {label: "Fshij postimin", action: {}, show: blog?.userId === user?.id, icon: icons.trashbin}
+    ]
+
+    const moreOptionsFiltered = moreOptionsItems.filter(item => item.show);
+    
     const [blogImages, setBlogImages] = useState([])
     
     const date = new Date(blog?.createdAt);
@@ -69,7 +84,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         </TouchableOpacity>}
         <View className="top-0 right-0 absolute flex-row items-center gap-1.5">
             {blog?.categoryId && <Text className={`font-psemibold rounded-bl-[10px] rounded-tr-[10px] p-2 py-1.5 bg-secondary text-xs text-white pr-9`} style={shadowStyle}>{getCourseCategories(categories, blog?.categoryId)}</Text>}
-            <TouchableOpacity className=" bg-primary-light dark:bg-primary p-1 absolute rounded-bl-md rounded-tr-md right-0 top-0 border-b border-l border-gray-200 dark:border-black-200" style={shadowStyle}>
+            <TouchableOpacity onPress={() => setMoreOptions(!moreOptions)} className=" bg-primary-light dark:bg-primary p-1 absolute rounded-bl-md rounded-tr-md right-0 top-0 border-b border-l border-gray-200 dark:border-black-200" style={shadowStyle}>
                 <Image 
                     source={icons.more}
                     className="size-6"
@@ -78,6 +93,23 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                 />
             </TouchableOpacity>
         </View>
+
+        {/* more options */}
+        {moreOptions && <View className="absolute right-0 top-8 bg-oBlack-light dark:bg-oBlack border z-50 border-gray-200 p-2 rounded-md dark:border-black-200" style={shadowStyle}>
+            {moreOptionsFiltered.map((item, index) => (
+                <TouchableOpacity key={index} onPress={() => item.action} className={`${index !== moreOptionsFiltered.length - 1 ? "border-b" : ""} items-center border-gray-200 dark:border-black-200 gap-1 flex-row justify-center`}>
+                    <Text className="text-oBlack dark:text-white text-sm font-plight p-1">{item.label}</Text>
+                    <Image 
+                        source={item.icon}
+                        className="size-4"
+                        resizeMode='contain'
+                        tintColor={"#FF9C01"}
+                    />
+                </TouchableOpacity>
+            ))}
+        </View>}
+        {/* more options */}
+
         {/* user */}
         <View className="flex-row px-4 pt-4 gap-4 items-center mb-4">
             <View className="">

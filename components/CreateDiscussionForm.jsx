@@ -16,9 +16,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { addDiscussionSchema } from '../schemas/addDiscussionSchema'
 import useFetchFunction from "../hooks/useFetchFunction"
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const CreateDiscussionForm = () => {
     const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     const [searchTagQuery, setSearchTagQuery] = useState("")
     const {data, refetch, isLoading: tagsLoading} = useFetchFunction(() => getTagsByTitle(searchTagQuery))
 
@@ -182,37 +184,37 @@ const CreateDiscussionForm = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => editor.blur()}>
-        <View className="p-4 bg-oBlack border flex-col gap-4 border-black-200 mb-4" style={styles.box}>
-            {showAnonimityInformation && <Animatable.View animation="bounceIn" className="bg-oBlack rounded-md border border-black-200 p-4 absolute top-4 left-0 right-0 mx-4 z-50" style={styles.box}>
-                <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
-                <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Mos shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit nuk mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
+        <View className="p-4 bg-oBlack-light dark:bg-oBlack border flex-col gap-4 border-gray-200 dark:border-black-200 mb-4" style={shadowStyle}>
+            {showAnonimityInformation && <Animatable.View animation="bounceIn" className="bg-oBlack-light dark:bg-oBlack rounded-md border border-gray-200 dark:border-black-200 p-4 absolute top-4 left-0 right-0 mx-4 z-50" style={shadowStyle}>
+                <Text className="text-oBlack dark:text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Mos shfaq profilin: </Text>Pasi te behet publikimi i diskutimit, perdoruesit nuk mund te shohin qe ju jeni ai/ajo qe e keni bere publikimin.</Text>
             </Animatable.View>}
-            {showUrgentInformation && <Animatable.View animation="bounceIn" className="bg-oBlack rounded-md border border-black-200 p-4 absolute top-4 left-0 right-0 mx-4 z-50" style={styles.box}>
-                <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Urgjente: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te filtrojne mbi diskutimet qe jane urgjente(Keni me shume shance per interaksione ne diskutimin tuaj).</Text>
-                <Text className="text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Normale: </Text>Pasi te behet publikimi i diskutimit, perdoruesit do mund te filtrojne mbi diskutimet me ane te opsioneve tjera perveq <Text className="text-secondary">Urgjente</Text>.</Text>
+            {showUrgentInformation && <Animatable.View animation="bounceIn" className="bg-oBlack-light dark:bg-oBlack rounded-md border border-gray-200 dark:border-black-200 p-4 absolute top-4 left-0 right-0 mx-4 z-50" style={shadowStyle}>
+                <Text className="text-oBlack dark:text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Urgjente: </Text>Pasi te behet publikimi i diskutimit, perdoruesit mund te filtrojne mbi diskutimet qe jane urgjente(Keni me shume shance per interaksione ne diskutimin tuaj).</Text>
+                <Text className="text-oBlack dark:text-white font-plight text-sm"><Text className="text-secondary font-psemibold">Normale: </Text>Pasi te behet publikimi i diskutimit, perdoruesit do mund te filtrojne mbi diskutimet me ane te opsioneve tjera perveq <Text className="text-secondary">Urgjente</Text>.</Text>
             </Animatable.View>}
             <TouchableOpacity onPress={() => setShowAnonimityInformation(true)} className="absolute -top-2 -right-2 z-20">
                 <Animatable.Image animation="pulse" duration={1000} iterationCount="infinite" 
                     source={icons.infoFilled}
                     className="h-5 w-5"
-                    tintColor={"#fff"}
+                    tintColor={colorScheme === "dark" ? "#fff" : "#FF9C01"}
                     resizeMode='contain'
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setPreferAnonimity((prevData) => !prevData)} className="absolute top-0 right-0 bg-secondary px-2 py-1 border-l border-black-200 border-b" style={styles.box}>
-                <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-white font-psemibold text-sm">{preferAnonimity === false ? "Shfaq Profilin" : "Mos shfaq profilin"}</Animatable.Text>
+            <TouchableOpacity onPress={() => setPreferAnonimity((prevData) => !prevData)} className="absolute top-0 right-0 bg-gray-200 dark:bg-secondary px-2 py-1 border-l border-gray-200 dark:border-black-200 border-b" style={shadowStyle}>
+                <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-oBlack dark:text-white font-pmedium dark:font-psemibold text-sm">{preferAnonimity === false ? "Shfaq Profilin" : "Mos shfaq profilin"}</Animatable.Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setShowUrgentInformation(true)} className="absolute -top-2 -left-2 z-20">
                 <Animatable.Image animation="pulse" duration={1000} iterationCount="infinite" 
                     source={icons.infoFilled}
                     className="h-5 w-5"
-                    tintColor={"#fff"}
+                    tintColor={colorScheme === "dark" ? "#fff" : "#FF9C01"}
                     resizeMode='contain'
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsUrgent(!isUrgent)} className="absolute top-0 left-0 bg-secondary px-2 py-1 border-l border-black-200 border-b" style={styles.box}>
-                <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-white font-psemibold text-sm">{isUrgent ? "Urgjente" : "Normale"}</Animatable.Text>
+            <TouchableOpacity onPress={() => setIsUrgent(!isUrgent)} className="absolute top-0 left-0 bg-gray-200 dark:bg-secondary px-2 py-1 border-r border-gray-200 dark:border-black-200 border-b" style={shadowStyle}>
+                <Animatable.Text animation="pulse" duration={1000} iterationCount="infinite" className="text-oBlack dark:text-white font-pmedium dark:font-psemibold text-sm">{isUrgent ? "Urgjente" : "Normale"}</Animatable.Text>
             </TouchableOpacity>
             <View className="mt-6">
                 <Controller 
@@ -228,21 +230,21 @@ const CreateDiscussionForm = () => {
                         />
                     )}
                 />
-                <Text className="text-gray-400 mt-1 font-plight text-xs">Behuni specifik ne krijimin e pyetjes/diskutimit tuaj.</Text>
+                <Text className="text-gray-600 dark:text-gray-400 mt-1 font-plight text-xs">Behuni specifik ne krijimin e pyetjes/diskutimit tuaj.</Text>
                 {errors.title && (
                     <Text className="text-red-500 text-xs font-plight">{errors.title.message}</Text>
                 )}
             </View>
             <View>
-                <View className="border min-h-[200px] rounded-xl border-black-200 overflow-hidden">
-                    <RichText editor={editor} style={[{backgroundColor: "#161622", borderRadius: 10, paddingLeft: 10, paddingRight: 10, maxHeight: "200"}, styles.box]}/>
+                <View className="border min-h-[200px] rounded-xl border-gray-200 dark:border-black-200 overflow-hidden">
+                    <RichText editor={editor} style={[{backgroundColor: colorScheme === "dark" ? "#161622" : "#fcf6f2", borderRadius: 10, paddingLeft: 10, paddingRight: 10, maxHeight: "200"}, shadowStyle]}/>
                     <KeyboardAvoidingView style={{position: "absolute", width: "100%", bottom: 0}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                         <Toolbar editor={editor} />
                     </KeyboardAvoidingView>
                 </View>
-                <Text className="text-gray-400 mt-1 font-plight text-xs">Perfshij te gjitha informacionet ne menyre te detajizuar.</Text>
+                <Text className="text-gray-600 dark:text-gray-400 mt-1 font-plight text-xs">Perfshij te gjitha informacionet ne menyre te detajizuar.</Text>
                 
-                <Text className="text-secondary text-xs font-plight"><Text>Ndihmese!<View><Image source={icons.info} className="mx-0.5 -mb-1 h-4 w-4 " tintColor={"#FF9C01"}/></View>: </Text> <Text className="text-gray-400 mt-1 font-plight text-xs relative">Ne klikim te fushes do shfaqet shiriti per perdorime te ndryshme tekstuale.</Text></Text>
+                <Text className="text-secondary text-xs font-plight"><Text>Ndihmese!<View><Image source={icons.info} className="mx-0.5 -mb-1 h-4 w-4 " tintColor={"#FF9C01"}/></View>: </Text> <Text className="text-gray-600 dark:text-gray-400 mt-1 font-plight text-xs relative">Ne klikim te fushes do shfaqet shiriti per perdorime te ndryshme tekstuale.</Text></Text>
                     
                 
             </View>
@@ -269,12 +271,12 @@ const CreateDiscussionForm = () => {
                             tintColor={"#fff"}
                         />
                     </TouchableOpacity>
-                    {(tagsResponse.length > 0 && showTagSearcher) && <ScrollView nestedScrollEnabled className="z-20 p-2 bg-primary mt-1 max-h-[140px] rounded-lg border border-black-200" style={styles.box}>
+                    {(tagsResponse.length > 0 && showTagSearcher) && <ScrollView nestedScrollEnabled className="z-20 p-2 bg-primary-light dark:bg-primary mt-1 max-h-[140px] rounded-lg border border-gray-200 dark:border-black-200" style={shadowStyle}>
                         
                         <TextInput
-                            className="bg-primary text-white font-plight text-sm p-2 rounded mb-2 border border-black-200"
+                            className="bg-primary-light dark:bg-primary text-oBlack dark:text-white font-plight text-sm p-2 rounded mb-2 border border-gray-200 dark:border-black-200"
                             placeholder="Kerkoni etiketime..."
-                            style={styles.box}
+                            style={shadowStyle}
                             placeholderTextColor="#999"
                             onChangeText={(text) => debounceTagsSearching(text)}
                         />
@@ -282,20 +284,20 @@ const CreateDiscussionForm = () => {
                         <Animatable.View animation="fadeIn" easing="ease-in-out">
                             {tagsLoading ? (
                                 <View className="items-center justify-center py-4 pb-3">
-                                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                                     <ActivityIndicator color={"#FF9C01"} size={24} />
                                 </View>
                             ) : (
                                 (tagsResponse.map((tag, idx) => (
-                                    <TouchableOpacity key={`tag-${idx}`} className="border-t border-b border-black-200 px-2 py-2" onPress={() => addExistingTag(tag.title)}>
-                                        <Text className="text-white font-psemibold text-sm">{tag.title}</Text>
+                                    <TouchableOpacity key={`tag-${idx}`} className="border-t border-b border-gray-200 dark:border-black-200 px-2 py-2" onPress={() => addExistingTag(tag.title)}>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">{tag.title}</Text>
                                     </TouchableOpacity>
                                 )))
                             )}
                         </Animatable.View>
                     </ScrollView>}
                 </View>
-            <Text className="text-gray-400 mt-1 font-plight text-xs">Vemendje: Per qdo hapsire qe behet, krijohet nje etikitim i ri!</Text>
+            <Text className="text-gray-600 dark:text-gray-400 mt-1 font-plight text-xs">Vemendje: Per qdo hapsire qe behet, krijohet nje etikitim i ri!</Text>
             {errors.tags && (
                 <Text className="text-red-500 text-xs font-plight">{errors.tags.message}</Text>
             )}
@@ -303,11 +305,11 @@ const CreateDiscussionForm = () => {
 
             
 
-            {tags.length > 0 && <View><Text className="text-gray-400 text-base font-plight mb-2">Etiketimet e zgjedhura:</Text>
+            {tags.length > 0 && <View><Text className="text-gray-600 dark:text-gray-400 text-base font-plight mb-2">Etiketimet e zgjedhura:</Text>
             <View className="flex-wrap gap-4 flex-row items-center">
                 {tags.map((tag, idx) => (
                     <View key={idx} className="bg-secondary px-2 py-1 rounded-md relative">
-                        <Text className="text-white font-psemibold">{tag}</Text>
+                        <Text className="text-oBlack dark:text-white font-pmedium dark:font-psemibold">{tag}</Text>
                         <TouchableOpacity className="absolute -top-2 -right-2 bg-white rounded-full p-1.5" onPress={() => removeTag(tag)}>
                             <Image 
                                 source={icons.close}

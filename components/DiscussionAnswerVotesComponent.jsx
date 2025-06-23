@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
 import { currentUserID } from '../services/authService'
 import { handleDiscussionAnswerVoteFunc } from '../services/fetchingService'
+import { useColorScheme } from 'nativewind' 
 
 const DiscussionAnswerVotesComponent = ({discussionAnswerData}) => {
   const [discussionAnswerDetails, setDiscussionAnswerDetails] = useState(discussionAnswerData)
   // console.log(discussionAnswerData, ' discussionanswervotescomponent');
-  
+  const {colorScheme} = useColorScheme();
+
+  //TODO: FIX NOT WORKING
   const handleAnswerVote = async (type) => {
     const userId = await currentUserID();
     const payload = {
@@ -18,6 +21,8 @@ const DiscussionAnswerVotesComponent = ({discussionAnswerData}) => {
     }
     
     const response = await handleDiscussionAnswerVoteFunc(payload)
+    console.log(response);
+    
     if(response){
       if(response.voteResponse === 0){
         if(discussionAnswerDetails?.isVotedUp && !discussionAnswerDetails?.isVotedDown){
@@ -81,21 +86,21 @@ const DiscussionAnswerVotesComponent = ({discussionAnswerData}) => {
   
   return (
     <View className="flex-col items-center gap-4">
-      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedUp ? "bg-secondary !border-0" : "bg-oBlack"}`} onPress={() => handleAnswerVote(0)}>
+      <TouchableOpacity className={`border border-white dark:border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedUp ? "bg-secondary !border-0" : "bg-gray-200 dark:bg-oBlack"}`} onPress={() => handleAnswerVote(0)}>
         <Image
             source={icons.upArrow}
             className={`h-6 w-6 `}
             resizeMode='contain'
-            tintColor={"#fff"}
+            tintColor={(colorScheme === "light" && !discussionAnswerDetails?.isVotedUp) ? "#000" : "#fff"}
         />
       </TouchableOpacity>
         <Text className="text-white font-psemibold">{discussionAnswerDetails?.votes}</Text>
-      <TouchableOpacity className={`border border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedDown ? "bg-secondary !border-0" : "bg-oBlack"}`} onPress={() => handleAnswerVote(1)}>
+      <TouchableOpacity className={`border border-white dark:border-black-200 rounded-md p-2 ${discussionAnswerDetails?.isVotedDown ? "bg-secondary !border-0" : "bg-gray-200 dark:bg-oBlack"}`} onPress={() => handleAnswerVote(1)}>
         <Image 
             source={icons.downArrow}
             className={`h-6 w-6`}
             resizeMode='contain'
-            tintColor={"#fff"}
+            tintColor={(colorScheme === "light" && !discussionAnswerDetails?.isVotedDown) ? "#000" : "#fff"}
         />
       </TouchableOpacity>
     </View>

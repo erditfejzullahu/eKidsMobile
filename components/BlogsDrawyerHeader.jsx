@@ -19,7 +19,7 @@ const BlogsDrawyerHeader = ({sendDiscussionInput, sendBlogsInput, discussionSect
   return (
     <>
     <View className="mb-6">
-        <Text className="text-white font-psemibold text-xl">Shfletoni etiketimet
+        <Text className="text-oBlack dark:text-white font-psemibold text-xl">Shfletoni etiketimet
         <View>
             <Image
             source={images.path}

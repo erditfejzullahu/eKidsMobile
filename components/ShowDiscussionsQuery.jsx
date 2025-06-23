@@ -11,7 +11,7 @@ const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
   // TODO NOT WORKING GOOD
   
   return (
-    <ScrollView className="max-h-[200px] h-full border border-black-200 rounded-[5px] overflow-hidden">
+    <ScrollView className="max-h-[200px] h-full border border-gray-200 dark:border-black-200 rounded-[5px] overflow-hidden">
       {retrievedDisucssionsData?.map((item) => {
         const date = new Date(item?.createdAt);
         const formattedDate = date.toLocaleDateString('sq-AL', {
@@ -21,7 +21,7 @@ const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
           });
           
         return (
-        <TouchableOpacity key={item?.id} className="py-2 border-b border-black-200 mx-2" 
+        <TouchableOpacity key={item?.id} className="py-2 border-b border-gray-200 dark:border-black-200 mx-2" 
           onPress={() => router.replace({
             pathname: `(blogs)/discussions/${item?.id}`,
             // params: {userId: item?.user?.id, userName: item?.user?.username, userPhoto: item?.user?.profilePictureUrl}
@@ -29,14 +29,14 @@ const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
           >
           <View className=" flex-row items-center justify-between">
             <View className="gap-1">
-                <Text className="font-psemibold text-lg mb-0.5 text-white">{item?.title}</Text>
+                <Text className="font-psemibold text-lg mb-0.5 text-oBlack dark:text-white">{item?.title}</Text>
                 {/* <View className="bg-secondary py-1 mb-1 px-2 rounded-[5px] self-start">
                   <Text className="font-psemibold text-white text-xs">{getCourseCategories(userData?.data?.categories, item?.categoryId)}</Text>
                 </View> */}
                 <View className="flex-row flex-wrap gap-2">
-                  {/* <Text className="text-white font-psemibold text-xs bg-primary px-2 py-1 border rounded-md border-black-200">{item?.name}</Text>
+                  {/* <Text className="text-white font-psemibold text-xs bg-primary-light dark:bg-primary px-2 py-1 border rounded-md border-gray-200 dark:border-black-200">{item?.name}</Text>
                   {item?.children?.map((tItem) => (
-                    <Text className="text-gray-400 font-psemibold text-xs bg-primary px-2 py-1 border rounded-md border-black-200">{tItem?.name}</Text>
+                    <Text className="text-gray-400 font-psemibold text-xs bg-primary-light dark:bg-primary px-2 py-1 border rounded-md border-gray-200 dark:border-black-200">{tItem?.name}</Text>
                   ))} */}
                 </View>
             </View>
@@ -47,8 +47,8 @@ const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
                     className="mr-2"
                 />
             </View>
-            <View className="absolute -top-2 -right-2 py-1 px-2 border-b border-l border-r border-black-200 bg-primary rounded-bl-[5px] rounded-tr-[5px]">
-              <Text className="text-gray-400 font-psemibold text-xs">{formattedDate}</Text>
+            <View className="absolute -top-2 -right-2 py-1 px-2 border-b border-l border-r border-gray-200 dark:border-black-200 bg-primary rounded-bl-[5px] rounded-tr-[5px]">
+              <Text className="text-gray-600 dark:text-gray-400 font-psemibold text-xs">{formattedDate}</Text>
             </View>
           </View>
         </TouchableOpacity>

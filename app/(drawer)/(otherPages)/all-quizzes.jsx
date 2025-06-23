@@ -18,6 +18,8 @@ import QuizzesCategoriesFilter from '../../../components/QuizzesCategoriesFilter
 import SearchInput from '../../../components/SearchInput'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
+//TODO: FIX ERROR ENROLLIN QUIZZES
+
 const AllQuizzes = () => {
   const {shadowStyle} = useShadowStyles();
   const {user, isLoading} = useGlobalContext();

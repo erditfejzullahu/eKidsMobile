@@ -22,8 +22,12 @@ import CreateDiscussionAnswer from '../../../../../components/CreateDiscussionAn
 import { useTopbarUpdater } from '../../../../../navigation/TopbarUpdater';
 import ShareToFriends from '../../../../../components/ShareToFriends';
 import { useGlobalContext } from '../../../../../context/GlobalProvider';
+import { useShadowStyles } from '../../../../../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 
 const Discussion = () => {
+  const {shadowStyle} = useShadowStyles();
+  const {colorScheme} = useColorScheme();
   const router = useRouter();
     const {id} = useLocalSearchParams();
     const {data, isLoading, refetch} = useFetchFunction(() => getDiscussionById(id))
@@ -93,7 +97,7 @@ const Discussion = () => {
     if(isLoading || discussionRefreshing || answersLoading || userLoading) return <Loading />
     
   return (
-    <View className="flex-1 h-full bg-primary">
+    <View className="flex-1 h-full bg-primary-light dark:bg-primary-light dark:bg-primary-light dark:bg-primary">
         <TouchableWithoutFeedback
           onPress={() => {
             createAnswerRef.current?.blurEditor();
@@ -116,8 +120,8 @@ const Discussion = () => {
           ListHeaderComponent={() => (
             <>
             <View className="flex-1">
-            <View className="bg-oBlack relative p-4 flex-row justify-between gap-2 items-start border-b border-black-200" style={styles.box}>
-                <TouchableOpacity onPress={() => router.back()} className="bg-primary border border-black-200 absolute left-4 -bottom-2 px-6 py-0.5 rounded-md" style={styles.box}>
+            <View className="bg-oBlack-light dark:bg-oBlack relative p-4 flex-row justify-between gap-2 items-start border-b border-gray-200 dark:border-black-200" style={shadowStyle}>
+                <TouchableOpacity onPress={() => router.back()} className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 absolute left-4 -bottom-2 px-6 py-0.5 rounded-md" style={shadowStyle}>
                   <Image 
                     source={icons.leftArrow}
                     className="h-4 w-4"
@@ -126,15 +130,15 @@ const Discussion = () => {
                   />
                 </TouchableOpacity>
               <View className="flex-1">
-                <Text className="text-2xl font-psemibold text-white">{discussionData?.title}</Text>
+                <Text className="text-2xl font-psemibold text-oBlack dark:text-white">{discussionData?.title}</Text>
                 <View className="flex-row items-center gap-2 justify-between flex-wrap mt-1">
-                <Text className="text-gray-400 text-xs font-plight">Krijuar <Text className="text-secondary font-psemibold">{date}</Text></Text>
-                <Text className="text-gray-400 text-xs font-plight">E shikuar <Text className="text-secondary font-psemibold">{discussionData?.views} here</Text></Text>
-                <Text className="text-white text-xs bg-primary border border-black-200 font-psemibold px-2 py-1 rounded-md" style={styles.box}>{discussionData?.edited ? "E modifikuar" : "E pa modifikuar"}</Text>
+                <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Krijuar <Text className="text-secondary font-psemibold">{date}</Text></Text>
+                <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">E shikuar <Text className="text-secondary font-psemibold">{discussionData?.views} here</Text></Text>
+                <Text className="text-oBlack dark:text-white text-xs bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 font-psemibold px-2 py-1 rounded-md" style={shadowStyle}>{discussionData?.edited ? "E modifikuar" : "E pa modifikuar"}</Text>
                 </View>
               </View>
               <View>
-              <TouchableOpacity className="bg-primary p-3 border border-black-200 rounded-md" style={styles.box} onPress={() => router.push(`(blogs)/discussions/addDiscussion`)}>
+              <TouchableOpacity className="bg-gray-200 dark:bg-primary p-3 border border-white dark:border-black-200 rounded-md" style={shadowStyle} onPress={() => router.push(`(blogs)/discussions/addDiscussion`)}>
               <Image 
                 source={icons.plus}
                 className="h-6 w-6"
@@ -145,12 +149,12 @@ const Discussion = () => {
               </View>
             </View>
             
-            <View className="border-b-8 border-black-200 pb-8">
+            <View className="border-b-8 border-gray-200 dark:border-black-200 pb-8">
               <DiscussionVotesComponent discussionData={discussionData}/>
 
-              <View className="flex-1 bg-oBlack p-4 border-t border-b border-black-200 relative" style={styles.box}>
+              <View className="flex-1 bg-oBlack-light dark:bg-oBlack p-4 border-t border-b border-gray-200 dark:border-black-200 relative" style={shadowStyle}>
                 <View className="absolute left-0 right-0 -top-5 min-w-full">
-                  <View className="flex-row items-center gap-1 bg-primary self-start mx-auto px-2 py-1 border border-black-200 rounded-md z-20" style={styles.box}>
+                  <View className="flex-row items-center gap-1 bg-primary-light dark:bg-primary self-start mx-auto px-2 py-1 border border-gray-200 dark:border-black-200 rounded-md z-20" style={shadowStyle}>
                     {discussionData?.user === null ? <Image 
                       source={icons.profile}
                       className="h-4 w-4"
@@ -164,19 +168,19 @@ const Discussion = () => {
                     <Text className="text-secondary font-plight text-sm">{discussionData?.user === null ? "Anonim" : discussionData?.user?.name}</Text>
                   </View>
                 </View>
-                <ScrollView className="mb-4 max-h-[400px] bg-primary border border-black-200 p-2">
+                <ScrollView className="mb-4 max-h-[400px] bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2">
                   <RenderHTML
                       tagsStyles={{
-                      h1: {color:"white", fontFamily: 'Poppins-Black', marginTop:"1.5em", marginBottom: "0.5em"},
-                      h2: {color:"white", fontFamily: 'Poppins-Bold', marginTop:"1.25em", marginBottom: "0.75em"},
-                      h3: {color:"white", fontFamily: 'Poppins-Medium', marginTop: "1em", marginBottom: "0.5em"},
-                      h4: {color:"white", fontFamily: "Poppins-Medium", marginTop: "0.75em", marginBottom: "0.5em"},
-                      h5: {color:"white", fontFamily:"Poppins-Regular", marginTop:"0.5em", marginBottom: "0.25em"},
-                      p: {color:"#9ca3af", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0px", marginBottom: "10px"},
-                      strong: {color:"white", fontFamily: "Poppins-Bold", fontSize: 12},
-                      li: {color:"white", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0.25em", marginBottom: "0.25em"},
-                      ol: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12,  marginTop: "1em", marginBottom: "1em"},
-                      ul: {color: "white", fontFamily: "Poppins-Bold", fontSize: 12, marginTop: "1em", marginBottom: "1em"},
+                        h1: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: 'Poppins-Black', marginTop:"1.5em", marginBottom: "0.5em"},
+                        h2: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: 'Poppins-Bold', marginTop:"1.25em", marginBottom: "0.75em"},
+                        h3: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: 'Poppins-Medium', marginTop: "1em", marginBottom: "0.5em"},
+                        h4: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: "Poppins-Medium", marginTop: "0.75em", marginBottom: "0.5em"},
+                        h5: {color: colorScheme === "dark" ? "white" : "#000", fontFamily:"Poppins-Regular", marginTop:"0.5em", marginBottom: "0.25em"},
+                        p: {color: colorScheme === "dark" ? "#9ca3af" : "#4b5563", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0px", marginBottom: "10px"},
+                        strong: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: "Poppins-Bold", fontSize: 12},
+                        li: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: "Poppins-Light", fontSize: 12, marginTop: "0.25em", marginBottom: "0.25em"},
+                        ol: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: "Poppins-Bold", fontSize: 12,  marginTop: "1em", marginBottom: "1em"},
+                        ul: {color: colorScheme === "dark" ? "white" : "#000", fontFamily: "Poppins-Bold", fontSize: 12, marginTop: "1em", marginBottom: "1em"},
                       }}
                       contentWidth={width}
                       source={htmlContent}
@@ -186,8 +190,8 @@ const Discussion = () => {
                       systemFonts={['Poppins-Black', 'Poppins-Bold', 'Poppins-ExtraBold', 'Poppins-Light', 'Poppins-Medium', 'Poppins-Regular', 'Popping-SemiBold']}
                   />
                 </ScrollView>
-                <TouchableOpacity onPress={() => setShareOpened(true)} className="absolute -bottom-3 left-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
-                    <Text className="font-psemibold text-sm text-white">Shperndaje</Text>
+                <TouchableOpacity onPress={() => setShareOpened(true)} className="absolute -bottom-3 left-2 bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={shadowStyle}>
+                    <Text className="font-psemibold text-sm text-oBlack dark:text-white">Shperndaje</Text>
                     <Image
                       source={icons.share}
                       className="h-4 w-4"
@@ -195,8 +199,8 @@ const Discussion = () => {
                       tintColor={"#ff9c01"}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {flatListRef.scrollToEnd({animated:true}); /* open editor req */}} className="absolute -bottom-3 right-2 bg-primary border border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={styles.box}>
-                    <Text className="font-psemibold text-sm text-white">Komento</Text>
+                <TouchableOpacity onPress={() => {flatListRef.scrollToEnd({animated:true}); /* open editor req */}} className="absolute -bottom-3 right-2 bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 rounded-md flex-row gap-1.5 px-3 py-1.5 items-center" style={shadowStyle}>
+                    <Text className="font-psemibold text-sm text-oBlack dark:text-white">Komento</Text>
                     <Image
                       source={icons.chat}
                       className="h-4 w-4"
@@ -214,12 +218,12 @@ const Discussion = () => {
               <Text className="text-secondary font-psemibold text-base">
                 {discussionAnswerData.length === 0 ? (
                   <>
-                    <Text className="text-white">Filloni me </Text>
+                    <Text className="text-oBlack dark:text-white">Filloni me </Text>
                     <Text className="text-secondary">komentin e parë</Text>
                   </>
                 ) : (
                   <>
-                    {discussionAnswerData?.answersCount} <Text className="text-white">përgjigjje/komente</Text>
+                    {discussionAnswerData?.answersCount} <Text className="text-oBlack dark:text-white">përgjigjje/komente</Text>
                   </>
                 )}
               </Text>
@@ -242,7 +246,7 @@ const Discussion = () => {
             <CreateDiscussionAnswer ref={createAnswerRef} id={id} sentSuccessResponse={(newComment) => setDiscussionAnswerData((prevData) => [newComment, ...prevData])}/>
           )}
           ListEmptyComponent={() => (
-            <View className="border-t pb-4 border-b border-black-200 bg-oBlack" style={styles.box}>
+            <View className="border-t pb-4 border-b border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
               <EmptyState 
                 title={"Nuk ka ende pergjigjje/koment"}
                 subtitle={"Filloni komentimin/pergjigjjen mbi kete diskutim"}

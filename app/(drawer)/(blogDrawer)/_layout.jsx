@@ -64,7 +64,7 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
     //tek pjesa e ketij hederi i qes krejt etiketimet me accordions ne baze te kategorive // etiketimet duhet me pas mundesin me pas underetiketime
     <FlatList
       refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}
-      className="flex-1 bg-oBlack p-4 border-r overflow-hidden border-black-200"
+      className="flex-1 bg-oBlack-light dark:bg-oBlack p-4 border-r overflow-hidden border-gray-200 dark:border-black-200"
       contentContainerStyle={{flexGrow: 1, gap: 6}}
       columnWrapperStyle={{gap: 6, overflow: "scroll"}}
       numColumns={4}
@@ -78,8 +78,8 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
       )}
       ListFooterComponentStyle={{flexGrow: 1, justifyContent: "flex-end", position: discussionSection ? "absolute" : "static", bottom: "0", width: discussionSection ? "100%" : "auto"}}
       ListFooterComponent={() => (
-        <View className={`py-2 border-t border-black-200 mb-2 `}>
-          <Text className="text-white font-plight text-xs">Realizuar nga <Link href={"https://murrizi.org"} accessibilityRole="link" className="text-secondary font-psemibold">Murrizi Co.</Link></Text>
+        <View className={`py-2 border-t border-gray-200 dark:border-black-200 mb-2 `}>
+          <Text className="text-oBlack dark:text-white font-plight text-xs">Realizuar nga <Link href={"https://murrizi.org"} accessibilityRole="link" className="text-secondary font-psemibold">Murrizi Co.</Link></Text>
         </View>
       )}
       ListEmptyComponent={() => (

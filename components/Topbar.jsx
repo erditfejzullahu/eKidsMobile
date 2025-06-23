@@ -112,7 +112,7 @@ const Topbar = () => {
                 placeholder={`${showSearcher ? "Kerkoni perdorues..." : showBlogSearcher ? "Kerkoni blogs..." : showDiscussionSearcher ? "Kerkoni diskutime..." : ""}`}
                 placeholderTextColor={"#414141"}
                 value={queryText}
-                className="border bg-primary text-white border-black-200 h-full p-2 rounded-[5px] w-full"
+                className="border bg-primary-light dark:bg-primary text-oBlack dark:text-white border-gray-200 dark:border-black-200 h-full p-2 rounded-[5px] w-full"
                 onChangeText={(text) => setQueryText(text)}
             />
             {queryText?.length > 0 && <TouchableOpacity className="absolute h-full items-center justify-center self-start right-0 px-2 z-[20]" onPress={() => setQueryText("")}>
@@ -168,22 +168,22 @@ const Topbar = () => {
 
       </View>
 
-      {(showSearcher && retrivedData?.length > 0 && queryText !== '') && <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
-        <ScrollView className="max-h-[200px] border border-black-200 rounded-[5px] overflow-hidden">
+      {(showSearcher && retrivedData?.length > 0 && queryText !== '') && <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack-light dark:bg-oBlack left-[5%]">
+        <ScrollView className="max-h-[200px] border border-gray-200 dark:border-black-200 rounded-[5px] overflow-hidden">
             {retrivedData?.map((item) => (
-            <TouchableOpacity key={`searchresult-${item?.id}`} className="py-2 border-b border-black-200 mx-2" onPress={() => {setQueryText(''); router.replace(`/users/${item?.id}`)}}>
+            <TouchableOpacity key={`searchresult-${item?.id}`} className="py-2 border-b border-gray-200 dark:border-black-200 mx-2" onPress={() => {setQueryText(''); router.replace(`/users/${item?.id}`)}}>
                 <View className=" flex-row items-center justify-between">
                     <View className="flex-row gap-3 items-center">
                         <View>
                             <Image 
                                 source={{uri: item?.profilePictureUrl}}
-                                className="h-14 w-14 rounded-[3px] border border-black-200"
+                                className="h-14 w-14 rounded-[3px] border border-gray-200 dark:border-black-200"
                                 resizeMode='cover'
                             />
                         </View>
                         <View>
-                            <Text className="font-psemibold text-lg mb-0.5 text-white">{item?.name}</Text>
-                            <Text className="font-pregular text-xs text-gray-400">{item?.isCloseFriend && item?.isFriend ? "Mik i ngushte" : item?.isFriend && !item?.isCloseFriend ? "Mik" : "Bashkeperdorues"}</Text>
+                            <Text className="font-psemibold text-lg mb-0.5 text-oBlack dark:text-white">{item?.name}</Text>
+                            <Text className="font-pregular text-xs text-gray-600 dark:text-gray-400">{item?.isCloseFriend && item?.isFriend ? "Mik i ngushte" : item?.isFriend && !item?.isCloseFriend ? "Mik" : "Bashkeperdorues"}</Text>
                         </View>
                     </View>
                     <View>
@@ -200,17 +200,17 @@ const Topbar = () => {
       </Animatable.View>}
         
         {(showBlogSearcher && retrivedBlogData?.length > 0 && queryText !== '') && 
-        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
+        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack-light dark:bg-oBlack left-[5%]">
             <ShowBlogsQuery retrivedBlogData={retrivedBlogData} userData={user}/>
         </Animatable.View>
         }
         {(showDiscussionSearcher && retrievedDiscussionData?.length > 0 && queryText !== '') && (
-        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack left-[5%]">
+        <Animatable.View animation="fadeInLeft" duration={300} className="w-[90%] absolute overflow-hidden m-auto mt-[82px] bg-oBlack-light dark:bg-oBlack left-[5%]">
             <ShowDiscussionsQuery retrivedBlogData={retrivedBlogData} userData={user}/>
         </Animatable.View>
         )}
 
-      <StatusBar backgroundColor='#13131a' style='light'/>
+        <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
 
     </SafeAreaView>
   )

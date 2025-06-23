@@ -157,18 +157,15 @@ const Blog = () => {
           )}
           ListFooterComponent={() => (
             <>
-          {/* <TouchableWithoutFeedback onPress={userOutsidePostCreation}>
-            <View className="my-6"><Text>asdasdasdasdasdasdasdasdasd</Text></View>
-          </TouchableWithoutFeedback> */}
             <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
               {hasMoreBlogs ? (
                 <>
-                <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                 <ActivityIndicator color={"#FF9C01"} size={24} />
                 </>
               ): (
                 <>
-                <Text className="text-white font-psemibold text-sm">Nuk ka me postime...</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me postime...</Text>
                 <Image 
                   source={images.breakHeart}
                   className="size-5"

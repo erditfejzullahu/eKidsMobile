@@ -4,8 +4,12 @@ import { icons } from '../constants'
 import { Platform } from 'react-native'
 import { currentUserID } from '../services/authService'
 import { handleDiscussionVoteFunc } from '../services/fetchingService'
+import { useShadowStyles } from '../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const DiscussionVotesComponent = ({discussionData}) => {
+    const {shadowStyle} = useShadowStyles();
+    const {colorScheme} = useColorScheme();
     const [voteDetails, setVoteDetails] = useState(null)
     const [actualVotes, setActualVotes] = useState(null)
     console.log(discussionData, ' discussionvotescomponent');
@@ -101,23 +105,23 @@ const DiscussionVotesComponent = ({discussionData}) => {
     
   return (
     <View className="flex-row items-center justify-between p-4">
-        <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(voteDetails === null || !voteDetails?.isVotedUp) ? "bg-oBlack" : "bg-secondary !border-0"} border border-black-200 p-2 rounded-md`} style={styles.box}>
+        <TouchableOpacity onPress={() => handleDiscussionVote(0)} className={`${(voteDetails === null || !voteDetails?.isVotedUp) ? "bg-gray-200 dark:bg-oBlack" : "bg-secondary !border-0"} border border-white dark:border-black-200 p-2 rounded-md`} style={shadowStyle}>
         <Image 
             source={icons.upArrow}
             className="h-8 w-8"
             resizeMode='contain'
-            tintColor={"#fff"}
+            tintColor={(colorScheme === "light" && (voteDetails === null || !voteDetails?.isVotedUp)) ? "#000" : "#fff"}
         />
         </TouchableOpacity>
 
-        <Text className="text-xl font-psemibold text-white">{actualVotes} <Text className="text-gray-400 text-sm font-plight">{actualVotes === 0 || actualVotes > 1 ? "Vota" : "Vote"}</Text></Text>
+        <Text className="text-xl font-psemibold text-white">{actualVotes} <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight">{actualVotes === 0 || actualVotes > 1 ? "Vota" : "Vote"}</Text></Text>
 
-        <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(voteDetails === null || !voteDetails?.isVotedDown) ? "bg-oBlack" : "bg-secondary !border-0"} border border-black-200 p-2 rounded-md`} style={styles.box}>
+        <TouchableOpacity onPress={() => handleDiscussionVote(1)} className={`${(voteDetails === null || !voteDetails?.isVotedDown) ? "bg-gray-200 dark:bg-oBlack" : "bg-secondary !border-0"} border border-white dark:border-black-200 p-2 rounded-md`} style={shadowStyle}>
         <Image 
             source={icons.downArrow}
             className="h-8 w-8"
             resizeMode='contain'
-            tintColor={"#fff"}
+            tintColor={(colorScheme === "light" && (voteDetails === null || !voteDetails?.isVotedDown)) ? "#000" : "#fff"}
         />
         </TouchableOpacity>
     </View>

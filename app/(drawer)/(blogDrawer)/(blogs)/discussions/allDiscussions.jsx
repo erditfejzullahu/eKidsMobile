@@ -9,11 +9,14 @@ import { getDiscussions } from '../../../../../services/fetchingService'
 import Loading from "../../../../../components/Loading"
 import EmptyState from '../../../../../components/EmptyState'
 import { useRoute } from '@react-navigation/native'
+import { useShadowStyles } from '../../../../../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const AllDiscussions = () => {
     const route = useRoute();
+    const {shadowStyle} = useShadowStyles();
     const {tagId, name} = route.params || {};
-    
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const [sortBy, setSortBy] = useState(0)
     const [paginationData, setPaginationData] = useState({pageNumber: 1, pageSize: 15});
@@ -99,7 +102,7 @@ const AllDiscussions = () => {
 if(isLoading && !loadedFirst) return <Loading />
   return (
     <FlatList 
-        className="bg-primary px-4"
+        className="bg-primary-light dark:bg-primary px-4"
         data={discussionData?.discussions}
         contentContainerStyle={{gap:20}}
         keyExtractor={(item) => item.id}
@@ -112,7 +115,7 @@ if(isLoading && !loadedFirst) return <Loading />
         ListHeaderComponent={() => (
             <>
             <View className={`my-4 flex-row items-center gap-2 relative`}>
-                <TouchableOpacity onPress={() => router.push('/discussions/addDiscussion')} className="absolute top-0 right-0 bg-secondary p-2 rounded-md" style={styles.box}>
+                <TouchableOpacity onPress={() => router.push('/discussions/addDiscussion')} className="absolute top-0 right-0 bg-secondary p-2 rounded-md" style={shadowStyle}>
                     <Image 
                         source={icons.plusnotfilled}
                         className="h-6 w-6"
@@ -121,7 +124,7 @@ if(isLoading && !loadedFirst) return <Loading />
                     />
                 </TouchableOpacity>
                 <View>
-                    <Text className="text-2xl text-white font-pmedium">Diskutimet
+                    <Text className="text-2xl text-oBlack dark:text-white font-pmedium">Diskutimet
                         <View>
                         <Image
                             source={images.path}
@@ -143,10 +146,10 @@ if(isLoading && !loadedFirst) return <Loading />
             <DiscussionsFilter sendData={(param) => setSortBy(param)} sortBy={sortBy}/>
 
             {(discussionData?.discussions?.length > 0 && discussionData?.discussionsCount > 0) && <View className="mt-2">
-                <Text className="text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold"><Text className="text-secondary">{discussionData?.discussionsCount}</Text> Diskutime</Text>
             </View>}
             {tagIdSelected?.name && (
-                <Text className="text-white font-psemibold mt-3 text-right">Etiketimi i perzgjedhur: <Text className="text-secondary">{tagIdSelected?.name}</Text></Text>
+                <Text className="text-oBlack dark:text-white font-psemibold mt-3 text-right">Etiketimi i perzgjedhur: <Text className="text-secondary">{tagIdSelected?.name}</Text></Text>
             )}
             </>
         )}
@@ -156,12 +159,12 @@ if(isLoading && !loadedFirst) return <Loading />
             <View className="justify-center -mt-2 mb-4 flex-row items-center gap-2">
                 {discussionData?.hasMore ? (
                     <>
-                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                     <ActivityIndicator color={"#FF9C01"} size={24} />
                     </>
                     ) : (
                     <>
-                    <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
                     <Image
                         source={images.breakHeart}
                         className="size-5"
@@ -174,12 +177,13 @@ if(isLoading && !loadedFirst) return <Loading />
             </>
         )}
         ListEmptyComponent={() => (
-            <View className="bg-oBlack border border-black-200" style={styles.box}>
+            <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200" style={shadowStyle}>
                 <EmptyState 
                     title={"Nuk ka diskutime"}
                     subtitle={"Nese mendoni qe eshte gabim, rifreskoni dritaren ose kontaktoni Panelin e Ndihmes. Per te krijuar nje diskutim shtypni butonin me poshte"}
                     isSearchPage={true}
                     buttonTitle={"Krijoni nje diskutim"}
+                    buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
                     buttonFunction={() => router.push('/discussions/addDiscussion')}
                 />
             </View>

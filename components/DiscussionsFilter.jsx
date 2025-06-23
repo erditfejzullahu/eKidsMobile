@@ -1,7 +1,8 @@
 import { View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { icons } from '../constants'
-
+import { useColorScheme } from 'nativewind';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 const initialDiscussionsSort = [
     { label: "Te rejat", icon: icons.latest, focused: false, param: 0 },
     { label: "Aktive", icon: icons.completedProgress, focused: false, param: 1 },
@@ -10,6 +11,8 @@ const initialDiscussionsSort = [
 ];
 
 const DiscussionsFilter = ({sendData, sortBy}) => {
+    const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     const [discussionsSort, setDiscussionsSort] = useState(initialDiscussionsSort)
 
     const handleDiscussionsFilter = (selectedItem, index) => {
@@ -34,15 +37,15 @@ const DiscussionsFilter = ({sendData, sortBy}) => {
   return (
     <View className="flex-row flex-wrap justify-end mt-2">
         {discussionsSort.map((item, index) => (
-            <TouchableOpacity onPress={() => handleDiscussionsFilter(item, index)} key={item.label} className={`flex-row px-4 py-1.5 items-center justify-center gap-1.5 border border-black-200 bg-oBlack`} style={styles.box}>
+            <TouchableOpacity onPress={() => handleDiscussionsFilter(item, index)} key={item.label} className={`flex-row px-4 py-1.5 items-center justify-center gap-1.5 border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack`} style={shadowStyle}>
                 <View>
-                    <Text className={`${item.focused ? "text-secondary" : "text-white"} font-plight text-sm`}>{item.label}</Text>
+                    <Text className={`${item.focused ? "text-secondary" : "text-oBlack dark:text-white"} font-plight text-sm`}>{item.label}</Text>
                 </View>
                 <View>
                     <Image 
                         source={item.icon}
                         className="size-4"
-                        tintColor={item.focused ? "#ff9c01" : "#fff"}
+                        tintColor={item.focused ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}
                     />
                 </View>
             </TouchableOpacity>

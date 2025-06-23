@@ -98,11 +98,11 @@ const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
     }, [editorContent])
     
   return (
-    <View className="border-t flex-1 border-b min-h-full  bg-primary border-black-200 overflow-hidden p-2 px-4">
-        <Text className="text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
-        <Text className="text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
+    <View className="border-t flex-1 border-b min-h-full  bg-primary-light dark:bg-primary border-gray-200 dark:border-black-200 overflow-hidden p-2 px-4">
+        <Text className="text-oBlack dark:text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
+        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
         <View>
-        <RichText onResponderGrant={() => console.log("erditbaba")} editor={editor} style={[{backgroundColor: "#13131a", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: "#232533"}, styles.box]}/>
+        <RichText editor={editor} style={[{backgroundColor: colorScheme === "dark" ? "#13131a" : "#fcf6f2", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: colorScheme === "dark" ? "#232533" : "#e5e7eb"}, styles.box]}/>
         {/* <KeyboardAvoidingView style={{position: "absolute", width: "100%", bottom: 0}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
         <View className="rounded-md overflow-hidden">
             <Toolbar editor={editor} />
