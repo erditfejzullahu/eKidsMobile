@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
-import { getCourseCategories } from '../services/fetchingService'
+import { deleteBlog, getBlogDetails, getCourseCategories } from '../services/fetchingService'
 import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
@@ -12,14 +12,19 @@ import { useColorScheme } from 'nativewind';
 import CustomModal from './Modal';
 import * as Animatable from "react-native-animatable"
 import { useNavigateToSupport } from '../hooks/goToSupportType';
+import NotifierComponent from './NotifierComponent';
+import Loading from './Loading';
 
 
-const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false}) => {
-    console.log(blog)
+const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false, removePostFromList}) => {
+    // console.log(blog)
     const navigateToSupport = useNavigateToSupport();
     const [moreOptions, setMoreOptions] = useState(false)
     const [blogDetails, setBlogDetails] = useState(false)
     const [comingSoon, setComingSoon] = useState(false)
+
+    const [blogDetailsLoading, setBlogDetailsLoading] = useState(false)
+    const [blogDetailsData, setBlogDetailsData] = useState(null)
 
     const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
@@ -33,8 +38,47 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         {label: "Shto tek favoritet", action: () => setComingSoon(true), show: true, icon: icons.star},
         {label: "Raporto", action: () => navigateToSupport('report'), show: true, icon: icons.report},
         {label: "Dukshmeria", action: () => setComingSoon(true), show: blog?.userId === user?.id, icon: icons.earth},
-        {label: "Fshij postimin", action: () => setComingSoon(true), show: blog?.userId === user?.id, icon: icons.trashbin}
+        {label: "Fshij postimin", action: () => deleteBlogById(), show: blog?.userId === user?.id, icon: icons.trashbin}
     ]
+
+    const {showNotification: deletedBlogNotification} = NotifierComponent({
+        title: "Sukses",
+        description: `Blogu ${blog?.title} eshte fshire me sukses`,
+        theme: colorScheme
+    })
+
+    const {showNotification: deleteBlogNotificationError} = NotifierComponent({
+        title: "Gabim",
+        description: `Dicka shkoi gabim ne fshirjen e blogut ${blog?.id}`,
+        theme: colorScheme,
+        alertType: "warning"
+    })
+
+    const deleteBlogById = async () => {
+        const response = await deleteBlog(blog?.id)
+        if(response === 200){
+            deletedBlogNotification()
+            removePostFromList(blog)
+        }else{
+            deleteBlogNotificationError();
+        }
+    }
+
+    const getBlogDetailsData = async () => {
+        setBlogDetailsLoading(true)
+        const response = await getBlogDetails(blog?.id)
+        console.log(response);
+        
+        setBlogDetailsData(response || null)
+        setBlogDetailsLoading(false);
+    }
+
+    useEffect(() => {
+      if(blogDetails){
+        getBlogDetailsData();
+      }
+    }, [blogDetails])
+    
 
     // const moreOptionsFiltered = moreOptionsItems.filter(item => item.show);
     const moreOptionsFiltered = useMemo(() => 
@@ -56,6 +100,20 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         index: 0,
         images: []
     })
+
+    const formatAlbanianDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.toLocaleString('sq-AL', { month: 'short' });
+        const year = date.getFullYear().toString().slice(-2);
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        
+        const period = hours >= 12 ? 'PD' : 'MD';
+        const displayHours = hours % 12 || 12;
+        
+        return `${day} ${month} ${year}, ${displayHours}:${minutes} ${period}`;
+      };
     
     useEffect(() => {
       if(blog?.imageUrls){
@@ -214,73 +272,86 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         onlyCancelButton
         cancelButtonText={"Largo dritaren"}
     >
-        <View className="flex-row items-center gap-1 border-b border-gray-200 mb-4 dark:border-black-200">
-            <Text className="text-xl text-oBlack dark:text-white font-psemibold text-center">Detajet e blogut</Text>
-            <Image 
-                source={icons.statistics}
-                className="size-8"
-                tintColor={"#FF9C01"}
-            />
-        </View>
-        <View className="min-w-full flex-col gap-2" style={shadowStyle}>
-            <View className="flex-row justify-between gap-2 items-center">
-                <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
-                    <Text className="text-oBlack dark:text-white font-psemibold">Autori</Text>
-                    <View className="flex-row gap-1 items-center">
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight">Erdit Fejzullahu</Text>
-                        <Image 
-                            source={icons.chat}
-                            className="size-4"
-                            tintColor={"#FF9C01"}
-                            resizeMode='contain'
-                        />
+        {blogDetailsLoading ? (
+            <View className="h-[100px]">
+                <Loading />
+            </View>
+        ) : !blogDetailsData ? (
+            <View className="p-3">
+                <Text className="text-oBlack dark:text-white font-psemibold text-center">Nuk ka te dhena</Text>
+                <Text className="text-gray-600 dark:text-gray-400 font-plight text-sm text-center">Nese mendoni qe eshte gabim, rifreskoni dritaren, apo raportoni problemin tek <Text className="text-secondary font-psemibold">Paneli i Ndihmes</Text></Text>
+            </View>
+        ) : (
+            <>
+            <View className="flex-row items-center gap-1 border-b border-gray-200 mb-4 dark:border-black-200">
+                <Text className="text-xl text-oBlack dark:text-white font-psemibold text-center">Detajet e blogut</Text>
+                <Image 
+                    source={icons.statistics}
+                    className="size-8"
+                    tintColor={"#FF9C01"}
+                />
+            </View>
+            <View className="min-w-full flex-col gap-2" style={shadowStyle}>
+                <View className="flex-row justify-between gap-2 items-center">
+                    <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                        <Text className="text-oBlack dark:text-white font-psemibold">Autori</Text>
+                        <View className="flex-row gap-1 items-center overflow-hidden">
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight">{blogDetailsData?.author || "Pa emer?"}</Text>
+                            <Image 
+                                source={icons.chat}
+                                className="size-4"
+                                tintColor={"#FF9C01"}
+                                resizeMode='contain'
+                            />
+                        </View>
+                    </View>
+                    <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Dukshmeria</Text>
+                        <View className="flex-row gap-1 items-center justify-end overflow-hidden">
+                            <Image 
+                                source={icons.earth}
+                                className="size-4"
+                                tintColor={"#FF9C01"}
+                            />
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right">{blogDetailsData?.visibility === 1 ? "Publike" : blogDetailsData?.visibility === 2 ? "Privat" : blogDetailsData?.visibility === 3 ? "Vetem miqte" : "I Fshire"}</Text>
+                        </View>
                     </View>
                 </View>
-                <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
-                    <Text className="text-oBlack dark:text-white font-psemibold text-right">Dukshmeria</Text>
-                    <View className="flex-row gap-1 items-center justify-end">
-                        <Image 
-                            source={icons.earth}
-                            className="size-4"
-                            tintColor={"#FF9C01"}
-                        />
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right">Publike</Text>
+                <View className="bg-oBlack-light gap-2 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                    <View className="flex-row items-center justify-between">
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold">Shikime</Text>
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">{blogDetailsData?.viewCount || 0}</Text> Shikime</Text>
+                        </View>
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-right">Komente</Text>
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">{blogDetailsData?.blogLikes || 0}</Text> Komente</Text>
+                        </View>
+                    </View>
+                    <View className="flex-row items-center justify-between">
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold">Pelqime</Text>
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">{blogDetailsData?.blogLikes || 0}</Text> Pelqime</Text>
+                        </View>
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-right">Shperndarje</Text>
+                            <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">{blogDetailsData?.shares || 0}</Text> Shperndarje</Text>
+                        </View>
+                    </View>
+                    <View className="flex-row items-center justify-between">
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold">Krijuar me</Text>
+                            <Text className="text-secondary text-sm font-psemibold">{formatAlbanianDate(blogDetailsData?.createdAt)}</Text>
+                        </View>
+                        <View>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-right">Titulli</Text>
+                            <Text className="text-secondary text-sm font-psemibold text-right">{blogDetailsData?.userTitle}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
-            <View className="bg-oBlack-light gap-2 dark:bg-oBlack border border-white dark:border-black-200 p-2">
-                <View className="flex-row items-center justify-between">
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold">Shikime</Text>
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">100</Text> Shikime</Text>
-                    </View>
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Komente</Text>
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">100</Text> Komente</Text>
-                    </View>
-                </View>
-                <View className="flex-row items-center justify-between">
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold">Pelqime</Text>
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">100</Text> Pelqime</Text>
-                    </View>
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Shperndarje</Text>
-                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">100</Text> Shperndarje</Text>
-                    </View>
-                </View>
-                <View className="flex-row items-center justify-between">
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold">Krijuar me</Text>
-                        <Text className="text-secondary text-sm font-psemibold">21 Jan 00 ora minuta</Text>
-                    </View>
-                    <View>
-                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Titulli</Text>
-                        <Text className="text-secondary text-sm font-psemibold text-right">Puna/Student</Text>
-                    </View>
-                </View>
-            </View>
-        </View>
+            </>
+        )}
     </CustomModal>
     {/* details modal */}
 

@@ -673,10 +673,21 @@ export const getAllBlogs = async (pagination, forYouOrFriends) => {
 
 export const deleteBlog = async (id) => {
     try {
-        const response = await apiClient.delete(`/api/Blogs/${id}`)
+        const response = await apiClient.delete(`/api/Blog/${id}`)
         return response && response.status;
     } catch (error) {
         return error.response.status
+    }
+}
+
+export const getBlogDetails = async (id) => {
+    try {
+        const response = await apiClient.get(`/api/Blog/GetBlogDetails/${id}`)
+        return response && response.data;
+    } catch (error) {
+        console.log(error.response);
+        
+        return null;
     }
 }
 

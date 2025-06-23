@@ -123,7 +123,7 @@ const Blog = () => {
           contentContainerStyle={{gap: 20}}
           keyExtractor={(item) => `ParentBlog-${item.id}`}
           renderItem={({item}) => (
-            <BlogCardComponent blog={item} userData={user} filterByTagId={(tagId) => setBlogTagId(tagId)}/>
+            <BlogCardComponent blog={item} userData={user} filterByTagId={(tagId) => setBlogTagId(tagId)} removePostFromList={(data) => setAllBlogs((prev) => {return prev.filter(item => item.id !== data.id)})}/>
           )}
           onEndReached={nextPage}
           onEndReachedThreshold={0.1}

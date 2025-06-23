@@ -349,7 +349,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
   return (
     <>
     <View className="flex-1">
-        <View className="flex-row items-center justify-center gap-4 bg-primary-light dark:bg-primary mx-4 -mb-4 z-50 border border-gray-200 dark:border-black-200 rounded-[5px] flex-1" style={shadowStyle}>
+        <View className="flex-row items-center justify-center gap-4 bg-primary-light dark:bg-primary mx-4 -mb-4 z-20 border border-gray-200 dark:border-black-200 rounded-[5px] flex-1" style={shadowStyle}>
             <View className="border-r pr-1.5 border-gray-200 dark:border-black-200 flex-1">
                 <TouchableOpacity onPress={() => likeBlog(blog?.id, user?.id)} className="flex-row items-center justify-center gap-1.5 py-2">
                     <Text className={`${(blog?.isLiked || blogTemporaryLike) ? "text-secondary" : "text-oBlack dark:text-white"} font-psemibold text-xs`}>{(blog?.isLiked || blogTemporaryLike) ? "I pelqyer" : "Pelqeni"}</Text>
