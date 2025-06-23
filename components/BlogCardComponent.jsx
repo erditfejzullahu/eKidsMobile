@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getCourseCategories } from '../services/fetchingService'
 import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
@@ -9,12 +9,18 @@ import { useRouter } from 'expo-router';
 import FullScreenImage from './FullScreenImage';
 import { useShadowStyles } from '../hooks/useShadowStyles';
 import { useColorScheme } from 'nativewind';
+import CustomModal from './Modal';
+import * as Animatable from "react-native-animatable"
+import { useNavigateToSupport } from '../hooks/goToSupportType';
 
 
 const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false}) => {
-    
     console.log(blog)
+    const navigateToSupport = useNavigateToSupport();
     const [moreOptions, setMoreOptions] = useState(false)
+    const [blogDetails, setBlogDetails] = useState(false)
+    const [comingSoon, setComingSoon] = useState(false)
+
     const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const router = useRouter();
@@ -22,22 +28,26 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
     const categories = userData?.data?.categories;
 
     const moreOptionsItems = [
-        {label: "Detajet", action: {}, show: true, icon: icons.edit},
-        {label: "Shko tek blogu", action: {}, show: true, icon: icons.blogs},
-        {label: "Shto tek favoritet", action: {}, show: true, icon: icons.star},
-        {label: "Raporto", action: {}, show: true, icon: icons.report},
-        {label: "Dukshmeria", action: {}, show: blog?.userId === user?.id, icon: icons.earth},
-        {label: "Fshij postimin", action: {}, show: blog?.userId === user?.id, icon: icons.trashbin}
+        {label: "Detajet", action: () => setBlogDetails(true), show: true, icon: icons.edit},
+        {label: "Shko tek blogu", action: () => router.push({pathname: `${blog?.id}`, params: {userId: blog?.userId, userName: blog?.user?.name, userPhoto: blog?.user?.profilePicture}}), show: true, icon: icons.blogs},
+        {label: "Shto tek favoritet", action: () => setComingSoon(true), show: true, icon: icons.star},
+        {label: "Raporto", action: () => navigateToSupport('report'), show: true, icon: icons.report},
+        {label: "Dukshmeria", action: () => setComingSoon(true), show: blog?.userId === user?.id, icon: icons.earth},
+        {label: "Fshij postimin", action: () => setComingSoon(true), show: blog?.userId === user?.id, icon: icons.trashbin}
     ]
 
-    const moreOptionsFiltered = moreOptionsItems.filter(item => item.show);
+    // const moreOptionsFiltered = moreOptionsItems.filter(item => item.show);
+    const moreOptionsFiltered = useMemo(() => 
+        moreOptionsItems.filter(item => item.show),
+        [blog?.userId, user?.id]
+    )
     
     const [blogImages, setBlogImages] = useState([])
     
     const date = new Date(blog?.createdAt);
     const formattedDate = date.toLocaleDateString('sq-AL', {
         year: 'numeric',
-        month: 'long',  // Full month name
+        month: 'long',  // Full month namemoreOptionsItems
         day: 'numeric',
     });
     // console.log(blog);
@@ -49,18 +59,23 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
     
     useEffect(() => {
       if(blog?.imageUrls){
-        setBlogImages(JSON.parse(blog?.imageUrls) || [])
+        const parsedImages = JSON.parse(blog?.imageUrls) || [];
+        setBlogImages(parsedImages);
+        setFullScreenModal((prev) => ({
+            ...prev,
+            images: parsedImages
+        }))
       }
     }, [blog?.imageUrls])
 
-    useEffect(() => {
-        if(blogImages){
-            setFullScreenModal((prev) => ({
-                ...prev,
-                images: blogImages
-            }))
-        }
-    }, [blogImages])
+    // useEffect(() => {
+    //     if(blogImages){
+    //         setFullScreenModal((prev) => ({
+    //             ...prev,
+    //             images: blogImages
+    //         }))
+    //     }
+    // }, [blogImages])
     
     
     // console.log(blogImages);
@@ -95,9 +110,9 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         </View>
 
         {/* more options */}
-        {moreOptions && <View className="absolute right-0 top-8 bg-oBlack-light dark:bg-oBlack border z-50 border-gray-200 p-2 rounded-md dark:border-black-200" style={shadowStyle}>
+        {moreOptions && <Animatable.View animation={"pulse"} duration={500} className="absolute right-0 top-8 bg-oBlack-light dark:bg-oBlack border z-50 border-gray-200 p-2 rounded-md dark:border-black-200" style={shadowStyle}>
             {moreOptionsFiltered.map((item, index) => (
-                <TouchableOpacity key={index} onPress={() => item.action} className={`${index !== moreOptionsFiltered.length - 1 ? "border-b" : ""} items-center border-gray-200 dark:border-black-200 gap-1 flex-row justify-center`}>
+                <TouchableOpacity key={index} onPress={() => {item.action(); setMoreOptions(false)}} className={`${index !== moreOptionsFiltered.length - 1 ? "border-b" : ""} items-center border-gray-200 dark:border-black-200 gap-1 flex-row justify-center`}>
                     <Text className="text-oBlack dark:text-white text-sm font-plight p-1">{item.label}</Text>
                     <Image 
                         source={item.icon}
@@ -107,7 +122,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
                     />
                 </TouchableOpacity>
             ))}
-        </View>}
+        </Animatable.View>}
         {/* more options */}
 
         {/* user */}
@@ -191,6 +206,98 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         initialIndex={fullScreenModal.index}
         onClose={() => setFullScreenModal({visible: false, images: [], index: 0})}
     />
+
+    {/* details modal */}
+    <CustomModal 
+        visible={blogDetails}
+        onClose={() => setBlogDetails(false)}
+        onlyCancelButton
+        cancelButtonText={"Largo dritaren"}
+    >
+        <View className="flex-row items-center gap-1 border-b border-gray-200 mb-4 dark:border-black-200">
+            <Text className="text-xl text-oBlack dark:text-white font-psemibold text-center">Detajet e blogut</Text>
+            <Image 
+                source={icons.statistics}
+                className="size-8"
+                tintColor={"#FF9C01"}
+            />
+        </View>
+        <View className="min-w-full flex-col gap-2" style={shadowStyle}>
+            <View className="flex-row justify-between gap-2 items-center">
+                <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                    <Text className="text-oBlack dark:text-white font-psemibold">Autori</Text>
+                    <View className="flex-row gap-1 items-center">
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight">Erdit Fejzullahu</Text>
+                        <Image 
+                            source={icons.chat}
+                            className="size-4"
+                            tintColor={"#FF9C01"}
+                            resizeMode='contain'
+                        />
+                    </View>
+                </View>
+                <View className="bg-oBlack-light w-[calc(50%-5px)] flex-1 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                    <Text className="text-oBlack dark:text-white font-psemibold text-right">Dukshmeria</Text>
+                    <View className="flex-row gap-1 items-center justify-end">
+                        <Image 
+                            source={icons.earth}
+                            className="size-4"
+                            tintColor={"#FF9C01"}
+                        />
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right">Publike</Text>
+                    </View>
+                </View>
+            </View>
+            <View className="bg-oBlack-light gap-2 dark:bg-oBlack border border-white dark:border-black-200 p-2">
+                <View className="flex-row items-center justify-between">
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold">Shikime</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">100</Text> Shikime</Text>
+                    </View>
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Komente</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">100</Text> Komente</Text>
+                    </View>
+                </View>
+                <View className="flex-row items-center justify-between">
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold">Pelqime</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight"><Text className="text-secondary font-psemibold">100</Text> Pelqime</Text>
+                    </View>
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Shperndarje</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-right"><Text className="text-secondary font-psemibold">100</Text> Shperndarje</Text>
+                    </View>
+                </View>
+                <View className="flex-row items-center justify-between">
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold">Krijuar me</Text>
+                        <Text className="text-secondary text-sm font-psemibold">21 Jan 00 ora minuta</Text>
+                    </View>
+                    <View>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-right">Titulli</Text>
+                        <Text className="text-secondary text-sm font-psemibold text-right">Puna/Student</Text>
+                    </View>
+                </View>
+            </View>
+        </View>
+    </CustomModal>
+    {/* details modal */}
+
+    <CustomModal
+        visible={comingSoon}
+        onClose={() => setComingSoon(false)}
+        onlyCancelButton
+        cancelButtonText={"Largo dritaren"}
+    >
+        <Text className="mb-4 text-oBlack dark:text-white font-psemibold text-xl">Se shpejti</Text>
+        <Image 
+            source={icons.learning}
+            className="size-10"
+            tintColor={"#FF9C01"}
+            resizeMode='contain'
+        />
+    </CustomModal>
     </>
   )
 }

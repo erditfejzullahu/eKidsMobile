@@ -22,9 +22,9 @@ const CustomModal = ({visible, onClose, onProcced, title, children, proceedButto
     >
         <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
             <View style={shadowStyle} className="bg-primary-light dark:bg-primary p-4 dark:rounded-[5px] border border-gray-200 dark:border-black-200 w-[80%] items-center">
-                <View className="w-full items-center">
+                {title && <View className="w-full items-center">
                     <Text className="font-pbold text-xl text-oBlack dark:text-white mb-2 border-b border-secondary">{title}</Text>
-                </View>
+                </View>}
                 <View className="w-full items-center">
                     {children}
                 </View>
