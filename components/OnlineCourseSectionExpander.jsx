@@ -5,8 +5,12 @@ import * as Animatable from "react-native-animatable"
 import { icons } from '../constants'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import ShareToFriends from './ShareToFriends'
+import { useShadowStyles } from '../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proceedToAvailableRoute, currentUserData}) => {
+    const {shadowStyle} = useShadowStyles();
+    const {colorScheme} = useColorScheme();
     const [sectionsOpened, setSectionsOpened] = useState(sections?.map((item) => item.id))
     
     const [passingShareItemId, setPassingShareItemId] = useState(null)
@@ -57,18 +61,18 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
         return (
             <View key={item.id}>
                 <Animatable.View className={`${sectionsOpened.includes(item.id) ? "-mb-2" : ""}`} animation={{from: {scale: 1}, to: {scale: 1.02}}} direction="alternate" easing={'ease-in-out'} iterationCount="infinite"  duration={1000}>
-                    <TouchableOpacity onPress={() => handleSectionsOpened(item.id)} className="bg-oBlack p-4 border border-black-200 mx-4" style={styles.box}>
-                            <Text className="text-white font-psemibold">{idx + 1}. {item.title}</Text>
+                    <TouchableOpacity onPress={() => handleSectionsOpened(item.id)} className="bg-oBlack-light dark:bg-oBlack p-4 border border-gray-200 dark:border-black-200 mx-4" style={shadowStyle}>
+                            <Text className="text-oBlack dark:text-white font-psemibold">{idx + 1}. {item.title}</Text>
                     </TouchableOpacity>
                 </Animatable.View>
                 {sectionsOpened.includes(item.id) && <View className="mb-4">
                     {item?.lessons.map((lItem, lIdx) => (
                         <Animatable.View animation="fadeInLeft" key={lIdx} className="relative mx-1">
                             <TouchableOpacity onPress={() => handleLessonClick(lItem)} onLongPress={() => handleLongPressClick(lItem)}>
-                                <Text className="text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary p-4 border border-black-200" style={styles.box}>{lIdx + 1}.{lItem.title}</Text>
-                                {lItem.meeting && <Text className="absolute text-[8px] bg-oBlack border-black-200 px-0.5 py-[1px] border rounded-br-md border-r font-plight left-0 top-0 text-gray-400" style={styles.box}>{lItem.meeting.status}</Text>}
+                                <Text className="text-gray-600 dark:text-gray-400 relative font-psemibold rounded-sm  text-sm bg-primary-light dark:bg-primary p-4 border border-gray-200 dark:border-black-200" style={shadowStyle}>{lIdx + 1}.{lItem.title}</Text>
+                                {lItem.meeting && <Text className="absolute text-[8px] bg-oBlack-light dark:bg-oBlack border-gray-200 dark:border-black-200 px-0.5 py-[1px] border rounded-br-md border-r font-plight left-0 top-0 text-gray-600 dark:text-gray-400" style={shadowStyle}>{lItem.meeting.status}</Text>}
                                 {lItem?.meeting ? (
-                                    <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <TouchableOpacity className="absolute right-1 bottom-1 border rounded-md bg-secondary dark:bg-oBlack p-1 border-t border-l border-gray-200 dark:border-black-200" style={shadowStyle}>
                                         <Animatable.Image
                                             animation={"pulse"}
                                             iterationCount={"infinite"}
@@ -76,11 +80,11 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                                             source={icons.play2}
                                             className="size-4"
                                             resizeMode='contain'
-                                            tintColor={"#ff9c01"}
+                                            tintColor={colorScheme === "dark" ? "#ff9c01" : "#fff"}
                                         />
                                     </TouchableOpacity>
                                 ) : !lItem?.meeting && lItem?.video_Url === null ? (
-                                    <TouchableOpacity onPress={handleInformationBar} className="absolute right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <TouchableOpacity onPress={handleInformationBar} className="absolute right-1 bottom-1 border rounded-md bg-secondary dark:bg-oBlack p-1 border-t border-l border-gray-200 dark:border-black-200" style={shadowStyle}>
                                         <Animatable.Image
                                             animation={"pulse"}
                                             iterationCount={"infinite"}
@@ -88,11 +92,11 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                                             source={icons.close}
                                             className="size-4"
                                             resizeMode='contain'
-                                            tintColor={"#b91c1c"}
+                                            tintColor={colorScheme === "dark" ? "#b91c1c" : "#fff"}
                                         />
                                     </TouchableOpacity>
                                 ) : !lItem?.meeting && lItem?.videoUrl ? (
-                                    <TouchableOpacity onPress={handleInformationBar} className="absolute flex-row items-center gap-0.5 right-1 bottom-1 border rounded-md bg-oBlack p-1 border-t border-l border-black-200" style={styles.box}>
+                                    <TouchableOpacity onPress={handleInformationBar} className="absolute flex-row items-center gap-0.5 right-1 bottom-1 border rounded-md bg-secondary dark:bg-oBlack p-1 border-t border-l border-gray-200 dark:border-black-200" style={shadowStyle}>
                                         <Animatable.Image
                                             animation={"pulse"}
                                             iterationCount={"infinite"}
@@ -100,7 +104,7 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                                             source={icons.close}
                                             className="size-4"
                                             resizeMode='contain'
-                                            tintColor={"#b91c1c"}
+                                            tintColor={colorScheme === "dark" ? "#b91c1c" : "#fff"}
                                         />
                                         <Animatable.Image
                                             animation={"pulse"}
@@ -109,7 +113,7 @@ const OnlineCourseSectionExpander = ({sections = [], handleInformationBar, proce
                                             source={icons.videoCamera}
                                             className="size-4"
                                             resizeMode='contain'
-                                            tintColor={"#b91c1c"}
+                                            tintColor={colorScheme === "dark" ? "#b91c1c" : "#fff"}
                                         />
                                     </TouchableOpacity>
                                 ) : null}

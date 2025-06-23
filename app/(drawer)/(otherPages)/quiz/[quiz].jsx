@@ -17,8 +17,10 @@ import { useTopbarUpdater } from '../../../../navigation/TopbarUpdater'
 import ShareToFriends from '../../../../components/ShareToFriends'
 import { useRole } from '../../../../navigation/RoleProvider'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../../hooks/useShadowStyles'
 
 const Quiz = () => {
+    const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const {role} = useRole();
     if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
@@ -206,13 +208,13 @@ const Quiz = () => {
   return (
     <ScrollView
         refreshControl={< RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh}/>}
-        className=" h-full bg-primary"
+        className=" h-full bg-primary-light dark:bg-primary"
         
     >
         <TouchableWithoutFeedback onPress={removeOpenedWindows}>
             <View>
                 <View>
-                    <View className="bg-oBlack px-4" style={styles.box}>
+                    <View className="bg-oBlack-light dark:bg-oBlack px-4" style={shadowStyle}>
                         <View className="absolute bg-secondary p-2 rounded-bl-full top-6 right-0 z-10">
                             <Image 
                                 source={quizCompletationStatus?.completed ? icons.completed : icons.completedProgress}
@@ -221,13 +223,13 @@ const Quiz = () => {
                                 resizeMode='contain'
                             />
                         </View>
-                        <View className="absolute top-0 right-0 z-20" style={styles.box}>
-                            <Text className="font-psemibold text-sm text-white min-w-[80px] text-center bg-secondary p-1 px-2.5 rounded-bl-[10px]">{getCourseCategories(userCategories, quizData?.quizCategory)}</Text>
+                        <View className="absolute top-0 right-0 z-20" style={shadowStyle}>
+                            <Text className="font-psemibold text-sm text-oBlack dark:text-white min-w-[80px] text-center bg-secondary p-1 px-2.5 rounded-bl-[10px]">{getCourseCategories(userCategories, quizData?.quizCategory)}</Text>
                         </View>
 
                         <View>
                             <View className="my-4">
-                                <Text className="text-xl text-white font-pmedium my-2 max-w-[90%]">{quizData?.quizName}
+                                <Text className="text-xl text-oBlack dark:text-white font-pmedium my-2 max-w-[90%]">{quizData?.quizName}
                                     <View>
                                         <Image
                                             source={images.path}
@@ -241,15 +243,15 @@ const Quiz = () => {
                     </View>
 
                     <View className="p-4">
-                        <Text className="font-psemibold text-base text-white">Pershkrimi i kuizit:</Text>
-                        <Text className="font-plight text-xs text-gray-400">{quizData?.quizDescription}</Text>
+                        <Text className="font-psemibold text-base text-oBlack dark:text-white">Pershkrimi i kuizit:</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">{quizData?.quizDescription}</Text>
                     </View>
 
-                    <View className="relative bg-oBlack" style={styles.box}>
-                        <TouchableOpacity onPress={() => setOpenContactUser(true)} className="p-4">
+                    <View className="relative bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
+                        <TouchableOpacity onPress={() => setOpenContactUser(!openContactUser)} className="p-4">
                             <View className="flex-row flex-1 w-full">
                                 <View className="flex-1">
-                                    <Text className="font-psemibold text-xs text-white">Krijuesi i kuizit</Text>
+                                    <Text className="font-psemibold text-xs text-oBlack dark:text-white">Krijuesi i kuizit</Text>
                                     <Text className="text-secondary font-psemibold text-base">{userQuizCreatedData?.info?.name} </Text>
                                 </View>
                                 <View className="items-center justify-center flex-1">
@@ -258,21 +260,21 @@ const Quiz = () => {
                                         iterationCount="infinite"
                                         source={icons.profile}
                                         className="h-8 w-8"
-                                        tintColor={"#fff"}
+                                        tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                     />
                                 </View>
                                 <View className="items-end flex-1">
-                                    <Text className="font-psemibold text-xs text-white">Kuize te krijuara</Text>
+                                    <Text className="font-psemibold text-xs text-oBlack dark:text-white">Kuize te krijuara</Text>
                                     <Text className="text-secondary font-psemibold text-base">{userQuizCreatedData?.count} {userQuizCreatedData?.count > 1 && <Text className="text-white text-xs">/sosh</Text>}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
-                        {openContactUser &&<Animatable.View animation="bounceIn" duration={500} className="absolute -bottom-5 right-0 bg-primary p-2 border border-black-200 rounded-[5px]" style={styles.box}>
+                        {openContactUser &&<Animatable.View animation="bounceIn" duration={500} className="absolute -bottom-5 right-0 bg-primary p-2 border border-black-200 rounded-[5px]" style={shadowStyle}>
                             <TouchableOpacity onPress={() => router.replace(`/users/${userQuizCreatedData?.info?.id}`)}>
-                                <Text className="font-plight text-white text-sm p-1">Shikoni profilin</Text>
+                                <Text className="font-plight text-oBlack dark:text-white text-sm p-1">Shikoni profilin</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleContactCreator}>
-                                <Text className="font-plight text-white text-sm p-1">Kontaktoni direkt</Text>
+                                <Text className="font-plight text-oBlack dark:text-white text-sm p-1">Kontaktoni direkt</Text>
                             </TouchableOpacity>
                         </Animatable.View>}
                     </View>
@@ -281,32 +283,32 @@ const Quiz = () => {
                 <View className="p-4 flex-row flex-1 gap-3">
                     <View className="flex-shrink justify-between">
                         <View>
-                            <Text className="font-psemibold text-sm text-white mb-0.5">Numri i pyetjeve:</Text>
+                            <Text className="font-psemibold text-sm text-oBlack dark:text-white mb-0.5">Numri i pyetjeve:</Text>
                             <Text className="text-secondary font-psemibold text-xs">{quizData?.questions?.length} {quizData?.questions?.length > 1 && <Text className="text-white text-xs">/sosh</Text>}</Text>
                         </View>
                         <View>
-                            <Text className="font-psemibold text-sm text-white mb-0.5">Gabimet:</Text>
+                            <Text className="font-psemibold text-sm text-oBlack dark:text-white mb-0.5">Gabimet:</Text>
                             <Text className="text-secondary font-psemibold text-xs">{mistakeData}</Text>
                         </View>
                     </View>
                     <View className="flex-1">
-                        <Text className="font-psemibold text-sm text-white mb-0.5">Informacione shtese:</Text>
-                        <Text className="font-plight text-xs text-gray-400">
+                        <Text className="font-psemibold text-sm text-oBlack dark:text-white mb-0.5">Informacione shtese:</Text>
+                        <Text className="font-plight text-xs text-gray-600 dark:text-gray-400">
                             Gjate perfundimit te kuizeve do te hasni ne lloje te pergjigjeve qe kerkohen ne kuiz! Jane pergjigjet e <Text className="text-secondary">vetme</Text>, <Text className="text-secondary">te shumta</Text> dhe pergjigjet qe kerkojne <Text className="text-secondary">plotesim</Text>
                         </Text>
                     </View>
                 </View>
 
                 {quizData && 
-                <View className="bg-oBlack p-4" style={styles.box}>
+                <View className="bg-oBlack-light dark:bg-oBlack p-4" style={shadowStyle}>
                     {quizData?.questions?.map((quizItem, index) => {
                         const answerType = () => {
                             if(quizItem.questionType === 'single'){
-                                return <Text>Pritet pergjigjje <Text className="text-secondary">e vetme</Text> e sakte</Text>
+                                return <Text className="text-oBlack dark:text-white">Pritet pergjigjje <Text className="text-secondary">e vetme</Text> e sakte</Text>
                             }else if (quizItem.questionType === 'multiple'){
-                                return <Text>Priten pergjigjje <Text className="text-secondary">te shumta</Text> te sakta</Text>
+                                return <Text className="text-oBlack dark:text-white">Priten pergjigjje <Text className="text-secondary">te shumta</Text> te sakta</Text>
                             }else if (quizItem.questionType === 'textual') {
-                                return <Text>Priten pergjigjje <Text className="text-secondary">me mbushje</Text> te sakta</Text>
+                                return <Text className="text-oBlack dark:text-white">Priten pergjigjje <Text className="text-secondary">me mbushje</Text> te sakta</Text>
                             }
                         }
                         if (questionOrder === index)
@@ -314,10 +316,10 @@ const Quiz = () => {
                             <Animatable.View animation="fadeInLeft" duration={600} key={`question-${index}`}>
                                 {quizCompletationStatus?.completed && <Text className="font-psemibold text-secondary text-sm mb-2">E perfunduar me sukes!</Text>}
                                 <View className="border-b border-white self-start mb-4">
-                                    <Text className="font-psemibold text-sm text-white">{answerType()}</Text>
+                                    <Text className="font-psemibold text-sm text-oBlack dark:text-white">{answerType()}</Text>
                                 </View>
                                 <View className="mb-2">
-                                    <Text className="font-psemibold text-lg text-white">{quizItem?.questionText}</Text>
+                                    <Text className="font-psemibold text-lg text-oBlack dark:text-white">{quizItem?.questionText}</Text>
                                 </View>
 
                                 <View className="gap-2">
@@ -325,12 +327,12 @@ const Quiz = () => {
                                         
                                         return(
                                             <>
-                                            <TouchableOpacity key={`answer-${aIndex}`} onPress={quizCompletationStatus?.completed ? () => {} : () => validateQuestions(answerItem, quizItem.questionType, (quizData?.questions?.length) === (index + 1))} className="border-2 border-black-200 rounded-[5px] flex-row items-center gap-2 p-2">
+                                            <TouchableOpacity key={`answer-${aIndex}`} onPress={quizCompletationStatus?.completed ? () => {} : () => validateQuestions(answerItem, quizItem.questionType, (quizData?.questions?.length) === (index + 1))} className="border-2 border-gray-200 dark:border-black-200 rounded-[5px] flex-row items-center gap-2 p-2">
                                                 <Checkbox 
                                                     value={quizCompletationStatus?.completed ? answerItem?.isCorrect : allAnswers?.[`answerItem-${answerItem.id}`]}
                                                     color={allAnswers?.[`answerItem-${answerItem.id}`] || quizCompletationStatus?.completed ? "#FF9C01" : undefined}
                                                 />
-                                                <Text className="font-psemibold text-sm text-white">{answerItem?.answerText}</Text>
+                                                <Text className="font-psemibold text-sm text-oBlack dark:text-white">{answerItem?.answerText}</Text>
                                             </TouchableOpacity>
                                             {(quizItem?.questionType !== 'single') && (quizItem?.answers?.length === aIndex + 1) && (quizCompletationStatus?.completed !== true) && <TouchableOpacity onPress={() => validateMultiples(quizItem?.answers, (quizData?.questions?.length) === (index + 1))} className="mt-2 self-start">
                                                 <Text className="p-2 px-4 border border-white bg-secondary rounded-[5px] text-white font-pmedium">Keni vendosur?</Text>
@@ -402,11 +404,11 @@ const Quiz = () => {
                 />
             </View>
             {/* nese osht end me bo suksesin */}
-            <View className="mt-2 bg-oBlack w-full rounded-[5px] p-2">
-                <Text className="font-plight text-base text-center text-white">Vazhdoni me kete ritem!</Text>
+            <View className="mt-2 bg-oBlack-light dark:bg-oBlack w-full rounded-[5px] p-2">
+                <Text className="font-plight text-base text-center text-oBlack dark:text-white">Vazhdoni me kete ritem!</Text>
             </View>
             <View className="mt-2">
-                <Text className="font-plight text-sm text-center text-white">{successfulModal.isEnd ? `Po njoftoheni mbi perfundimin e kuizit ${quizData?.quizName}. Kuizet e perfunduara mund ti gjeni tek profili juaj ne rubriken e "Progresi juaj".` : "Brenda pak kohesh do te ridrejtoheni tek pyetja tjeter..."}</Text>
+                <Text className="font-plight text-sm text-center text-oBlack dark:text-white">{successfulModal.isEnd ? `Po njoftoheni mbi perfundimin e kuizit ${quizData?.quizName}. Kuizet e perfunduara mund ti gjeni tek profili juaj ne rubriken e "Progresi juaj".` : "Brenda pak kohesh do te ridrejtoheni tek pyetja tjeter..."}</Text>
             </View>
         </CustomModal>
 
@@ -433,11 +435,11 @@ const Quiz = () => {
                 tintColor={"#FF9C01"}
                 />
             </View>
-            <View className="mt-2 bg-oBlack w-full rounded-[5px] p-2">
-                <Text className="font-plight text-base text-center text-white">Sapo keni gabuar!</Text>
+            <View className="mt-2 bg-oBlack-light dark:bg-oBlack w-full rounded-[5px] p-2">
+                <Text className="font-plight text-base text-center text-oBlack dark:text-white">Sapo keni gabuar!</Text>
             </View>
             <View className="mt-2">
-                <Text className="font-plight text-sm text-center text-white">Ju lutem provoni perseri duke klikuar ne kete butonin me poshte!</Text>
+                <Text className="font-plight text-sm text-center text-oBlack dark:text-white">Ju lutem provoni perseri duke klikuar ne kete butonin me poshte!</Text>
             </View>
         </CustomModal>
 

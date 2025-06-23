@@ -23,18 +23,18 @@ const AllMessages = () => {
     )
   }else{
     return (
-      <View style={styles.box} className="bg-primary pb-4 h-full">
+      <View style={styles.box} className="bg-primary-light dark:bg-primary pb-4 h-full">
         <View className="px-4">
-          <TouchableOpacity onPress={() => setHideHeader(!hideHeader)} className="absolute top-4 right-4 bg-oBlack border border-black-200 rounded-full p-2 z-50">
+          <TouchableOpacity onPress={() => setHideHeader(!hideHeader)} className="absolute top-4 right-4 bg-gray-200 dark:bg-oBlack border border-white dark:border-black-200 rounded-full p-2 z-50">
             <Image 
               source={hideHeader ? icons.downArrow : icons.upArrow}
               className="h-6 w-6"
               tintColor={"#ff9c01"}
             />
           </TouchableOpacity>
-          <View className="border-b border-black-200">
-            <View className={`my-4 ${hideHeader === false ? "border-b border-black-200 pb-4" : ""} `}>
-              <Text className="text-2xl text-white font-pmedium">Lajmetari juaj
+          <View className="border-b border-gray-200 dark:border-black-200">
+            <View className={`my-4 ${hideHeader === false ? "border-b border-white dark:border-black-200 pb-4" : ""} `}>
+              <Text className="text-2xl text-oBlack dark:text-white font-pmedium">Lajmetari juaj
                 <View>
                   <Image
                     source={images.path}
@@ -43,12 +43,12 @@ const AllMessages = () => {
                   />
                 </View>
               </Text>
-              {hideHeader === false && <Text className="text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve, kuizeve, leksioneve, mesimit online apo edhe disutimeve ne pergjithesi!</Text>}
+              {hideHeader === false && <Text className="text-gray-600 dark:text-gray-200 text-sm font-plight mt-5">Ketu mund te komunikoni me komunitetin e <Text className="font-psemibold text-secondary">ShokuMesimit</Text> ne lidhje me tema te perditshme, aktualitetet e fundit apo ne lidhje me tematikat e kurseve, kuizeve, leksioneve, mesimit online apo edhe disutimeve ne pergjithesi!</Text>}
             </View>
             <View className="relative w-full mb-4">
-              {hideHeader === false && <View className="border border-black-200 rounded-[10px] p-2">
-                <Text className="text-white font-pregular text-base mb-2">Detajet tuaja te komunikimit:</Text>
-                <View className="flex-row bg-oBlack flex-wrap justify-between items-center p-4 border border-black-200 rounded-[10px]">
+              {hideHeader === false && <View className="border border-gray-200 dark:border-black-200 rounded-[10px] p-2">
+                <Text className="text-oBlack dark:text-white font-pregular text-base mb-2">Detajet tuaja te komunikimit:</Text>
+                <View className="flex-row bg-oBlack-light dark:bg-oBlack flex-wrap justify-between items-center p-4 border border-gray-200 dark:border-black-200 rounded-[10px]">
                   <View className="">
                     <Image 
                       source={{uri: userData?.profilePictureUrl}}
@@ -58,8 +58,8 @@ const AllMessages = () => {
                     />
                   </View>
                   <View>
-                    <Text className="font-psemibold text-white text-lg">{userData?.firstname} {userData?.lastname}</Text>
-                    <Text className="font-plight text-gray-200 text-xs">{userData?.email}</Text>
+                    <Text className="font-psemibold text-oBlack dark:text-white text-lg">{userData?.firstname} {userData?.lastname}</Text>
+                    <Text className="font-plight text-gray-600 dark:text-gray-200 text-xs">{userData?.email}</Text>
                   </View>
                   <View>
                     <TouchableOpacity onPress={() => router.replace('/profile')}>
@@ -79,8 +79,8 @@ const AllMessages = () => {
         <View className="flex-1">
           <AllUsersFilter userData={userData}/>
         </View>
-        <View className="border-t border-black-200 py-2 mt-2 mx-4">
-          <Text className="text-white font-plight text-sm">Mundesuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
+        <View className="border-t border-gray-200 dark:border-black-200 py-2 mt-2 mx-4">
+          <Text className="text-oBlack dark:text-white font-plight text-sm">Mundesuar nga <Text className="text-secondary font-psemibold">Murrizi Co.</Text></Text>
         </View>
       </View>
     )

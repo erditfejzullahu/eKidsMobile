@@ -11,9 +11,12 @@ import MessengerSearchInput from './MessengerSearchInput'
 import { StyleSheet } from 'react-native'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
-
+import { useShadowStyles } from '../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const AllUsersFilter = ({userData}) => {    
+    const {shadowStyle} = useShadowStyles();
+    const {colorScheme} = useColorScheme();
     const [userTypes, setUserTypes] = useState(1)
     const {data, isLoading, refetch} = useFetchFunction(() => reqGetAllUserTypes(userData?.id, userTypes, searchParam))
     const [usersData, setUsersData] = useState([])
@@ -47,7 +50,7 @@ const AllUsersFilter = ({userData}) => {
     <View className="flex-1">
         <FlatList
         refreshControl={<RefreshControl onRefresh={onRefresh} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing}/>}
-        className="h-full bg-primary"
+        className="h-full bg-primary-light dark:bg-primary"
         data={usersData}
         contentContainerStyle={{gap: 14, paddingLeft: 16, paddingRight: 16}}
         keyExtractor={(item) => 'user-' + item?.id?.toString()}
@@ -58,38 +61,38 @@ const AllUsersFilter = ({userData}) => {
         />
         )}
         ListHeaderComponent={() => (
-            <View className="flex-row rounded-[5px] relative items-center pt-4" style={styles.box}>
-                {!showSearchInput && <Animatable.View className="flex-row flex-1 items-center" animation={"fadeInLeft"} easing={"ease-in-out"} duration={500}><View className={`flex-1 rounded-tl-md rounded-bl-md items-center border border-black-200 ${userTypes === 1 ? "bg-oBlack" : ""}`}>
+            <View className="flex-row rounded-[5px] relative items-center pt-4" style={shadowStyle}>
+                {!showSearchInput && <Animatable.View className="flex-row flex-1 items-center" animation={"fadeInLeft"} easing={"ease-in-out"} duration={500}><View className={`flex-1 rounded-tl-md rounded-bl-md items-center border border-white dark:border-black-200 ${userTypes === 1 ? "bg-gray-200 dark:bg-oBlack" : ""}`}>
                 <TouchableOpacity onPress={() => setUserTypes(1)} className="p-2 flex-row items-center gap-1">
-                    <Text className="font-plight text-white text-sm">Te gjithe</Text>
+                    <Text className="font-plight text-oBlack dark:text-white text-sm">Te gjithe</Text>
                     <Image 
                         source={icons.parents}
                         className="w-4 h-4"
                         resizeMode='contain'
-                        style={{tintColor: userTypes === 1 ? "#ff9c01" : "#fff"}}
+                        style={{tintColor: userTypes === 1 ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}}
                     />
                 </TouchableOpacity>
                 </View>
-                <View className={`flex-1 items-center border border-l-0 border-black-200 ${userTypes === 2 ? "bg-oBlack" : ""}`} >
+                <View className={`flex-1 items-center border border-l-0 border-white dark:border-black-200 ${userTypes === 2 ? "bg-gray-200 dark:bg-oBlack" : ""}`} >
                 <TouchableOpacity onPress={() => setUserTypes(2)} className="p-2 flex-row items-center gap-1">
-                    <Text className="font-plight text-white text-sm">Miqte</Text>
+                    <Text className="font-plight text-oBlack dark:text-white text-sm">Miqte</Text>
                     <Image 
                         source={icons.friends}
                         className="w-4 h-4"
                         resizeMode='contain'
-                        style={{tintColor: userTypes === 2 ? "#ff9c01" : "#fff"}}
+                        style={{tintColor: userTypes === 2 ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}}
                     />
                 </TouchableOpacity>
                 </View>
-                <View className={`flex-1 border border-l-0 border-black-200 items-center ${userTypes === 3 ? "bg-oBlack" : ""} rounded-tr-md rounded-br-md`}>
+                <View className={`flex-1 border border-l-0 border-white dark:border-black-200 items-center ${userTypes === 3 ? "bg-gray-200 dark:bg-oBlack" : ""} rounded-tr-md rounded-br-md`}>
                 <TouchableOpacity onPress={() => setUserTypes(3)} className="p-2 flex-row items-center gap-1">
-                    <Text className="font-plight text-white text-sm">Te ngushte
+                    <Text className="font-plight text-oBlack dark:text-white text-sm">Te ngushte
                     </Text>
                     <Image 
                         source={icons.heart}
                         className="w-4 h-4"
                         resizeMode='contain'
-                        style={{tintColor: userTypes === 3 ? "#ff9c01" : "#fff"}}
+                        style={{tintColor: userTypes === 3 ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}}
                     />
                 </TouchableOpacity>
                 </View></Animatable.View>}

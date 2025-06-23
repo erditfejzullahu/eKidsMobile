@@ -27,6 +27,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import * as Linking from "expo-linking"
 import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -36,6 +37,7 @@ const Profiles = () => {
     const {profile} = useLocalSearchParams();
     // console.log(profile, " profili");
     const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
     useEffect(() => {
       setProfileData(null);
       setRelationStatus(null)
@@ -85,9 +87,9 @@ const Profiles = () => {
     const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
     const chartConfig = {
-      backgroundGradientFrom: "#1E2923",
+      backgroundGradientFrom: colorScheme === "dark" ? "#1E2923" : "#FFD3B6",
       backgroundGradientFromOpacity: 0,
-      backgroundGradientTo: "#08130D",
+      backgroundGradientTo: colorScheme === "dark" ? "#08130D" : "#FFE8D6",
       backgroundGradientToOpacity: 0.5,
       color: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255 ,255, ${opacity})`,
@@ -350,10 +352,10 @@ const Profiles = () => {
     <View>
     <ScrollView
       refreshControl={< RefreshControl onRefresh={refreshData} tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} />}
-      className="h-full bg-primary"
+      className="h-full bg-primary-light dark:bg-primary"
     >
       {/* profile part */}
-      <View className="w-full items-center justify-center pb-4 mb-4 relative" style={styles.box}>
+      <View className="w-full items-center justify-center pb-4 mb-4 relative" style={shadowStyle}>
         <BlogsProfile userData={profileData}/> 
         <DiscussionsProfile userData={profileData}/> 
           <View className="h-16 w-16 bg-secondary rounded-[15px] justify-center items-center mt-10">
@@ -366,18 +368,18 @@ const Profiles = () => {
             </TouchableOpacity>
           </View>
           <View className="mt-4">
-            <Text className="text-white text-xl font-psemibold text-center">{profileData?.firstname} {profileData?.lastname}</Text>
-            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{profileData?.email}</Text>
-            <Text className="text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(profileData?.userMeta, "UserRole")}</Text>
+            <Text className="text-oBlack dark:text-white text-xl font-psemibold text-center">{profileData?.firstname} {profileData?.lastname}</Text>
+            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{profileData?.email}</Text>
+            <Text className="text-gray-600 dark:text-gray-200 text-sm font-pregular text-center mt-2">{getMetaValue(profileData?.userMeta, "UserRole")}</Text>
             <View className="flex-row justify-between w-[300px] mt-6 gap-4">
-              <TouchableOpacity onPress={() => setAllFriendsModal(true)} className="border border-black-200 rounded-[10px] px-6 py-2 bg-oBlack flex-1">
-                <Text className="text-gray-200 text-base font-pregular text-center">Komuniteti:</Text>
+              <TouchableOpacity onPress={() => setAllFriendsModal(true)} className="border border-gray-200 dark:border-black-200 rounded-[10px] px-6 py-2 bg-oBlack-light dark:bg-oBlack flex-1">
+                <Text className="text-gray-600 dark:text-gray-200 text-base font-pregular text-center">Komuniteti:</Text>
                 {/* <Text className="text-secondary text-lg font-psemibold text-center">{getMetaValue(userData?.userMeta, "LessonsCompleted")}</Text> */}
                 <Text className="text-secondary text-lg font-psemibold text-center">{profileData?.friends?.length}</Text>
 
               </TouchableOpacity>
               <View 
-                className="border border-black-200 rounded-[10px] px-6 py-2 bg-oBlack flex-1"
+                className="border border-gray-200 dark:border-black-200 rounded-[10px] px-6 py-2 bg-oBlack-light dark:bg-oBlack flex-1"
                 onTouchEnd={() => {
                   const phoneNumber = getMetaValue(profileData?.userMeta, "Phone")
                   if(phoneNumber){
@@ -387,7 +389,7 @@ const Profiles = () => {
                     
                   }
                 }}>
-                <Text className="text-gray-200 text-base font-pregular text-center">Telefoni:</Text>
+                <Text className="text-gray-600 dark:text-gray-200 text-base font-pregular text-center">Telefoni:</Text>
                 <Text className="text-secondary text-lg font-psemibold text-center">{getMetaValue(profileData?.userMeta, "Phone")}</Text>
               </View>
             </View>
@@ -395,7 +397,7 @@ const Profiles = () => {
       </View>
       {/* profile part */}
 
-      <View className="max-w-[350px] mb-4 flex-row flex-1 mx-auto gap-4" style={styles.box}>
+      <View className="max-w-[350px] mb-4 flex-row flex-1 mx-auto gap-4" style={shadowStyle}>
         <TouchableOpacity onPress={outputRelation() === 0 ? makeFriend : outputRelation() === 1 ? acceptFriend : outputRelation() === 2 ? removeOnWaitingFriend : outputRelation() === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
           <Text className="text-white font-psemibold text-base text-center">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : "default"}</Text>
           <Image 
@@ -405,35 +407,35 @@ const Profiles = () => {
             tintColor={"#fff"}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigateToMessenger(router, profileData, userData)} className="bg-oBlack py-3 w-[150px] rounded-[10px] border border-black-200 flex-row items-center justify-center gap-2">
-          <Text className="text-white font-psemibold text-base text-center">Kontakto</Text>
+        <TouchableOpacity onPress={() => navigateToMessenger(router, profileData, userData)} className="bg-oBlack-light dark:bg-oBlack py-3 w-[150px] rounded-[10px] border border-white dark:border-black-200 flex-row items-center justify-center gap-2">
+          <Text className="text-oBlack dark:text-white font-psemibold text-base text-center">Kontakto</Text>
           <Image 
             source={icons.report}
             className="w-6 h-6"
             resizeMode='contain'
-            tintColor={"#fff"}
+            tintColor={colorScheme === "dark" ? "#fff" : "#000"}
           />
         </TouchableOpacity>
       </View>
 
       {/* toggle part */}
-      <View className="w-full border-t border-black-200 ">
-        <View className="flex-row justify-between w-full border-b border-black-200">
-          <View className="w-1/2  border-r border-black-200" style={{backgroundColor: showQuizzes ? "#13131a" : "transparent"}}>
+      <View className="w-full border-t border-gray-200 dark:border-black-200 ">
+        <View className="flex-row justify-between w-full border-b border-gray-200 dark:border-black-200">
+          <View className={`w-1/2  border-r border-gray-200 dark:border-black-200 ${showQuizzes ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
             <TouchableOpacity 
               className="flex-row py-4 items-center gap-2 justify-center text-center"
               onPress={() => {setShowQuizzes(!showQuizzes), setShowCourses(false), setShowCreatedCourses(false),setShowOnlineCoursesProgress(false); setShowCreatedQuizzes(false)}}
             >
               <Image 
                 source={icons.quiz}
-                style={{tintColor: showQuizzes ? "#ff9c01" : "#fff"}}
+                style={{tintColor: showQuizzes ? "#ff9c01" : colorScheme === "dark" ? "#fff" : "#000"}}
                 className="h-6 w-6 bg-secon"
                 resizeMode="contain"
               />
-              <Text className="text-sm text-white font-pregular">Progresi Kuizeve</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-pregular">Progresi Kuizeve</Text>
             </TouchableOpacity>
           </View>
-          <View className="w-1/2" style={{backgroundColor: showCourses ? "#13131a" : "transparent"}}>
+          <View className={`w-1/2 ${showCourses ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"}`}>
             <TouchableOpacity 
               className="flex-row  py-4 items-center gap-2 justify-center text-center"
               onPress={() => {setShowCourses(!showCourses), setShowQuizzes(false), setShowCreatedCourses(false),setShowOnlineCoursesProgress(false); setShowCreatedQuizzes(false)}}
@@ -442,9 +444,9 @@ const Profiles = () => {
                 source={icons.progress}
                 className="h-6 w-6"
                 resizeMode="contain"
-                style={{tintColor: showCourses ? "#ff9c01" : "#FFF"}}
+                style={{tintColor: showCourses ? "#ff9c01" : colorScheme === "dark" ? "#FFF" : "#000"}}
               />
-              <Text className="text-sm text-white font-pregular">Progresi Kurseve</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-pregular">Progresi Kurseve</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -452,42 +454,42 @@ const Profiles = () => {
       {/* toggle part */}
 
       {/* other toggle part */}
-      <View className={`flex-row items-center w-[98%] mx-auto border border-black-200 rounded-lg mt-2 ${showOnlineCoursesProgress ? "mb-6" : ""}`} style={styles.box}>
-        <View className={` ${showCreatedQuizzes ? "bg-oBlack" : ""} p-2 w-1/2 border-r border-black-200 rounded-tl-md rounded-bl-md`}>
-          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowOnlineCoursesProgress(false); setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center gap-2 flex-row justify-center">
+      <View className={`flex-row items-center w-[98%] mx-auto border border-gray-200 dark:border-black-200 rounded-lg mt-2 ${showOnlineCoursesProgress ? "mb-6" : ""}`} style={shadowStyle}>
+        <View className={` ${showCreatedQuizzes ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} w-1/2 border-r border-gray-200 dark:border-black-200 rounded-tl-md rounded-bl-md`}>
+          <TouchableOpacity onPress={() => {setShowCreatedQuizzes(!showCreatedQuizzes), setShowCourses(false), setShowOnlineCoursesProgress(false); setShowQuizzes(false), setShowCreatedCourses(false)}} className="items-center py-2 gap-2 flex-1 flex-row justify-center">
             <View>
               <Image 
                 source={images.mortarBoard} 
-                style={{tintColor: showCreatedQuizzes ? "#FF9C01" : "#fff"}} 
+                style={{tintColor: showCreatedQuizzes ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}} 
                 className="w-6 h-6"
                 resizeMode='contain'
                 />
             </View>
-            <Text className="text-sm text-center text-white font-pregular">Kuize te krijuara</Text>
+            <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Kuize te krijuara</Text>
           </TouchableOpacity>
         </View>
-        <View className={`${showCreatedCourses ? "bg-oBlack" : ""} w-1/2 p-2 rounded-tr-md rounded-br-md`}>
-          <TouchableOpacity onPress={() => {setShowCreatedCourses(!showCreatedCourses), setShowCourses(false), setShowQuizzes(false), setShowCreatedQuizzes(false)}} className="items-center gap-2 flex-row justify-center">
+        <View className={`${showCreatedCourses ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} w-1/2 rounded-tr-md rounded-br-md`}>
+          <TouchableOpacity onPress={() => {setShowCreatedCourses(!showCreatedCourses), setShowCourses(false), setShowQuizzes(false), setShowCreatedQuizzes(false)}} className="items-center py-2 gap-2 flex-1 flex-row justify-center">
             <View>
               <Image 
                 source={icons.lectures} 
-                style={{tintColor: showCreatedCourses ? "#FF9C01" : "#fff"}} 
+                style={{tintColor: showCreatedCourses ? "#FF9C01" : colorScheme === "dark" ? "#fff" : "#000"}} 
                 className="w-6 h-6"
                 resizeMode='contain'
                 />
             </View>
-            <Text className="text-sm text-center text-white font-pregular">Kurse te krijuara</Text>
+            <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Kurse te krijuara</Text>
           </TouchableOpacity>
         </View>
         <View className="items-center justify-center absolute -bottom-7 right-0 left-0">
-          <TouchableOpacity onPress={() => {setShowOnlineCoursesProgress(!showOnlineCoursesProgress); setShowCreatedCourses(false); setShowQuizzes(false); setShowCourses(false); setShowCreatedQuizzes(false)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-oBlack" : "bg-primary"} border border-black-200 rounded-md p-2 py-1`} style={styles.box}>
+          <TouchableOpacity onPress={() => {setShowOnlineCoursesProgress(!showOnlineCoursesProgress); setShowCreatedCourses(false); setShowQuizzes(false); setShowCourses(false); setShowCreatedQuizzes(false)}} className={`flex-row items-center justify-center gap-2 ${showOnlineCoursesProgress ? "bg-[#d9d9d9] dark:bg-oBlack" : "bg-primary-light dark:bg-primary"} border border-gray-200 dark:border-black-200 rounded-md p-2 py-1`} style={shadowStyle}>
             <Image 
               source={icons.parents} 
-              style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : "#fff"}} 
+              style={{tintColor: showOnlineCoursesProgress ? "#FF9C01" : colorScheme === "dark" ?  "#fff" : "#000"}} 
               className="w-6 h-6"
               resizeMode='contain'
               />
-            <Text className="text-sm text-center text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
+            <Text className="text-sm text-center text-oBlack dark:text-white font-pregular">Progresi <Text className="text-secondary">Meso Online</Text></Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -502,12 +504,13 @@ const Profiles = () => {
               </View>
           )))
         ) : (
-          <View style={styles.box} className=" mx-4 my-4 bg-oBlack border border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
+          <View style={shadowStyle} className=" mx-4 my-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-0.5 py-4 pt-5">
             <EmptyState
               title={"Nuk u gjet asnje progress i Takimeve Online"}
               titleStyle={"!font-pregular mb-2"}
               subtitle={"Nese mendoni qe ka ndodhur nje gabim, rifreskoni dritaren apo filloni shfletimin e ndonje Kursi Online duke klikuar ne butonin e meposhtem!"}
               buttonTitle={"Shfletoni Kurse Online"}
+              buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
               buttonFunction={() => router.replace('/allOnlineMeetings')}
               />
           </View>
@@ -522,11 +525,12 @@ const Profiles = () => {
           userCategories={user?.data?.categories}
         />
       </View>: 
-      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+      <View className="mx-4 pt-4 mt-10 rounded-[5px] border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
         <EmptyState 
           title={"Nuk u gjet asnje progress!"}
           subtitle={"Perdoruesi nuk ka filluar perfundimin e ndonje kursi!"}
           showButton={false}
+          buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
           titleStyle={"!font-psemibold"}
         />
       </View>)}
@@ -537,11 +541,12 @@ const Profiles = () => {
           userCategories={user?.data?.categories}
         />
       </View> : 
-      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+      <View className="mx-4 pt-4 mt-10 rounded-[5px] border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
         <EmptyState 
           title={"Nuk u gjet asnje progress!"}
           subtitle={"Perdoruesi nuk ka filluar perfundimin e ndonje kuizi!"}
           showButton={false}
+          buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
           titleStyle={"!font-psemibold"}
         />
       </View>)}
@@ -552,11 +557,12 @@ const Profiles = () => {
           userCategories={user?.data?.categories}
           />
       </View> :
-      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+      <View className="mx-4 pt-4 mt-10 rounded-[5px] border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
         <EmptyState 
           title={"Nuk u gjet asnje kurs offline!"}
           subtitle={"Perdoruesi nuk ka krijuar kurse offline ende!"}
           showButton={false}
+          buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
           titleStyle={"!font-psemibold"}
         />
       </View>)}
@@ -567,76 +573,77 @@ const Profiles = () => {
           userCategories={user?.data?.categories}
         />
       </View> :
-      <View className="mx-4 pt-4 mt-6 rounded-[5px] border border-black-200 bg-oBlack" style={styles.box}>
+      <View className="mx-4 pt-4 mt-10 rounded-[5px] border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
         <EmptyState 
           title={"Nuk u gjet asnje kuiz!"}
           subtitle={"Perdoruesi nuk ka krijuar kuize ende!"}
           showButton={false}
+          buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
           titleStyle={"!font-psemibold"}
         />
       </View>)}
 
       {profileAboutData && 
         <View className="mt-8">
-          <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack border border-black-200 rounded-[10px] justify-between w-[260px]" style={styles.box}>
-          <TouchableOpacity onPress={() => {setPersonalInformation(true), setProfessionalInformation(false)}} className="flex-1 items-center border-r border-black-200">
-              <Text className={`${personalInformation ? "text-secondary font-pregular" : "text-white"} text-sm font-plight text-center`}>Informacione personale</Text>
+          <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[10px] justify-between w-[260px]" style={shadowStyle}>
+          <TouchableOpacity onPress={() => {setPersonalInformation(true), setProfessionalInformation(false)}} className="flex-1 items-center border-r border-gray-200 dark:border-black-200">
+              <Text className={`${personalInformation ? "text-secondary font-pregular" : "text-oBlack dark:text-white"} text-sm font-plight text-center`}>Informacione personale</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setProfessionalInformation(true), setPersonalInformation(false)}} className="flex-1 items-center">
-              <Text className={`${professionalInformation ? "text-secondary font-pregular" : "text-white"} text-sm font-plight text-center`}>Informacione Profesionale</Text>
+              <Text className={`${professionalInformation ? "text-secondary font-pregular" : "text-oBlack dark:text-white"} text-sm font-plight text-center`}>Informacione Profesionale</Text>
           </TouchableOpacity>
           </View>
 
           {personalInformation && 
-          <View className="m-4 bg-oBlack border rounded-[10px] border-black-200" style={styles.box}>
-          <View className="m-4 my-2 border-b border-black-200 flex-row justify-between">
+          <View className="m-4 bg-oBlack-light dark:bg-oBlack border rounded-[10px] border-gray-200 dark:border-black-200" style={shadowStyle}>
+          <View className="m-4 my-2 border-b border-gray-200 dark:border-black-200 flex-row justify-between">
             <View>
               <Text className="text-secondary font-psemibold text-xs">Abonimi</Text>
-              <Text className="text-sm text-white font-plight">TODO:</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight">TODO:</Text>
             </View>
             <View>
               <Text className="text-secondary font-psemibold text-xs text-right">Angazhimi</Text>
-              <Text className="text-sm text-white font-plight text-right">Mesatar</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight text-right">Mesatar</Text>
             </View>
           </View>
-          <View className="m-4 my-2 flex-row justify-between border-b border-black-200">
+          <View className="m-4 my-2 flex-row justify-between border-b border-gray-200 dark:border-black-200">
             <View>
               <Text className="text-secondary font-psemibold text-xs">Emri perdoruesit</Text>
-              <Text className="text-sm text-white font-plight">{profileData?.username}</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight">{profileData?.username}</Text>
             </View>
             <View>
               <Text className="text-secondary font-psemibold text-xs text-right">Roli i krijimit</Text>
-              <Text className="text-sm text-white font-plight text-right">{profileData?.role}</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight text-right">{profileData?.role}</Text>
             </View>
           </View>
-          <View className="m-4 my-2 border-b-none border-black-200 flex-row justify-between">
+          <View className="m-4 my-2 flex-row justify-between">
             <View>
               <Text className="text-secondary font-psemibold text-xs">Data lindjes</Text>
-              <Text className="text-sm text-white font-plight">{new Date(profileData?.userInformation?.birthday).toLocaleDateString('sq-AL', {day: "2-digit", month: "long", year: "numeric"}) || "Nuk ka informate"}</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight">{new Date(profileData?.userInformation?.birthday).toLocaleDateString('sq-AL', {day: "2-digit", month: "long", year: "numeric"}) || "Nuk ka informate"}</Text>
             </View>
             <View>
               <Text className="text-secondary font-psemibold text-xs text-right">Profesioni</Text>
-              <Text className="text-sm text-white font-plight text-right">{profileData?.userInformation?.profession}</Text>
+              <Text className="text-sm text-oBlack dark:text-white font-plight text-right">{profileData?.userInformation?.profession}</Text>
             </View>
           </View>
           </View>}
 
           {professionalInformation && 
-          <View className="m-4 bg-oBlack border rounded-[10px] border-black-200" style={styles.box}>
-            <View className="flex-row flex-1 border-b border-black-200">
-              <View className="flex-1 items-center border-r border-black-200">
+          <View className="m-4 bg-oBlack-light dark:bg-oBlack border rounded-[10px] border-gray-200 dark:border-black-200" style={shadowStyle}>
+            <View className="flex-row flex-1 border-b border-gray-200 dark:border-black-200">
+              <View className="flex-1 items-center border-r border-gray-200 dark:border-black-200">
                 <TouchableOpacity onPress={() => {setSkillsPart(true), setCommitmentPart(false), setProjectsPart(false)}} className="p-2">
-                  <Text className={`${skillsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Informacione</Text>
+                  <Text className={`${skillsPart ? "text-secondary" : "text-oBlack dark:text-white"} font-plight text-sm`}>Informacione</Text>
                 </TouchableOpacity>
               </View>
-              <View className="flex-1 items-center border-r border-black-200">
+              <View className="flex-1 items-center border-r border-gray-200 dark:border-black-200">
                 <TouchableOpacity onPress={() => {setCommitmentPart(true), setSkillsPart(false), setProjectsPart(false)}} className="p-2">
-                  <Text className={`${commitmentPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Angazhimi</Text>
+                  <Text className={`${commitmentPart ? "text-secondary" : "text-oBlack dark:text-white"} font-plight text-sm`}>Angazhimi</Text>
                 </TouchableOpacity>
               </View>
               <View className="flex-1 items-center">
                 <TouchableOpacity className="p-2" onPress={() => {setProjectsPart(true), setSkillsPart(false), setCommitmentPart(false)}}>
-                  <Text className={`${projectsPart ? "text-secondary" : "text-white"} font-plight text-sm`}>Projekte</Text>
+                  <Text className={`${projectsPart ? "text-secondary" : "text-oBlack dark:text-white"} font-plight text-sm`}>Projekte</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -644,53 +651,53 @@ const Profiles = () => {
             {skillsPart && 
             <View className="p-4">
               <View className="gap-3">
-                <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                <View className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2 rounded-sm" style={shadowStyle}>
                   <Text className="text-secondary font-psemibold text-xs">Edukimi shkollor:</Text>
                   {profileData?.userInformation?.userEducation?.length > 0 ? profileData?.userInformation?.userEducation.map((item, index) => (
-                    <View className="border-b border-black-200 border-r rounded-br-sm mb-1" key={`usereducation-${index}`}>
-                      <Text className="text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
-                      <Text className="text-gray-400 text-xs font-plight">{item.field}</Text>
+                    <View className="border-b border-gray-200 dark:border-black-200 border-r rounded-br-sm mb-1" key={`usereducation-${index}`}>
+                      <Text className="text-oBlack dark:text-white font-psemibold text-base">{index + 1}. {item.place_Name} ({item.start_Year}) - {typeof(item.end_Year) === "number" ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
+                      <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">{item.field}</Text>
                     </View>
-                  )) : <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
+                  )) : <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
                   
                 </View>
-                <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                <View className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2 rounded-sm" style={shadowStyle}>
                   <Text className="text-secondary font-psemibold text-xs">Punesimi:</Text>
                   {profileData?.userInformation?.userJobs?.length > 0 ? (
                       (profileData?.userInformation?.userJobs.map((item, index) => (
-                        <View className="border-b border-black-200 border-r rounded-br-sm mb-1" key={`userjobs-${index}`}>
-                          <Text className="text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
-                          <Text className="text-gray-400 text-xs font-plight">{item.job_Place}</Text>
+                        <View className="border-b border-gray-200 dark:border-black-200 border-r rounded-br-sm mb-1" key={`userjobs-${index}`}>
+                          <Text className="text-oBlack dark:text-white font-psemibold text-base">{index + 1}. {item.job_Title} ({item.start_Year}) - {typeof(item.end_Year) === 'number' ? "(" + item.end_Year + ")" : <><Text className="text-secondary">(Ende)</Text></>}</Text>
+                          <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">{item.job_Place}</Text>
                         </View>
                       )))
                     ) : (
                       <View>
-                        <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Nuk ka informata</Text>
                       </View>
                     )}
                 </View>
-                  <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                  <View className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2 rounded-sm" style={shadowStyle}>
                     <Text className="text-secondary font-psemibold text-xs">Aftesite:</Text>
                     {professionalSkills.length > 0 ? professionalSkills.map((item, index) => (
-                      <Text key={`skills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400 font-plight">{index + 1}.</Text> {item}</Text>
+                      <Text key={`skills-${index}`} className="text-oBlack dark:text-white font-plight text-base"><Text className="text-gray-600 dark:text-gray-400 font-plight">{index + 1}.</Text> {item}</Text>
                     )) 
                      : 
-                        <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Nuk ka informata</Text>
                       }
                     </View>
 
-                  <View className="bg-primary border border-black-200 p-2 rounded-sm" style={styles.box}>
+                  <View className="bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2 rounded-sm" style={shadowStyle}>
                     <Text className="text-secondary font-psemibold text-xs">Aftesi te buta:</Text>
                     {softSkills.length > 0 ? softSkills.map((item, index) => (
-                      <Text key={`softskills-${index}`} className="text-white font-plight text-base"><Text className="text-gray-400">{index + 1}.</Text> {item} </Text>
-                    )): <Text className="text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
+                      <Text key={`softskills-${index}`} className="text-oBlack dark:text-white font-plight text-base"><Text className="text-gray-600 dark:text-gray-400">{index + 1}.</Text> {item} </Text>
+                    )): <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Nuk ka informata</Text>}
                   </View>
               </View>
             </View>}
 
             {commitmentPart && 
             <View className="flex-1">
-              <Text className="text-white font-plight text-sm p-2 bg-oBlack" style={styles.box}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
+              <Text className="text-oBlack dark:text-white font-plight text-sm p-2 bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>Angazhimi llogaritet nga sa here ju brenda dites jeni paraqitur ne aplikacion dhe keni ndervepruar ne aplikacion!</Text>
               <ScrollView horizontal>
                 <ContributionGraph 
                   values={profileData?.commitsData || []}
@@ -722,7 +729,7 @@ const Profiles = () => {
 
             {projectsPart && (
               <View className="flex-1 p-4 items-center justify-center">
-                <Text className="text-white text-lg font-psemibold mb-2">Se shpejti</Text>
+                <Text className="text-oBlack dark:text-white text-lg font-psemibold mb-2">Se shpejti</Text>
                 <Image 
                   source={icons.learning}
                   className="size-16"
@@ -759,7 +766,7 @@ const Profiles = () => {
       >
         <TouchableWithoutFeedback onPress={() => setShowFriendListOptions([])}>
           <View className="flex-1 justify-center items-center" style={{backgroundColor: "rgba(0,0,0,0.4)"}}>
-            <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={styles.box}>
+            <View className="h-[80%] w-[80%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={shadowStyle}>
               <View className="border-b border-black-200 flex-1">
                 <FlatList 
                 scrollEnabled={true}
@@ -767,12 +774,12 @@ const Profiles = () => {
                   data={allFriendsData}
                   keyExtractor={(item) => `userfriends-${item.id}`}
                   ListHeaderComponent={() => (
-                  <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px]" style={styles.box}>
+                  <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px]" style={shadowStyle}>
                     <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Lista e miqesise</Text>
                   </View>
                   )}
                   renderItem={({item}) => (
-                    <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={styles.box}>
+                    <View className="border-b border-t p-2 border-black-200 flex-row gap-2 bg-oBlack" style={shadowStyle}>
                       <View>
                         <Image 
                           source={{uri: item?.profilePictureUrl}}
@@ -782,7 +789,7 @@ const Profiles = () => {
                       </View>
                       <View className="flex-row items-center justify-between flex-1 relative">
                         {showFriendListOptions.includes(item.id) && 
-                        <Animatable.View animation="bounceIn" className="absolute bg-oBlack right-0 z-20 p-2 border border-black-200 rounded-[10px]" style={styles.box}>
+                        <Animatable.View animation="bounceIn" className="absolute bg-oBlack right-0 z-20 p-2 border border-black-200 rounded-[10px]" style={shadowStyle}>
                           <TouchableOpacity className="absolute -right-2 -top-2 rounded-full bg-secondary p-1" onPress={() => setShowFriendListOptions([])}>
                             <Image 
                               source={icons.close}
@@ -818,7 +825,7 @@ const Profiles = () => {
                 />
               </View>
               <View className="h-[60px]">
-                <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" style={styles.box} onPress={() => {setAllFriendsModal(false), setShowFriendListOptions([])}}>
+                <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" style={shadowStyle} onPress={() => {setAllFriendsModal(false), setShowFriendListOptions([])}}>
                   <Text className="text-sm font-psemibold text-white">Largoni dritaren</Text>
                 </TouchableOpacity>
               </View>

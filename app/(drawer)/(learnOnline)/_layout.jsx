@@ -3,6 +3,7 @@ import React from 'react'
 import { Stack, Tabs, Link, Redirect } from 'expo-router';
 import { icons } from '../../../constants';
 import { useRole } from '../../../navigation/RoleProvider';
+import { useColorScheme } from 'nativewind';
 
 const TabIcon = ({icon, color, name, focused}) => {
     return (
@@ -16,13 +17,14 @@ const TabIcon = ({icon, color, name, focused}) => {
                 />
             </View>
             <View className="w-full">
-                <Text className={`${focused ? "font-psemibold" : "font-pregular"} text-sm text-white w-full`}>{name}</Text>
+                <Text className={`${focused ? "font-psemibold" : "font-pregular"} text-sm text-oBlack dark:text-white w-full`}>{name}</Text>
             </View>
         </View>
     )
 }
 
 const _layout = () => {
+    const {colorScheme} = useColorScheme();
     // const {role} = useRole();
     // if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   return (
@@ -39,12 +41,12 @@ const _layout = () => {
         screenOptions={{
             tabBarShowLabel: false,
             tabBarActiveTintColor: '#FFA001',
-            tabBarInactiveTintColor: '#CDCDE0',
+            tabBarInactiveTintColor: colorScheme === "light" ? "#000" : '#CDCDE0',
             tabBarStyle: {
-            backgroundColor: "#13131a",
-            borderTopWidth: 1,
-            borderTopColor: '#232533',
-            height: 90,
+              backgroundColor: colorScheme === 'light' ? "#fcf6f2" : "#13131a",
+              borderTopWidth: 1,
+              borderTopColor: colorScheme === 'light' ? "#e5e7eb" : '#232533',
+              height: 90,
             },
         }}
     >

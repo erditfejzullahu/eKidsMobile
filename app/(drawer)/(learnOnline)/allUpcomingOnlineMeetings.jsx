@@ -12,8 +12,12 @@ import { GetAllMeetings } from '../../../services/fetchingService'
 import { ActivityIndicator } from 'react-native'
 import EmptyState from '../../../components/EmptyState'
 import { useRouter } from 'expo-router'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const AllUpcomingOnlineMeetings = () => {
+  const {colorScheme} = useColorScheme();
+  const {shadowStyle} = useShadowStyles();
     const router = useRouter();
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [filterData, setFilterData] = useState({...initialFilterData, userActiveMeetingsSection: true})    
@@ -96,7 +100,7 @@ const AllUpcomingOnlineMeetings = () => {
         onEndReachedThreshold={0.1}
         data={meetingsData?.meetings}
         refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
-        className="h-full bg-primary"
+        className="h-full bg-primary-light dark:bg-primary"
         contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
@@ -109,7 +113,7 @@ const AllUpcomingOnlineMeetings = () => {
                 <View className="overflow-hidden">
                     <SorterComponent showSorter={true} sortButton={handleSorter}/>
                 </View>
-                <TouchableOpacity className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={styles.box}>
+                <TouchableOpacity className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={shadowStyle}>
                     <Text className="text-white font-plight text-sm">Vleresoni takimet</Text>
                     <Image
                     source={icons.star}
@@ -121,12 +125,13 @@ const AllUpcomingOnlineMeetings = () => {
             </View>
         )}
         ListEmptyComponent={() => (
-            <View className="bg-oBlack border border-black-200" style={styles.box}>
+            <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200" style={shadowStyle}>
               <EmptyState
                 title={"Nuk keni takime ne pritje!"}
                 subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
                 isSearchPage={true}
                 buttonTitle={"Ndjek kurse"}
+                buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
                 buttonFunction={() => router.replace('allOnlineCourses')}
               />
             </View>
@@ -137,12 +142,12 @@ const AllUpcomingOnlineMeetings = () => {
             <View className="justify-center -mt-2 flex-row items-center gap-2">
                 {meetingsData?.hasMore ? (
                     <>
-                    <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                     <ActivityIndicator color={"#FF9C01"} size={24} />
                     </>
                     ) : (
                     <>
-                    <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                    <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
                     <Image
                         source={images.breakHeart}
                         className="size-5"

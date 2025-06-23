@@ -12,9 +12,13 @@ import { images } from '../../../../constants'
 import Loading from '../../../../components/Loading'
 import OnlineClassesCard from "../../../../components/OnlineClassesCard"
 import { GetInstructorCoursesById } from '../../../../services/fetchingService'
+import { useShadowStyles } from '../../../../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
 
 const TutorCourses = () => {
+  const {colorScheme} = useColorScheme();
     const {id} = useLocalSearchParams();
+    const {shadowStyle} = useShadowStyles();
     const {user, isLoading} = useGlobalContext();
     const [coursesData, setCoursesData] = useState([])
     const [filterData, setFilterData] = useState({...initialFilterData})
@@ -90,7 +94,7 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1">
         <FlatList 
-            className="h-full bg-primary px-4"
+            className="h-full bg-primary-light dark:bg-primary px-4"
             refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
             onEndReached={loadMore}
             onEndReachedThreshold={0.1}
@@ -111,17 +115,16 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
                 </>
             )}
             ListEmptyComponent={() => (
-                <View className="bg-oBlack border border-black-200 pt-3 mt-4" styles={styles.box}>
-                    <EmptyState 
-                        title={"Nuk ka kurse te krijuara"}
-                        titleStyle={"!font-plight"}
-                        subtitle={`Nuk ka kurse te krijuara ende nga ${coursesData?.instructor?.name?.split(" ")[0]}. Mund ta kontaktoni permes butonit me poshte`}
-                        subtitleStyle={"!font-plight"}
-                        buttonTitle={"Kontaktoje"}
-                        isBookMarkPage
-                        buttonFunction={() => {}}
-                    />
-                </View>
+              <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200" style={shadowStyle}>
+                <EmptyState
+                  title={"Nuk ka kurse te krijuara"}
+                  subtitle={`Nuk ka kurse te krijuara ende nga ${coursesData?.instructor?.name?.split(" ")[0]}. Mund ta kontaktoni permes butonit me poshte`}
+                  isSearchPage={true}
+                  buttonTitle={"Kontaktoje"}
+                  buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
+                  buttonFunction={() => {}}
+                />
+              </View>
             )}
             ListFooterComponent={() => (
                 <>
@@ -130,12 +133,12 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
                         <View className="justify-center flex-row items-center gap-2">
                         {coursesData?.hasMore ? (
                             <>
-                            <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                             <ActivityIndicator color={"#FF9C01"} size={24} />
                             </>
                             ) : (
                             <>
-                            <Text className="text-white font-psemibold text-sm">Nuk ka me kurse...</Text>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me kurse...</Text>
                             <Image
                                 source={images.breakHeart}
                                 className="size-5"

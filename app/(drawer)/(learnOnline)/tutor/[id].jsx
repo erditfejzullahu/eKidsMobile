@@ -60,7 +60,7 @@ const Tutor = () => {
   if(isLoading || isRefreshing || userLoading || relationReloading) return <Loading />
   return (
     <ScrollView
-      className="h-full bg-primary"
+      className="h-full bg-primary-light dark:bg-primary"
       refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
     >
       <DiscussionsProfile userData={instructorData} otherSection={true}/>

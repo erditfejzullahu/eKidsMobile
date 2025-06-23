@@ -13,8 +13,13 @@ import { initialFilterData } from '../../../services/filterConfig'
 import { ActivityIndicator } from 'react-native'
 import { icons, images } from '../../../constants'
 import { useRouter } from 'expo-router'
-
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
+import { useColorScheme } from 'nativewind'
+import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 const AllOnlineMeetings = () => {
+  const {shadowStyle} = useShadowStyles();
+  const {colorScheme} = useColorScheme();
+  const navigateToSupport = useNavigateToSupport();
   const router = useRouter();
   const [filterData, setFilterData] = useState({
     ...initialFilterData
@@ -98,7 +103,7 @@ const AllOnlineMeetings = () => {
     <View className="flex-1">
         <FlatList
           refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} refreshing={isRefreshing} onRefresh={onRefresh} />}
-          className="h-full bg-primary"
+          className="h-full bg-primary-light dark:bg-primary"
           contentContainerStyle={{paddingLeft:16, paddingRight:16, gap:16}}
           onEndReached={loadMore}
           onEndReachedThreshold={0.1}
@@ -114,7 +119,7 @@ const AllOnlineMeetings = () => {
               <View className="overflow-hidden">
                 <SorterComponent showSorter={true} sortButton={handleSorter}/>
               </View>
-              <TouchableOpacity onPress={() => router.replace('allUpcomingOnlineMeetings')} className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={styles.box}>
+              <TouchableOpacity onPress={() => router.replace('allUpcomingOnlineMeetings')} className="flex-row items-center justify-center gap-1.5 mx-auto px-3 border border-white bg-secondary py-1.5" style={shadowStyle}>
                 <Text className="text-white font-plight text-sm">Klaset tuaja te ardhshme</Text>
                 <Image 
                   source={icons.clock}
@@ -131,12 +136,12 @@ const AllOnlineMeetings = () => {
             <View className="justify-center -mt-2 flex-row items-center gap-2">
               {meetingsData?.hasMore ? (
                   <>
-                  <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                   <ActivityIndicator color={"#FF9C01"} size={24} />
                   </>
                   ) : (
                   <>
-                  <Text className="text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me takime online...</Text>
                   <Image
                       source={images.breakHeart}
                       className="size-5"
@@ -149,13 +154,14 @@ const AllOnlineMeetings = () => {
               </>
           )}
           ListEmptyComponent={() => (
-            <View className="bg-oBlack border border-black-200" style={styles.box}>
+            <View className="bg-oBlack border border-black-200" style={shadowStyle}>
               <EmptyState
                 title={"Nuk ka takime ende!"}
                 subtitle={"Nese mendoni qe eshte gabim, ju lutem rifreskoni dritaren apo kontaktoni Panelin e Ndihmes"}
                 isSearchPage={true}
-                buttonTitle={"Krijo kurse"}
-                buttonFunction={() => router.replace('/instructor/addCourse')}
+                buttonTitle={"Navigohuni tek Paneli Ndihmes"}
+                buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}
+                buttonFunction={() => navigateToSupport('suport')}
               />
             </View>
           )}

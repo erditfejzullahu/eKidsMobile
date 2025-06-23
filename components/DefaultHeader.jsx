@@ -4,9 +4,9 @@ import { images } from '../constants'
 
 const DefaultHeader = ({headerTitle, topSubtitle, bottomSubtitle, showBorderBottom}) => {
   return (
-    <View className={`my-4 ${showBorderBottom ? "border-b border-black-200 pb-2 mb-2" : ""}`}>
-        {topSubtitle && <Text className="text-gray-100 font-pmedium text-sm">{topSubtitle}</Text>}
-        <Text className="text-2xl text-white font-pmedium">{headerTitle}
+    <View className={`my-4 ${showBorderBottom ? "border-b border-gray-200 dark:border-black-200 pb-2 mb-2" : ""}`}>
+        {topSubtitle && <Text className="text-gray-600 dark:text-gray-100 font-pmedium text-sm">{topSubtitle}</Text>}
+        <Text className="text-2xl text-oBlack dark:text-white font-pmedium">{headerTitle}
             <View>
             <Image
                 source={images.path}
@@ -15,7 +15,7 @@ const DefaultHeader = ({headerTitle, topSubtitle, bottomSubtitle, showBorderBott
             />
             </View>
         </Text>
-        {bottomSubtitle && <Text className="text-gray-100 font-plight text-xs mt-2.5">{bottomSubtitle}</Text>}
+        {bottomSubtitle && <Text className="text-gray-600 dark:text-gray-100 font-plight text-xs mt-2.5">{bottomSubtitle}</Text>}
     </View>
   )
 }

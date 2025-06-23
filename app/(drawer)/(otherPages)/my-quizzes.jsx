@@ -76,7 +76,7 @@ const MyQuizzes = () => {
 
 
     const loadMore = () => {
-        if(!yourQuizzesData.hasMore || isLoadingMore) return;
+        if(!yourQuizzesData?.hasMore || isLoadingMore) return;
         setIsLoadingMore(true);
         setFilterData((prev) => ({
             ...prev,
@@ -120,7 +120,7 @@ const MyQuizzes = () => {
     }else{
         return (
                 <FlatList 
-                    className="h-full bg-primary px-4"
+                    className="h-full bg-primary-light dark:bg-primary px-4"
                     onEndReached={loadMore}
                     onEndReachedThreshold={0.1}
                     refreshControl={< RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} refreshing={isRefreshing}/>}
@@ -136,7 +136,7 @@ const MyQuizzes = () => {
                     ListHeaderComponent={() => (
                         <>
                         <View className="my-4">
-                            <Text className="text-2xl text-white font-pmedium">Kuizet e mia
+                            <Text className="text-2xl text-oBlack dark:text-white font-pmedium">Kuizet e mia
                                 <View>
                                 <Image
                                     source={images.path}
@@ -161,7 +161,7 @@ const MyQuizzes = () => {
                         <View className="mt-4 ">
                             <EmptyState 
                                 title={"Asnje kuiz nuk u gjend!"}
-                                titleStyle={"!font-pregular"}
+                                // titleStyle={"!font-pregular"}
                                 subtitle={"Ju lutem provoni perseri apo provoni te shtoni kuize te reja duke klikuar butonin e meposhtem!"}
                                 isSearchPage={true}
                                 buttonTitle={"Krijoni nje kuiz te ri!"}
@@ -175,12 +175,12 @@ const MyQuizzes = () => {
                         <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
                         {yourQuizzesData?.hasMore ? (
                             <>
-                            <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                             <ActivityIndicator color={"#FF9C01"} size={24} />
                             </> 
                         ): (
                             <>
-                            <Text className="text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
+                            <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
                             <Image
                                 source={images.breakHeart}
                                 className="size-5"

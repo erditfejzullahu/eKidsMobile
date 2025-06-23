@@ -5,9 +5,11 @@ import { getCourseCategories } from '../services/fetchingService';
 import { Link } from 'expo-router';
 import * as Animatable from 'react-native-animatable'
 import { sortBy } from 'lodash';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const UserCourseCreated = ({userCourses, userCategories}) => {
     // console.log(userCourses);
+    const {shadowStyle} = useShadowStyles();
     const [showMoreCreated, setShowMoreCreated] = useState([])
     const [sortName, setSortName] = useState(false)
     const [sortViews, setSortViews] = useState(false)
@@ -37,12 +39,12 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
       };
   return (
     <>
-    <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack border border-black-200 rounded-[10px] justify-between w-[260px]" style={styles.box}>
-        <TouchableOpacity onPress={() => {setSortName(!sortName), setSortViews(false)}} className="flex-1 items-center border-r border-black-200">
-            <Text className={`${sortName ? "text-secondary font-pregular" : "text-white"} text-sm font-plight`}>Nga emri</Text>
+    <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[10px] justify-between w-[260px]" style={shadowStyle}>
+        <TouchableOpacity onPress={() => {setSortName(!sortName), setSortViews(false)}} className="flex-1 items-center border-r border-gray-200 dark:border-black-200">
+            <Text className={`${sortName ? "text-secondary font-pregular" : "text-oBlack dark:text-white"} text-sm font-plight`}>Nga emri</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {setSortViews(!sortViews), setSortName(false)}} className="flex-1 items-center">
-            <Text className={`${sortViews ? "text-secondary font-pregular" : "text-white"} text-sm font-plight`}>Nga shikimet</Text>
+            <Text className={`${sortViews ? "text-secondary font-pregular" : "text-oBlack dark:text-white"} text-sm font-plight`}>Nga shikimet</Text>
         </TouchableOpacity>
     </View>
     <View className="mb-6">
@@ -56,24 +58,24 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
             return (
                 <View
                 key={"courseCreated-" + item?.id}
-                style={styles.box}
-                className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
+                style={shadowStyle}
+                className="bg-oBlack-light dark:bg-oBlack rounded-[10px] border border-gray-200 dark:border-black-200 m-4 p-4 relative"
                 >
-                <View className="flex-row justify-between border-b border-black-200 pb-4 items-center gap-2">
+                <View className="flex-row justify-between border-b border-gray-200 dark:border-black-200 pb-4 items-center gap-2">
                     <View className="gap-4 flex-col flex-[0.5]">
                     <View>
-                        <Text className="text-xs font-plight text-white">Emri i kursit:</Text>
-                        <Text className="text-base font-psemibold text-white">{item?.courseName}</Text>
+                        <Text className="text-xs font-plight text-oBlack dark:text-white">Emri i kursit:</Text>
+                        <Text className="text-base font-psemibold text-oBlack dark:text-white">{item?.courseName}</Text>
                     </View>
                     <View>
-                        <Text className="text-xs font-plight text-white">Kategoria:</Text>
-                        <Text className="text-base font-psemibold text-white">{getCourseCategories(userCategories, item?.courseCategory)}</Text>
+                        <Text className="text-xs font-plight text-oBlack dark:text-white">Kategoria:</Text>
+                        <Text className="text-base font-psemibold text-oBlack dark:text-white">{getCourseCategories(userCategories, item?.courseCategory)}</Text>
                     </View>
                     </View>
                     <View className="flex-[0.5] rounded-[10px]  overflow-hidden">
                     <Image 
                         source={images.testimage}
-                        className="h-[100px] w-full border border-black-200 rounded-[10px]"
+                        className="h-[100px] w-full border border-gray-200 dark:border-black-200 rounded-[10px]"
                         resizeMode='cover'
                     />
                     </View>
@@ -111,8 +113,8 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
                     animation="fadeInLeft"
                     duration={700}
                     >
-                    <Text className="text-base font-psemibold text-white">Pershkrimi i kursit:</Text>
-                    <Text className="text-xs font-light text-white">{item?.courseDescription}</Text>
+                    <Text className="text-base font-psemibold text-oBlack dark:text-white">Pershkrimi i kursit:</Text>
+                    <Text className="text-xs font-light text-gray-600 dark:text-gray-400">{item?.courseDescription}</Text>
                     </Animatable.View>
                     <View className="flex-row items-end justify-between overflow-hidden">
                     <View className="flex-1">
@@ -123,8 +125,8 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
                         animation="fadeInRight"
                         duration={700}
                     >
-                        <Text className="text-xs font-light text-white text-right">Krijuar me:</Text>
-                        <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
+                        <Text className="text-xs font-light text-oBlack dark:text-white text-right">Krijuar me:</Text>
+                        <Text className="text-base font-psemibold text-oBlack dark:text-white text-right">{formattedDate}</Text>
                     </Animatable.View>
                     </View>
                 </View>}

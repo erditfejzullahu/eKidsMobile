@@ -16,8 +16,10 @@ import { useTopbarUpdater } from '../../../navigation/TopbarUpdater'
 import { ActivityIndicator } from 'react-native'
 import QuizzesCategoriesFilter from '../../../components/QuizzesCategoriesFilter'
 import SearchInput from '../../../components/SearchInput'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const AllQuizzes = () => {
+  const {shadowStyle} = useShadowStyles();
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;  
   const [showModal, setShowModal] = useState(true)
@@ -61,7 +63,7 @@ const AllQuizzes = () => {
   const {setShareOpened, shareOpened} = useTopbarUpdater();
 
   const loadMore = () => {
-    if(!quizesData.hasMore || isLoadingMore) return;
+    if(!quizesData?.hasMore || isLoadingMore) return;
     setIsLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
@@ -126,7 +128,7 @@ const AllQuizzes = () => {
   return (
     <>
     <FlatList 
-      className="bg-primary h-full px-4"
+      className="bg-primary-light dark:bg-primary h-full px-4"
       onEndReached={loadMore}
       onEndReachedThreshold={0.1}
       refreshControl={<RefreshControl tintColor="#ff9c01" colors={['#ff9c01', '#ff9c01', '#ff9c01']} onRefresh={onRefresh} refreshing={isRefreshing} />}
@@ -142,7 +144,7 @@ const AllQuizzes = () => {
       ListHeaderComponent={() => (
         <>
         <View className="my-4">
-          <Text className="text-2xl text-white font-pmedium">Te gjitha kuizet
+          <Text className="text-2xl text-oBlack dark:text-white font-pmedium">Te gjitha kuizet
             <View>
               <Image
                 source={images.path}
@@ -180,12 +182,12 @@ const AllQuizzes = () => {
         <View className="justify-center p-4 -mt-5 flex-row items-center gap-2">
         {quizesData?.hasMore ? (
           <>
-          <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+          <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
           <ActivityIndicator color={"#FF9C01"} size={24} />
           </> 
         ): (
             <>
-            <Text className="text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
+            <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me kuize...</Text>
             <Image
                 source={images.breakHeart}
                 className="size-5"
@@ -207,19 +209,19 @@ const AllQuizzes = () => {
       cancelButtonText={"Largo dritaren"}
       onClose={() => setShowModal(false)}
     >
-      <ScrollView className="max-h-[300px] my-4" style={styles.box}>
+      <ScrollView className="max-h-[300px] my-4" style={shadowStyle}>
         <Text className="text-secondary font-psemibold text-center mb-2 text-lg">(Se shpejti)</Text>
-        <Text className="text-white text-sm font-plight">Miresevini në pjesën e kuizeve ku mund të zhvilloni diturinë tuaj duke plotësuar kuizet e kategorive të ndryshme!</Text>
-        <Text className="text-white text-xl font-psemibold mt-4 mb-1">Kompeticioni</Text>
-        <Text className="text-white text-sm font-plight">Pjesëmarrësit do të kenë mundësinë të garojnë me njëri-tjetrin në një kompeticion emocionues. Çdo javë, do të shpallen fituesit përkatës të çdo kategorie, dhe ata do të marrin çmime të veçanta.</Text>
-        <Text className="text-white text-xl font-psemibold mt-4 mb-1">Si te merrni pjese?</Text>
-        <Text className="text-white text-sm font-plight">1. <Text className="font-pbold">Zgjidhni Kategorine:</Text> Zgjidhni nga një gamë e gjerë kategorish që ju interesojnë apo zgjidhni kuizin ne menyre te randomizuar.</Text>
-        <Text className="text-white text-sm font-plight">2. <Text className="font-pbold">Plotësoni Kuizin:</Text> Përdorni njohuritë tuaja për të plotësuar kuizin.</Text>
-        <Text className="text-white text-sm font-plight">3. <Text className="font-pbold">Shihni Rezultatet:</Text> Pas përfundimit, shihni se si u renditët krahasuar me pjesëmarrësit e tjerë ne baze te karakteristikave sic jane: Koha, Gabimet, Perkushtimi.</Text>
-        <Text className="text-white text-xl font-psemibold mt-4 mb-1">Përfitimet</Text>
-        <Text className="text-white text-sm font-plight">1. <Text className="font-pbold">Zhvilloni Diturinë:</Text> Mësoni gjëra të reja dhe thelloni njohuritë tuaja.</Text>
-        <Text className="text-white text-sm font-plight">2. <Text className="font-pbold">Bashkëpunimi:</Text> Bisedoni dhe shkëmbeni mendime me pjesëmarrës të tjerë.</Text>
-        <Text className="text-white text-sm font-plight">3. <Text className="font-pbold">Çmime:</Text> Fitoni çmime dhe njohje për arritjet tuaja.</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">Miresevini në pjesën e kuizeve ku mund të zhvilloni diturinë tuaj duke plotësuar kuizet e kategorive të ndryshme!</Text>
+        <Text className="text-oBlack dark:text-white text-xl font-psemibold mt-4 mb-1">Kompeticioni</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">Pjesëmarrësit do të kenë mundësinë të garojnë me njëri-tjetrin në një kompeticion emocionues. Çdo javë, do të shpallen fituesit përkatës të çdo kategorie, dhe ata do të marrin çmime të veçanta.</Text>
+        <Text className="text-oBlack dark:text-white text-xl font-psemibold mt-4 mb-1">Si te merrni pjese?</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">1. <Text className="font-pbold">Zgjidhni Kategorine:</Text> Zgjidhni nga një gamë e gjerë kategorish që ju interesojnë apo zgjidhni kuizin ne menyre te randomizuar.</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">2. <Text className="font-pbold">Plotësoni Kuizin:</Text> Përdorni njohuritë tuaja për të plotësuar kuizin.</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">3. <Text className="font-pbold">Shihni Rezultatet:</Text> Pas përfundimit, shihni se si u renditët krahasuar me pjesëmarrësit e tjerë ne baze te karakteristikave sic jane: Koha, Gabimet, Perkushtimi.</Text>
+        <Text className="text-oBlack dark:text-white text-xl font-psemibold mt-4 mb-1">Përfitimet</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">1. <Text className="font-pbold">Zhvilloni Diturinë:</Text> Mësoni gjëra të reja dhe thelloni njohuritë tuaja.</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">2. <Text className="font-pbold">Bashkëpunimi:</Text> Bisedoni dhe shkëmbeni mendime me pjesëmarrës të tjerë.</Text>
+        <Text className="text-oBlack dark:text-white text-sm font-plight">3. <Text className="font-pbold">Çmime:</Text> Fitoni çmime dhe njohje për arritjet tuaja.</Text>
       </ScrollView>
     </CustomModal>
     </>

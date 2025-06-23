@@ -14,7 +14,7 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
     }, [searchInput])
     
   return (
-    <View className={`my-4 ${pathname === "/allTutors" || pathname === "/allOnlineMeetings" ? "border-b border-black-200 mb-1 pb-4" : ""} relative`}>
+    <View className={`my-4 ${pathname === "/allTutors" || pathname === "/allOnlineMeetings" ? "border-b border-gray-200 dark:border-black-200 mb-1 pb-4" : ""} relative`}>
       <TouchableOpacity onPress={() => setShowSearchBar(!showSearchBar)} className="absolute right-4 z-50 top-0 p-1 bg-secondary rounded-md border border-white">
         <Image 
             source={showSearchBar ? icons.downArrow : icons.upArrow}
@@ -23,7 +23,7 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
             tintColor={"#fff"}
         />
       </TouchableOpacity>
-        <Text className="text-2xl text-white font-pmedium">{headerTitle}
+        <Text className="text-2xl text-oBlack dark:text-white font-pmedium">{headerTitle}
             <View>
             <Image
                 source={images.path}

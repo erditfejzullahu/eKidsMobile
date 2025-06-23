@@ -8,8 +8,10 @@ import { icons } from '../constants';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
 import { useRouter } from 'expo-router';
 import StudentsItemComponent from './StudentsItemComponent';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const STDINCaruselSection = ({data, sectionType, userData}) => {    
+  const {shadowStyle} = useShadowStyles();
   // sectionType can be "courses", "students", "onlineMeetings"
     const router = useRouter();
     
@@ -17,7 +19,7 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
   if (!data || data?.length === 0) {
     return (
         <>
-        <View className="bg-oBlack p-4 m-4 border border-black-200 mt-8" style={styles.box}>
+        <View className="bg-oBlack-light dark:bg-oBlack p-4 m-4 border border-gray-200 dark:border-black-200 mt-8" style={shadowStyle}>
             <EmptyState 
                 title={`Nuk ka te dhena per ${sectionType === "courses" ? "Kurse" : sectionType === "students" ? "Studente" : "Takime Online"}`}
                 subtitle={"Nese mendoni qe eshte gabim ju lutem rifreskoni dritaren, apo kontaktoni Panelin e Ndihmes"}
@@ -44,7 +46,7 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
   return (
     <View className="py-4">
       
-        <Text className="text-white font-psemibold text-lg px-4">{sectionType === "courses" ? "Kurset" : sectionType === "students" ? "Studentet" : "Takimet Online"}</Text>
+        <Text className="text-oBlack dark:text-white font-psemibold text-lg px-4">{sectionType === "courses" ? "Kurset" : sectionType === "students" ? "Studentet" : "Takimet Online"}</Text>
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false}
@@ -53,15 +55,15 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
         {data.map((item) => (
           <View 
             key={item?.id} 
-            style={styles.box}
-            className="w-[250px] h-fit my-4 bg-oBlack border border-black-200 rounded-xl shadow-sm mr-4 p-4"
+            style={shadowStyle}
+            className="w-[250px] h-fit my-4 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-xl shadow-sm mr-4 p-4"
           >
             {sectionType === "courses" && (
                 <OnlineClassesCard classes={item} userCategories={userData?.data?.categories} viewProfilePlace/>
             )}
             {sectionType === "students" && (
-                // <View className="bg-oBlack border border-black-200 rounded-md p-4 relative" style={styles.box}>
-                //     <View className="flex-row gap-2 items-center" style={styles.box}>
+                // <View className="bg-oBlack border border-black-200 rounded-md p-4 relative" style={shadowStyle}>
+                //     <View className="flex-row gap-2 items-center" style={shadowStyle}>
                 //         <View>
                 //             <Image 
                 //                 source={{uri: item?.profilePictureUrl}}

@@ -106,10 +106,10 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
         )
     }else{
         return (
-          <TouchableOpacity onPress={handleCoursePress} className="relative p-4 bg-oBlack border rounded-md border-black-200 pb-10" style={shadowStyle}>
+          <TouchableOpacity onPress={handleCoursePress} className="relative p-4 bg-oBlack-light dark:bg-oBlack border rounded-md border-gray-200 dark:border-black-200 pb-10" style={shadowStyle}>
               {/* absolute */}
               {managePlace && (<Animatable.View animation="pulse" duration={1000} iterationCount="infinite" className="absolute right-0 left-0 top-8 items-center justify-center z-50">
-                  <TouchableOpacity onPress={editCardPress} className="z-50  mx-auto items-center justify-center bg-oBlack px-4 py-2 border border-black-200 w-[80%]" style={shadowStyle}>
+                  <TouchableOpacity onPress={editCardPress} className="z-50  mx-auto items-center justify-center bg-oBlack-light dark:bg-oBlack px-4 py-2 border border-gray-200 dark:border-black-200 w-[80%]" style={shadowStyle}>
                       <Image 
                           source={icons.edit}
                           className="size-5"
@@ -118,10 +118,10 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                       />
                   </TouchableOpacity>
               </Animatable.View>)}
-              <View className="absolute -top-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={shadowStyle}>
-                  <Text className="text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes?.categoryId)}</Text>
+              <View className="absolute -top-2 z-20 -right-2 bg-primary-light dark:bg-primary px-2.5 py-1.5 border rounded-md border-gray-200 dark:border-black-200 " style={shadowStyle}>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-sm">{getCourseCategories(userCategories, classes?.categoryId)}</Text>
               </View>
-              {(role !== "Instructor" && !viewProfilePlace) && <View className="absolute top-5 z-20 -right-2 bg-primary border border-black-200 p-2 rounded-bl-lg rounded-tr-lg" style={shadowStyle}>
+              {(role !== "Instructor" && !viewProfilePlace) && <View className="absolute top-5 z-20 -right-2 bg-primary-light dark:bg-primary border border-gray-200 dark:border-black-200 p-2 rounded-bl-lg rounded-tr-lg" style={shadowStyle}>
                   <Image
                       className="size-6"
                       source={classes.enrolled ? icons.heart : icons.play2}
@@ -129,23 +129,23 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                       resizeMode='contain'
                   />
               </View>}
-              {!viewProfilePlace && <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-black-200 items-center bg-primary z-20 max-w-[200px]" style={shadowStyle}>
+              {!viewProfilePlace && <View className="absolute -left-2 -top-2 flex-row gap-2 p-2 rounded-md border border-gray-200 dark:border-black-200 items-center bg-primary-light dark:bg-primary z-20 max-w-[200px]" style={shadowStyle}>
                   <Image 
                       source={{uri: classes.profilePictureUrl}}
-                      className="h-12 w-12 border border-black-200 rounded-sm p-2"
+                      className="h-12 w-12 border border-[#d9d9d9] dark:border-black-200 rounded-sm p-2"
                       resizeMode='contain'
                   />
                   <View className="flex-1">
-                      <Text className="text-white font-psemibold text-md break-words" numberOfLines={1}>{classes.instructorName}</Text>
-                      <Text className="text-gray-400 text-xs font-plight">Instruktor</Text>
+                      <Text className="text-oBlack dark:text-white font-psemibold text-md break-words" numberOfLines={1}>{classes.instructorName}</Text>
+                      <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight">Instruktor</Text>
                   </View>
               </View>}
               {/* absolute */}
       
-              <View className="h-[120px] border border-black-200" style={shadowStyle}>
+              <View className="h-[120px] border border-gray-200 dark:border-black-200" style={shadowStyle}>
                   {!classes.image ? (<Image 
                       source={images.logoNew}
-                      className="h-full w-full py-2 bg-primary"
+                      className="h-full w-full py-2 bg-primary-light dark:bg-primary"
                       resizeMode='contain'
                   />) : (
                       <Image
@@ -156,14 +156,14 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
                   )}
               </View>
               
-              <Text className="text-white font-psemibold text-xl mt-4">{classes.name}</Text>
-              <Text numberOfLines={4} className="text-gray-400 text-xs font-plight">{classes.description}</Text>
+              <Text className="text-oBlack dark:text-white font-psemibold text-xl mt-4">{classes.name}</Text>
+              <Text numberOfLines={4} className="text-gray-600 dark:text-gray-400 text-xs font-plight">{classes.description}</Text>
               
-              {!viewProfilePlace && <View className="absolute -bottom-2 z-20 -left-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={shadowStyle}>
-                  <Text className="text-white font-psemibold text-xs">Niveli <Text className="text-secondary">{classes.level === 0 ? "Fillestar" : classes.level === 1 ? "Mesatar" : classes.level === 2 ? "i Larte" : classes.level === 3 ? "i Avancuar" : "i Panjohur"}</Text></Text>
+              {!viewProfilePlace && <View className="absolute -bottom-2 z-20 -left-2 bg-primary-light dark:bg-primary px-2.5 py-1.5 border rounded-md border-gray-200 dark:border-black-200 " style={shadowStyle}>
+                  <Text className="text-oBlack dark:text-white font-psemibold text-xs">Niveli <Text className="text-secondary">{classes.level === 0 ? "Fillestar" : classes.level === 1 ? "Mesatar" : classes.level === 2 ? "i Larte" : classes.level === 3 ? "i Avancuar" : "i Panjohur"}</Text></Text>
               </View>}
-              <View className="absolute -bottom-2 z-20 -right-2 bg-primary px-2.5 py-1.5 border rounded-md border-black-200 " style={shadowStyle}>
-              <Text className="text-white font-psemibold text-xs">
+              <View className="absolute -bottom-2 z-20 -right-2 bg-primary-light dark:bg-primary px-2.5 py-1.5 border rounded-md border-gray-200 dark:border-black-200 " style={shadowStyle}>
+              <Text className="text-oBlack dark:text-white font-psemibold text-xs">
                   {classes.enrolledStudents === 0 ? (
                       <Text className="text-secondary">Nuk ka shfletime ende</Text>
                   ) : (

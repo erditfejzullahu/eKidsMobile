@@ -7,8 +7,10 @@ import EmptyState from './EmptyState'
 import * as Animatable from "react-native-animatable"
 import { images } from '../constants'
 import { Link } from 'expo-router'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => { 
+  const {shadowStyle} = useShadowStyles();
     console.log(courseData);
     const bounceDownAnimation = {
         0: { transform: [{ translateY: 0 }] },
@@ -20,12 +22,12 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
     const [showMoreCompleted, setShowMoreCompleted] = useState([])
   return (
     <View>
-        <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack border border-black-200 rounded-[10px] justify-between w-[260px]" style={styles.box}>
-            <TouchableOpacity onPress={() => setInProgress(true)} className="flex-1 items-center border-r border-black-200">
-                <Text className={`${inProgress ? "text-secondary font-pregular" : "text-white"} text-sm font-plight`}>Ne progress</Text>
+        <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[10px] justify-between w-[260px]" style={shadowStyle}>
+            <TouchableOpacity onPress={() => setInProgress(true)} className="flex-1 items-center border-r border-gray-200 dark:border-black-200">
+                <Text className={`${inProgress ? "text-secondary font-pregular" : "border-gray-200 dark:text-white"} text-sm font-plight`}>Ne progress</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setInProgress(false)} className="flex-1 items-center">
-                <Text className={`${!inProgress ? "text-secondary font-pregular" : "text-white"} text-sm font-plight`}>Te perfunduara</Text>
+                <Text className={`${!inProgress ? "text-secondary font-pregular" : "border-gray-200 dark:text-white"} text-sm font-plight`}>Te perfunduara</Text>
             </TouchableOpacity>
         </View>
 
@@ -44,24 +46,24 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                 return (
                     <View 
                     key={"progressItem-" + item?.id}
-                    style={styles.box}
-                    className="bg-oBlack rounded-[10px] border border-black-200 m-4 p-4 relative"
+                    style={shadowStyle}
+                    className="bg-oBlack-light dark:bg-oBlack rounded-[10px] border border-gray-200 dark:border-black-200 m-4 p-4 relative"
                   >
-                    <View className="flex-row justify-between border-b border-black-200 pb-4 items-center gap-2">
+                    <View className="flex-row justify-between border-b border-gray-200 dark:border-black-200 pb-4 items-center gap-2">
                       <View className="gap-4 flex-col flex-[0.5]">
                         <View>
-                          <Text className="text-xs font-plight text-white">Emri i kursit:</Text>
-                          <Text className="text-base font-psemibold text-white">{item?.course?.courseName}</Text>
+                          <Text className="text-xs font-plight text-oBlack dark:text-white">Emri i kursit:</Text>
+                          <Text className="text-base font-psemibold text-oBlack dark:text-white">{item?.course?.courseName}</Text>
                         </View>
                         <View>
-                          <Text className="text-xs font-plight text-white">Kategoria:</Text>
-                          <Text className="text-base font-psemibold text-white">{getCourseCategories(userCategories, item?.course?.courseCategory)}</Text>
+                          <Text className="text-xs font-plight text-oBlack dark:text-white">Kategoria:</Text>
+                          <Text className="text-base font-psemibold text-oBlack dark:text-white">{getCourseCategories(userCategories, item?.course?.courseCategory)}</Text>
                         </View>
                       </View>
                       <View className="flex-[0.5] rounded-[10px]  overflow-hidden">
                         <Image
                           source={images.testimage}
-                          className="h-[100px] w-full border border-black-200 rounded-[10px]"
+                          className="h-[100px] w-full border border-gray-200 dark:border-black-200 rounded-[10px]"
                           resizeMode='cover'
                         />
                       </View>
@@ -99,8 +101,8 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                       animation="fadeInLeft"
                       duration={700}
                       >
-                        <Text className="text-base font-psemibold text-white">Pershkrimi i kursit:</Text>
-                        <Text className="text-xs font-light text-white">{item?.course?.courseDescription}</Text>
+                        <Text className="text-base font-psemibold text-oBlack dark:text-white">Pershkrimi i kursit:</Text>
+                        <Text className="text-xs font-light  text-gray-600 dark:text-gray-400">{item?.course?.courseDescription}</Text>
                       </Animatable.View>
                       <View className="flex-row items-end justify-between overflow-hidden">
                         <View className="flex-1">
@@ -111,8 +113,8 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                           animation="fadeInRight"
                           duration={700}
                         >
-                          <Text className="text-xs font-light text-white text-right">Perfunduar me:</Text>
-                          <Text className="text-base font-psemibold text-white text-right">{formattedDate}</Text>
+                          <Text className="text-xs font-light text-oBlack dark:text-white text-right">Perfunduar me:</Text>
+                          <Text className="text-base font-psemibold text-oBlack dark:text-white text-right">{formattedDate}</Text>
                         </Animatable.View>
                         
                       </View>
@@ -121,7 +123,7 @@ const ProfileCoursesComponent = ({userDataId, courseData, userCategories}) => {
                         animation="fadeInLeft"
                         duration={700}
                         >
-                          <Text className="text-xs font-light text-white">Deshmija:</Text>
+                          <Text className="text-xs font-light text-oBlack dark:text-white">Deshmija:</Text>
                           <Text className="text-sm font-psemibold text-secondary">{item?.testimonial}</Text>
                         </Animatable.View>}
                     </View>}

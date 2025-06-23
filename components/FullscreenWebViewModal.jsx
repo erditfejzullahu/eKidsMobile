@@ -51,7 +51,7 @@ const FullscreenWebViewModal = ({ visible, onClose, url }) => {
       onRequestClose={onClose}
     >
       <View className="absolute left-0 top-10 right-0 z-50 items-center justify-center">
-      <TouchableOpacity onPress={onClose} className="bg-oBlack rounded-md border border-black-200 p-2">
+      <TouchableOpacity onPress={onClose} className="bg-gray-200 dark:bg-oBlack rounded-md border border-gray-200 dark:border-black-200 p-2">
         <Image 
           source={icons.close}
           className="size-5"

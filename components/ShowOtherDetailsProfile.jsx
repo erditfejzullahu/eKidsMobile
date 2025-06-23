@@ -28,9 +28,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
     const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
     // const chartWidth = Math.max(screenWidthGraph, data.labels.length * 80);
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
+        backgroundGradientFrom: colorScheme === "dark" ? "#1E2923" : "#FFD3B6",
         backgroundGradientFromOpacity: 0,
-        backgroundGradientTo: "#08130D",
+        backgroundGradientTo: colorScheme === "dark" ? "#08130D" : "#FFE8D6",
         backgroundGradientToOpacity: 0.5,
         color: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,

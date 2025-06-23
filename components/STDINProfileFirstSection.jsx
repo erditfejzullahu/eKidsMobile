@@ -14,8 +14,10 @@ import { navigateToMessenger } from '../hooks/useFetchFunction'
 import { useRouter } from 'expo-router'
 import CustomModal from '../components/Modal'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefetch}) => {
+    const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const router = useRouter();
     const [courseModal, setCourseModal] = useState(false)
@@ -192,12 +194,12 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
                 />
             </View>
             <View>
-                <Text className="text-xl font-psemibold text-white text-center mb-1">{data?.instructorName}</Text>
-                <Text className="text-gray-400 text-sm font-plight text-center mt-1">{data?.email}</Text>
+                <Text className="text-xl font-psemibold text-oBlack dark:text-white text-center mb-1">{data?.instructorName}</Text>
+                <Text className="text-gray-600 dark:text-gray-400 text-sm font-plight text-center mt-1">{data?.email}</Text>
                 <Text className="text-secondary text-sm font-psemibold text-center mt-1">{data?.expertise}</Text>
                 {!showbio && <Animatable.View animation="pulse" iterationCount="infinite" duration={2000}>
                     <TouchableOpacity className="self-start mx-auto" onPress={() => setShowbio(true)}>
-                        <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={styles.box}>Shfaq biografine</Text>
+                        <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={shadowStyle}>Shfaq biografine</Text>
                     </TouchableOpacity>
                 </Animatable.View>}
                 {showbio && <Animatable.Text animation="fadeInLeft" className="text-gray-400 text-xs font-light italic px-2 text-center mt-1">{data?.bio}</Animatable.Text>}
@@ -205,15 +207,15 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         </View>
         {data?.isYourInstructor ? (
             <View>
-                <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={styles.box}>Tutori Juaj</Text>
+                <Text className="text-white font-psemibold text-sm text-center bg-secondary border border-white rounded-md px-3 py-1 mt-4" style={shadowStyle}>Tutori Juaj</Text>
             </View>
         ) : (
-            <TouchableOpacity onPress={() => setCourseModal(true)} className="py-1 px-3 border border-white bg-secondary rounded-md mt-4" style={styles.box}>
+            <TouchableOpacity onPress={() => setCourseModal(true)} className="py-1 px-3 border border-white bg-secondary rounded-md mt-4" style={shadowStyle}>
                 <Animatable.Text animation="pulse" iterationCount="infinite" className="text-white font-psemibold text-sm">Behuni student</Animatable.Text>
             </TouchableOpacity>
         )}
 
-        <View className="max-w-[350px] flex-row flex-1 mx-auto gap-4 mt-6" style={styles.box}>
+        <View className="max-w-[350px] flex-row flex-1 mx-auto gap-4 mt-6" style={shadowStyle}>
             <TouchableOpacity onPress={outputRelation() === 0 ? makeFriend : outputRelation() === 1 ? acceptFriend : outputRelation() === 2 ? removeOnWaitingFriend : outputRelation() === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
                 <Text className="text-white font-psemibold text-base text-center">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : "default"}</Text>
                 <Image 
@@ -223,18 +225,18 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
                 tintColor={"#fff"}
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={contactInstructor} className="bg-oBlack py-3 w-[150px] rounded-[10px] border border-black-200 flex-row items-center justify-center gap-2">
-                <Text className="text-white font-psemibold text-base text-center">Kontakto</Text>
+            <TouchableOpacity onPress={contactInstructor} className="bg-oBlack-light dark:bg-oBlack py-3 w-[150px] rounded-[10px] border border-white dark:border-black-200 flex-row items-center justify-center gap-2">
+                <Text className="text-oBlack dark:text-white font-psemibold text-base text-center">Kontakto</Text>
                 <Image 
                 source={icons.report}
                 className="w-6 h-6"
                 resizeMode='contain'
-                tintColor={"#fff"}
+                tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                 />
             </TouchableOpacity>
         </View>
 
-        <Text className="text-white font-psemibold text-sm mt-3 border bg-oBlack border-black-200 rounded-md px-2 py-1 absolute -top-10 left-12" style={[styles.box, {transform: [{rotate: "-30deg"}]}]}>Qe nga <Text className="text-secondary">{date}</Text></Text>
+        <Text className="text-oBlack dark:text-white font-psemibold text-sm mt-3 border bg-oBlack-light dark:bg-oBlack border-white dark:border-black-200 rounded-md px-2 py-1 absolute -top-10 left-12" style={[shadowStyle, {transform: [{rotate: "-30deg"}]}]}>Qe nga <Text className="text-secondary">{date}</Text></Text>
     </View>
 
     <CustomModal
@@ -246,7 +248,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
       cancelButtonText={"Largoni dritaren!"}
       proceedButtonText={"Largo miqesine!"}
     >
-        <Text className="text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{data?.instructorName}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
+        <Text className="text-oBlack dark:text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{data?.instructorName}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
     </CustomModal>
 
     <Modal
@@ -256,7 +258,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         cancelButtonText={"Largoni dritaren"}
         title={"Zgjidhni me poshte"}
     >
-        {coursesData.length > 0 && !coursesLoading && <Text className="text-gray-400 font-plight text-xs mt-1 text-center">Me ane te listes se gjeneruar me poshte, ju mund te zgjidhni nje kurs ne te cilin mund te beheni studente i <Text className="text-secondary">{data?.instructorName}</Text></Text>}
+        {coursesData.length > 0 && !coursesLoading && <Text className="text-gray-600 data:text-gray-400 font-plight text-xs mt-1 text-center">Me ane te listes se gjeneruar me poshte, ju mund te zgjidhni nje kurs ne te cilin mund te beheni studente i <Text className="text-secondary">{data?.instructorName}</Text></Text>}
         {coursesLoading ? <View className="h-[120px]"><Loading /></View> : 
         (coursesData.length === 0 ? (
                 <View className="-mt-14">
@@ -268,7 +270,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
                 />
                 </View>
         ) : (
-            <ScrollView className="h-[150px] gap-2 mt-2 bg-oBlack w-full rounded-md border-black-200 border" style={styles.box}>
+            <ScrollView className="h-[150px] gap-2 mt-2 bg-oBlack-light dark:bg-oBlack w-full rounded-md border-gray-200 dark:border-black-200 border" style={shadowStyle}>
             {coursesData.map((item) => {
                 const date = new Date(item.createdAt).toLocaleDateString("sq-AL", {
                     day: "2-digit",
@@ -276,10 +278,10 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
                     year: "numeric"
                 })
                 return (
-                    <TouchableOpacity onPress={() => handleBeStudentCourseId(item.id)} key={item.id} className="bg-oBlack p-2 border-b relative border-black-200 rounded-b-md" style={styles.box}>
-                        <Text className="text-white font-psemibold text-base">{item.name}</Text>
-                        <Text className="text-gray-400 font-plight text-xs">{getCourseCategories(userData?.data?.categories, item.categoryId)}</Text>
-                        <Text className="absolute bottom-0 right-0 bg-primary border-t border-l border-black-200 rounded-tl-md rounded-br-md px-2 py-0.5 text-white font-psemibold text-xs" style={styles.box}>{date}</Text>
+                    <TouchableOpacity onPress={() => handleBeStudentCourseId(item.id)} key={item.id} className="bg-oBlack-light dark:bg-oBlack p-2 border-b relative border-gray-200 dark:border-black-200 rounded-b-md" style={shadowStyle}>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-base">{item.name}</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 font-plight text-xs">{getCourseCategories(userData?.data?.categories, item.categoryId)}</Text>
+                        <Text className="absolute bottom-0 right-0 bg-gray-200 dark:bg-primary border-t border-l border-gray-200 dark:border-black-200 rounded-tl-md rounded-br-md px-2 py-0.5 text-oBlack dark:text-white font-psemibold text-xs" style={shadowStyle}>{date}</Text>
                     </TouchableOpacity>
                 )
             }

@@ -5,9 +5,12 @@ import { useRouter } from 'expo-router';
 import { Platform } from 'react-native';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
 import * as Animatable from "react-native-animatable"
+import { useShadowStyles } from '../hooks/useShadowStyles';
+import { useColorScheme } from 'nativewind';
 
 const AllUsersInteractions = ({usersData, currentUserData}) => {
-    console.log(usersData);
+    const {shadowStyle} = useShadowStyles();
+    const {colorScheme} = useColorScheme();
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
     const date = new Date(usersData?.lastMessage?.message?.createdAt);
@@ -96,11 +99,11 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
             iterationCount="infinite"
             duration={1500}
             animation={usersData?.lastMessage?.message?.isRead === false && usersData?.lastMessage?.message?.senderUsername !== currentUserData?.username ? {
-                0: {backgroundColor: "#13131a"},
+                0: {backgroundColor: colorScheme === "dark" ? "#13131a" : "#fcf6f2"},
                 0.5: {backgroundColor: "rgba(255, 156, 1, 0.4)"},
-                1: {backgroundColor: "#13131a"}
+                1: {backgroundColor: colorScheme === "dark" ? "#13131a" : "#fcf6f2"}
             } : undefined}
-            style={styles.box} className={`${currentUserData?.username === usersData?.username ? "bg-primary" : "bg-oBlack"} flex-row relative gap-2 items-center justify-between w-full p-4 border rounded-lg border-black-200`}>
+            style={shadowStyle} className={`${currentUserData?.username === usersData?.username ? "bg-gray-200 dark:bg-primary" : "bg-oBlack-light dark:bg-oBlack"} flex-row relative gap-2 items-center justify-between w-full p-4 border rounded-lg border-white dark:border-black-200`}>
                 <View className="flex-row items-center gap-4 flex-1">
                     <View>
                         <Image 
@@ -111,9 +114,9 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
                     </View>
 
                     <View className="flex-1">   
-                        <Text className="text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
-                        <Text className="text-gray-400 text-xs font-plight" numberOfLines={1}>{returnLastMessage()}</Text>
-                        <Text className="text-white text-xs font-plight text-right mt-1">{usersData?.lastMessage?.message?.createdAt ? formattedDate : ""}</Text>
+                        <Text className="text-oBlack dark:text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight" numberOfLines={1}>{returnLastMessage()}</Text>
+                        <Text className="text-oBlack dark:text-white text-xs font-plight text-right mt-1">{usersData?.lastMessage?.message?.createdAt ? formattedDate : ""}</Text>
                     </View>
                 </View>
                 <View>
@@ -121,19 +124,19 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
                         source={icons.chat}
                         className="h-8 w-8"
                         resizeMode='contain'
-                        tintColor={"#fff"}
+                        tintColor={colorScheme === "dark" ? "#fff" : "#FF9C01"}
                     />
                 </View>
 
-                {showOptions && <View className="absolute self-start -left-2 -bottom-2 bg-oBlack border border-black-200 rounded-[5px] p-2" style={styles.box}>
-                    <View className="border-b border-black-200">
+                {showOptions && <View className="absolute self-start -left-2 -bottom-2 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[5px] p-2" style={shadowStyle}>
+                    <View className="border-b border-gray-200 dark:border-black-200">
                         <TouchableOpacity onPress={() => handleRouteToUser()}>
-                            <Text className="font-plight text-white text-sm p-1">Vizitoni profilin</Text>
+                            <Text className="font-plight text-oBlack dark:text-white text-sm p-1">Vizitoni profilin</Text>
                         </TouchableOpacity>
                     </View>
                     <View>
                         <TouchableOpacity onPress={() => {navigateToMessenger(router, usersData, currentUserData), setShowOptions(false)}}>
-                            <Text className="font-plight text-white text-sm p-1">Filloni biseden</Text>
+                            <Text className="font-plight text-oBlack dark:text-white text-sm p-1">Filloni biseden</Text>
                         </TouchableOpacity>
                     </View>
                 </View>}

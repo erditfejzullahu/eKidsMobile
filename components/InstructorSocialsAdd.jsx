@@ -128,7 +128,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
     {socialsData.map((item, idx) => {
         return (
             <View key={idx} className="relative">
-                {idx > 0 && <TouchableOpacity onPress={() => removeSocial(idx)} className="bg-oBlack absolute rounded-xl items-center justify-center border-2 border-black-200 h-8 w-8 -left-4 top-6 z-20">
+                {idx > 0 && <TouchableOpacity onPress={() => removeSocial(idx)} className="bg-oBlack-light dark:bg-oBlack absolute rounded-xl items-center justify-center border-2 border-gray-200 dark:border-black-200 h-8 w-8 -left-4 top-6 z-20">
                     <Image 
                         source={icons.close}
                         className="h-8 w-8 p-2"
@@ -137,7 +137,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
                     />
                 </TouchableOpacity>}
                 {idx === socialsData.length - 1 &&<TouchableOpacity 
-                    className="bg-oBlack rounded-xl items-center justify-center border-2 border-black-200 h-10 w-10 absolute right-0 -top-4"
+                    className="bg-oBlack-light dark:bg-oBlack rounded-xl items-center justify-center border-2 border-gray-200 dark:border-black-200 h-10 w-10 absolute right-0 -top-4"
                     onPress={() => setSocialsData((prevData) => [...prevData, {}])}
                     >
                     <Image
@@ -157,7 +157,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
                         />
                     </View>
                     <View className="flex-[0.2] justify-end relative">
-                        <View className="border-2 items-center justify-center border-black-200 rounded-xl h-16 bg-oBlack">
+                        <View className="border-2 items-center justify-center border-gray-200 dark:border-black-200 rounded-xl h-16 bg-oBlack-light dark:bg-oBlack">
                             <Image 
                                 source={socialsData[idx]?.icon ?? icons.info}
                                 className="h-10 w-10"
@@ -166,12 +166,12 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
                         </View>
                     </View>
                 </View>
-                <Text className="text-gray-400 text-xs mt-1 font-plight">Ne paraqitje te linkut do shfaqet ikona e duhur.</Text>
+                <Text className="text-gray-600 dark:text-gray-400 text-xs mt-1 font-plight">Ne paraqitje te linkut do shfaqet ikona e duhur.</Text>
                 {socialsError[idx] && <Text className="font-plight text-red-500 mt-1 text-xs">{socialsError[idx]}</Text>}
             </View>
         )
     })}
-    <View className="mt-4 pb-6">
+    <View className="mt-4 pb-4">
         <CustomButton
                 title={"Paraqitni aplikimin"}
                 containerStyles={"!min-h-[60px]"}

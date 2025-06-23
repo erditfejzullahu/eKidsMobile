@@ -23,11 +23,13 @@ import CustomModal from '../../../components/Modal';
 import NotifierComponent from '../../../components/NotifierComponent';
 import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 import { useColorScheme } from 'nativewind';
+import { useShadowStyles } from '../../../hooks/useShadowStyles';
 
 const Conversation = () => {
-    const {colorScheme} = useColorScheme();
-    const router = useRouter();
     const conversation = useLocalSearchParams();
+    const {colorScheme} = useColorScheme();
+    const {shadowStyle} = useShadowStyles();
+    const router = useRouter();
     const [paginationState, setPaginationState] = useState({pageNumber: 1, pageSize: 15})
     console.log(conversation, ' conversation');
     
@@ -380,9 +382,6 @@ const Conversation = () => {
             console.error(error);
         }
     }
-
-    console.log(conversation?.conversation, ' asdasd');
-    console.log(user?.data?.userData?.id, ' asdasdasdasd')
     
 
     const { showNotification: successFriendReq } = NotifierComponent({
@@ -475,9 +474,9 @@ const Conversation = () => {
     } else {
         return (
         <KeyboardAvoidingView className="h-full" style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <View className="h-full bg-primary flex-1">
+            <View className="h-full bg-primary-light dark:bg-primary flex-1">
                 <View>
-                    <View style={styles.box}  className="flex-row z-20 justify-between bg-oBlack p-4 relative border-b border-black-200">
+                    <View style={shadowStyle}  className="flex-row z-20 justify-between bg-oBlack-light dark:bg-oBlack p-4 relative border-b border-gray-200 dark:border-black-200">
                         <View className="flex-row gap-2 items-center">
                             <View className="mr-2">
                                 <TouchableOpacity onPress={() => router.back()}>
@@ -497,7 +496,7 @@ const Conversation = () => {
                                 />
                             </View>
                             <View>
-                                <Text className="text-white font-psemibold text-base">{conversation?.receiverFirstname} {conversation?.receiverLastname}</Text>
+                                <Text className="text-oBlack dark:text-white font-psemibold text-base">{conversation?.receiverFirstname} {conversation?.receiverLastname}</Text>
                             </View>
                         </View>
 
@@ -512,10 +511,10 @@ const Conversation = () => {
                             </TouchableOpacity>
                         </View>
 
-                        {openMoreDetails && <View className="absolute bg-oBlack right-6 p-2 z-20 rounded-[5px] border-black-200 border mt-[45px]">
-                            <View className="border-b border-black-200">
+                        {openMoreDetails && <View className="absolute bg-oBlack-light dark:bg-oBlack right-6 p-2 z-20 rounded-[5px] border-gray-200 dark:border-black-200 border mt-[45px]">
+                            <View className="border-b border-gray-200 dark:border-black-200">
                                 <TouchableOpacity className="flex-row gap-1 justify-center items-center" onPress={() => router.replace(`/users/${conversation?.conversation}`)}>
-                                    <Text className="text-white p-1 font-pregular">Shikoni profilin</Text>
+                                    <Text className="text-oBlack dark:text-white p-1 font-pregular">Shikoni profilin</Text>
                                     <Image 
                                         source={icons.profile}
                                         className="h-5 w-5"
@@ -524,7 +523,7 @@ const Conversation = () => {
                                     />
                                 </TouchableOpacity>
                             </View>
-                            {parseInt(conversation?.conversation) !== parseInt(user?.data?.userData?.id) && <View className="border-b border-black-200">
+                            {parseInt(conversation?.conversation) !== parseInt(user?.data?.userData?.id) && <View className="border-b border-gray-200 dark:border-black-200">
                                 <TouchableOpacity 
                                     className="flex-row gap-1 justify-center items-center"
                                     onPress={() => {
@@ -540,7 +539,7 @@ const Conversation = () => {
                                         }
                                     }}
                                     >
-                                    <Text className="text-white p-1 font-pregular">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : outputRelation() === 4 ? "Prisni..." : "Undefined"}</Text>
+                                    <Text className="text-oBlack dark:text-white p-1 font-pregular">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : outputRelation() === 4 ? "Prisni..." : "Undefined"}</Text>
                                     <Image 
                                         source={icons.friends}
                                         className="h-5 w-5"
@@ -554,7 +553,7 @@ const Conversation = () => {
                                     className="flex-row gap-1 justify-center items-center"
                                     onPress={() => useReportNavigation("report")}
                                     >
-                                    <Text className="text-white p-1 font-pregular">Raportoni</Text>
+                                    <Text className="text-oBlack dark:text-white p-1 font-pregular">Raportoni</Text>
                                     <Image 
                                         source={icons.report}
                                         className="h-5 w-5"
@@ -587,12 +586,12 @@ const Conversation = () => {
                             (messages?.messages?.length > 0 && (
                                 (messages.hasMore && isLoadingMore ? (
                                     <View className="px-4 justify-center py-2 flex-row items-center gap-2">
-                                        <Text className="text-white font-psemibold text-sm">Ju lutem prisni...</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">Ju lutem prisni...</Text>
                                         <ActivityIndicator color={"#FF9C01"} size={24} />
                                     </View>
                                 ) : (
                                     <View className="px-4 justify-center py-2 flex-row items-center gap-2">
-                                        <Text className="text-white font-psemibold text-sm">Nuk ka me mesazhe...</Text>
+                                        <Text className="text-oBlack dark:text-white font-psemibold text-sm">Nuk ka me mesazhe...</Text>
                                         <Image
                                             source={images.breakHeart}
                                             className="size-5"
@@ -609,7 +608,7 @@ const Conversation = () => {
                 <View className={`relative ${textInputFocused ? "mb-24" : ""}`}>
 
                     {/* fotoja apo dokumenti zgjedhur */}
-                    {image.type !== '' && image.base64 !== '' && <View className="absolute gap-4 items-center justify-center right-[8px] bottom-0 mb-[84px] bg-oBlack z-20 border border-black-200 rounded-[5px] p-4 w-[160px]">
+                    {image.type !== '' && image.base64 !== '' && <View className="absolute gap-4 items-center justify-center right-[8px] bottom-0 mb-[84px] bg-oBlack-light dark:bg-oBlack z-20 border border-gray-200 dark:border-black-200 rounded-[5px] p-4 w-[160px]">
                         <View>
                             {image.type.includes('image') ? (
                                 <Image 
@@ -622,26 +621,26 @@ const Conversation = () => {
                                     source={icons.documents}
                                     className="h-20 rounded-[2px]"
                                     resizeMode='contain'
-                                    tintColor={"#fff"}
+                                    tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                 />
                             )}
                         </View>
                         <View>
-                            <Text className="text-white font-pmedium text-center text-xs" numberOfLines={2}>{image.fileName || 'random'}</Text>
+                            <Text className="text-oBlack dark:text-white font-pmedium text-center text-xs" numberOfLines={2}>{image.fileName || 'random'}</Text>
                         </View>
                         <View className="absolute -right-1 -top-1">
-                            <TouchableOpacity className="bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteImage}>
+                            <TouchableOpacity className="bg-secondary-100 dark:bg-white p-1.5 rounded-full overflow-hidden" onPress={deleteImage}>
                                 <Image 
                                     source={icons.close}
-                                    tintColor={"#000"}
-                                    className="w-2 h-2"
+                                    tintColor={colorScheme === "dark" ? "#000" : "#fff"}
+                                    className="w-2.5 h-2.5"
                                 />
                             </TouchableOpacity>
                         </View>
                     </View>}
                     {/* fotoja apo dokumenti zgjedhur */}
 
-                    <View className="bg-oBlack p-4 h-[76px] flex-row items-start justify-center gap-4 border-t border-black-200">
+                    <View className="bg-oBlack-light dark:bg-oBlack p-4 h-[76px] flex-row items-start justify-center gap-4 border-t border-gray-200 dark:border-black-200">
                         <View className="items-center flex-row gap-4">
                             <View className="flex-row items-center gap-2">
                                 <View>
@@ -650,7 +649,7 @@ const Conversation = () => {
                                             source={icons.imageGallery}
                                             className="h-6 w-6"
                                             resizeMode='contain'
-                                            tintColor={"#fff"}
+                                            tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -660,7 +659,7 @@ const Conversation = () => {
                                             source={icons.microphone}
                                             className="h-6 w-6"
                                             resizeMode='contain'
-                                            tintColor={"#fff"}
+                                            tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -670,7 +669,7 @@ const Conversation = () => {
                                             source={icons.documents}
                                             className="h-6 w-6"
                                             resizeMode='contain'
-                                            tintColor={"#fff"}
+                                            tintColor={colorScheme === "dark" ? "#fff" : "#000"}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -678,7 +677,7 @@ const Conversation = () => {
                             <View className="flex-1">
                                 <TextInput
                                     ref={messageVal}
-                                    className="bg-primary text-white border border-black-200 p-2 rounded-[5px]"
+                                    className="bg-primary-light dark:bg-primary text-oBlack dark:text-white border border-gray-200 dark:border-black-200 p-2 rounded-[5px]"
                                     placeholder='Shkruaj mesazhin ketu...'
                                     placeholderTextColor={"#414141"}
                                     // onChangeText={(text) => messageVal.text = text}
@@ -702,7 +701,7 @@ const Conversation = () => {
                 cancelButtonText={"Largoni dritaren!"}
                 proceedButtonText={"Largo miqesine!"}
                 >
-                    <Text className="text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{conversation?.receiverFirstname} {conversation?.receiverLastname}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
+                    <Text className="text-oBlack dark:text-white font-plight text-sm text-center my-2">Nga ky veprim ju largoni miqesine me <Text className="text-secondary font-psemibold">{conversation?.receiverFirstname} {conversation?.receiverLastname}.</Text> Nese jeni te sigurte vazhdoni me veprimin nga butoni me poshte ose largoni dritaren!</Text>
             </CustomModal>
         </KeyboardAvoidingView>
         )

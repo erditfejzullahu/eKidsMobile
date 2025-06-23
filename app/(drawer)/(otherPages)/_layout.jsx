@@ -3,8 +3,11 @@ import React from 'react'
 import { Redirect, Stack } from 'expo-router'
 import Topbar from '../../../components/Topbar'
 import { useRole } from '../../../navigation/RoleProvider'
+import { StatusBar } from 'expo-status-bar'
+import { useColorScheme } from 'nativewind'
 
 const _layout = ({children}) => {
+  const {colorScheme} = useColorScheme();
   const {role} = useRole();
   if(role === "Instructor") return <Redirect href={'/instructor/instructorHome'}/>
   return (
@@ -16,6 +19,7 @@ const _layout = ({children}) => {
       <Stack.Screen name="my-quizzes" options={{headerShown: false}} />
     </Stack> */}
     {children}
+    <StatusBar translucent backgroundColor="transparent" style={`${colorScheme === 'light' ? "dark" : "light"}`}/>
     </>
   )
 }

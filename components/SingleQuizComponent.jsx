@@ -10,9 +10,10 @@ import NotifierComponent from './NotifierComponent';
 import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import ShareToFriends from './ShareToFriends';
 import { useColorScheme } from 'nativewind';
-
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) => {
+  const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const userCategories = user?.data?.categories;
     const userData = user?.data?.userData;
@@ -110,19 +111,19 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
 
   return (
     <>
-    <View className="mt-4 mb-4" style={styles.box}>
+    <View className="mt-4 mb-4" style={shadowStyle}>
       <TouchableOpacity onLongPress={allQuizzes ? () => setShareOpened(true) : undefined} delayLongPress={300} onPress={allQuizzes ? handleQuizStart : () => setModalVisible(true)}>
-        <View className="border border-black-200 bg-oBlack p-4 relative">
-            <Text className="text-white font-psemibold text-lg">{quizData?.quizName}</Text>
-            <Text className="text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>
+        <View className="border border-gray-200 dark:border-black-200 bg-oBlack-light dark:bg-oBlack p-4 relative">
+            <Text className="text-oBlack dark:text-white font-psemibold text-lg">{quizData?.quizName}</Text>
+            <Text className="text-gray-600 dark:text-gray-400 font-plight text-xs pb-2.5" numberOfLines={3}>{quizData?.quizDescription}</Text>
 
-            <View className="flex-row justify-between pt-2.5 border-t border-black-200">
+            <View className="flex-row justify-between pt-2.5 border-t border-gray-200 dark:border-black-200">
               <View>
-                <Text className="text-white font-psemibold text-xs">{allQuizzes ? "Statusi" : "Shikime"}</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-xs">{allQuizzes ? "Statusi" : "Shikime"}</Text>
                 <Text className="text-secondary font-pbold text-sm">{allQuizzes ? (quizData?.status ? "E perfunduar" : "E paperfunduar") : quizData?.viewCount === 1 ? quizData?.viewCount + " shikim" : quizData?.viewCount + " shikime"}</Text>
               </View>
               <View>
-                <Text className="text-white font-psemibold text-xs text-right">Sa here i perfunduar?</Text>
+                <Text className="text-oBlack dark:text-white font-psemibold text-xs text-right">Sa here i perfunduar?</Text>
                 <Text className="text-secondary font-pbold text-sm text-right">{quizData?.howMany === 0 ? "I pashfletuar" : quizData?.howMany + " Here"}</Text>
               </View>
             </View>
@@ -166,7 +167,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
         onClose={() => setModalVisible(false)}
     >
         <View className="mb-6 mt-2">
-            <Text className="text-white font-plight text-center text-sm">
+            <Text className="text-oBlack dark:text-white font-plight text-center text-sm">
                 Këtu mund të ndërveproni në lidhje me kursin tuaj! Gjatë kohës do të shtohen edhe mundësitë për redaktimin e kursit dhe shikimin e statistikave ndërmjet kurseve tjera!
             </Text>
         </View>
@@ -176,7 +177,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
                 setTimeout(() => {
                     setShareOpened(true)
                 }, 150); }} 
-                className="bg-secondary p-2 py-1.5 items-center justify-center gap-2 flex-row rounded-[5px] mb-2">
+                className="bg-secondary p-2 py-1.5 items-center justify-center gap-2 flex-row rounded-none border dark:border-0 border-white dark:rounded-[5px] mb-2">
                 <Text className="text-white font-pregular text-sm">Shperndani kursin</Text>
                 <Image 
                     source={icons.share}
@@ -187,7 +188,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
             </TouchableOpacity>
         </View>
         <View className="gap-2 flex-row flex-wrap mb-2">
-            <TouchableOpacity onPress={goToQuiz} className="flex-row flex-1 items-center justify-center gap-2 bg-secondary p-2 py-1.5 rounded-[5px]">
+            <TouchableOpacity onPress={goToQuiz} className="flex-row flex-1 items-center justify-center gap-2 bg-secondary p-2 py-1.5 rounded-none border dark:border-0 border-white dark:rounded-[5px]">
                 <Text className="text-white font-pregular text-sm">Shikoni kursin</Text>
                 <Image 
                     source={icons.quiz}
@@ -196,7 +197,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
                     tintColor={"#fff"}
                 />
             </TouchableOpacity>
-            <TouchableOpacity onPress={deleteQuizPrompt} className="flex-row flex-1 items-center justify-center gap-2 bg-secondary p-2 py-1.5 rounded-[5px]">
+            <TouchableOpacity onPress={deleteQuizPrompt} className="flex-row flex-1 items-center justify-center gap-2 bg-secondary p-2 py-1.5 rounded-none border dark:border-0 border-white dark:rounded-[5px]">
                 <Text className="text-white font-pregular text-sm">Fshini kursin</Text>
                 <Image 
                     source={icons.close}
