@@ -11,8 +11,16 @@ import logoNoText from '../assets/images/logowithouttext.png'
 import mortarBoard from '../assets/images/mortarboard.png'
 import reward from '../assets/images/reward.png'
 import rewardXl from '../assets/images/rewardXl.png'
+import imageGirl from "../assets/images/imageGirl.webp"
+import bookTable from "../assets/images/bookTable.webp"
+import imageMan1 from "../assets/images/imageMan1.webp"
+import imageMan from "../assets/images/imageMan.webp"
 
 export default {
+    imageGirl,
+    bookTable,
+    imageMan,
+    imageMan1,
     logo,
     cards,
     path,

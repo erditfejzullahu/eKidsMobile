@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, Text, View } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'react-native';
@@ -13,8 +13,10 @@ import { useEffect } from 'react';
 import { useNavigation } from 'expo-router';
 import { CommonActions } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
+import { useShadowStyles } from '../hooks/useShadowStyles';
 
 export default function App() {
+  const {shadowStyle} = useShadowStyles();
   const {colorScheme} = useColorScheme();
   const {role, refreshRole, isLoading: roleLoading} = useRole();
   const {isLoading, isLoggedIn} = useGlobalContext();
@@ -67,11 +69,22 @@ export default function App() {
             resizeMode="contain"
           />
 
-          <Image 
-            source={images.cards}
-            className="max-w-[380px] w-full h-[300px]"
-            resizeMode='contain'
-          />
+        <View className="max-h-[150px] h-full relative w-full my-10">
+          <View className="absolute -right-14 -bottom-8 h-full z-50 rotate-[20deg] border-2 rounded-lg border-secondary bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
+            <Image 
+              source={images.imageMan}
+              className="max-w-[280px] flex-1 rounded-[4px]"
+              resizeMode='cover'
+            />
+          </View>
+          <View className="absolute -left-14 border-2 border-secondary -rotate-[15deg] rounded-lg -bottom-4 h-full bg-oBlack-light dark:bg-oBlack" style={shadowStyle}>
+            <Image 
+              source={images.imageGirl}
+              className="max-w-[280px] flex-1 rounded-[4px]"
+              resizeMode='cover'
+            />
+          </View>
+        </View>
 
           <View className="relative w-full">
             <View className="relative mt-5">
@@ -93,7 +106,7 @@ export default function App() {
           <CustomButton 
             title="Vazhdoni me Kyçjen"
             handlePress={() => router.push('/sign-in')}
-            containerStyles="w-full mt-8"
+            containerStyles={colorScheme === 'light' ? "!rounded-none !border !border-gray-200 w-full mt-8" : "w-full mt-8"}
             textStyles="font-psemibold"
           />
         </View>

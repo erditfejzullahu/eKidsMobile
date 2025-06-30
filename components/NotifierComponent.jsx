@@ -28,7 +28,7 @@ const NotifierComponent = ({title, description, alertType = "success", onHideFun
                 alertType: alertType, // Can also be 'error' "warning" or 'info'
                 titleStyle: { color: theme === "dark" ? '#fff' : "#13131a", fontFamily: "Poppins-SemiBold" }, 
                 descriptionStyle: { color: theme === "dark" ? '#9ca3af' : "#4b5563", fontFamily: "Poppins-Light" },
-                containerStyle: { backgroundColor: theme === "dark" ? '#161622' : "#f8f5f2"},
+                containerStyle: { backgroundColor: theme === "dark" ? '#161622' : "#f8f5f2", elevation: 8, shadowColor: theme === "dark" ? "#000" : "#b8e1ff"},
                 imageSource: imageSource,
                 imageStyle: {
                     tintColor: '#ff9c01',
