@@ -1,9 +1,8 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { icons } from '../constants'
 import CustomButton from './CustomButton'
 import * as Animatable from 'react-native-animatable'
-import { SlideInUp } from 'react-native-reanimated'
 import { useColorScheme } from 'nativewind'
 
 const SorterComponent = ({ showSorter, sortButton }) => {
@@ -95,7 +94,9 @@ const SorterComponent = ({ showSorter, sortButton }) => {
         pageSize: 15
     })
 
-    const setActiveButton = (id) => {
+    const setActiveButton = useCallback((id) => {
+        console.log(id);
+        
         setSortableOptions(prevOptions =>
             prevOptions.map(option =>
                 option.id === id
@@ -106,9 +107,10 @@ const SorterComponent = ({ showSorter, sortButton }) => {
 
         setActiveOptionId(id);
         setActiveSubOptionId(null);
-    }
+    }, [])
 
-    const setActiveUnderButton = (mainId, subId) => {
+    const setActiveUnderButton = useCallback((mainId, subId) => {
+        
         setSortableOptions(prevOptions =>
             prevOptions.map(option =>
                 option.id === mainId
@@ -147,7 +149,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                 return subId
             }
         })        
-    }
+    }, [])
 
     useEffect(() => {
         // Check if any sub-option in any option is ticked
@@ -172,9 +174,9 @@ const SorterComponent = ({ showSorter, sortButton }) => {
     //     setShowButton(!anySubTicked)
     // }
 
-    const sendSortData = () => {
+    const sendSortData = useCallback(() => {
         sortButton(sendData);
-    }
+    }, [sendData])
     
     if (!showSorter) return null;
     return (
@@ -279,4 +281,4 @@ const SorterComponent = ({ showSorter, sortButton }) => {
     )
 }
 
-export default SorterComponent
+export default memo(SorterComponent)

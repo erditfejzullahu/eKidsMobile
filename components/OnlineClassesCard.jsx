@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { Platform } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { memo, useCallback, useState } from 'react'
 import { icons, images } from '../constants'
 import { getCourseCategories } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
@@ -20,25 +19,26 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
     const {role} = useRole();
 
     const navigation = useNavigation();
-    const editCardPress = () => {
+
+    const editCardPress = useCallback(() => {
 
         navigation.navigate('addCourse', {
             courseData: classes,
             updateData: true
         })
-    }
+    }, [navigation])
 
-    const handleLessonPress = (item) => {
+    const handleLessonPress = useCallback((item) => {
         if(item.routeTo){
             router.replace(`/meetings/${item.routeTo.id}`);
         }else{
             setShowLessonInfoModal(true)
         }
-    }
+    }, [router])
 
-    const handleCoursePress = () => {
+    const handleCoursePress = useCallback(() => {
         router.push(`onlineClass/${classes.id}`)
-    }
+    }, [router])
 
     if(profilePlace){
         return(
@@ -179,19 +179,4 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
     }
 }
 
-export default OnlineClassesCard
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(OnlineClassesCard)

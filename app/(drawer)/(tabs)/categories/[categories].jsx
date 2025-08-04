@@ -17,6 +17,9 @@ import { initialFilterData } from '../../../../services/filterConfig';
 import { useNavigateToSupport } from '../../../../hooks/goToSupportType';
 import { useShadowStyles } from '../../../../hooks/useShadowStyles';
 import { useColorScheme } from 'nativewind';
+import CategoriesHeader from '../../../../components/CategoriesHeader';
+
+
 
 const Categories = () => {
   const { categories } = useLocalSearchParams();
@@ -34,14 +37,14 @@ const Categories = () => {
   const {shadowStyle} = useShadowStyles();
   const {user} = useGlobalContext(); //show category information no matter what
   
-  const updateSearchData = (data) => {
+  const updateSearchData = useCallback((data) => {
     setSortingData((prevData) => ({
       ...prevData,
       searchParam: data
     }))
-  }
+  }, [])
   
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setLoadedFirst(false)
     setAllData([])
     setSortingData((prevData) => ({
@@ -58,9 +61,9 @@ const Categories = () => {
       searchParam: ''
     }))
     await getCategories()
-  }
+  }, [])
 
-  const getCategories = async () => {
+  const getCategories = useCallback(async () => {
     setRefreshing(true)
     try {
       const response = (categories === 'all' || categories === undefined)
@@ -68,8 +71,6 @@ const Categories = () => {
         : await fetchCategory(sortingData)
         
         setLoadedFirst(true)
-        console.log(response, ' asdasdasd');
-        console.log(sortingData, ' sorting');
         
         if(sortingData.pageNumber > 1){
           setAllData((prev) => {
@@ -98,18 +99,18 @@ const Categories = () => {
       setShowLoadingMore(false)
       setRefreshing(false)
     }
-  }
+  }, [])
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!allData.hasMore || showLoadingMore) return;
     setShowLoadingMore(true)
     setSortingData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [showLoadingMore, allData.hasMore])
 
-  const sortCategories = (data) => {
+  const sortCategories = useCallback((data) => {
     setLoadedFirst(false)
     setSortingData((prev) => ({
       ...prev,
@@ -121,7 +122,7 @@ const Categories = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  })
 
 
   useEffect(() => {
@@ -150,37 +151,6 @@ const Categories = () => {
   }, [categories]);
 
 
-  const catHeader = () => {
-    return (
-      <View className="px-4">
-          <Text className="text-oBlack dark:text-white font-pmedium text-2xl mt-4">
-            {showAllCategories ? "Të gjitha kategoritë" : `Të gjitha kurset për kategorinë ${getCourseCategories(user?.data?.categories, parseInt(categories))}`}
-            <View>
-              <Image
-                source={images.path}
-                resizeMode="contain"
-                className="h-auto w-[100px] absolute -bottom-8 -left-12"
-              />
-            </View>
-          </Text>
-          <View className="mt-6 pb-5 border-b border-gray-200 dark:border-black-200">
-            <SearchInput 
-                // value={searchInput.searchData}
-                searchFunc={updateSearchData}
-                placeholder={"Shkruani këtu kategorinë tuaj të dëshiruar"}
-                keyboardType="email-address"
-                valueData={sortingData.searchData}
-            />
-          </View>
-          <View className="mt-6 overflow-hidden">
-            <SorterComponent 
-              showSorter={true}
-              sortButton={sortCategories}
-            />
-          </View>
-        </View>
-    )
-  }
   
   if(refreshing && !loadedFirst){
     return (
@@ -203,7 +173,14 @@ const Categories = () => {
               />
             )}
             ListHeaderComponent={() => (
-              catHeader()
+              <CategoriesHeader
+                showAllCategories={showAllCategories}
+                user={user}
+                categories={categories}
+                updateSearchData={updateSearchData}
+                sortingData={sortingData}
+                sortCategories={sortCategories}
+              />
             )}
             ListEmptyComponent={() => (
               <View className="bg-oBlack-light dark:bg-oBlack m-4 py-2 pt-4 border border-gray-200 dark:border-black-200" style={shadowStyle}>
@@ -243,7 +220,14 @@ const Categories = () => {
               />
             )}
             ListHeaderComponent={()=> (
-              catHeader()
+              <CategoriesHeader
+                showAllCategories={showAllCategories}
+                user={user}
+                categories={categories}
+                updateSearchData={updateSearchData}
+                sortingData={sortingData}
+                sortCategories={sortCategories}
+              />
             )}
             ListEmptyComponent={() => (
               <View className="bg-oBlack-light dark:bg-oBlack m-4 py-2 pt-4 border border-gray-200 dark:border-black-200" style={shadowStyle}>

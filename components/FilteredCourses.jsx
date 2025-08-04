@@ -1,5 +1,5 @@
-import { View, Text, Image, StyleSheet, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Image } from 'react-native'
+import { memo, useCallback } from 'react'
 import { images, icons } from '../constants'
 import * as Animatable from 'react-native-animatable'
 import { useRouter } from 'expo-router'
@@ -11,9 +11,9 @@ const FilteredCourses = ({ userCourses: { id, courseName, courseCategory, corseF
   const {shadowStyle} = useShadowStyles();
   const animationType = id % 2 === 0 ? 'slideInLeft' : 'slideInRight'
   const router = useRouter();
-  const enrollCourse = () => {
+  const enrollCourse = useCallback(() => {
     router.push(`/categories/course/${id}`)
-  }
+  }, [router])
   return (
     <View className="w-full px-4">
       <TouchableOpacity
@@ -92,19 +92,4 @@ const FilteredCourses = ({ userCourses: { id, courseName, courseCategory, corseF
     </View>
   )
 }
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
-export default FilteredCourses
+export default memo(FilteredCourses)

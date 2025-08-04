@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text } from 'react-native'
-import React from 'react'
+import { memo } from 'react'
 
 const CustomButton = ({ title, handlePress, containerStyles, textStyles, isLoading }) => {
   return (
@@ -14,4 +14,4 @@ const CustomButton = ({ title, handlePress, containerStyles, textStyles, isLoadi
   )
 }
 
-export default CustomButton
+export default memo(CustomButton)

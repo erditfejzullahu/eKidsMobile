@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { memo, useCallback, useMemo, useState } from 'react'
 import FormField from './FormField'
 import CustomButton from './CustomButton'
 import { icons } from '../constants'
@@ -25,28 +25,32 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
     })
 
     // Notification handlers
-    const {showNotification: successQuiz} = NotifierComponent({
+    
+    const successQuizField = useMemo(() => NotifierComponent({
         title: "Kuizi u krijua me sukes!",
         description: "Sapo krijuat kursin tuaj me sukses! Ecurine mund ta percillni tek pjesa e navigimit; 'Kuizet e mia'",
         theme: colorScheme
-    })
+    }), [colorScheme])
+    const successQuiz = successQuizField.showNotification
 
-    const {showNotification: failedQuiz} = NotifierComponent({
+    const failedQuizField = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Dicka shkoi gabim ne krijimin e kursit tuaj! Nese problemi vazhdon kontaktoni Panelin e ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
+    const failedQuiz = failedQuizField.showNotification
 
-    const {showNotification: validationError} = NotifierComponent({
+    const validationErrorField = useMemo(() => NotifierComponent({
         title: "Plotesoni te gjitha fushat!",
         description: "Ju lutem plotesoni te gjitha fushat e kerkuara per te krijuar kuizin!",
         alertType: "error",
         theme: colorScheme
-    })
+    }), [colorScheme])
+    const validationError = validationErrorField.showNotification;
 
     // Validate the entire quiz form
-    const validateQuizForm = () => {
+    const validateQuizForm = useCallback(() => {
         const errors = {}
         let isValid = true
 
@@ -103,9 +107,9 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
 
         setValidationErrors(errors)
         return isValid
-    }
+    }, [quizParents, quizForm, quizAnswersQuantity])
 
-    const createQuiz = async () => {
+    const createQuiz = useCallback(async () => {
         // First validate parent form
         if (!isFormValid) {
             validationError()
@@ -141,17 +145,17 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         } finally {
             setButtonIsLoading(false)
         }
-    }
+    }, [])
 
-    const resetForm = () => {
+    const resetForm = useCallback(() => {
         setQuizForm({})
         setQuizParents([1])
         setQuizAnswersQuantity({ "parent_1": [1,2,3] })
         setValidationErrors({})
         setTouchedFields({})
-    }
+    }, [])
 
-    const handleCorrectAnswers = (parent, answerOrder) => {
+    const handleCorrectAnswers = useCallback((parent, answerOrder) => {
         const fieldKey = `quiz_parent_${parent}_correct_${answerOrder}`
 
         if (quizForm[`quiz_parent_${parent}_type`] === "single") {
@@ -180,9 +184,9 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             ...prev,
             [fieldKey]: true
         }))
-    }
+    }, [])
 
-    const setQuizType = (parent, type) => {
+    const setQuizType = useCallback((parent, type) => {
         setQuizForm(prev => ({
             ...prev,
             [`quiz_parent_${parent}_type`]: type
@@ -195,9 +199,9 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         }))
         
         setShowModal(prev => ({ ...prev, [parent]: false }))
-    }
+    }, [])
 
-    const handleValues = (index, field, value) => {
+    const handleValues = useCallback((index, field, value) => {
         const key = field === "question" 
             ? `quiz_parent_${index}_${field}`
             : `quiz_parent_${index[0]}_${field}_${index[1]}`
@@ -212,25 +216,25 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             ...prev,
             [key]: true
         }))
-    }
+    }, [])
 
-    const handleAnswerAdd = (parentId) => {
+    const handleAnswerAdd = useCallback((parentId) => {
         setQuizAnswersQuantity(prev => ({
             ...prev,
             [`parent_${parentId}`]: [...prev[`parent_${parentId}`], prev[`parent_${parentId}`].length + 1]
         }))
-    }
+    }, [])
 
-    const handleQuestionAdd = () => {
+    const handleQuestionAdd = useCallback(() => {
         const newParentIndex = quizParents.length + 1
         setQuizParents(prev => [...prev, newParentIndex])
         setQuizAnswersQuantity(prev => ({
             ...prev,
             [`parent_${newParentIndex}`]: [1,2,3]
         }))
-    }
+    }, [])
 
-    const removeAnswer = (parentIndex, answerIndex) => {
+    const removeAnswer = useCallback((parentIndex, answerIndex) => {
         setQuizAnswersQuantity(prev => {
             const updatedAnswers = prev[`parent_${parentIndex}`]
                 .filter(item => item !== answerIndex)
@@ -274,7 +278,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             delete newErrors[`quiz_parent_${parentIndex}_answers_${answerIndex}`]
             return newErrors
         })
-    }
+    }, [])
 
     // Helper to check if field should show error
     const shouldShowError = (field) => {
@@ -469,20 +473,4 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
     )
 }
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-})
-
-export default QuizCreate
+export default memo(QuizCreate)

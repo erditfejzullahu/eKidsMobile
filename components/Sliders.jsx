@@ -1,5 +1,5 @@
-import { View, Text, FlatList, Image, ImageBackground, StyleSheet, Platform } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
+import { View, Text, FlatList, ImageBackground, StyleSheet, Platform } from 'react-native';
+import {useState, useEffect, useRef, memo, useCallback} from 'react';
 import * as Animatable from 'react-native-animatable';
 import { images } from '../constants';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -74,10 +74,10 @@ const Sliders = ({ posts = [], keyID, dataCategory }) => {
         // console.log(viewableItems[0]?.key);
     }).current
 
-    const handlePress = (item) => {
+    const handlePress = useCallback((item) => {
         // console.log(item.CategoryID);
         router.push(`/categories/${item.CategoryID}`)
-    }
+    }, [router])
 
   return (
     <FlatList 
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default Sliders
+export default memo(Sliders)

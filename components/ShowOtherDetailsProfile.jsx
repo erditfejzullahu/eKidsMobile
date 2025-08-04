@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Image, Modal, Dimensions, ScrollView, Touchable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet,  TouchableOpacity, Image, Modal, Dimensions, ScrollView } from 'react-native'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { icons } from '../constants'
 import FormField from './FormField'
 import { Picker } from '@react-native-picker/picker'
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { getUserCommits, getUserOtherInformations, reqUpdateUserInformation, updateUserOtherInformations } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from '../hooks/useFetchFunction'
@@ -27,7 +26,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
     const endDate = new Date(`${currentYear}-12-31`); // December 31st
     const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
     // const chartWidth = Math.max(screenWidthGraph, data.labels.length * 80);
-    const chartConfig = {
+    const chartConfig = useMemo(() => ({
         backgroundGradientFrom: colorScheme === "dark" ? "#1E2923" : "#FFD3B6",
         backgroundGradientFromOpacity: 0,
         backgroundGradientTo: colorScheme === "dark" ? "#08130D" : "#FFE8D6",
@@ -37,7 +36,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
         strokeWidth: 2, // optional, default 3
         barPercentage: 0.5,
         useShadowColorFromDataset: false // optional
-    };
+    }), [colorScheme]);
 
     useEffect(() => {        
       if(data){
@@ -122,7 +121,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
     }, [userOtherData])
     
     
-    const arrangeData = (text, type, index) => {
+    const arrangeData = useCallback((text, type, index) => {
         setUserInformationData(prevData => {
             const updatedUserEducations = [...prevData.userEducations]
             const updatedUserJobs = [...prevData.userJobs]
@@ -250,9 +249,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 userJobs: updatedUserJobs,
             }
         })
-    }
+    }, [])
 
-    const removeSpecificIndex = (index) => {
+    const removeSpecificIndex = useCallback((index) => {
         if(showModals.type === "education"){
             setUserInformationData((prevData) => ({
                 ...prevData,
@@ -290,25 +289,34 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 howManyProfessionalSkills: prevValue.howManyProfessionalSkills - 1
             }))
         }
-    }
+    }, [])
 
-    const {showNotification: successUpdate} = NotifierComponent({
-        title: "Sapo perditesuat te dhenat tuaja me sukses!",
-        theme: colorScheme
-    })
+    const successUpdate = useMemo(() => {
+        const { showNotification } = NotifierComponent({
+            title: "Sapo perditesuat te dhenat tuaja me sukses!",
+            theme: colorScheme
+        });
+        return showNotification;
+    }, [colorScheme]);
 
-    const {showNotification: unsuccessfulUpdate} = NotifierComponent({
+    const unsuccessfulUpdate = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    });
+    return showNotification;
+    }, [colorScheme]);
 
-    const {showNotification: fillFields} = NotifierComponent({
+    const fillFields = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: "Ju lutem mbushini te gjitha fushat!",
         alertType: "warning",
         theme: colorScheme
-    })
+    });
+    return showNotification;
+    }, [colorScheme]);
 
     const [showInformationStepTick, setShowInformationStepTick] = useState({
         education: false,
@@ -317,7 +325,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
         professionalSkills: false
     })
 
-    const checkIfDataValid = (type) => {
+    const checkIfDataValid = useCallback((type) => {
         if(type === "education"){
             
             if(userInformationData.userEducations.every((education) => {
@@ -374,9 +382,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 }))
             }
         }
-    }
+    }, [])
 
-    const formatDateOnlyForBackend = (date) => {
+    const formatDateOnlyForBackend = useCallback((date) => {
         if(!(date instanceof Date) || isNaN(date)){
             throw new Error("Invalid date object");
         }
@@ -384,9 +392,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
         const month = String(date.getMonth() + 1).padStart(2, "0")
         const day = String(date.getDate()).padStart(2, "0")
         return `${year}-${month}-${day}`;
-    }
+    }, [])
 
-    const updateInformations = async () => {
+    const updateInformations = useCallback(async () => {
         setUpdateDataLoading(true)
         if(userOtherData && Object.keys(userOtherData).length !== 0){            
             const birthday = userInformationData.birthDay;
@@ -400,7 +408,6 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 birthDay: formattedDate,
                 skills: JSON.stringify(userInformationData.professionalSkills)
             }
-            console.log(updatedUserInformation, " updated");
             
             const response = await updateUserOtherInformations(userOtherData?.id, updatedUserInformation);
             if(response === 200){
@@ -433,7 +440,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
             }
         }
         setUpdateDataLoading(false)
-    }
+    }, [userOtherData])
 
     // useEffect(() => {
     //     console.log(showModals.type);
@@ -442,16 +449,16 @@ const ShowOtherDetailsProfile = ({userId}) => {
     // }, [showModals.type, howManySections]);    
 
     
-    const handleChangeDate = (event, date) => {
+    const handleChangeDate = useCallback((event, date) => {
         if(date){
             setUserInformationData((prevData) => ({
                 ...prevData,
                 birthDay: date
             }))
         }
-    }
+    }, [])
 
-    const clearData = (type) => {
+    const clearData = useCallback((type) => {
         if(userOtherData && Object.keys(userOtherData).length === 0){
             setUserInformationData((prevData) => {
                 if(type === "education"){
@@ -493,20 +500,19 @@ const ShowOtherDetailsProfile = ({userId}) => {
             })
         }
         setShowModals({visibility: false, type: ""})
-    }
+    },[])
 
-    const getCommitments = async () => {
-        setCommitsDataLoading(true)
-        const response = await getUserCommits(userId);
-        console.log('asdasd');
-        
-        if(response){
-            setCommitsData(response);
-            setCommitsDataLoading(false)
-        }
-    }
-
+    
     useEffect(() => {
+        const getCommitments = async () => {
+            setCommitsDataLoading(true)
+            const response = await getUserCommits(userId);
+            
+            if(response){
+                setCommitsData(response);
+                setCommitsDataLoading(false)
+            }
+        }
       if(commitmentSection){
         getCommitments()
       }
@@ -873,29 +879,4 @@ const pickerSelectStyles = StyleSheet.create({
     },
   });
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    inner: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: 16,
-    },
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
-  
-
-export default ShowOtherDetailsProfile
+export default memo(ShowOtherDetailsProfile)

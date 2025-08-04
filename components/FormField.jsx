@@ -1,5 +1,5 @@
 import { View, Text, TextInput } from 'react-native'
-import React, {useState} from 'react'
+import React, {memo, useState} from 'react'
 import { TouchableOpacity, Image } from 'react-native'
 import { images, icons } from '../constants'
 
@@ -48,4 +48,4 @@ const FormField = ({ title, value, placeholder, handleChangeText, otherStyles, t
     )
 }
 
-export default FormField
+export default memo(FormField)

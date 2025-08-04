@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../../constants';
 import FormField from '../../../components/FormField';
@@ -35,25 +35,25 @@ const AddQuiz = () => {
     validateForm();
   }, [form]);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {
       category: form.category === '',
       quizName: form.quizName === '' || form.quizName.length < 4,
       quizDescription: form.quizDescription === '' || form.quizDescription.length < 8
     };
     setFormErrors(newErrors);
-  };
+  }, [form]);
 
-  const handleFieldChange = (field, value) => {
+  const handleFieldChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setTouchedFields(prev => ({ ...prev, [field]: true }));
-  };
+  }, []);
 
-  const handleBlur = (field) => {
+  const handleBlur = useCallback((field) => {
     setTouchedFields(prev => ({ ...prev, [field]: true }));
-  };
+  }, []);
 
-  const handleCreateSuccess = (data) => {
+  const handleCreateSuccess = useCallback((data) => {
     if (data === true) {
       setForm({
         category: '',
@@ -67,7 +67,7 @@ const AddQuiz = () => {
         quizDescription: false
       });
     }
-  };
+  }, []);
 
   const { user } = useGlobalContext();
   const userCategories = user?.data?.categories || [];

@@ -1,5 +1,5 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
+import { memo } from 'react'
 import { images } from '../constants'
 
 const DefaultHeader = ({headerTitle, topSubtitle, bottomSubtitle, showBorderBottom}) => {
@@ -20,4 +20,4 @@ const DefaultHeader = ({headerTitle, topSubtitle, bottomSubtitle, showBorderBott
   )
 }
 
-export default DefaultHeader
+export default memo(DefaultHeader)

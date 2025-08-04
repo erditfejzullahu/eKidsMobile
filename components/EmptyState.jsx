@@ -1,5 +1,5 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
+import { memo } from 'react'
 import { images } from '../constants'
 import CustomButton from './CustomButton'
 
@@ -30,4 +30,4 @@ const EmptyState = ({title, titleStyle, subtitle, subtitleStyle, buttonTitle, bu
   )
 }
 
-export default EmptyState
+export default memo(EmptyState)

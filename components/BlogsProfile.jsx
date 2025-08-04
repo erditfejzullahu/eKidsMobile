@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, Modal, FlatList, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { icons } from '../constants'
 import * as Animatable from "react-native-animatable"
 import Loading from './Loading'
@@ -16,11 +16,11 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
     const [blogsLoading, setBlogsLoading] = useState(false)
     const [blogsData, setBlogsData] = useState([])
     
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         await getBlogs();
-    }
+    }, [])
 
-    const getBlogs = async () => {
+    const getBlogs = useCallback(async () => {
         setBlogsLoading(true)
         const response = await getUserCreatedBlogsOrDiscussions("blogs", otherSection ? otherData?.userId : userData?.data?.userData?.id)
         if(response){
@@ -29,7 +29,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
             setBlogsData([])
         }
         setBlogsLoading(false)
-    }
+    }, [])
 
     useEffect(() => {
       if(openModal){
@@ -106,20 +106,4 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
   )
 }
 
-export default BlogsProfile
-
-const styles = StyleSheet.create({
-  box: {
-    ...Platform.select({
-        ios: {
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.6,
-            shadowRadius: 10,
-          },
-          android: {
-            elevation: 8,
-          },
-    })
-},
-});
+export default memo(BlogsProfile)

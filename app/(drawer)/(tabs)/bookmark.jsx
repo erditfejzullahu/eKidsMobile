@@ -1,9 +1,9 @@
-import { View, Text, ScrollView, Image, RefreshControl, StyleSheet, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, Image, RefreshControl } from 'react-native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { images, icons } from '../../../constants'
 import Loading from '../../../components/Loading'
 import useFetchFunction from '../../../hooks/useFetchFunction'
-import { deleteBookmark, deleteBookmarkById, getBookmarks } from '../../../services/fetchingService'
+import { deleteBookmarkById, getBookmarks } from '../../../services/fetchingService'
 import EmptyState from '../../../components/EmptyState'
 import { useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
@@ -21,13 +21,13 @@ const Bookmark = () => {
   const [showCourses, setShowCourses] = useState(true)
   const [bookmarkData, setBookmarkData] = useState(null)
   const {data, isLoading, refetch} = useFetchFunction(() => getBookmarks())
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true)
     setIsCourseListEmpty([])
     setIsLessonsListEmpty([])
     await refetch()
     setRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     if(data){
@@ -47,30 +47,32 @@ const Bookmark = () => {
     }
   }, [])
   
-  const filterData = () => {
+  const filterData = useCallback(() => {
     const courseData = data?.filter(item => item.course)
     const lessonData = data?.filter(item => item.lesson)
     return {courseLength: courseData.length, lessonLength: lessonData.length};
-  }
+  }, [data])
 
   const navigateCourses = () => {
     router.push('/categories')
   }
 
-  const {showNotification: bookmarkDeleted} = NotifierComponent({
+  const bookmarkDeletedField = useMemo(() => NotifierComponent({
     title: "Njoftim mbi favoritin tuaj!",
     description: "Favoriti juaj eshte fshire me sukses!",
     theme: colorScheme
-  })
+  }), [colorScheme])
+  const bookmarkDeleted = bookmarkDeletedField.showNotification;
 
-  const {showNotification: bookmarkNotDeleted} = NotifierComponent({
+  const bookmarkNotDeletedField = useMemo(() => NotifierComponent({
     title: "Njoftim mbi favoritin tuaj!",
     alertType: "warning",
     description: "Problem ne fshirjen e favoritit tuaj! Provoni perseri!",
     theme: colorScheme
-  })
+  }), [colorScheme])
+  const bookmarkNotDeleted = bookmarkNotDeletedField.showNotification
 
-  const delBookmark = async (id) => {
+  const delBookmark = useCallback(async (id) => {
     try {
       const response = await deleteBookmarkById(id);
       if(response === 200){
@@ -82,18 +84,19 @@ const Bookmark = () => {
     } catch (error) {
       console.error(error);
     }
-  }
+  }, [])
+
   const [isCourseListEmpty, setIsCourseListEmpty] = useState([])
   const [isLessonsListEmpty, setIsLessonsListEmpty] = useState([])
-  const proceedLearning = (item, type) => {
+
+  const proceedLearning = useCallback((item, type) => {
     // console.log(item.courseId);
     if(type === 'course'){
       router.push(`/categories/course/${item?.courseId}`)
     }else if (type === 'lession'){      
       router.push(`/categories/course/lesson/${item?.lessonId}`)
     }
-    
-  }
+  }, [router])
 
   if(refreshing || isLoading){
     return (
@@ -292,19 +295,5 @@ const Bookmark = () => {
     )
   }
 }
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+
 export default Bookmark

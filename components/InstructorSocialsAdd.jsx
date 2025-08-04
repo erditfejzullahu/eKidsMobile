@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { icons } from '../constants'
 import FormField from './FormField'
 import { currentUserID, logout } from '../services/authService'
@@ -8,6 +8,40 @@ import NotifierComponent from './NotifierComponent'
 import CustomButton from './CustomButton'
 import { useColorScheme } from 'nativewind'
 
+const isValidUrl = (url) => {
+    const pattern = new RegExp(
+      "^(https?:\\/\\/)?" +                             // optional protocol
+      "((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+" + // domain name
+      "[a-zA-Z]{2,}|" +                                  // domain extension
+      "((\\d{1,3}\\.){3}\\d{1,3}))" +                    // OR IP address
+      "(\\:\\d+)?(\\/[-a-zA-Z\\d%@_.~+&:]*)*" +          // optional port and path
+      "(\\?[;&a-zA-Z\\d%@_.,~+&:=-]*)?" +                // optional query
+      "(\\#[-a-zA-Z\\d_]*)?$",                          // optional fragment
+      "i"
+    );
+    return pattern.test(url);
+  };
+
+  const getSocialIcon = (link) => {
+      if (!link) return {icon: icons.info, label: "Other"};
+    
+      const lowercase = link.toLowerCase();
+    
+      if (lowercase.includes("github")) return {icon: icons.githubIcon, label: "Github"};                           // GitHub
+      if (lowercase.includes("meta") || lowercase.includes("facebook")) return {icon: icons.metaIcon, label: "Facebook"}; // Facebook
+      if (lowercase.includes("insta") || lowercase.includes("instagram")) return {icon: icons.instagramIcon, label: "Instagram"}; // Instagram
+      if (lowercase.includes("twitter") || lowercase.includes("x.com")) return {icon: icons.twitterIcon, label: "Twitter"};  // Twitter/X
+      if (lowercase.includes("linkedin")) return {icon: icons.linkedinIcon, label: "Linkedin"};                      // LinkedIn
+      if (lowercase.includes("tiktok")) return {icon: icons.tiktokIcon, label: "Tiktok"};                          // TikTok
+      if (lowercase.includes("youtube") || lowercase.includes("youtu.be")) return {icon: icons.youtubeIcon, label: "Youtube"}; // YouTube
+      if (lowercase.includes("reddit")) return {icon: icons.redditIcon, label: "Reddit"};                          // Reddit
+      if (lowercase.includes("snapchat")) return {icon: icons.snapchatIcon, label: "Snapchat"};                      // Snapchat
+      if (lowercase.includes("discord")) return {icon: icons.discordIcon, label: "Discord"};                        // Discord
+      if (lowercase.includes("t.me") || lowercase.includes("telegram")) return {icon: icons.telegramIcon, label: "Telegram"}; // Telegram
+    
+      return {icon: icons.info, label: "Other"}; // Fallback icon if no match found
+    };
+
 const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
     const {colorScheme} = useColorScheme();
     const [socialsData, setSocialsData] = useState([{}])
@@ -15,41 +49,9 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
     const [isLoading, setIsLoading] = useState(false)
     
 
-    const isValidUrl = (url) => {
-        const pattern = new RegExp(
-          "^(https?:\\/\\/)?" +                             // optional protocol
-          "((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+" + // domain name
-          "[a-zA-Z]{2,}|" +                                  // domain extension
-          "((\\d{1,3}\\.){3}\\d{1,3}))" +                    // OR IP address
-          "(\\:\\d+)?(\\/[-a-zA-Z\\d%@_.~+&:]*)*" +          // optional port and path
-          "(\\?[;&a-zA-Z\\d%@_.,~+&:=-]*)?" +                // optional query
-          "(\\#[-a-zA-Z\\d_]*)?$",                          // optional fragment
-          "i"
-        );
-        return pattern.test(url);
-      };
 
-    const getSocialIcon = (link) => {
-        if (!link) return {icon: icons.info, label: "Other"};
       
-        const lowercase = link.toLowerCase();
-      
-        if (lowercase.includes("github")) return {icon: icons.githubIcon, label: "Github"};                           // GitHub
-        if (lowercase.includes("meta") || lowercase.includes("facebook")) return {icon: icons.metaIcon, label: "Facebook"}; // Facebook
-        if (lowercase.includes("insta") || lowercase.includes("instagram")) return {icon: icons.instagramIcon, label: "Instagram"}; // Instagram
-        if (lowercase.includes("twitter") || lowercase.includes("x.com")) return {icon: icons.twitterIcon, label: "Twitter"};  // Twitter/X
-        if (lowercase.includes("linkedin")) return {icon: icons.linkedinIcon, label: "Linkedin"};                      // LinkedIn
-        if (lowercase.includes("tiktok")) return {icon: icons.tiktokIcon, label: "Tiktok"};                          // TikTok
-        if (lowercase.includes("youtube") || lowercase.includes("youtu.be")) return {icon: icons.youtubeIcon, label: "Youtube"}; // YouTube
-        if (lowercase.includes("reddit")) return {icon: icons.redditIcon, label: "Reddit"};                          // Reddit
-        if (lowercase.includes("snapchat")) return {icon: icons.snapchatIcon, label: "Snapchat"};                      // Snapchat
-        if (lowercase.includes("discord")) return {icon: icons.discordIcon, label: "Discord"};                        // Discord
-        if (lowercase.includes("t.me") || lowercase.includes("telegram")) return {icon: icons.telegramIcon, label: "Telegram"}; // Telegram
-      
-        return {icon: icons.info, label: "Other"}; // Fallback icon if no match found
-      };
-      
-    const updateSocialsData = (idx, link) => {
+    const updateSocialsData = useCallback((idx, link) => {
         const isValid = isValidUrl(link);
         const icon = isValid ? getSocialIcon(link) : icons.info;
         setSocialsData(prev => {
@@ -63,33 +65,41 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
             newErrors[idx] = isValid ? null : "Linku nuk është valid!";
             return newErrors;
           });
-    }
+    }, [])
 
-    const removeSocial = (idx) => {
+    const removeSocial = useCallback((idx) => {
         setSocialsData((prevData) => {
             return prevData.filter((_, index) => index !== idx)
         })
-    }
+    }, [])
 
-    const {showNotification: success} = NotifierComponent({
+    const success = useMemo(() => {
+    return NotifierComponent({
         title: "Sukses!",
         description: "Ne vazhdim do behen disa kontrollime. Deri atehere mund te veproni ne fushen tuaj perkatese. Kycuni perseri per te vazhduar me tutje!",
         theme: colorScheme
-    })
-    const {showNotification: unsuccess} = NotifierComponent({
+    }).showNotification;
+    }, [colorScheme]);
+
+    const unsuccess = useMemo(() => {
+    return NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
-    const {showNotification: fillfields} = NotifierComponent({
+    }).showNotification;
+    }, [colorScheme]);
+
+    const fillfields = useMemo(() => {
+    return NotifierComponent({
         title: "Gabim",
         description: "Ju lutem mbushini te gjitha fushat e kerkuara.",
         alertType: "warning",
         theme: colorScheme
-    })
+    }).showNotification;
+    }, [colorScheme]);
 
-    const submit = async () => {
+    const submit = useCallback(async () => {
         if(expertise === "" || bio === "" || socialsError.some((item => item !== null))){
             
             fillfields()
@@ -112,7 +122,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
             unsuccess()
         }
         setIsLoading(false)
-    }
+    }, [])
 
     useEffect(() => {
       if(isRefreshing){
@@ -183,4 +193,4 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
   )
 }
 
-export default InstructorSocialsAdd
+export default memo(InstructorSocialsAdd)

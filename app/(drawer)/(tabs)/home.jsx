@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, FlatList, Image, RefreshControl, ActivityIndicator, StyleSheet, Platform } from 'react-native'
-import React, {useState, useEffect, useCallback, useRef} from 'react'
+import { View, Text, FlatList, Image, RefreshControl, ActivityIndicator} from 'react-native'
+import {useState, useEffect, useCallback, useRef} from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
-import { images, icons } from '../../../constants'
+import { images } from '../../../constants'
 import SearchInput from '../../../components/SearchInput'
 import { StatusBar } from 'expo-status-bar'
 import Courses from '../../../components/Courses'
@@ -10,18 +10,19 @@ import Sliders from '../../../components/Sliders'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { fetchCourses } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
-import CustomButton from '../../../components/CustomButton'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const Home = () => {  
   const {colorScheme} = useColorScheme();
   const [refreshing, setRefreshing] = useState(false)
 
   const { user, isLoading: userDataLoading } = useGlobalContext()
+  const {shadowStyle} = useShadowStyles();
+
   const [currentPage, setCurrentPage] = useState(1)
   const [allCourses, setAllCourses] = useState([])
   const [showLoadMore, setShowLoadMore] = useState(false)
@@ -39,7 +40,7 @@ const Home = () => {
 
   const [loadedFirst, setLoadedFirst] = useState(false)
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true)
     setCurrentPage(1);
     setLoadedFirst(false)
@@ -61,7 +62,7 @@ const Home = () => {
 
     await refetch();
     setRefreshing(false)
-  }
+  }, [])
 
   const loadMoreCourses = useCallback(() => {
     if(!allCourses.hasMore || showLoadMore) return;
@@ -72,7 +73,7 @@ const Home = () => {
       }))
   }, [allCourses.courses, showLoadMore])
 
-  const updateFilterData = (data) => {
+  const updateFilterData = useCallback((data) => {
     setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
@@ -84,15 +85,15 @@ const Home = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  }, [])
 
-  const searchFunction = (data) => {
+  const searchFunction = useCallback((data) => {
     setLoadedFirst(false)
     setFilterData((prevData) => ({
       ...prevData,
       searchParam: data
     }))
-  }
+  }, [])
   
   useEffect(() => {
     refetch();    
@@ -201,7 +202,7 @@ const Home = () => {
             </View>
           )}
           ListEmptyComponent={() => (
-            <View className="bg-oBlack-light dark:bg-oBlack mx-4 py-2 pt-4 border border-gray-200 dark:border-black-200 mb-4" style={colorScheme === 'dark' ? styles.darkBox : styles.lightBox}>
+            <View className="bg-oBlack-light dark:bg-oBlack mx-4 py-2 pt-4 border border-gray-200 dark:border-black-200 mb-4" style={shadowStyle}>
               <EmptyState 
                 title={"Nuk është gjetur ndonjë përmbajtje"}
                 subtitle={"Ju lutem kontaktoni Seksionin e Ndihmës apo bëni kërkesën e krijimit të një materiali të ri mësimor të specifikuar!"}
@@ -235,32 +236,3 @@ const Home = () => {
 }
 
 export default Home
-
-const styles = StyleSheet.create({
-    lightBox: {
-        ...Platform.select({
-            ios: {
-                shadowColor: "#b8e1ff",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-    darkBox: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-})

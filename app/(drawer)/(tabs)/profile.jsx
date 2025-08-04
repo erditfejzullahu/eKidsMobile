@@ -1,18 +1,16 @@
-import { View, Text, Image, Alert, StyleSheet, RefreshControl, ActivityIndicator, Platform, Touchable } from 'react-native'
-import React, {useState, useEffect} from 'react'
+import { View, Text, Image, RefreshControl, Platform } from 'react-native'
+import {useState, useEffect, useMemo, useCallback} from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import { images, icons } from '../../../constants'
 import { getCompletedQuizzesByUser, getCourseCategories, GetInstructorsUserProfileProgresses, getMetaValue, updateProfilePicture, updateUserDetails } from '../../../services/fetchingService'
 import { TouchableOpacity } from 'react-native'
 import FormField from '../../../components/FormField'
-import { ScrollView } from 'react-native'
 import CustomButton from '../../../components/CustomButton'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Loading from '../../../components/Loading'
 import { userDetails } from '../../../services/necessaryDetails'
 import UserProgressComponent from '../../../components/UserProgressComponent'
 import NotifierComponent from '../../../components/NotifierComponent'
-import { currentUserID } from '../../../services/authService'
 import * as ImagePicker from 'expo-image-picker';
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getCompletedLessons } from '../../../services/fetchingService'
@@ -32,12 +30,19 @@ import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
 import * as Linking from "expo-linking"
 
+const bounceDownAnimation = {
+  0: { transform: [{ translateY: 0 }] },
+  0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
+  1: { transform: [{ translateY: 0 }] }, // Back to original position
+};
+  
+
 const Profile = () => {
   const {colorScheme} = useColorScheme();
   const {shadowStyle} = useShadowStyles();
   const {role} = useRole()
   if(role === "Instructor") return <Redirect href={'/instructor/instructorProfile'}/>
-const router = useRouter();
+  const router = useRouter();
   const { user, isLoading, setUser } = useGlobalContext();
   // console.log(isLoading, 'loading');
   const userData = user?.data?.userData;
@@ -53,11 +58,6 @@ const router = useRouter();
     }
   }, [data])
 
-  const bounceDownAnimation = {
-    0: { transform: [{ translateY: 0 }] },
-    0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
-    1: { transform: [{ translateY: 0 }] }, // Back to original position
-  };
   
   const [showDetails, setShowDetails] = useState(true)
   const [changePassword, setChangePassword] = useState(false)
@@ -78,7 +78,7 @@ const router = useRouter();
 
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(personalInformations),
-    defaultValues: {
+    defaultValues: useMemo(() => ({
       name: "",
       lastname: "",
       password: "",
@@ -87,7 +87,7 @@ const router = useRouter();
       email: "",
       phone: "",
       age: 13
-    },
+    }), []),
     mode: "onTouched"
   })
 
@@ -108,7 +108,7 @@ const router = useRouter();
   }, [userData, reset])
   
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true)
     try {
       const updatedUser = await userDetails(); // Fetch updated user data
@@ -120,7 +120,7 @@ const router = useRouter();
     } finally {
       setRefreshing(false);
     }
-  }
+  }, [])
 
   useEffect(() => {
     if(completedQuizzes){
@@ -134,45 +134,64 @@ const router = useRouter();
   
 
   const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
-  const showOnlineCoursesProgresses = async () => {
-    setOnlineCoursesLoading(true)
-    
-    const response = await GetInstructorsUserProfileProgresses(userData?.id)
-    
-    setOnlineCoursesData(response)
-    setOnlineCoursesLoading(false)
-  }
 
+  
   useEffect(() => {
+    const showOnlineCoursesProgresses = async () => {
+      setOnlineCoursesLoading(true)
+      
+      const response = await GetInstructorsUserProfileProgresses(userData?.id)
+      
+      setOnlineCoursesData(response)
+      setOnlineCoursesLoading(false)
+    }
+
     if(showOnlineCoursesProgress){
       showOnlineCoursesProgresses()
     }
   }, [showOnlineCoursesProgress])
 
-  const togglePassword = () => {
+  const togglePassword = useCallback(() => {
     setChangePassword(!changePassword)
-  }
+  }, [changePassword])
 
-  const {showNotification: updateSuccessful} = NotifierComponent({
-    title: "Te dhenat u perditesuan me sukses!"
-  })
+  const updateSuccessful = useMemo(() => {
+    const { showNotification } = NotifierComponent({
+      title: "Te dhenat u perditesuan me sukses!",
+      theme: colorScheme,
+    });
+    return showNotification;
+  }, [colorScheme]);
 
-  const {showNotification: updateFailed} = NotifierComponent({
-    tite: "Dicka shkoi gabim!",
-    description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-    alertType: "warning",
-    theme: colorScheme
-  })
+  const updateFailed = useMemo(() => {
+    const { showNotification } = NotifierComponent({
+      title: "Dicka shkoi gabim!",  // Fixed typo: was 'tite'
+      description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+      alertType: "warning",
+      theme: colorScheme
+    });
+    return showNotification;
+  }, [colorScheme]);
 
-  const {showNotification: profileUpdateSuccess} = NotifierComponent({
-    title: "Fotoja juaj e profilit u perditesua me sukses!",
-    theme: colorScheme
-  }) 
+  const profileUpdateSuccess = useMemo(() => {
+    const { showNotification } = NotifierComponent({
+      title: "Fotoja juaj e profilit u perditesua me sukses!",
+      theme: colorScheme
+    });
+    return showNotification;
+  }, [colorScheme]);
+
+  const profilePicIsUploading = useMemo(() => {
+    const { showNotification } = NotifierComponent({
+      title: "Fotoja e profilit eshte duke u perditesuar...",
+      theme: colorScheme
+    });
+    return showNotification;
+  }, [colorScheme]);
 
 
 
-
-  const updateDetails = async (data) => {
+  const updateDetails = useCallback(async (data) => {
     const age = parseInt(data.age);
     
     const response = await updateUserDetails({
@@ -192,22 +211,25 @@ const router = useRouter();
     }else{
       updateFailed();
     }
-  }
+  }, [])
 
   const [image, setImage] = useState({
     type: '',
     base64: '',
   });
 
-  const {showNotification: permissionNotification} = NotifierComponent({
-    title: "Nevojitet leje!",
-    description: "Klikoni per te shtuar lejet e posacshme",
-    alertType: "warning",
-    onPressFunc: () => Linking.openSettings(),
-    theme: colorScheme
-  })
+  const permissionNotification = useMemo(() => {
+    const {showNotification} = NotifierComponent({
+      title: "Nevojitet leje!",
+      description: "Klikoni per te shtuar lejet e posacshme",
+      alertType: "warning",
+      onPressFunc: () => Linking.openSettings(),
+      theme: colorScheme
+    })
+    return showNotification;
+  }, [colorScheme])
 
-  const profileImage = async () => {
+  const profileImage = useCallback(async () => {
     
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if(!permissionResult){
@@ -234,7 +256,7 @@ const router = useRouter();
       // changeProfilePicture(image);
     }
     
-  }
+  }, [])
 
   useEffect(() => {
     if(image.type && image.base64){
@@ -243,8 +265,9 @@ const router = useRouter();
   }, [image])
   
 
-  const changeProfilePicture = async (base64Data) => {
+  const changeProfilePicture = useCallback(async (base64Data) => {
     // console.log(base64Data);
+    profilePicIsUploading()
     const formattedBase64 = `${base64Data.type}${base64Data.base64}`;
     // console.log(formattedBase64);
     
@@ -257,9 +280,11 @@ const router = useRouter();
         updateFailed()
       }
     } catch (error) {
-      console.error(error, '????');
+      updateFailed()
+    } finally {
+      setImage({type: "", base64: ""})
     }
-  }
+  }, [])
   
   if(refreshing || isLoading){
     return(
@@ -832,29 +857,5 @@ const router = useRouter();
     )
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  box: {
-    ...Platform.select({
-        ios: {
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.6,
-            shadowRadius: 10,
-          },
-          android: {
-            elevation: 8,
-          },
-    })
-},
-});
-
 
 export default Profile

@@ -1,5 +1,5 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import { View, Text,  TouchableOpacity } from 'react-native'
+import  {memo, useCallback, useEffect, useState} from 'react'
 import { userActualProgresses } from '../services/fetchingService'
 import Loading from './Loading'
 import useFetchFunction from '../hooks/useFetchFunction'
@@ -34,7 +34,7 @@ const UserProgressComponent = ({userDataId}) => {
     }, [data])
 
 
-    const toggleProgress = (id) => {
+    const toggleProgress = useCallback((id) => {
         setCourseToggled((prev) => {
             if(prev.includes(id)){
                 return prev.filter(progressId => progressId !== id);
@@ -42,9 +42,9 @@ const UserProgressComponent = ({userDataId}) => {
                 return [...prev, id]
             }
         })
-    }
+    }, [])
 
-    const calculateProgress = (lessonDetails) => {
+    const calculateProgress = useCallback((lessonDetails) => {
         if (!lessonDetails || lessonDetails.length === 0) return 0;
     
         const completedLessons = lessonDetails.filter(
@@ -52,12 +52,12 @@ const UserProgressComponent = ({userDataId}) => {
         ).length;
         
         return completedLessons / lessonDetails.length;
-      };
+      }, []);
 
-    const navigateToLesson = (lessonItem) => {
+    const navigateToLesson = useCallback((lessonItem) => {
         // console.log(lessonItem);
         router.push(`/categories/course/lesson/${lessonItem?.lessonId}`)
-    }
+    }, [router])
 
     if (refreshing || isLoading) {
         return (
@@ -165,19 +165,5 @@ const UserProgressComponent = ({userDataId}) => {
         )
     }
 }
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-  })
-export default UserProgressComponent
+
+export default memo(UserProgressComponent)

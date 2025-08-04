@@ -1,7 +1,7 @@
-import { View, Text, TextInput } from 'react-native'
-import React, {useState} from 'react'
+import { View, TextInput } from 'react-native'
+import {memo, useCallback, useState} from 'react'
 import { TouchableOpacity, Image } from 'react-native'
-import { images, icons } from '../constants'
+import { icons } from '../constants'
 import { useColorScheme } from 'nativewind'
 
 const SearchInput = ({ title, placeholder, otherStyles, searchFunc, valueData, ...props }) => {
@@ -10,9 +10,9 @@ const SearchInput = ({ title, placeholder, otherStyles, searchFunc, valueData, .
       data: ''
     })
 
-    const sendSearchData = () => {
+    const sendSearchData = useCallback(() => {
       searchFunc(searchData.data);
-    }
+    }, [searchData.data])
     return (
             <View className="border-2 border-gray-200 dark:border-black-200 w-full h-16 px-4 bg-oBlack-light dark:bg-black-100 rounded-2xl focus:border-secondary items-center flex-row">
                 <TextInput
@@ -39,4 +39,4 @@ const SearchInput = ({ title, placeholder, otherStyles, searchFunc, valueData, .
     )
 }
 
-export default SearchInput
+export default memo(SearchInput)

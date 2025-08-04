@@ -1,5 +1,5 @@
 import { View, Text, Image, Dimensions, StyleSheet, Platform } from 'react-native'
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import { images, icons } from '../constants'
 import * as Animatable from 'react-native-animatable'
 import { TouchableOpacity } from 'react-native'
@@ -11,9 +11,9 @@ const AllCategories = ({userCategories: {CategoryID, categoryName, categoryConte
     const {shadowStyle} = useShadowStyles();
     const router = useRouter();
     const animationType = CategoryID % 2 === 0 ? 'slideInLeft' : 'slideInRight'
-    const enrollCourses = () => {
+    const enrollCourses = useCallback(() => {
       router.push(`/categories/${CategoryID}`)
-    }
+    }, [router])
   return (
     <View className="w-full px-4">
         <TouchableOpacity
@@ -67,4 +67,4 @@ const AllCategories = ({userCategories: {CategoryID, categoryName, categoryConte
   
 }
 
-export default AllCategories
+export default memo(AllCategories)

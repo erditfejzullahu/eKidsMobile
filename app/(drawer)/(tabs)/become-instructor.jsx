@@ -1,9 +1,7 @@
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Platform, RefreshControl } from 'react-native'
+import { useEffect, useState } from 'react'
 import DefaultHeader from "../../../components/DefaultHeader"
 import FormField from '../../../components/FormField'
-import { icons } from '../../../constants'
-import CustomButton from '../../../components/CustomButton'
 import InstructorSocialsAdd from '../../../components/InstructorSocialsAdd'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Loading from '../../../components/Loading'
@@ -23,7 +21,6 @@ const BecomeInstructor = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
 
     useEffect(() => {
-        
         if(hasInteractedExpertise && expertise === ""){
             setExpertiseError(true)
         }

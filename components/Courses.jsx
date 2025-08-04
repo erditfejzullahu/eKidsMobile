@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { memo } from 'react'
 import { images } from '../constants'
 import { useGlobalContext } from '../context/GlobalProvider'
 import { getCourseCategories } from '../services/fetchingService'
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
         })
     },
 })
-export default Courses
+export default memo(Courses)

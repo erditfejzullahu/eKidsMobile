@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, Modal, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { icons } from '../constants'
 import * as Animatable from "react-native-animatable"
 import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
@@ -17,7 +17,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
     const [discussionsLoading, setDiscussionsLoading] = useState(false)
     const [discussionsData, setDiscussionsData] = useState([])
     
-    const getDiscussions = async () => {
+    const getDiscussions = useCallback(async () => {
         setDiscussionsLoading(true)
         const response = await getUserCreatedBlogsOrDiscussions("discussions", userData?.data?.userData?.id || userData?.userId)
         
@@ -27,7 +27,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
             setDiscussionsData([])
         }
         setDiscussionsLoading(false)
-    }
+    }, [])
 
     useEffect(() => {
       if(openModal){
@@ -105,21 +105,4 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
   )
 }
 
-export default DiscussionsProfile
-
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+export default memo(DiscussionsProfile)

@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { getAccessToken, getRefreshToken, removeTokens } from './secureStorage'
-import { currentUserID, logout, refresh } from './authService';
-import { Alert } from 'react-native';
+import { getAccessToken, getRefreshToken } from './secureStorage'
+import {  logout, refresh } from './authService';
 import NotifierComponent from '../components/NotifierComponent';
 
 const API_URL = 'https://dove-well-officially.ngrok-free.app'
