@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Image, Alert, StyleSheet, RefreshControl } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {images} from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
@@ -18,10 +18,8 @@ import Loading from '../../components/Loading'
 import { useNavigation } from 'expo-router'
 import { CommonActions } from '@react-navigation/native'
 import { useColorScheme } from 'nativewind'
-const SignIn = () => {
-  const {colorScheme} = useColorScheme();
-  const navigation = useNavigation();
-  const styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -30,7 +28,12 @@ const SignIn = () => {
       justifyContent: 'center',
       padding: 16,
     },
-  });
+});
+
+const SignIn = () => {
+  const {colorScheme} = useColorScheme();
+  const navigation = useNavigation();
+  
 
   const { setUser, setIsLoggedIn, isLoggedIn } = useGlobalContext();
   const {role, isLoading, refreshRole} = useRole();
@@ -44,28 +47,31 @@ const SignIn = () => {
     }, 1000);
   }
 
-  const {showNotification} = NotifierComponent({
+  const successNotifier = useMemo(() => NotifierComponent({
     title: "Sapo u identifikuat me sukses",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: error} = NotifierComponent({
+  const showNotification = successNotifier.showNotification;
+
+  const errorNotifier = useMemo(() => NotifierComponent({
     alertType: "warning",
     title: "Gabim",
     description: "Dicka shkoi gabim, ju lutem provoni perseri!",
     theme: colorScheme
-  })
+  }))
+  const error = errorNotifier.showNotification;
 
   const {control, reset, formState: {errors, isSubmitting}, handleSubmit} = useForm({
     resolver: zodResolver(loginUserSchema),
-    defaultValues: {
+    defaultValues: useMemo(() => ({
       email: "",
       password: ""
-    },
+    }), []),
     mode: "onTouched"
   })
 
-  const submit = async (data) => {
+  const submit = useCallback(async (data) => {
       try {        
         const response = await login(data.email, data.password)
         if(response){
@@ -81,7 +87,7 @@ const SignIn = () => {
         console.error(errorr);
         error();
       }
-  }
+  }, [role])
 
   useEffect(() => {
     if(isLoggedIn){
@@ -95,7 +101,7 @@ const SignIn = () => {
         }))
       }
     }
-  }, [role, isLoggedIn])
+  }, [role, isLoggedIn, navigation])
   
 if(isRefreshing) return <Loading />
   return (

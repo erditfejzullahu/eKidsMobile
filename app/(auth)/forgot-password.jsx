@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, Image, ScrollView, RefreshControl, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import Loading from '../../components/Loading'
@@ -17,35 +17,41 @@ const ForgotPassword = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false)
 
-    const onRefresh = () => {
+    const onRefresh = useCallback(() => {
         setIsRefreshing(true)
         setEmail("")
         setTimeout(() => {
             setIsRefreshing(false)
         }, 1000);
-    }
+    }, [])
 
-    const {showNotification: success} = NotifierComponent({
+
+    const successNotifier = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: "Emaili shkoi me sukses ne adresen elektronike te paraqitur ne forme",
         theme: colorScheme
-    })
+    }))
 
-    const {showNotification: error} = NotifierComponent({
+    const success = successNotifier.showNotification
+
+    const errorNotifier = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim, ju lutem provoni perseri!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: emptyField} = NotifierComponent({
+    const error = errorNotifier.showNotification
+
+    const emptyFieldNotifier = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Emaili është i detyrueshëm",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
+    const emptyField = emptyFieldNotifier.showNotification
 
-    const submit = async () => {
+    const submit = useCallback(async () => {
         if(email.trim() === "" || email === null){
             emptyField()
             return;
@@ -62,7 +68,7 @@ const ForgotPassword = () => {
             setEmail("")
             error();
         }
-    }
+    }, [router])
 
     if(isRefreshing) return <Loading />
 
@@ -109,4 +115,4 @@ const ForgotPassword = () => {
   )
 }
 
-export default ForgotPassword
+export default memo(ForgotPassword)

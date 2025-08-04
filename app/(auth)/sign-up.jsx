@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, StyleSheet, Alert, RefreshControl } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
@@ -27,7 +27,7 @@ const SignUp = () => {
   
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(registerUserSchema),
-    defaultValues: {
+    defaultValues: useMemo(() => ({
       email: "",
       username: "",
       firstname: "",
@@ -35,32 +35,34 @@ const SignUp = () => {
       password: "",
       age: 13,
       role: "student"
-    },
+    }), []),
     mode: "onTouched"
   })
-  
-  const {showNotification: errorr} = NotifierComponent({
+
+  const errorNotifier = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Dicka shkoi gabim, ju lutem provoni perseri",
     alertType: "warning",
     theme: colorScheme
-  })
-  
-  const {showNotification: success} = NotifierComponent({
+  }), [colorScheme])
+  const errorr = errorNotifier.showNotification
+
+  const successNotifier = useMemo(() => NotifierComponent({
     title: "Sukses",
     description: "Sapo, u regjistruat me sukses, tani do te ridrejtoheni!",
     theme: colorScheme
-  })
+  }), [colorScheme])
+  const success = successNotifier.showNotification;
   
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setIsRefreshing(true)
     reset();
     setTimeout(() => {
       setIsRefreshing(false)
     }, 1000);
-  }
+  },[])
 
-  const submit = async (data) => {
+  const submit = useCallback(async (data) => {
     try {
       const response = await register(data)
       if(response.data === "me kqyr responsin"){
@@ -85,7 +87,8 @@ const SignUp = () => {
       console.error(error)
       errorr();
     }
-  }
+  }, [router])
+  
 if(isRefreshing) return <Loading />
   return (
     <SafeAreaView className="bg-primary-light dark:bg-primary h-full">
