@@ -1,9 +1,8 @@
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Image, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, ActivityIndicator, Image, RefreshControl } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import DefaultHeader from "../../../../components/DefaultHeader"
 import EmptyState from "../../../../components/EmptyState"
-import { Platform } from 'react-native'
 import SorterComponent from "../../../../components/SorterComponent"
 import { useGlobalContext } from '../../../../context/GlobalProvider'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
@@ -28,36 +27,36 @@ const TutorCourses = () => {
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [loadingMore, setLoadingMore] = useState(false)
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         setFilterData({...initialFilterData})
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if(!coursesData?.hasMore || loadingMore) return;
         setLoadingMore(true)
         setFilterData((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [setLoadingMore, setFilterData, coursesData?.hasMore, loadingMore])
 
-    const handleSorter = async (data) => {
-        setLoadedFirst(false)
-        setFilterData((prev) => ({
-          ...prev,
-          sortByName: data.emri != null && "Name",
-          sortNameOrder: data.emri,
-          sortByDate: data.data != null && "CreatedAt",
-          sortDateOrder: data.data,
-          sortByViews: data.shikime != null && "ViewCount",
-          sortViewOrder: data.shikime,
-          pageSize: data.pageSize,
-        }))
-      }
+    const handleSorter = useCallback(async (data) => {
+      setLoadedFirst(false)
+      setFilterData((prev) => ({
+        ...prev,
+        sortByName: data.emri != null && "Name",
+        sortNameOrder: data.emri,
+        sortByDate: data.data != null && "CreatedAt",
+        sortDateOrder: data.data,
+        sortByViews: data.shikime != null && "ViewCount",
+        sortViewOrder: data.shikime,
+        pageSize: data.pageSize,
+      }))
+    }, [setLoadedFirst, setFilterData])
 
     useEffect(() => {
       refetch()
@@ -157,19 +156,3 @@ if((isLoading || courseLoading) && !loadedFirst) return <Loading />
 }
 
 export default TutorCourses
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { icons } from '../constants'
 import { useRole } from '../navigation/RoleProvider'
 import * as ImagePicker from "expo-image-picker"
@@ -18,15 +18,15 @@ const INProfileFirstSection = ({data}) => {
         file: null
     })
 
-    const {showNotification: permissionNotification} = NotifierComponent({
-            title: "Nevojitet leje!",
-            description: "Klikoni per te shtuar lejet e posacshme",
-            alertType: "warning",
-            onPressFunc: () => Linking.openSettings(),
-            theme: colorScheme
-        })
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
+      title: "Nevojitet leje!",
+      description: "Klikoni per te shtuar lejet e posacshme",
+      alertType: "warning",
+      onPressFunc: () => Linking.openSettings(),
+      theme: colorScheme
+    }), [colorScheme])
 
-    const uploadPicture = async () => {
+    const uploadPicture = useCallback(async () => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
             permissionNotification()
@@ -48,21 +48,21 @@ const INProfileFirstSection = ({data}) => {
                 file: image.assets[0].uri
             }))
         }
-    }
+    }, [setImageChoosen])
 
-    const {showNotification: updateFailed} = NotifierComponent({
-        tite: "Dicka shkoi gabim!",
-        description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
-        alertType: "warning",
-        theme: colorScheme
-      })
+    const {showNotification: updateFailed} = useMemo(() => NotifierComponent({
+      tite: "Dicka shkoi gabim!",
+      description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
+      alertType: "warning",
+      theme: colorScheme
+    }), [colorScheme])
     
-      const {showNotification: profileUpdateSuccess} = NotifierComponent({
-        title: "Fotoja juaj e profilit u perditesua me sukses!",
-        theme: colorScheme
-      }) 
+    const {showNotification: profileUpdateSuccess} = useMemo(() => NotifierComponent({
+      title: "Fotoja juaj e profilit u perditesua me sukses!",
+      theme: colorScheme
+    }), [colorScheme])
 
-    const changeProfilePicture = async (base64Data) => {
+    const changeProfilePicture = useCallback(async (base64Data) => {
         const formattedBase64 = `${base64Data.type}${base64Data.base64}`
 
         try {
@@ -79,7 +79,7 @@ const INProfileFirstSection = ({data}) => {
         } catch (error) {
             
         }
-    }
+    }, [setUserData])
 
     useEffect(() => {
       if(imageChoosen.type && imageChoosen.base64){
@@ -116,4 +116,4 @@ const INProfileFirstSection = ({data}) => {
   )
 }
 
-export default INProfileFirstSection
+export default memo(INProfileFirstSection)

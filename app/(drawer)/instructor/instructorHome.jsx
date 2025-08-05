@@ -1,9 +1,9 @@
-import { View, Text, FlatList, Image, TouchableOpacity, RefreshControl, StyleSheet, Platform, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, Image, RefreshControl, ActivityIndicator } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
 import { useGlobalContext } from '../../../context/GlobalProvider'
 import Loading from '../../../components/Loading';
 import DefaultHeader from '../../../components/DefaultHeader';
-import { icons, images } from '../../../constants';
+import { images } from '../../../constants';
 import SorterComponent from '../../../components/SorterComponent';
 import OnlineClassesCard from '../../../components/OnlineClassesCard';
 import useFetchFunction from '../../../hooks/useFetchFunction';
@@ -40,15 +40,15 @@ const InstructorHome = () => {
   const userData = user?.data?.userData;
   // console.log(user);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const handleSorter = (data) => {
+  const handleSorter = useCallback((data) => {
     setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
@@ -60,7 +60,7 @@ const InstructorHome = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  }, [setLoadedFirst, setFilterData])
 
   useEffect(() => {
     refetch();
@@ -72,14 +72,14 @@ const InstructorHome = () => {
     }
   }, [coursesData])
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!coursesData.hasMore || moreLoading) return;
     setMoreLoading(true)
     setFilterData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [setMoreLoading, setFilterData, coursesData?.hasMore, moreLoading])
   
 
   useEffect(() => {
@@ -179,19 +179,3 @@ const InstructorHome = () => {
 }
 
 export default InstructorHome
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

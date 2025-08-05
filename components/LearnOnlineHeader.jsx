@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { icons, images } from '../constants'
 import Search from "./SearchInput"
 import { usePathname } from 'expo-router'
@@ -43,4 +43,4 @@ const LearnOnlineHeader = ({headerTitle, sentInput}) => {
   )
 }
 
-export default LearnOnlineHeader
+export default memo(LearnOnlineHeader)

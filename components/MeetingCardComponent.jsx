@@ -1,6 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import React, { useState } from 'react'
-import { Platform } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { icons, images } from '../constants';
 import * as Animatable from "react-native-animatable"
 import { useNavigation } from 'expo-router';
@@ -34,7 +33,7 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         }
     }
 
-    const formatDuration = () => {
+    const formatDuration = useMemo(() => {
         if(!item.durationTime){
             return "Takim pa limit kohor"
         }
@@ -52,7 +51,7 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
                 </>
             )
         }
-    }
+    }, [])
 
     const date = new Date(item.createdAt).toLocaleDateString("sq-AL", {
         day: "2-digit",
@@ -60,14 +59,14 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         year: "numeric"
     })
 
-    const {showNotification: editNotification} = NotifierComponent({
+    const {showNotification: editNotification} = useMemo(() => NotifierComponent({
         title: "Gabim!",
         description: "Per shkak qe statusi i takimit nuk eshte ne kohen e ardhshme, ky takim nuk mund te perditesohet!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const editPress = () => {
+    const editPress = useCallback(() => {
         if(item.status === "Nuk ka filluar ende"){
             navigation.navigate("addScheduleMeeting", {
                 meetingData: item,
@@ -76,11 +75,11 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         }else{
             editNotification();
         }
-    }
+    }, [navigation])
 
-    const handleCardPress = () => {
+    const handleCardPress = useCallback(() => {
         router.push(`meetings/${item.id}`)
-    }
+    }, [router])
 
   return (
     <TouchableOpacity onPress={handleCardPress} className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 relative p-2" style={shadowStyle}>
@@ -108,7 +107,7 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         {/* logic to make when it starts notification and stuff */}
         
         <Text className="absolute -bottom-2 -left-2 border border-gray-200 dark:border-black-200 bg-primary-light dark:bg-primary px-3 py-1 font-psemibold text-sm text-oBlack dark:text-white" style={shadowStyle}>{date}</Text>
-        <Text className="absolute -bottom-2 -right-2 border border-gray-200 dark:border-black-200 bg-primary-light dark:bg-primary px-3 py-1 font-psemibold text-sm text-oBlack dark:text-white" style={shadowStyle}>{formatDuration()}</Text>
+        <Text className="absolute -bottom-2 -right-2 border border-gray-200 dark:border-black-200 bg-primary-light dark:bg-primary px-3 py-1 font-psemibold text-sm text-oBlack dark:text-white" style={shadowStyle}>{formatDuration}</Text>
         <View className="h-[120px] border border-gray-200 dark:border-black-200 relative" style={shadowStyle}>
             {item.course?.image ? (
                 <Image 
@@ -201,20 +200,4 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
   )
 }
 
-export default MeetingCardComponent
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+export default memo(MeetingCardComponent)

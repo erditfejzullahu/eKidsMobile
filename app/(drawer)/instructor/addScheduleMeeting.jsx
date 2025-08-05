@@ -1,5 +1,5 @@
 import { View, Text, RefreshControl, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Platform } from 'react-native'
 import DefaultHeader from '../../../components/DefaultHeader'
@@ -75,7 +75,7 @@ const AddScheduleMeeting = () => {
   const [coursesData, setCoursesData] = useState([])
   const [lessonsData, setLessonsData] = useState([])
   
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setCourseSelected(null)
     setNonCourseChecked(false)
@@ -84,13 +84,12 @@ const AddScheduleMeeting = () => {
     reset();
     await refetch()
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const getLessonsBasedOfCourse = async () => {
+  const getLessonsBasedOfCourse = useCallback(async () => {
     const response = await InstructorLessonsBasedOfCourse(courseSelected)
-    console.log(response);
     setLessonsData(response)
-  }
+  }, [setLessonsData])
 
   useEffect(() => {
     if(courseSelected !== null){
@@ -141,41 +140,41 @@ const AddScheduleMeeting = () => {
 
   const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
     resolver: zodResolver(meetingSchema),
-    defaultValues: {
+    defaultValues: useMemo(() => ({
       title: "",
       scheduledDate: new Date(),
-    },
+    }), []),
     mode: "onTouched"
   })
 
   
 
-  const {showNotification: pickCourse} = NotifierComponent({
+  const {showNotification: pickCourse} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Zgjidhni takim pa permbajtje nese deshironi te mos selektoni kurs!",
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: pickLesson} = NotifierComponent({
+  const {showNotification: pickLesson} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Zgjidhni leksion i lire nese deshironi te mos selektoni leksion!",
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: errorMeeting} = NotifierComponent({
+  const {showNotification: errorMeeting} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Dicka shkoi gabim ne krijimin e mledhjes online. Ju lutem provoni perseri!",
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: success} = NotifierComponent({
+  const {showNotification: success} = useMemo(() => NotifierComponent({
     title: "Sukses",
     description: "Sapo krijuat takimin online me sukses. Per te shikuar informacionet e takimeve tuaja online, drejtohuni tek Profili!",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
   const onSubmit = async (data) => {
     console.log("qitu?");

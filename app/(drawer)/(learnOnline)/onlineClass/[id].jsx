@@ -1,10 +1,9 @@
-import { View, Text, ScrollView, RefreshControl, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { View, Text, ScrollView, RefreshControl, Image, TouchableOpacity } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { useLocalSearchParams } from 'expo-router'
 import Loading from '../../../../components/Loading'
 import { GetCourseById, StartOnlineCourse } from '../../../../services/fetchingService'
-import { Platform } from 'react-native'
 import { icons, images } from '../../../../constants'
 import * as Animatable from "react-native-animatable"
 import OnlineCourseSectionExpander from '../../../../components/OnlineCourseSectionExpander'
@@ -36,33 +35,33 @@ const OnlineClass = () => {
   const instructorRef = useRef(null)
   const scrollViewRef = useRef(null);
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const {showNotification: success} = NotifierComponent({
+  const {showNotification: success} = useMemo(() => NotifierComponent({
     title: "Sukses",
     description: `Sapo filluat kursin ${courseData?.courseName}. Tani do te ridrejtoheni tek leksionet vijuese`,
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: failed} = NotifierComponent({
+  const {showNotification: failed} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: becomeStudent} = NotifierComponent({
+  const {showNotification: becomeStudent} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: "Per te proceduar tek leksioni i klikuar, ju duhet te filloni kursin",
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const handleCourseStart = async () => {
+  const handleCourseStart = useCallback(async () => {
     if(courseData?.routes?.enrolled){
       router.replace(`meetings/${courseData?.routes?.routeTo?.id}`)
     }else{
@@ -82,9 +81,9 @@ const OnlineClass = () => {
         failed();
       }
     }
-  }
+  }, [router, courseData])
 
-  const handleGoToInstructor = () => {
+  const handleGoToInstructor = useCallback(() => {
     instructorRef.current?.measure((x, y, width, height, pageX, pageY) => {
       if (pageY !== undefined) {
         scrollViewRef.current?.scrollTo({ y: pageY, animated: true });
@@ -94,20 +93,18 @@ const OnlineClass = () => {
     if (!instructorMoreInformation) {
       setInstructorMoreInformation(true);
     }
-  };
+  }, [setInstructorMoreInformation, scrollViewRef, instructorRef, instructorMoreInformation]);
 
 
-  const proceedToAvailableRoute = (id) => {
+  const proceedToAvailableRoute = useCallback((id) => {
     if(courseData?.routes?.enrolled){
       router.replace(`meetings/${id}`)
     }else{
       becomeStudent()
     }
-  }
+  }, [router, courseData])
 
   useEffect(() => {
-    console.log(data);
-    
     setCourseData(data || null)
   }, [data])
 
@@ -364,19 +361,3 @@ const OnlineClass = () => {
 }
 
 export default OnlineClass
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

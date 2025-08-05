@@ -1,5 +1,5 @@
 import { View, Text, Image, FlatList, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { images } from '../../../constants'
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
 import LearnOnlineTutorCard from '../../../components/LearnOnlineTutorCard';
@@ -28,22 +28,22 @@ const AllTutors = () => {
   const [loadedFirst, setLoadedFirst] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!instructorsData?.hasMore || loadingMore) return;
     setLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [setLoadingMore, setFilterData, instructorsData?.hasMore, loadingMore])
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     console.log(data);
@@ -70,7 +70,7 @@ const AllTutors = () => {
   }, [filterData])
   
 
-  const inputData = (data) => {
+  const inputData = useCallback((data) => {
     if(data){
       setLoadedFirst(false)
       setFilterData((prev) => ({
@@ -78,9 +78,9 @@ const AllTutors = () => {
         searchInput: data
       }))
     }
-  }
+  }, [setLoadedFirst, setFilterData])
   
-  const handleSorter = (data) => {
+  const handleSorter = useCallback((data) => {
     setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
@@ -92,7 +92,7 @@ const AllTutors = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  }, [setLoadedFirst, setFilterData])
 
   useEffect(() => {
     if(instructorsData?.instructors?.length > 0){

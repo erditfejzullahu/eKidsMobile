@@ -1,9 +1,7 @@
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TouchableWithoutFeedback, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
 import DefaultHeader from '../../../components/DefaultHeader'
-import { Platform } from 'react-native'
-import { icons, images } from '../../../constants'
-import * as Animatable from "react-native-animatable"
+import { images } from '../../../constants'
 import ManageTypesDialog from '../../../components/ManageTypesDialog'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { GetInstructorManageTypeData } from '../../../services/fetchingService'
@@ -41,15 +39,15 @@ const InstructorManage = () => {
     const [loadedFirst, setLoadedFirst] = useState(false)
     const [moreLoading, setMoreLoading] = useState(false)
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         setFilterData({...initialFilterData})
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const handleSorter = (data) => {
+    const handleSorter = useCallback((data) => {
         setLoadedFirst(false)
         setFilterData((prev) => ({
         ...prev,
@@ -61,16 +59,16 @@ const InstructorManage = () => {
         sortViewOrder: data.shikime,
         pageSize: data.pageSize,
         }))
-    }
+    }, [setLoadedFirst, setFilterData])
 
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if(!manageData?.hasMore || moreLoading) return;
         setMoreLoading(true)
         setFilterData((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [setMoreLoading, setFilterData, manageData?.hasMore, moreLoading])
 
     useEffect(() => {
       if(manageData?.data?.length > 0){
@@ -182,19 +180,3 @@ const InstructorManage = () => {
 }
 
 export default InstructorManage
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });

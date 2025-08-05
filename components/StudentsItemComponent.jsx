@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { memo, useCallback } from 'react'
 import { useRouter } from 'expo-router'
 import { icons } from '../constants';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
@@ -8,7 +8,8 @@ import { useShadowStyles } from '../hooks/useShadowStyles';
 const StudentsItemComponent = ({item, currentUserData}) => {
     const {shadowStyle} = useShadowStyles();
     const router = useRouter();
-    const handleContactUser = (item) => {
+
+    const handleContactUser = useCallback((item) => {
         const otherUserData = {
             firstname: item.name.split(" ")[0],
             lastname: item.name.split(" ")[1],
@@ -16,7 +17,8 @@ const StudentsItemComponent = ({item, currentUserData}) => {
             profilePictureUrl: item.profilePictureUrl
         }
         navigateToMessenger(router, otherUserData, currentUserData.data.userData)
-    }
+    }, [router, otherUserData, currentUserData])
+
   return (
     <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-md p-4 relative" style={shadowStyle}>
         <View className="flex-row gap-2 items-center" style={shadowStyle}>
@@ -47,20 +49,4 @@ const StudentsItemComponent = ({item, currentUserData}) => {
   )
 }
 
-export default StudentsItemComponent
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(StudentsItemComponent)

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import useFetchFunction from '../../../../hooks/useFetchFunction';
 import { GetSingleInstructorDetailsFromStudentSide, getUserRelationStatus } from '../../../../services/fetchingService';
@@ -17,7 +17,6 @@ export const unstable_settings = {
 };
 const Tutor = () => {
   const {id} = useLocalSearchParams();
-  console.log(id, " IDJA");
   
   const router = useRouter();
   const {data, isLoading, refetch} = useFetchFunction(() => GetSingleInstructorDetailsFromStudentSide(id))
@@ -35,16 +34,14 @@ const Tutor = () => {
   }, [data, user, id])
   
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     await refetch();
     await relationRefetch();
     setIsRefreshing(false);
-  }
+  }, [])
 
   useEffect(() => {
-    console.log(data);
-    
     setInstructorData(data || null)
   }, [data])
 

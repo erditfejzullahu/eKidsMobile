@@ -1,15 +1,14 @@
-import { View, Text, ScrollView, Platform, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { useState } from 'react'
 import EmptyState from './EmptyState'
-import { Dimensions } from 'react-native'
 import { useRouter } from 'expo-router'
 import { icons } from '../constants'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
-const INProfileCaruselSection = ({statistics}) => {
-  console.log(statistics, ' statistikat');
-  
+const INProfileCaruselSection = ({statistics}) => {  
   const {friends, courses, meetings, students} = statistics
   const router = useRouter();
+  const {shadowStyle} = useShadowStyles();
 
   const [showSections, setShowSections] = useState(true)
   //TODO: modals for each one of them in click
@@ -17,7 +16,7 @@ const INProfileCaruselSection = ({statistics}) => {
   return (
     <>
     <TouchableOpacity 
-      className="rounded-md border border-black-200 h-10 w-10 items-center justify-center bg-primary absolute z-20 left-2 top-0" style={styles.box}
+      className="rounded-md border border-black-200 h-10 w-10 items-center justify-center bg-primary absolute z-20 left-2 top-0" style={shadowStyle}
       onPress={() => setShowSections(!showSections)}
     >
       <Image 
@@ -29,7 +28,7 @@ const INProfileCaruselSection = ({statistics}) => {
     </TouchableOpacity>
     {!showSections && <View className="h-16"></View>}
     {showSections && <ScrollView horizontal className="flex-row p-4 mt-1 relative" showsHorizontalScrollIndicator={false}>
-      <View className="flex-row gap-6 flex-1 relative pb-2 pr-4" style={styles.box}>
+      <View className="flex-row gap-6 flex-1 relative pb-2 pr-4" style={shadowStyle}>
         {students > 0 ? (
           <TouchableOpacity className="bg-oBlack w-[250px] border rounded-md border-black-200 p-2 pb-1 justify-center">
             <Text className="text-base text-center font-psemibold text-white">Studentet tuaj</Text>
@@ -115,19 +114,3 @@ const INProfileCaruselSection = ({statistics}) => {
 }
 
 export default INProfileCaruselSection
-
-const styles = StyleSheet.create({
-  box: {
-    ...Platform.select({
-        ios: {
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.6,
-            shadowRadius: 10,
-          },
-          android: {
-            elevation: 8,
-          },
-    })
-},
-});

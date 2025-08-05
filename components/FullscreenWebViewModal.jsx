@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { Image, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { icons } from '../constants';
@@ -150,4 +150,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default FullscreenWebViewModal;
+export default memo(FullscreenWebViewModal);

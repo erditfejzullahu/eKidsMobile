@@ -1,7 +1,5 @@
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
-import { Platform } from 'react-native'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import * as Animatable from "react-native-animatable"
 import Modal from "../components/Modal"
 import { acceptFriendRequest, getCourseCategories, InstructorCreatedCoursesById, makeUserFriendReq, removeFriendReq, removeFriendRequestReq, StartOnlineCourse } from '../services/fetchingService'
@@ -26,12 +24,8 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
     const [showbio, setShowbio] = useState(false)
 
     const [coursesLoading, setCoursesLoading] = useState(false)
-    const getCourses = async () => {
-        setCoursesLoading(true)
-        const response = await InstructorCreatedCoursesById(data?.instructorId);
-        setCoursesData(response);
-        setCoursesLoading(false)
-    }
+
+    
 
     const date = new Date(data?.whenBecameInstructor).toLocaleDateString("sq-AL", {
         day: "2-digit",
@@ -39,20 +33,20 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         year: "numeric"
     })
 
-    const {showNotification: success} = NotifierComponent({
+    const {showNotification: success} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: `Sapo filluat kursin e zgjedhur. Mund te drejtoheni tek kursi duke naviguar tek Profili juaj/Progresi ose tek seksioni Mesoni Online`,
         theme: colorScheme
-      })
+    }), [colorScheme])
     
-      const {showNotification: failed} = NotifierComponent({
+    const {showNotification: failed} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-      })
+    }), [colorScheme])
 
-    const handleBeStudentCourseId = async (item) => {
+    const handleBeStudentCourseId = useCallback(async (item) => {
         const userId = await currentUserID();
         const payload = {
             userId,
@@ -66,9 +60,9 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failed()
         }
-    }
+    }, [setCourseModal])
 
-    const outputRelation = () => {
+    const outputRelation = useMemo(() => {
         if(relationStatus === null){
           return 0 // Shto miqesine 0
         }else{
@@ -84,28 +78,28 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
             return 3 //shoqerohu
           }
         }
-    }
+    }, [relationStatus])
 
-    const { showNotification: successFriendReq } = NotifierComponent({
+    const { showNotification: successFriendReq } = useMemo(() => NotifierComponent({
         title: "Kerkesa shkoi me sukes!",
         description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: successFriendDeletion} = NotifierComponent({
+    const {showNotification: successFriendDeletion} = useMemo(() => NotifierComponent({
         title: "Kerkesa shkoi me sukses!",
         description: `Sapo e larguat ${data?.instructorName} nga statusi juaj miqesor me perdorues!`,
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const { showNotification: failedReq } = NotifierComponent({
+    const { showNotification: failedReq } = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const makeFriend = async () => {
+    const makeFriend = useCallback(async () => {
         
         const payload = {
             userId: userData?.data?.userData?.id,
@@ -120,27 +114,27 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failedReq()
         }
-    }
+    }, [userData, data, relationRefetch])
 
-    const acceptFriend = async () => {
+    const acceptFriend = useCallback(async () => {
         const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
         if(response === 200){
             await relationRefetch();
         }else{
             failedReq()
         }
-    }
+    }, [relationRefetch, relationStatus])
 
-    const removeOnWaitingFriend = async () => {
+    const removeOnWaitingFriend = useCallback(async () => {
         const response = await removeFriendRequestReq(data?.userId);
         if(response === 200){
             await relationRefetch();
         }else{
             failedReq();
         }
-    }
+    }, [relationRefetch, data])
 
-    const removeFriend = async () => {
+    const removeFriend = useCallback(async () => {
         const response = await removeFriendReq(data?.userId)
         if(response === 200){
             successFriendDeletion()
@@ -150,9 +144,9 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
             setRemoveFriendModal(false);
             failedReq()
         }
-    }
+    }, [data, relationRefetch, setRemoveFriendModal])
 
-    const contactInstructor = () => {
+    const contactInstructor = useCallback(() => {
         const instructorData = {
             id: data?.userId,
             firstname: data?.instructorName.split(" ")[0],
@@ -162,10 +156,16 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }
         
         navigateToMessenger(router, instructorData, userData?.data?.userData);
-    }
+    }, [router, instructorData, userData, data])
 
     useEffect(() => {
         let timeout;
+        const getCourses = async () => {
+            setCoursesLoading(true)
+            const response = await InstructorCreatedCoursesById(data?.instructorId);
+            setCoursesData(response);
+            setCoursesLoading(false)
+        }
       if(courseModal){
         getCourses()
       }else{
@@ -216,8 +216,8 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         )}
 
         <View className="max-w-[350px] flex-row flex-1 mx-auto gap-4 mt-6" style={shadowStyle}>
-            <TouchableOpacity onPress={outputRelation() === 0 ? makeFriend : outputRelation() === 1 ? acceptFriend : outputRelation() === 2 ? removeOnWaitingFriend : outputRelation() === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
-                <Text className="text-white font-psemibold text-base text-center">{outputRelation() === 0 ? "Shto miqesine" : outputRelation() === 1 ? "Shoqerohu!" : outputRelation() === 2 ? "Ne pritje" : outputRelation() === 3 ? "Largo miqesine" : "default"}</Text>
+            <TouchableOpacity onPress={outputRelation === 0 ? makeFriend : outputRelation === 1 ? acceptFriend : outputRelation === 2 ? removeOnWaitingFriend : outputRelation === 3 ? () => setRemoveFriendModal(true) : {}} className="bg-secondary py-3 w-[150px] rounded-[10px] border border-white flex-row items-center justify-center gap-2">
+                <Text className="text-white font-psemibold text-base text-center">{outputRelation === 0 ? "Shto miqesine" : outputRelation === 1 ? "Shoqerohu!" : outputRelation === 2 ? "Ne pritje" : outputRelation === 3 ? "Largo miqesine" : "default"}</Text>
                 <Image 
                 source={icons.friends}
                 className="w-6 h-6"
@@ -294,20 +294,4 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
   )
 }
 
-export default STDINProfileFirstSection
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(STDINProfileFirstSection)

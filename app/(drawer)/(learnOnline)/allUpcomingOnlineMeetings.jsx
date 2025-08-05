@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Platform } from 'react-native'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { initialFilterData } from '../../../services/filterConfig'
@@ -26,24 +26,24 @@ const AllUpcomingOnlineMeetings = () => {
     const [loadingMore, setLoadingMore] = useState(false)
     const [meetingsData, setMeetingsData] = useState(null)
 
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if(!meetingsData?.hasMore || loadingMore) return;
         setLoadingMore(true)
         setFilterData((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [setFilterData, meetingsData?.hasMore, loadingMore, setLoadingMore])
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         await refetch();
         setFilterData({...initialFilterData, userActiveMeetingSection: true})
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const inputData = (data) => {
+    const inputData = useCallback((data) => {
         if(data){
           setLoadedFirst(false)
           setFilterData((prev) => ({
@@ -51,9 +51,9 @@ const AllUpcomingOnlineMeetings = () => {
             searchInput: data
           }))
         }
-    }
+    }, [setLoadedFirst, setFilterData])
 
-    const handleSorter = (data) => {
+    const handleSorter = useCallback((data) => {
         setFilterData((prev) => ({
           ...prev,
           sortByName: data.emri != null && "Title",
@@ -64,7 +64,7 @@ const AllUpcomingOnlineMeetings = () => {
           sortViewOrder: data.shikime,
           pageSize: data.pageSize,
         }))
-    }
+    }, [setFilterData])
 
     useEffect(() => {
       if(meetingsData?.meetings?.length > 0){
@@ -73,9 +73,7 @@ const AllUpcomingOnlineMeetings = () => {
     }, [meetingsData])
     
 
-    useEffect(() => {
-        console.log(data);
-        
+    useEffect(() => {        
       if(data?.meetings?.length > 0){
         if(filterData.pageNumber > 1){
             setMeetingsData((prev) => ({
@@ -92,6 +90,7 @@ const AllUpcomingOnlineMeetings = () => {
         setMeetingsData(null)
       }
     }, [data])
+    
     if((isLoading || isRefreshing) && !loadedFirst) return <Loading />
   return (
     <View className="flex-1">

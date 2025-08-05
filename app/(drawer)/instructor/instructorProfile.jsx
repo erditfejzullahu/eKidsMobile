@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import INProfileFirstSection from '../../../components/INProfileFirstSection'
 import {useGlobalContext} from "../../../context/GlobalProvider"
 import Loading from "../../../components/Loading"
@@ -26,11 +26,11 @@ const InstructorProfile = () => {
   const [instructorProfile, setInstructorProfile] = useState(null)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     if(data){

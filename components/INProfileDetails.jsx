@@ -1,10 +1,11 @@
 import { View, Text, Image, Modal, FlatList, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { icons } from '../constants'
 import FormField from './FormField'
 import CustomButton from './CustomButton'
 import { Platform } from 'react-native'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const INProfileDetails = ({user}) => {
     // console.log(user.instructor.socials, " USERII");
@@ -15,6 +16,7 @@ const INProfileDetails = ({user}) => {
     const [socialsError, setSocialsError] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
     const [openSocialsModal, setOpenSocialsModal] = useState(false)
+    const {shadowStyle} = useShadowStyles();
     
 
     useEffect(() => {
@@ -66,7 +68,7 @@ const INProfileDetails = ({user}) => {
     </View>
 
     {showDetails ? (
-        <View className="px-4 my-4 gap-3" style={styles.box}>
+        <View className="px-4 my-4 gap-3" style={shadowStyle}>
             <View>
                 <FormField 
                     title={"Emri i plote"}
@@ -112,7 +114,7 @@ const INProfileDetails = ({user}) => {
             </View>
         </View>
     ) : (
-        <View className="px-4 my-4 gap-3" style={styles.box}>
+        <View className="px-4 my-4 gap-3" style={shadowStyle}>
             <View>
                 <FormField 
                     title={"Ekspertiza"}
@@ -200,14 +202,14 @@ const INProfileDetails = ({user}) => {
         onRequestClose={() => setOpenSocialsModal(false)}
     >
         <View className="flex-1 justify-center items-center" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
-            <View className="h-[90%] w-[90%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={styles.box}>
+            <View className="h-[90%] w-[90%] bg-oBlack rounded-[10px] border border-black-200 justify-between" style={shadowStyle}>
                 <View className="border-b border-black-200 flex-1">
                     <FlatList 
                         contentContainerStyle={{gap:24, paddingLeft: 16, paddingRight: 16}}
                         data={userSocials}
                         keyExtractor={(item) => item.Label}
                         ListHeaderComponent={() => (
-                            <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={styles.box}>
+                            <View className="mx-auto my-4 border-b border-black-200 bg-oBlack rounded-b-[10px] -mb-2" style={shadowStyle}>
                                 <Text className="text-white font-psemibold text-2xl text-center border-b border-secondary self-start">Rrjete sociale</Text>
                             </View>
                         )}
@@ -334,7 +336,7 @@ const INProfileDetails = ({user}) => {
                     />
                 </View>
                 <View className="h-[60px]">
-                    <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" onPress={() => setOpenSocialsModal(false)} style={styles.box}>
+                    <TouchableOpacity className="bg-oBlack border-t items-center justify-center flex-1 border-black-200" onPress={() => setOpenSocialsModal(false)} style={shadowStyle}>
                         <Text className="text-sm font-psemibold text-white">Largoni dritaren</Text>
                     </TouchableOpacity>
                 </View>
@@ -345,21 +347,5 @@ const INProfileDetails = ({user}) => {
   )
 }
 
-export default INProfileDetails
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+export default memo(INProfileDetails)
   

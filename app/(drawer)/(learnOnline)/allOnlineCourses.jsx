@@ -1,9 +1,8 @@
-import { View, Text, Image, FlatList, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Image, FlatList, RefreshControl, ActivityIndicator } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
 import { images } from '../../../constants'
 import SorterComponent from "../../../components/SorterComponent"
 import OnlineClassesCard from '../../../components/OnlineClassesCard';
-import { Platform } from 'react-native';
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader';
 import useFetchFunction from '../../../hooks/useFetchFunction';
 import { GetInstructorsCourses } from '../../../services/fetchingService';
@@ -30,24 +29,24 @@ const AllOnlineCourses = () => {
   const [loadedFirst, setLoadedFirst] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!coursesData?.hasMore || loadingMore) return;
     setLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [setLoadingMore, setFilterData, coursesData?.hasMore, loadingMore])
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const handleSorter = async (data) => {
+  const handleSorter = useCallback(async (data) => {
     setLoadedFirst(false)
     setFilterData((prev) => ({
       ...prev,
@@ -59,7 +58,7 @@ const AllOnlineCourses = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize
     }))
-  }
+  }, [setLoadedFirst, setFilterData])
 
   useEffect(() => {
     refetch()
@@ -71,7 +70,7 @@ const AllOnlineCourses = () => {
     }
   }, [coursesData])
   
-  const inputData = (data) => {
+  const inputData = useCallback((data) => {
     if(data){
       setLoadedFirst(false)
       setFilterData((prev) => ({
@@ -79,7 +78,7 @@ const AllOnlineCourses = () => {
         searchInput: data
       }))
     }
-  }
+  }, [setLoadedFirst, setFilterData])
 
   useEffect(() => {
     console.log(data, '  data')
@@ -162,19 +161,3 @@ const AllOnlineCourses = () => {
 }
 
 export default AllOnlineCourses
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

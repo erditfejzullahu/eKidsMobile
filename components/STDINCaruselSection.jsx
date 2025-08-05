@@ -1,19 +1,16 @@
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { Platform } from 'react-native';
+import { View, Text, ScrollView } from 'react-native'
+import { memo } from 'react'
 import OnlineClassesCard from './OnlineClassesCard';
 import EmptyState from './EmptyState';
 import MeetingCardComponent from './MeetingCardComponent';
-import { icons } from '../constants';
-import { navigateToMessenger } from '../hooks/useFetchFunction';
-import { useRouter } from 'expo-router';
+// import { useRouter } from 'expo-router';
 import StudentsItemComponent from './StudentsItemComponent';
 import { useShadowStyles } from '../hooks/useShadowStyles';
 
 const STDINCaruselSection = ({data, sectionType, userData}) => {    
   const {shadowStyle} = useShadowStyles();
   // sectionType can be "courses", "students", "onlineMeetings"
-    const router = useRouter();
+    // const router = useRouter();
     
   // Return empty view if no data
   if (!data || data?.length === 0) {
@@ -32,16 +29,16 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
     ); // or you could return <View /> or a message like <Text>No items to display</Text>
   }
 
-  const handleContactUser = (item) => {
-    console.log(item, ' itemi')
-    const otherUserData = {
-        firstname: item.name.split(" ")[0],
-        lastname: item.name.split(" ")[1],
-        username: item.username,
-        profilePictureUrl: item.profilePictureUrl
-    }
-    navigateToMessenger(router, otherUserData, userData.data.userData)
-  }
+  // const handleContactUser = (item) => {
+  //   console.log(item, ' itemi')
+  //   const otherUserData = {
+  //       firstname: item.name.split(" ")[0],
+  //       lastname: item.name.split(" ")[1],
+  //       username: item.username,
+  //       profilePictureUrl: item.profilePictureUrl
+  //   }
+  //   navigateToMessenger(router, otherUserData, userData.data.userData)
+  // }
 
   return (
     <View className="py-4">
@@ -100,20 +97,4 @@ const STDINCaruselSection = ({data, sectionType, userData}) => {
   )
 }
 
-export default STDINCaruselSection
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(STDINCaruselSection)

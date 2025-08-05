@@ -1,12 +1,10 @@
-import { View, Text, FlatList, RefreshControl, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, RefreshControl, Image, TouchableOpacity } from 'react-native'
+import  { useCallback, useEffect, useState } from 'react'
 import LearnOnlineHeader from '../../../components/LearnOnlineHeader'
-import LearnOnlineUpcomingClasses from '../../../components/LearnOnlineUpcomingClasses'
 import MeetingCardComponent from '../../../components/MeetingCardComponent'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { GetAllMeetings } from '../../../services/fetchingService'
 import Loading from '../../../components/Loading'
-import { Platform } from 'react-native'
 import EmptyState from '../../../components/EmptyState'
 import SorterComponent from '../../../components/SorterComponent'
 import { initialFilterData } from '../../../services/filterConfig'
@@ -16,6 +14,7 @@ import { useRouter } from 'expo-router'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
 import { useColorScheme } from 'nativewind'
 import { useNavigateToSupport } from '../../../hooks/goToSupportType'
+
 const AllOnlineMeetings = () => {
   const {shadowStyle} = useShadowStyles();
   const {colorScheme} = useColorScheme();
@@ -32,25 +31,24 @@ const AllOnlineMeetings = () => {
   const [loadedFirst, setLoadedFirst] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!meetingsData?.hasMore || loadingMore) return;
     setLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [setLoadingMore, setFilterData, loadingMore, meetingsData?.hasMore])
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setLoadedFirst(false)
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
-    console.log(data);
     if(data?.meetings?.length > 0){
       if(filterData.pageNumber > 1){
         setMeetingsData((prev) => ({
@@ -75,7 +73,7 @@ const AllOnlineMeetings = () => {
   }, [meetingsData])
   
 
-  const inputData = (data) => {
+  const inputData = useCallback((data) => {
     if(data){
       setLoadedFirst(false)
       setFilterData((prev) => ({
@@ -83,9 +81,9 @@ const AllOnlineMeetings = () => {
         searchInput: data
       }))
     }
-  }
+  }, [setLoadedFirst, setFilterData])
 
-  const handleSorter = (data) => {
+  const handleSorter = useCallback((data) => {
     setFilterData((prev) => ({
       ...prev,
       sortByName: data.emri != null && "Title",
@@ -96,7 +94,7 @@ const AllOnlineMeetings = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  }, [setFilterData])
 
   if((isLoading || isRefreshing) && !loadedFirst) return <Loading />
   return (
@@ -171,19 +169,3 @@ const AllOnlineMeetings = () => {
 }
 
 export default AllOnlineMeetings
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

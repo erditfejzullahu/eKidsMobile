@@ -1,6 +1,5 @@
-import { View, Text, Platform, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
-import { StyleSheet } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { memo, useCallback, useState } from 'react'
 import { icons } from '../constants'
 import { useRouter } from 'expo-router'
 import * as Animatable from "react-native-animatable"
@@ -16,9 +15,9 @@ const LearnOnlineTutorCard = ({item}) => {
         year: "numeric"
     })
 
-    const handleCardPress = () => {
+    const handleCardPress = useCallback(() => {
         router.push(`tutor/${item?.instructorId}`)
-    }
+    }, [router])
   return (
     <TouchableOpacity onPress={handleCardPress} className="bg-oBlack-light dark:bg-oBlack relative border border-gray-200 dark:border-black-200 p-4" style={shadowStyle}>
         <Text className="absolute top-0 right-0 px-2 py-0.5 rounded-bl-md border-b border-l border-gray-200 dark:border-black-200 bg-gray-200 dark:bg-primary text-oBlack dark:text-white font-psemibold text-xs" style={shadowStyle}>Qe nga <Text className="text-secondary">{date}</Text></Text>
@@ -95,20 +94,4 @@ const LearnOnlineTutorCard = ({item}) => {
   )
 }
 
-export default LearnOnlineTutorCard
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(LearnOnlineTutorCard)

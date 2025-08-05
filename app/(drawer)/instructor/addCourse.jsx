@@ -1,5 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Button, RefreshControl } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Image, RefreshControl } from 'react-native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import DefaultHeader from '../../../components/DefaultHeader'
 import { Platform } from 'react-native'
 import FormField from '../../../components/FormField'
@@ -7,7 +7,6 @@ import { icons } from '../../../constants'
 import * as Animatable from "react-native-animatable"
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { courseSchema } from '../../../schemas/addCourseSchema'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Loading from '../../../components/Loading'
@@ -49,7 +48,7 @@ const AddCourse = () => {
     const [sectionLessons, setSectionLessons] = useState([])
     const [sectionLessonsTouched, setSectionLessonsTouched] = useState([])
 
-    const onRefresh = () => {
+    const onRefresh = useCallback(() => {
         setIsRefreshing(true)
 
         reset();
@@ -62,18 +61,18 @@ const AddCourse = () => {
         setTimeout(() => {
             setIsRefreshing(false)
         }, 100);
-    }
+    }, [])
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(courseSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             name: "",
             description: "",
             topicsCovered: [],
             sectionTitles: [],
             sectionLessons: [],
             image: ""
-        },
+        }), []),
         mode: "onTouched"
     }) 
 
@@ -91,7 +90,7 @@ const AddCourse = () => {
         }
     }, [isUpdateMode, courseData, reset]);
 
-    const nextStep = async () => {
+    const nextStep = useCallback(async () => {
         if(step === 1){
             const isNameValid = await trigger("name");
             const isDescriptionValid = await trigger("description");
@@ -106,34 +105,34 @@ const AddCourse = () => {
                 setStep((prev) => Math.min(prev + 1, maxSteps));
             }
         }
-    }
+    }, [setStep, trigger])
 
-    const prevStep = () => {
+    const prevStep = useCallback(() => {
         setStep((prev) => Math.min(prev - 1, maxSteps));
-    }
+    }, [setStep])
 
-    const {showNotification: error} = NotifierComponent({
+    const {showNotification: error} = useMemo(() => NotifierComponent({
         title: "Gabim!",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: success} = NotifierComponent({
+    const {showNotification: success} = useMemo(() => NotifierComponent({
         title: "Sukses!",
         description: "Sapo shtuat nje kurs me planprogram te detajizuar! Tani mund te krijoni kohe te takimeve online! Do ridrejtoheni pas pak.",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const pickImage = async (onChange) => {
+    const pickImage = useCallback(async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
             permissionNotification();
@@ -151,10 +150,9 @@ const AddCourse = () => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }
+    }, [])
 
-    const onSubmit = async (data) => {
-        console.log(data)
+    const onSubmit = useCallback(async (data) => {
         const response = await InstructorCreateCourse(data);
         if(response){
             success()
@@ -164,7 +162,7 @@ const AddCourse = () => {
         }else{
             error()
         }
-    }
+    }, [reset, router])
 
     useFocusEffect(
         useCallback(() => {
@@ -510,19 +508,3 @@ if(isRefreshing) return <Loading />
 }
 
 export default AddCourse
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });

@@ -1,6 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, RefreshControl, Image, Modal } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Platform } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, Image, Modal } from 'react-native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useFetchFunction from '../../../../hooks/useFetchFunction'
 import { getCourseCategories, GetMeetingInformation, StartOnlineCourse } from '../../../../services/fetchingService'
 import { useLocalSearchParams } from 'expo-router'
@@ -38,13 +37,13 @@ const Meetings = () => {
     year: "2-digit"
   })
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const outputText = () => {
+  const outputText = useMemo(() => {
     if(!meetingData?.isAllowed){
       return (
         <TouchableOpacity onPress={becomeStudentOfInstructor} className="flex-row items-center gap-2 bg-primary-light dark:bg-primary p-4 border border-white dark:border-black-200" style={shadowStyle}>
@@ -121,9 +120,9 @@ const Meetings = () => {
         </TouchableOpacity>
       )
     }
-  }
+  }, [meetingData])
 
-  const outputMeetingTimeOutput = () => {
+  const outputMeetingTimeOutput = useMemo(() => {
     
     if(meetingData?.status === "Nuk eshte mbajtur(Mungese Instruktori)"){
       return (
@@ -166,22 +165,22 @@ const Meetings = () => {
         <Text className="text-oBlack dark:text-white font-psemibold">Eshte mbaruar me: <Text className="text-secondary">{finalDate}</Text></Text>
       )
     }
-  }
+  }, [meetingData])
 
-  const {showNotification: success} = NotifierComponent({
+  const {showNotification: success} = useMemo(() => NotifierComponent({
     title: "Sukses",
     description: `Ju tani mund te kyceni ne te gjithe permbajtjen e instruktorit ${meetingData?.instructor}`,
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const {showNotification: failed} = NotifierComponent({
+  const {showNotification: failed} = useMemo(() => NotifierComponent({
     title: "Gabim",
     description: `Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes`,
     alertType: "warning",
     theme: colorScheme
-  })
+  }), [colorScheme])
 
-  const becomeStudentOfInstructor = async () => {
+  const becomeStudentOfInstructor = useCallback(async () => {
     const userId = await currentUserID();
     const payload = {
       userId,
@@ -195,11 +194,9 @@ const Meetings = () => {
     }else{
       failed();
     }
-  }
+  }, [refetch, meetingData])
 
   useEffect(() => {
-    // console.log(data, ' data?');
-    
     setMeetingData(data || null)
   }, [data])
   
@@ -230,10 +227,10 @@ const Meetings = () => {
             tintColor={"#ff9c01"}
           />
           <Text className="text-oBlack dark:text-white font-psemibold text-xs bg-primary-light dark:bg-primary absolute z-50 top-0 left-0 border-b border-r border-white dark:border-black-200 rounded-br-md px-2 py-1" style={shadowStyle}>{meetingData?.status}</Text>
-          {outputText()}
+          {outputText}
         </View>
         <View className="bg-primary-light dark:bg-primary border-b border-l border-r border-gray-200 dark:border-black-200 p-4" style={shadowStyle}>
-          {outputMeetingTimeOutput()}
+          {outputMeetingTimeOutput}
         </View>
 
 
@@ -315,19 +312,3 @@ const Meetings = () => {
 }
 
 export default Meetings
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
