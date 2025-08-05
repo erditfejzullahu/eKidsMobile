@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { ScrollView, useWindowDimensions } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { useColorScheme } from 'nativewind';
@@ -32,4 +32,4 @@ const LessonContent = ({htmlContent}) => {
   )
 }
 
-export default LessonContent
+export default memo(LessonContent)

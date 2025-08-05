@@ -1,5 +1,5 @@
-import { View, Text, Image, Touchable, ImageBackground } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Image, ImageBackground } from 'react-native'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { images, icons } from '../constants';
 import { TouchableOpacity } from 'react-native';
 import * as Animatable from 'react-native-animatable'
@@ -24,30 +24,36 @@ const SingleCourse = ({course}) => {
         day: 'numeric',
       });
 
-    const {showNotification} = NotifierComponent({
+    const showSuccessNotification = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: "Shfletim me sukses",
         description: `Detajet per ecurine tuaj mbi ${courseData?.courseName} mund t'i gjeni tek profili juaj!`,
         alertType: "success",
         theme: colorScheme
-    })
-    const {showNotification: errorNotification } = NotifierComponent({
+    });
+    return showNotification;
+    }, [colorScheme, courseData?.courseName]); // Include courseName in dependencies
+
+    const showErrorNotification = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: "Pengese ne shfletimin e kursit",
         description: "Ju lutem provoni perseri ose kontaktoni Panelin e Ndihmes",
         alertType: "error",
         theme: colorScheme
-    })
+    });
+    return showNotification;
+    }, [colorScheme]);
 
     const startCourse = async () => {
         try {
             const userId = await currentUserID();
-            const lessonId = courseData.lessons[0].id;            
-            const response = await startCourseProgress(userId, courseData.id, lessonId)
-            console.log(response, 'asd?');
+            const lessonId = courseData?.lessons[0]?.id;            
+            const response = await startCourseProgress(userId, courseData?.id, lessonId)
             if(response){
-                showNotification();
+                showSuccessNotification();
             }
         } catch (error) {
-            errorNotification()
+            showErrorNotification()
             console.error(error.response.data.message, '?????');
         }
     }
@@ -68,16 +74,16 @@ const SingleCourse = ({course}) => {
         }
     }
 
-    const courseBookmark = async () => {
+    const courseBookmark = useCallback(async () => {
         try {
             const userId = await currentUserID();
             if(!isBookmarked){
-                const response = await makeBookmark(userId, courseData.id);                
+                const response = await makeBookmark(userId, courseData?.id);                
                 if(response){
                     setIsBookmarked(true);
                 }
             }else{
-                const response = await deleteBookmark(userId, courseData.id);                
+                const response = await deleteBookmark(userId, courseData?.id);                
                 if(response){
                     setIsBookmarked(false)
                 }
@@ -87,9 +93,9 @@ const SingleCourse = ({course}) => {
             console.error(error);
             
         }
-    }
+    }, [courseData?.id, isBookmarked])
 
-    const showModal = (item, type) => {
+    const showModal = useCallback((item, type) => {
         if(type === 'textual'){
             setModalVisible({visibility: true, type: 'textual', lessonName: item?.lessonName})
         }else if(type === 'video') {
@@ -97,7 +103,7 @@ const SingleCourse = ({course}) => {
         }else if (type === 'quiz') {
             setModalVisible({visibility: true, type: 'quiz', lessonName: item?.lessonName})
         }
-    }
+    }, [])
 
     useEffect(() => {
       if(course){
@@ -289,4 +295,4 @@ const SingleCourse = ({course}) => {
   )
 }
 
-export default SingleCourse
+export default memo(SingleCourse)

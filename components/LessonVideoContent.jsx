@@ -1,6 +1,6 @@
 import Checkbox from 'expo-checkbox';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Image, Text, View } from 'react-native';
 import { icons } from '../constants';
 import { currentUserID } from '../services/authService';
@@ -28,14 +28,14 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
 
     const {isPlaying} = useEvent(player, 'playingChange', {isPlaying: player.playing});
     
-    const {showNotification: errorLesson} = NotifierComponent({
+    const {showNotification: errorLesson} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const delBookmark = async () => {
+    const delBookmark = useCallback(async () => {
         const userId = await currentUserID();
         try {
         const response = await deleteBookmark(userId, null, lessonData?.lesson?.id)
@@ -46,9 +46,9 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
         errorLesson();
         console.error(error);
         }
-    }
+    }, [])
 
-    const reqBookmark = async () => {
+    const reqBookmark = useCallback(async () => {
         const userId = await currentUserID()
         try {
         const response = await makeBookmark(userId, null, lessonData?.lesson?.id);
@@ -59,7 +59,7 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
             errorLesson();
             console.error(error);
         }
-    }
+    }, [])
 
     const switchBetweenContents = () => {
         setIsChecked(!isChecked)
@@ -69,8 +69,12 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
     useFocusEffect(
         useCallback(() => {
             return () => {
-                if(player && player.playing){
-                    player.pause();
+                try {
+                    if(player && player?.playing){
+                        player.pause();
+                    }
+                } catch (error) {
+                    console.error('Error pausing ', error);
                 }
             }
         }, [player])
@@ -82,7 +86,7 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
             setVideoCompleted(true)
         })
         return () => {
-            if(player && player.playing) {
+            if(player && player?.playing) {
                 player.pause();  // Pause the video
             }
             // Remove any listeners (important to prevent memory leaks)
@@ -194,4 +198,4 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
   )
 }
 
-export default LessonVideoContent
+export default memo(LessonVideoContent)

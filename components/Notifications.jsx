@@ -1,18 +1,14 @@
 import { 
     View, 
     Text, 
-    ScrollView, 
-    Dimensions, 
     Image, 
     StyleSheet, 
     Platform, 
     TouchableWithoutFeedback, 
-    KeyboardAvoidingView, 
-    FlatList,
     RefreshControl,
     TouchableOpacity
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { icons, images } from '../constants';
 import * as Animatable from 'react-native-animatable';
 import { useNotificationContext } from '../context/NotificationState';
@@ -40,24 +36,25 @@ const Notifications = ({ onClose }) => {
     const [isLoadingMore, setIsLoadingMore] = useState(false)
     const [loadedFirst, setLoadedFirst] = useState(false)
     const {isOpened, setIsOpened, currentConnection} = useNotificationContext();
-    const handleOutsidePress = (event) => {
+
+    const handleOutsidePress = useCallback((event) => {
         // This ensures touches inside the ScrollView or children are ignored
         if (event.target === event.currentTarget) {
             setIsOpened(false);
             setLoadedFirst(false)
         }
-    };
+    }, []);
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         // setNotificationData([])
         setPaginationParams({pageNumber: 1})
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const loadMore = async () => {
+    const loadMore = useCallback(async () => {
         if(!notificationData.hasMore || isLoadingMore) return;
         console.log("Po thirret loadmore")
         setIsLoadingMore(false)
@@ -65,7 +62,7 @@ const Notifications = ({ onClose }) => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [notificationData?.hasMore, isLoadingMore])
 
     useEffect(() => {
       refetch();
@@ -107,7 +104,7 @@ const Notifications = ({ onClose }) => {
       }
     }, [])
     
-    const deleteNotification = async (item) => {
+    const deleteNotification = useCallback(async (item) => {
         const response = await reqDeleteNotification(item?.id)
         if(response === 200){
             setNotificationData((prev) => {
@@ -120,27 +117,27 @@ const Notifications = ({ onClose }) => {
                 }
             })
         }
-    }
+    }, [])
 
 
-    const {showNotification: errorInRequests} = NotifierComponent({
+    const {showNotification: errorInRequests} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: acceptedFriendRequest} = NotifierComponent({
+    const {showNotification: acceptedFriendRequest} = useMemo(() => NotifierComponent({
         title: "Sapo keni pranuar kerkesen e miqesise me sukses",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: comingSoon} = NotifierComponent({
+    const {showNotification: comingSoon} = useMemo(() => NotifierComponent({
         title: "Se shpejti do implementohet Dritarja e Njoftimeve",
         theme: colorScheme
-    })
+    }), [colorScheme])
  
-    const acceptFriendReq = async (item) => {
+    const acceptFriendReq = useCallback(async (item) => {
         const response = await acceptFriendRequest(item.userId);
         if(response === 200){
             acceptedFriendRequest()
@@ -148,11 +145,9 @@ const Notifications = ({ onClose }) => {
         }else{
             errorInRequests()
         }
-    }
+    }, [])
 
-    
-
-    const handleNotificationClick = (notification) => {        
+    const handleNotificationClick = useCallback((notification) => {        
         if(notification.type === 13 || notification.type === 14 || notification.type === 16){ //friend accepted
             setIsOpened(false)
             router.replace(`/users/${notification.userId}`)
@@ -162,9 +157,9 @@ const Notifications = ({ onClose }) => {
         }else{
             comingSoon()
         }
-    }
+    }, [router])
 
-    const handleRemoveFriendRequest = async (item) => {
+    const handleRemoveFriendRequest = useCallback(async (item) => {
         const response = await removeFriendRequestReq(item?.userId)
         if(response === 200){
             await refetch()
@@ -180,9 +175,9 @@ const Notifications = ({ onClose }) => {
         }else{
             errorInRequests();
         }
-    }
+    }, [])
     
-    const outputNotificationWithType = (item) => {        
+    const outputNotificationWithType = useMemo(() => (item) => {        
         // LoginActivity = 10
         // PasswordReset = 11
         // registeredAccount = 12
@@ -313,9 +308,9 @@ const Notifications = ({ onClose }) => {
                 <Text className="p-4">Null?</Text>
                 break;
             }
-    }
+    }, [])
 
-    const removalButton = ({item}) => (
+    const removalButton = useMemo(() => ({item}) => (
         <TouchableOpacity onPress={() => deleteNotification(item)} className="bg-secondary items-end p-6 flex-1 justify-center">
             <Image 
                 source={icons.trashbin}
@@ -324,7 +319,7 @@ const Notifications = ({ onClose }) => {
                 tintColor="#fff"
             />
         </TouchableOpacity>
-    )
+    ), [])
 
     return (
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
@@ -417,20 +412,4 @@ const Notifications = ({ onClose }) => {
     );
 };
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        }),
-    },
-});
-
-export default Notifications;
+export default memo(Notifications);

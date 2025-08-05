@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import { fetchCourse } from '../../../../../services/fetchingService';
 import useFetchFunction from '../../../../../hooks/useFetchFunction';
@@ -43,12 +43,12 @@ const Course = () => {
 
   
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch();
     await getStatus();
     setRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     setCourseData(null)

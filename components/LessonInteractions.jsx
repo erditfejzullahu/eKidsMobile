@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Image, Text, TouchableOpacity } from 'react-native'
 import { View } from 'react-native'
 import { icons } from '../constants'
@@ -47,4 +47,4 @@ const LessonInteractions = ({lessonData, handleLessonLike, handleLessonComment})
   )
 }
 
-export default LessonInteractions
+export default memo(LessonInteractions)

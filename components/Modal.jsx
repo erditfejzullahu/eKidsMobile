@@ -1,5 +1,5 @@
-import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback,StyleSheet, Platform } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, Modal, TouchableOpacity,} from 'react-native'
+import { memo, useEffect } from 'react'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 const CustomModal = ({visible, onClose, onProcced, title, children, proceedButtonText, cancelButtonText, showButtons = true, autoCloseDuration = null, onlyProceedButton = false, onlyCancelButton = false}) => {
     const {shadowStyle} = useShadowStyles();
@@ -51,19 +51,5 @@ const CustomModal = ({visible, onClose, onProcced, title, children, proceedButto
     </Modal>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-})
-export default CustomModal
+
+export default memo(CustomModal)

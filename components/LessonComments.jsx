@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useFetchFunction from '../hooks/useFetchFunction'
 import { getLessonComments, reqCreateComment, reqCreateLike, reqCreateReply } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
@@ -23,27 +23,27 @@ const LessonComments = ({lesson}) => {
 
     const {data: lessonComments, isLoading: commentLoading, refetch: commentRefetch} = useFetchFunction(() => getLessonComments(lesson, "lesson"))
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setRefreshing(true)
         setCommentData(null)
         await commentRefetch()
         setRefreshing(false)
-    }
+    }, [])
 
-    const {showNotification: commentMade} = NotifierComponent({
+    const {showNotification: commentMade} = useMemo(() => NotifierComponent({
         title: "Komenti u shtua me sukses!",
         description: "Interaktiviteti mes jush krijon mesim me funksional",
         theme: colorScheme
-      });
+      }), [colorScheme]);
   
-    const {showNotification: commentNotMade} = NotifierComponent({
+    const {showNotification: commentNotMade} = useMemo(() => NotifierComponent({
         title: "Problem ne krijim te komentit!",
         description: "Ju lutem provoni perseri ose kontaktoni panelin e ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const createComment = async () => {
+    const createComment = useCallback(async () => {
         const userId = await currentUserID();
         try {
             if(commentValue.length === 0) {
@@ -64,9 +64,9 @@ const LessonComments = ({lesson}) => {
             commentNotMade()
             console.log(error);
         }
-    }
+    }, [])
 
-    const createReplyComment = async (object, commentValue) => {
+    const createReplyComment = useCallback(async (object, commentValue) => {
         const userId = await currentUserID();
         try {
         const response = await reqCreateReply(userId, lesson, object.commentId, commentValue);
@@ -82,9 +82,9 @@ const LessonComments = ({lesson}) => {
             commentNotMade()
         console.error(error);
         }
-    }
+    }, [])
     
-    const createLikeComment = async (item) => {      
+    const createLikeComment = useCallback(async (item) => {      
         const userId = await currentUserID();
         try {
         const response = await reqCreateLike(item.commentId, userId)
@@ -94,16 +94,16 @@ const LessonComments = ({lesson}) => {
         } catch (error) {
         console.error(error);
         }
-    }
+    }, [])
 
     const [visibleCommentsCount, setVisibleCommentsCount] = useState(4)
     const [showAllComments, setShowAllComments] = useState(false)
 
-    const loadMoreComments = () => {
+    const loadMoreComments = useCallback(() => {
       if (visibleCommentsCount < commentData?.length) {
         setVisibleCommentsCount((prevCount) => prevCount + 4);
       }
-    };
+    }, [visibleCommentsCount]);
 
     useEffect(() => {
         setVisibleCommentsCount(4); // Reset visible comments on lesson change
@@ -118,18 +118,11 @@ const LessonComments = ({lesson}) => {
         }
     }, [lessonComments])
 
-
-    
-
-    const [inputIsActive, setInputIsActive] = useState(false)
-    
-
-
     const [hasCrossed, setHasCrossed] = useState(false);
     
     const isAtEndRef = useRef(false);
 
-    const checkScroll = (event) => {
+    const checkScroll = useCallback((event) => {
         const contentHeight = event.nativeEvent.contentSize.height; // Height of the entire content
         const contentOffsetY = event.nativeEvent.contentOffset.y; // How far the user has scrolled
         const layoutHeight = event.nativeEvent.layoutMeasurement.height; // Height of the visible part of the list
@@ -145,8 +138,7 @@ const LessonComments = ({lesson}) => {
         } else {
         setHasCrossed(false); // Hide "Scroll to Top" button
         }
-        
-    }
+    }, [])
 
     useEffect(() => {
         if(fireUpEndScroll){
@@ -157,7 +149,7 @@ const LessonComments = ({lesson}) => {
     }, [fireUpEndScroll])
       
   
-    const scrollToEnd = () => {
+    const scrollToEnd = useCallback(() => {
         setShowAllComments(true);
         // setIsAtEnd(false);
         setFireUpEndScroll(false)
@@ -177,7 +169,7 @@ const LessonComments = ({lesson}) => {
         //     }
         // }, 500);
         }
-    };
+    }, []);
 
     const scrollTotop = () => {
 

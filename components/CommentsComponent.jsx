@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet, Platform, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import * as Animatable from 'react-native-animatable'
 import { images, icons } from '../constants'
 import FormField from '../components/FormField'
@@ -17,7 +17,7 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
 
     const {setHideHalfVideo} = useLessonCommentsContext();
 
-    const makeReply = (reply) => {
+    const makeReply = useCallback((reply) => {
         setShowReply((prevReplies) => {
             if(prevReplies.includes(reply)){
                 return [];
@@ -25,7 +25,7 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
                 return [reply]
             }
         })       
-    }
+    }, [showReply, setShowReply])
 
     const prepareReplyComment = (item, commentValue) => {
         handleReplyComment(item, commentValue)

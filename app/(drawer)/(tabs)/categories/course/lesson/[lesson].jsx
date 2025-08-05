@@ -1,30 +1,18 @@
-import { View, Text, ScrollView, RefreshControl, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Touchable, useWindowDimensions, StyleSheet, Platform } from 'react-native'
-import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { useLocalSearchParams, useRouter, useSegments, usePathname, useFocusEffect } from 'expo-router';
+import { View, Text, Image, TouchableOpacity, useWindowDimensions, StyleSheet, Platform } from 'react-native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLocalSearchParams, useRouter, usePathname } from 'expo-router';
 import useFetchFunction from '../../../../../../hooks/useFetchFunction';
 import { fetchLesson, getUserCourseStatus, reqCreateLessonLike, updateUserLessonStatus } from '../../../../../../services/fetchingService';
 import Loading from '../../../../../../components/Loading';
-import { images, icons } from '../../../../../../constants';
+import { images } from '../../../../../../constants';
 import ClockComponent from '../../../../../../components/ClockComponent';
-import Checkbox from 'expo-checkbox';
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEvent } from 'expo';
-import CommentsComponent from '../../../../../../components/CommentsComponent';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { currentUserID } from '../../../../../../services/authService';
 import NotifierComponent from '../../../../../../components/NotifierComponent';
-import { useEventListener } from 'expo';
-import EmptyState from '../../../../../../components/EmptyState'
 import CustomModal from '../../../../../../components/Modal';
-import RenderHTML from 'react-native-render-html';
 import { useGlobalContext } from '../../../../../../context/GlobalProvider';
-
 import { useDrawerUpdater } from '../../../../../../navigation/DrawerUpdater';
 import apiClient from '../../../../../../services/apiClient';
-
 import ShareToFriends from '../../../../../../components/ShareToFriends';
-
 import LessonTitle from '../../../../../../components/LessonTitle';
 import LessonInteractions from '../../../../../../components/LessonInteractions';
 import LessonComments from '../../../../../../components/LessonComments';
@@ -32,6 +20,7 @@ import { useLessonCommentsContext } from '../../../../../../context/LessonCommen
 import LessonVideoContent from '../../../../../../components/LessonVideoContent';
 import { useShadowStyles } from '../../../../../../hooks/useShadowStyles';
 import { useColorScheme } from 'nativewind';
+
 const lessonContent = () => {
     const { lesson } = useLocalSearchParams(); 
     const {user} = useGlobalContext();
@@ -61,55 +50,48 @@ const lessonContent = () => {
     
     // const {status} = useEvent(player, 'playToEnd', {status: player?.status}); //check here per kur kryhet video leksioni
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
       setRefreshing(true)
       setLessonData(null)
       setCommentData(null)
       await refetch()
       await commentRefetch()
       setRefreshing(false)
-    }
+    }, [])
 
 
-    const handleLessonLike = async () => {
-      // const userId = await currentUserID();
+    const handleLessonLike = useCallback(async () => {
       try {
-        const response = await reqCreateLessonLike(lesson);
-        if(response){
-          // console.log(response);
-          
-          // await refetch() 
-          setLessonData((prevData) => ({
-            ...prevData,
+        const response = await reqCreateLessonLike(lesson)
+        if(response) {
+          setLessonData(prev => ({
+            ...prev,
             isLiked: response.message === "Lesson Like removed" ? false : true,
             lesson: {
-              ...prevData.lesson,
+              ...prev.lesson,
               likes: response.likes
             }
           }))
         }
       } catch (error) {
-        
+        console.error(error)
       }
-    }
+    }, [lesson])
 
     
 
-    const {showNotification: completedLesson} = NotifierComponent({
+    const { showNotification: completedLesson } = useMemo(() => NotifierComponent({
       title: "Sapo perfunduat me sukses leksionin!",
       description: "Tani do te drejtoheni tek leksioni tjeter ne vijim...",
       theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: errorLesson} = NotifierComponent({
+    const { showNotification: errorLesson } = useMemo(() => NotifierComponent({
       title: "Dicka shkoi gabim!",
       description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
       alertType: "warning",
       theme: colorScheme
-    })
-
-    
-
+    }), [colorScheme])
     
 
     const date = new Date();
@@ -138,36 +120,15 @@ const lessonContent = () => {
 
     }, [data])
 
-    
-
-    
-    
-
     const timeChange = useCallback((time) => {
         // setCurrentTime(time);
     },[])
 
-    
-    
-    
     const [modalVisible, setModalVisible] = useState(false)
     const [visibleCourseCompletationModal, setVisibleCourseCompletationModal] = useState(false)
 
-    
-
-
-
-
-    
-
-
-
-    
-
-    const updateStatus = async (userId, courseId, lessonId, nextLessonId) => {
-      try {
-        console.log('nrregull1');
-        
+    const updateStatus = useCallback(async (userId, courseId, lessonId, nextLessonId) => {
+      try {        
         const response = await updateUserLessonStatus({
           "userId": userId,
           "courseId": courseId,
@@ -187,9 +148,9 @@ const lessonContent = () => {
       } catch (error) {
         console.error(error, ' qitu?');
       }
-    } 
+    }, [])
 
-    const updateNextLessonStarted = async (userId, courseId, lessonId) => {
+    const updateNextLessonStarted = useCallback(async (userId, courseId, lessonId) => {
       try {
         console.log('nrregull2');
 
@@ -213,9 +174,9 @@ const lessonContent = () => {
         
         console.error(error, ' qitu1111??');
       }
-    }
+    }, [])
 
-    const getStatuses = async (processType) => {
+    const getStatuses = useCallback(async (processType) => {
       const userId = await currentUserID();
       try {
         const response = await getUserCourseStatus(userId, lessonData?.lesson?.courseID);
@@ -276,7 +237,7 @@ const lessonContent = () => {
       } catch (error) {
         console.error(error, 'apo qitu?');
       }
-    }
+    }, [lessonData, router])
 
     const handleModalClose = async () => {
       setModalVisible(false)
@@ -292,19 +253,19 @@ const lessonContent = () => {
       await getStatuses('back')
     }
     
-    const handleBookmarkDelete = () => {
+    const handleBookmarkDelete = useCallback(() => {
       setLessonData((prevData) => ({
         ...prevData,
         isBookmarked: false
       }))
-    }
+    }, [])
 
-    const handleBookmarkMade = () => {
+    const handleBookmarkMade = useCallback(() => {
       setLessonData((prevData) => ({
         ...prevData,
         isBookmarked: true
       }))
-    }
+    }, []) 
 
     
     //TODO: FIX PLAYER ERROR WHEN LEAVE SCREEN AND STUFF.
@@ -375,9 +336,9 @@ const lessonContent = () => {
           onProcced={async () => await handleModalClose()}
         >
           <View>
-            <Text className="text-white font-pregular text-base text-center mb-4">Para se te kaloni ne leksionin e radhes sigurohuni qe informacioni i percjellur nga ligjerata eshte marre seriozisht nga ana juaj!</Text>
-            <Text className="text-white font-plight text-sm text-center mb-2">Nese deshironi te percillni perseri materialin mediatik apo te shkruaj shtypni <Text className="text-secondary font-psemibold">Qendro</Text></Text>
-            <Text className="text-white font-plight text-sm text-center mb-2">Kurse nese deshironi te procedoni me tutje me ligjeratat e radhes shtupni <Text className="text-secondary font-psemibold">Vazhdo</Text></Text>
+            <Text className="dark:text-white text-oBlack font-pregular text-base text-center mb-4">Para se te kaloni ne leksionin e radhes sigurohuni qe informacioni i percjellur nga ligjerata eshte marre seriozisht nga ana juaj!</Text>
+            <Text className="dark:text-white text-oBlack font-plight text-sm text-center mb-2">Nese deshironi te percillni perseri materialin mediatik apo te shkruaj shtypni <Text className="text-secondary font-psemibold">Qendro</Text></Text>
+            <Text className="dark:text-white text-oBlack font-plight text-sm text-center mb-2">Kurse nese deshironi te procedoni me tutje me ligjeratat e radhes shtupni <Text className="text-secondary font-psemibold">Vazhdo</Text></Text>
           </View>
         </CustomModal>
           <CustomModal
@@ -404,11 +365,11 @@ const lessonContent = () => {
                   />
                 </View>
                 <View className="mt-2 bg-oBlack w-full rounded-[5px] p-2">
-                  <Text className="font-plight text-base text-center text-white">Sapo keni perfunduar kursin</Text>
+                  <Text className="font-plight text-base text-center dark:text-white text-oBlack">Sapo keni perfunduar kursin</Text>
                   <Text className="font-pblack text-secondary text-center">{lessonData?.lesson?.course?.courseName}</Text>
                 </View>
                 <View className="mt-2">
-                  <Text className="font-plight text-sm text-center text-white">Brenda disa sekondave do te ridrejtoheni tek dritarja e ardhshme ku do mund te shkarkoni diplomen tuaj te nenshkruar nga <Text className="text-secondary font-psemibold">ShokuMesimit</Text>...</Text>
+                  <Text className="font-plight text-sm text-center dark:text-white text-oBlack">Brenda disa sekondave do te ridrejtoheni tek dritarja e ardhshme ku do mund te shkarkoni diplomen tuaj te nenshkruar nga <Text className="text-secondary font-psemibold">ShokuMesimit</Text>...</Text>
                 </View>
               </CustomModal>
           <ShareToFriends  //nuk po hapet diqka ?? fix

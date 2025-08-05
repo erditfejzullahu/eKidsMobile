@@ -1,8 +1,7 @@
-import { View, Text, Modal, FlatList, Platform, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, Modal, FlatList, Image, TouchableOpacity } from 'react-native'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import Loading from './Loading';
-import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { reqGetAllUserTypes, reqShareToUser } from '../services/fetchingService';
 import { icons } from '../constants';
@@ -27,7 +26,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     const [userFriendData, setUserFriendData] = useState([])
     const [shareLoading, setShareLoading] = useState(false)
 
-    const outputText = () => {
+    const outputText = useCallback(() => {
         switch (shareType) {
             case "quiz":
                 return "Kuizin"
@@ -50,22 +49,28 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
             default:
                 return "Artikullin"
         }
-    }
+    }, [shareType])
 
-    const {showNotification: successShare} = NotifierComponent({
+    const successShare = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: `Sapo derguat ${outputText()} me sukses`,
         description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!",
         theme: colorScheme
-    })
+    });
+    return showNotification;
+    }, [colorScheme, outputText()]); // Include outputText() in dependencies
 
-    const {showNotification: errorShare} = NotifierComponent({
+    const errorShare = useMemo(() => {
+    const { showNotification } = NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    });
+    return showNotification;
+    }, [colorScheme]);
     
-    const shareToUser = async (receiverUser) => {       
+    const shareToUser = useCallback(async (receiverUser) => {       
         setShareLoading(true) 
         const payload = {
             senderUsername: currentUserData?.username,
@@ -89,22 +94,23 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
             errorShare();
         }
         setShareLoading(false)
-    }
+    }, [])
 
     useEffect(() => {
+        const getUserFriends = async () => {
+            setUserFriendLoading(true)
+            const response = await reqGetAllUserTypes(currentUserData?.id, 2)
+            if(response){
+                setUserFriendData(response);
+            }
+            setUserFriendLoading(false)
+        }
+
         if(shareOpened){        
           getUserFriends();
         }
       }, [shareOpened])
       
-    const getUserFriends = async () => {
-        setUserFriendLoading(true)
-        const response = await reqGetAllUserTypes(currentUserData?.id, 2)
-        if(response){
-            setUserFriendData(response);
-        }
-        setUserFriendLoading(false)
-    }
 
   return (
     <Modal
@@ -173,19 +179,5 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     </Modal>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-  })
-export default ShareToFriends
+
+export default memo(ShareToFriends)
