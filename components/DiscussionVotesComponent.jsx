@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { memo, useEffect, useState } from 'react'
 import { icons } from '../constants'
-import { Platform } from 'react-native'
 import { currentUserID } from '../services/authService'
 import { handleDiscussionVoteFunc } from '../services/fetchingService'
 import { useShadowStyles } from '../hooks/useShadowStyles'
@@ -11,9 +10,7 @@ const DiscussionVotesComponent = ({discussionData}) => {
     const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const [voteDetails, setVoteDetails] = useState(null)
-    const [actualVotes, setActualVotes] = useState(null)
-    console.log(discussionData, ' discussionvotescomponent');
-    
+    const [actualVotes, setActualVotes] = useState(null)    
 
     const handleDiscussionVote = async (voteType) => {
         // voteType as 0(voteup) or 1(votedown)
@@ -128,20 +125,4 @@ const DiscussionVotesComponent = ({discussionData}) => {
   )
 }
 
-export default DiscussionVotesComponent
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(DiscussionVotesComponent)

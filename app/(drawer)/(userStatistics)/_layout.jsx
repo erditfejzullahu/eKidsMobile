@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { useState } from 'react'
 import { Drawer } from 'react-native-drawer-layout';
 import { Link, Stack } from 'expo-router';
@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'expo-router';
 import { useShadowStyles } from '../../../hooks/useShadowStyles';
 import { useColorScheme } from 'nativewind';
 
-const DrawerContent = ({closeDrawer}) => {
+const DrawerContent = memo(({closeDrawer}) => {
     const {shadowStyle} = useShadowStyles();
     const {colorScheme} = useColorScheme();
     const router = useRouter();
@@ -122,7 +122,7 @@ const DrawerContent = ({closeDrawer}) => {
             </View>
         </ScrollView>
     )
-}
+})
 
 const _layout = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -143,19 +143,5 @@ const _layout = () => {
     </>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+
 export default _layout

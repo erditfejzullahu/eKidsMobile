@@ -1,5 +1,5 @@
-import { View, Text, FlatList, RefreshControl, StyleSheet, Platform, TouchableOpacity, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { icons } from '../../../../constants';
 import useFetchFunction from '../../../../hooks/useFetchFunction';
@@ -19,12 +19,12 @@ const Blogs = () => {
     const [blogData, setBlogData] = useState([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
         setBlogData([]);
         await refetch();
         setIsRefreshing(false);
-    };
+    }, []);
 
     useEffect(() => {
         if (data) {
@@ -107,21 +107,5 @@ const Blogs = () => {
         />
     );
 };
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
 
 export default Blogs;

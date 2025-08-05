@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Platform, RefreshControl, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, router } from 'expo-router'
 import { icons, images } from '../../../constants'
 import CustomModal from '../../../components/Modal'
@@ -40,7 +40,7 @@ const AllQuizzes = () => {
 
   const {data, isLoading: quizzesLoading, refetch} = useFetchFunction(() => getAllQuizzes(filterData))
 
-  const sortQuizes = (data) => {
+  const sortQuizes = useCallback((data) => {
     setFilterData((prev) => ({
       ...prev,
       sortByName: data.emri != null && "QuizName",
@@ -51,27 +51,27 @@ const AllQuizzes = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }
+  }, [setFilterData])
 
 
-  const filterQuizes = (category) => {    
+  const filterQuizes = useCallback((category) => {    
     setLoadedFirst(false)
     setFilterData((prevValues) => ({
       ...prevValues,
       categoryId: category.CategoryID
     }))
-  }
+  }, [setFilterData])
 
   const {setShareOpened, shareOpened} = useTopbarUpdater();
 
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if(!quizesData?.hasMore || isLoadingMore) return;
     setIsLoadingMore(true)
     setFilterData((prev) => ({
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }
+  }, [quizesData?.hasMore, isLoadingMore])
 
   useEffect(() => {
     if(quizesData?.result?.length > 0){
@@ -103,7 +103,7 @@ const AllQuizzes = () => {
   }, [filterData])
   
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setIsRefreshing(true)
     setLoadedFirst(false)
     setFilterData((prevData) => ({
@@ -120,7 +120,7 @@ const AllQuizzes = () => {
       searchParam: ""
     }))
     setIsRefreshing(false)
-  }
+  }, [])
 
   if((isRefreshing || isLoading || quizzesLoading) && !loadedFirst){
     return(
@@ -230,19 +230,5 @@ const AllQuizzes = () => {
   )
   }
 }
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+
 export default AllQuizzes

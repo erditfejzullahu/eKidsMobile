@@ -1,16 +1,16 @@
-import { View, Text, Image, Platform, StyleSheet, TextInput, ScrollView, Modal, Pressable, TouchableWithoutFeedback, Touchable, KeyboardAvoidingView } from 'react-native'
-import React, { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
+import { View, Text, Image, Platform, StyleSheet, TextInput, Modal, Pressable, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
+import { useCallback, useMemo, useRef } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
 import { getAllBlogTags, getCourseCategories, reqCreatePost } from '../services/fetchingService'
 import { FlatList } from 'react-native-gesture-handler'
 import { useEffect } from 'react'
-import { icons, images } from '../constants'
+import { icons } from '../constants'
 import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
 import NotifierComponent from './NotifierComponent'
 import useFetchFunction from "../hooks/useFetchFunction"
-import _, { flatMap, flatten, flattenDeep, noop } from 'lodash'
+import {debounce } from 'lodash'
 import FullScreenImage from './FullScreenImage'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
@@ -71,7 +71,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         setContainerWidth(width); // Save container width
     };
 
-    const selectTags = (item) => {
+    const selectTags = useCallback((item) => {
         setTagsSelected((prev) => {
             const exists = prev.some(tag => tag.id === item.id)
             if(exists){
@@ -80,17 +80,17 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                 return [...prev, item];
             }
         })
-    }
+    }, [setTagsSelected])
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const addImages = async () => {
+    const addImages = useCallback(async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(!permissionResult){
             permissionNotification();
@@ -117,9 +117,9 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             
             setImagesSelected(selectedImages)
         }
-    }
+    }, [setImagesSelected])
 
-    const addCameraImage = async () => {
+    const addCameraImage = useCallback(async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
         if(!permissionResult){
             permissionNotification();
@@ -140,14 +140,14 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             }]
             setImagesSelected(newImage)
         }
-    }
+    }, [setImagesSelected])
 
 
     const tagsexample = ["Tagu 1", "Tagu 2", "Tagu 3", "Tagu 4", "Tagu 5"]
 
     const blogContentRef = useRef(null)
 
-    const removeTag = (tag) => {
+    const removeTag = useCallback((tag) => {
         if(outputTags.includes(tag)){
             setOutputTags((prevData) => prevData.filter((item) => item !== tag));
         }
@@ -155,9 +155,9 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             const regex = new RegExp(`\\b${tag}\\b`, 'g');
             return prevWrittenTags.replace(regex, '').replace(/\s{2,}/g, ' ').trim();
         })
-    }
+    }, [setOutputTags, setWrittenTags])
 
-    const switchFromTitle = (e) => {
+    const switchFromTitle = useCallback((e) => {
         if(e.nativeEvent.key === 'Enter' && !enteredOnce){
             setEnteredOnce(true);
             setTimeout(() => {
@@ -166,42 +166,43 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                 }
             }, 100);
         }
-    }
+    }, [setEnteredOnce])
 
-    const {showNotification: successNotification} = NotifierComponent({
+    const {showNotification: successNotification} = useMemo(() => NotifierComponent({
         title: "Blogu i postua me sukses",
         description: "Per te pare postimet e tua mund te drejtoheni tek pjesa e profilit!",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: failedNotification} = NotifierComponent({
+    const {showNotification: failedNotification} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri ne krijimin e postimit tuaj apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })   
+    }), [colorScheme])
 
-    const {showNotification: titleContentError} = NotifierComponent({
+    const {showNotification: titleContentError} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem mbushni titullin dhe permbajtjen e blogut",
         alertType: "warning",
         theme: colorScheme
-    })   
-    const {showNotification: tagsSelectedError} = NotifierComponent({
+    }), [colorScheme])
+
+    const {showNotification: tagsSelectedError} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem zgjidhni nje ose me shume etiketime, apo krijoni tuajat",
         alertType: "warning",
         theme: colorScheme
-    })   
-    const {showNotification: outputTagsError} = NotifierComponent({
+    }), [colorScheme])
+
+    const {showNotification: outputTagsError} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem shkruani nje ose me shume etiketime, apo zgjidhni nga egzistueset",
         alertType: "warning",
         theme: colorScheme
-    })   
+    }), [colorScheme])
 
     const createBlog = async () => {
-        
         
         if(title.trim() === "" || title.trim() === null){
             titleContentError()
@@ -256,14 +257,14 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
         setBlogCreating(false)
     }
 
-    const removeOpenedDialogs = () => {
+    const removeOpenedDialogs = useCallback(() => {
         setOpenTagDialog(false)
         setOpenPostStatus(false)
-    }
+    }, [setOpenTagDialog, setOpenPostStatus])
 
     const debounceTagsSearchingRef = useRef();
     const debounceTagsSearching = useMemo(() => {
-        const fn = _.debounce((text) => setSearchTagQuery(text), 500)
+        const fn = debounce((text) => setSearchTagQuery(text), 500)
         debounceTagsSearchingRef.current = fn;
         return fn;
     },[])

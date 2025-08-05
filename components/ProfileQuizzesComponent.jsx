@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import useFetchFunction from '../hooks/useFetchFunction'
-import { getCompletedQuizzesByUser, getCourseCategories } from '../services/fetchingService'
+import { View, Text, TouchableOpacity,Image } from 'react-native'
+import { memo, useState } from 'react'
+import {  getCourseCategories } from '../services/fetchingService'
 import Loading from './Loading'
 import EmptyState from './EmptyState'
 import { useRouter } from 'expo-router'
@@ -10,19 +9,19 @@ import * as Animatable from 'react-native-animatable'
 import { Link } from 'expo-router'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 
+const bounceDownAnimation = {
+    0: { transform: [{ translateY: 0 }] },
+    0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
+    1: { transform: [{ translateY: 0 }] }, // Back to original position
+  };
+
 const ProfileQuizzesComponent = ({quizzesCompleted, userCategories}) => {
   const {shadowStyle} = useShadowStyles();
-  console.log(quizzesCompleted);
   
     const router = useRouter();
     const [inProgress, setInProgress] = useState(true)
     const [showMoreInQuizzes, setShowMoreInQuizzes] = useState([])
 
-    const bounceDownAnimation = {
-        0: { transform: [{ translateY: 0 }] },
-        0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
-        1: { transform: [{ translateY: 0 }] }, // Back to original position
-      };
     
   return (
     <View>
@@ -134,27 +133,5 @@ const ProfileQuizzesComponent = ({quizzesCompleted, userCategories}) => {
     </View>
   )
 }
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    inner: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: 16,
-    },
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
-export default ProfileQuizzesComponent
+
+export default memo(ProfileQuizzesComponent)

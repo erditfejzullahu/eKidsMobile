@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, PlatformColor, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState, useRef, useEffect, memo } from 'react';
+import { Text, View, TouchableOpacity, ScrollView, Image } from 'react-native';
 import uuid from 'react-native-uuid';
 import FormField from './FormField';
 import { useShadowStyles } from '../hooks/useShadowStyles';
@@ -8,7 +7,7 @@ import { icons } from '../constants';
 
 //TODO: create chat system
 
-export default function SupportChatForm() {
+const SupportChatForm = () => {
   const {shadowStyle} = useShadowStyles()
   const [messages, setMessages] = useState([
     { id: uuid.v4(), text: "Hi there! Ask me anything about your app.", sender: "bot" },
@@ -62,7 +61,7 @@ export default function SupportChatForm() {
       <Text className="text-lg text-oBlack dark:text-white">Se shpejti</Text>
     </View>
   return (
-    <View className="bg-oBlack rounded-md border border-black-200" style={styles.box}>
+    <View className="bg-oBlack rounded-md border border-black-200" style={shadowStyle}>
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={{ padding: 10 }}
@@ -91,18 +90,4 @@ export default function SupportChatForm() {
   );
 }
 
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+export default memo(SupportChatForm)

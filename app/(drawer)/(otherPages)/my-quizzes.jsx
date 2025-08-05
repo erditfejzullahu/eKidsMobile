@@ -1,5 +1,5 @@
 import { View, Text, Image, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { images, icons } from '../../../constants'
 import EmptyState from '../../../components/EmptyState'
 import { useGlobalContext } from '../../../context/GlobalProvider'
@@ -34,7 +34,7 @@ const MyQuizzes = () => {
     const {data, isLoading: quizloading, refetch} = useFetchFunction(() => getAllQuizzesByUser(filterData))
 
 
-    const sortQuizzes = (data) => {
+    const sortQuizzes = useCallback((data) => {
         setLoadedFirst(false)
         setFilterData((prev) => ({
             ...prev,
@@ -45,9 +45,9 @@ const MyQuizzes = () => {
             sortByViews: data.shikime != null && "viewCount",
             sortViewOrder: data.shikime
         }))
-    }
+    }, [])
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         setFilterData((prevData) => ({
@@ -64,25 +64,25 @@ const MyQuizzes = () => {
             searchParam: ""
         }))
         setIsRefreshing(false)
-    }
+    }, [setFilterData])
 
-    const filterQuizzes = (item) => {
+    const filterQuizzes = useCallback((item) => {
         setLoadedFirst(false)
         setFilterData((prevData) => ({
             ...prevData,
             categoryId: item.CategoryID  
         }))
-    }
+    }, [setFilterData])
 
 
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if(!yourQuizzesData?.hasMore || isLoadingMore) return;
         setIsLoadingMore(true);
         setFilterData((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [yourQuizzesData?.hasMore, isLoadingMore])
 
     useEffect(() => {
       if(data){

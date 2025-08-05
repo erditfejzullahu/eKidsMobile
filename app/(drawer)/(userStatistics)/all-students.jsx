@@ -1,10 +1,9 @@
-import { View, Text, FlatList, Image, Platform, ScrollView, RefreshControl } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, FlatList, Image, ScrollView, RefreshControl } from 'react-native'
+import { useCallback, useEffect } from 'react'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { getAllUsersStatstics, getMetaValue } from '../../../services/fetchingService'
 import { useState } from 'react'
 import { icons, images } from '../../../constants'
-import { StyleSheet } from 'react-native'
 import SearchInput from "../../../components/SearchInput"
 import Loading from '../../../components/Loading'
 import * as Animatable from "react-native-animatable"
@@ -20,16 +19,16 @@ const AllStudentsStatistics = () => {
 
     const [searchInput, setSearchInput] = useState('')
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setSearchInput("")        
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const searchUsers = (data) => {        
+    const searchUsers = useCallback((data) => {        
         setSearchInput(data)
-    }
+    }, [setSearchInput])
     
     useEffect(() => {
       refetch();
@@ -170,19 +169,5 @@ const AllStudentsStatistics = () => {
     </ScrollView>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
+
 export default AllStudentsStatistics

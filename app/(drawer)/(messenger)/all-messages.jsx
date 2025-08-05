@@ -1,19 +1,16 @@
-import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, StyleSheet, Touchable } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import useFetchFunction from '../../../hooks/useFetchFunction'
-import { getAllUsers, reqGetAllUserTypes } from '../../../services/fetchingService'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import  { useState } from 'react'
 import Loading from '../../../components/Loading'
 import { icons, images } from '../../../constants'
 import { useGlobalContext } from '../../../context/GlobalProvider'
-import AllUsersInteractions from '../../../components/AllUsersInteractions'
-import { router } from 'expo-router'
 import { useRouter } from 'expo-router'
-import { Platform } from 'react-native'
 import AllUsersFilter from '../../../components/AllUsersFilter'
+import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
 const AllMessages = () => {
   const router = useRouter();
   const {user, isLoading: userLoading } = useGlobalContext();
+  const {shadowStyle} = useShadowStyles()
   const userData = user?.data?.userData;
   const [hideHeader, setHideHeader] = useState(false)
 
@@ -23,7 +20,7 @@ const AllMessages = () => {
     )
   }else{
     return (
-      <View style={styles.box} className="bg-primary-light dark:bg-primary pb-4 h-full">
+      <View style={shadowStyle} className="bg-primary-light dark:bg-primary pb-4 h-full">
         <View className="px-4">
           <TouchableOpacity onPress={() => setHideHeader(!hideHeader)} className="absolute top-4 right-4 bg-gray-200 dark:bg-oBlack border border-white dark:border-black-200 rounded-full p-2 z-50">
             <Image 
@@ -86,21 +83,5 @@ const AllMessages = () => {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
 
 export default AllMessages

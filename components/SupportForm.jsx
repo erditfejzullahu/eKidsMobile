@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { memo, useCallback, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { supportSectionSchema } from '../schemas/supportSectionSchema'
@@ -22,13 +22,13 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
     const {shadowStyle} = useShadowStyles();
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(supportSectionSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             subject: '',
             description: '',
             topicType: 1,
             otherTopic: '',
             image: ""
-        },
+        }), []),
         mode: "onTouched"
     })
 
@@ -36,28 +36,28 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
 
     const selectedTopic = watch("topicType");
 
-    const {showNotification: success} = NotifierComponent({
+    const {showNotification: success} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: "Kerkesa shkoj me sukses. Do te njoftoheni ne emailin tuaj sa me shpejt qe eshte e mundur.",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: error} = NotifierComponent({
+    const {showNotification: error} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [])
 
-    const pickImage = async (onChange) => {
+    const pickImage = useCallback(async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
             permissionNotification();
@@ -75,9 +75,9 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }
+    }, [])
 
-    const submitSupport = async (data) => {
+    const submitSupport = useCallback(async (data) => {
         const userId = await currentUserID()
         const payload = {
             availableTicketId: data.topicType,
@@ -93,7 +93,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
         }else{
             error();
         }
-    }
+    }, [])
 
   return (
     <View className="gap-3" style={shadowStyle}>
@@ -213,7 +213,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
   )
 }
 
-export default SupportForm
+export default memo(SupportForm)
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -245,19 +245,3 @@ const pickerSelectStyles = StyleSheet.create({
     fontWeight:'700'
   },
 });
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });

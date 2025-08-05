@@ -1,5 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, TextInput, RefreshControl, StyleSheet, KeyboardAvoidingView, ActivityIndicator } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { Image } from 'react-native';
 import { icons, images } from '../../../constants';
@@ -60,15 +60,15 @@ const Conversation = () => {
         fileName: ''
     })
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const sendImage = async () => {
+    const sendImage = useCallback(async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if(!permissionResult){
             permissionNotification()
@@ -95,10 +95,10 @@ const Conversation = () => {
             }))
             // console.log(image);
         }
-    }
+    }, [])
 
     //documents upload
-    const pickDocument = async () => {
+    const pickDocument = useCallback(async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({type: '*/*',})
 
@@ -118,31 +118,31 @@ const Conversation = () => {
         } catch (error) {
             console.error(error);
         }
-    }
+    }, [])
     //documents upload
     
-    const deleteImage = () => {
+    const deleteImage = useCallback(() => {
         setImage({
             type: "",
             base64: "",
             fileName: ""
         })
-    }
+    }, [setImage])
 
-    const updateReadMessages = async () => {
+    const updateReadMessages = useCallback(async () => {
         const response = await reqReadMessages(conversation?.currentUserUsername, conversation?.receiverUsername)
         if(response === 200){
             console.log("Messages read succesfully");
         }else{
             console.log("Error reading messages");
         }
-    }
+    }, [conversation])
 
     useEffect(() => {
       setRelationStatus(relationData || null)
     }, [relationData])
 
-    const outputRelation = () => {
+    const outputRelation = useCallback(() => {
         if(relationReloading){
             return 4;
         }else{
@@ -162,7 +162,7 @@ const Conversation = () => {
               }
             }
         }
-      }
+      }, [relationStatus, user?.data?.userData])
     
 
     useEffect(() => {
@@ -370,15 +370,17 @@ const Conversation = () => {
     }, [])
     //connectioni me hub dhe shtimi i mesazheve
 
-    const sendMessage = async () => {
-        if(messageSent === '' || !messageSent && image.base64 === ''){
-            console.log("enter a image or message");
+    const sendMessage = useCallback(async () => {
+        
+        if(messageSent === '' || !messageSent){
+            console.log("add message");
             return;
+        }
+        if((messageSent === '' || !messageSent) && image.base64 !== ""){
+            console.log("add message")
         }
 
         const formattedBase64 = image.base64 !== '' ? `${image.type}${image.base64}` : null;
-        // console.log(messageVal.text);
-        // console.log(receiver, ' resiveri');
         
         try {
             await connection?.invoke('SendPrivateMessage', receiver, messageSent, formattedBase64)
@@ -391,29 +393,29 @@ const Conversation = () => {
         } catch (error) {
             console.error(error);
         }
-    }
+    }, [setMessageSent, setImage, messageSent, image])
     
 
-    const { showNotification: successFriendReq } = NotifierComponent({
+    const { showNotification: successFriendReq } = useMemo(() => NotifierComponent({
         title: "Kerkesa shkoi me sukes!",
         description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: successFriendDeletion} = NotifierComponent({
+    const {showNotification: successFriendDeletion} = useMemo(() => NotifierComponent({
         title: "Kerkesa shkoi me sukses!",
         description: `Sapo e larguat ${conversation?.receiverFirstname} ${conversation?.receiverLastname} nga statusi juaj miqesor me perdorues!`,
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const { showNotification: failedReq } = NotifierComponent({
+    const { showNotification: failedReq } = useMemo(() => NotifierComponent({
     title: "Dicka shkoi gabim!",
     description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
     alertType: "warning",
     theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const makeFriend = async () => {
+    const makeFriend = useCallback(async () => {
         const payload = {
             userId: user?.data?.userData?.id,
             receiverId: conversation?.conversation,
@@ -428,18 +430,18 @@ const Conversation = () => {
         }else{
             failedReq()
         }
-    }
+    }, [])
 
-    const removeOnWaitingFriend = async () => {
+    const removeOnWaitingFriend = useCallback(async () => {
         const response = await removeFriendRequestReq(conversation?.conversation);
         if(response === 200){
             await relationRefetch();
         }else{
             failedReq();
         }
-    }
+    }, [])
 
-    const removeFriend = async () => {
+    const removeFriend = useCallback(async () => {
         const response = await removeFriendReq(conversation?.conversation)
         if(response === 200){
             successFriendDeletion()
@@ -449,26 +451,26 @@ const Conversation = () => {
             setRemoveFriendModal(false);
             failedReq()
         }
-    }
+    }, [])
 
-    const acceptFriend = async () => {
+    const acceptFriend = useCallback(async () => {
         const response = await acceptFriendRequest(relationStatus?.senderId)
         if(response === 200){
             await relationRefetch();
         }else{
             failedReq()
         }
-    }
+    }, [])
     
     //shtim i meszheve tvjetra
-    const onEndReached = () => {
+    const onEndReached = useCallback(() => {
         if(!messages?.hasMore || isLoadingMore) return;
         setIsLoadingMore(true)
         setPaginationState((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [messages?.hasMore, isLoadingMore])
 
     useEffect(() => {
       refetch()

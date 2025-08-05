@@ -1,16 +1,16 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Image, ScrollView, KeyboardAvoidingView, TextInput, ActivityIndicator, TouchableWithoutFeedback } from 'react-native'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { View, Text, TouchableOpacity, Platform, Image, ScrollView, KeyboardAvoidingView, TextInput, ActivityIndicator, TouchableWithoutFeedback } from 'react-native'
+import  { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import FormField from "./FormField"
 import * as Animatable from "react-native-animatable"
 import { icons } from '../constants'
 import CustomButton from "./CustomButton"
-import { CoreBridge, PlaceholderBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor';
+import { CoreBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor';
 import Placeholder from '@tiptap/extension-placeholder'
 import { currentUserID } from '../services/authService'
 import { createDiscussion, getTagsByTitle } from '../services/fetchingService'
 import NotifierComponent from './NotifierComponent'
 import { useRouter } from 'expo-router'
-import _ from 'lodash'
+import {debounce} from 'lodash'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDiscussionSchema } from '../schemas/addDiscussionSchema'
@@ -62,22 +62,22 @@ const CreateDiscussionForm = () => {
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(addDiscussionSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             title: "",
             tags: ""
-        },
+        }), []),
         mode: "onTouched"
     })
 
-    const removeTag = (tag) => {
+    const removeTag = useCallback((tag) => {
         setTags((prevData) => prevData.filter((itm) => itm !== tag))
         setTagInput((prevInput) => prevInput.split(" ").filter((word) => word !== tag).join(" "))
-    }
+    }, [setTags, setTagInput])
 
-    const addExistingTag = (tag) => {
+    const addExistingTag = useCallback((tag) => {
         setTags((prevData) => [...prevData, tag])
         setTagInput((prevInput) => prevInput + ` ${tag}`)
-    }
+    }, [setTags, setTagInput])
 
     useEffect(() => {
       const newTags = tagInput.trim().split(" ").filter(tag => tag.length > 0);
@@ -127,29 +127,29 @@ const CreateDiscussionForm = () => {
 
 
     
-    const {showNotification: successCreation} = NotifierComponent({
+    const {showNotification: successCreation} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: "Sapo krijuat pyetjen/diskutimin me sukses! Mund ta percillni gjendjen e saj tek profili juaj poashtu.",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: failedCreation} = NotifierComponent({
+    const {showNotification: failedCreation} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: contentRequired} = NotifierComponent({
+    const {showNotification: contentRequired} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Nevojitet permbajtje me e gjate(minimum 20 karaktere).",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
     const debounceTagsSearchingRef = useRef();
     const debounceTagsSearching = useMemo(() => {
-        const fn = _.debounce((text) => setSearchTagQuery(text), 500)
+        const fn = debounce((text) => setSearchTagQuery(text), 500)
         debounceTagsSearchingRef.current = fn;
         return fn;
     },[])
@@ -333,20 +333,4 @@ const CreateDiscussionForm = () => {
   )
 }
 
-export default CreateDiscussionForm
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(CreateDiscussionForm)

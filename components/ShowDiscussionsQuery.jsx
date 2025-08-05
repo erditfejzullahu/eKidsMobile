@@ -1,12 +1,11 @@
 import { View, Text, ScrollView, Image } from 'react-native'
-import React from 'react'
-import { getCourseCategories } from '../services/fetchingService'
+import  { memo } from 'react'
+// import { getCourseCategories } from '../services/fetchingService'
 import { TouchableOpacity } from 'react-native'
 import { icons } from '../constants'
 import { useRouter } from 'expo-router'
 const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
   const router = useRouter();
-    console.log(retrievedDisucssionsData);
     
   // TODO NOT WORKING GOOD
   
@@ -57,4 +56,4 @@ const ShowDiscussionsQuery = ({retrievedDisucssionsData = [], userData}) => {
   )
 }
 
-export default ShowDiscussionsQuery
+export default memo(ShowDiscussionsQuery)

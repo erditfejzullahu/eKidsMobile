@@ -1,5 +1,5 @@
 import { View, Text, TextInput, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import { images } from '../constants';
 import SearchInput from "./SearchInput"
@@ -45,4 +45,4 @@ const BlogsDrawyerHeader = ({sendDiscussionInput, sendBlogsInput, discussionSect
   )
 }
 
-export default BlogsDrawyerHeader
+export default memo(BlogsDrawyerHeader)

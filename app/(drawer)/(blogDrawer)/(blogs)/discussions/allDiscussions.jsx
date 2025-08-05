@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, Image, Platform, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { icons, images } from '../../../../../constants'
 import DiscussionsFilter from '../../../../../components/DiscussionsFilter'
@@ -30,7 +30,7 @@ const AllDiscussions = () => {
 
     const [tagIdSelected, setTagIdSelected] = useState(null)
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setLoadedFirst(false)
         setSortBy(0)
@@ -39,16 +39,16 @@ const AllDiscussions = () => {
             await refetch();
         }
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if(!discussionData?.hasMore || loadingMore) return;
         setLoadingMore(true)
         setPaginationData((prev) => ({
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }
+    }, [discussionData?.hasMore, loadingMore])
 
     useEffect(() => {
       refetch();
@@ -193,19 +193,3 @@ if(isLoading && !loadedFirst) return <Loading />
 }
 
 export default AllDiscussions
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});

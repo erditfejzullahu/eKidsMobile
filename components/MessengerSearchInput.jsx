@@ -1,5 +1,5 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { Platform } from 'react-native'
 import * as Animatable from "react-native-animatable"
 
@@ -18,20 +18,4 @@ const MessengerSearchInput = ({sendText}) => {
   )
 }
 
-export default MessengerSearchInput
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(MessengerSearchInput)

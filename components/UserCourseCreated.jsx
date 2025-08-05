@@ -1,5 +1,5 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native'
-import React, {useState, useEffect} from 'react'
+import { View, Text, Image, TouchableOpacity} from 'react-native'
+import {useState, useEffect, memo} from 'react'
 import { images } from '../constants';
 import { getCourseCategories } from '../services/fetchingService';
 import { Link } from 'expo-router';
@@ -7,6 +7,11 @@ import * as Animatable from 'react-native-animatable'
 import { sortBy } from 'lodash';
 import { useShadowStyles } from '../hooks/useShadowStyles';
 
+const bounceDownAnimation = {
+    0: { transform: [{ translateY: 0 }] },
+    0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
+    1: { transform: [{ translateY: 0 }] }, // Back to original position
+  };
 const UserCourseCreated = ({userCourses, userCategories}) => {
     // console.log(userCourses);
     const {shadowStyle} = useShadowStyles();
@@ -32,11 +37,6 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
       }
     }, [sortName, sortViews])
     
-    const bounceDownAnimation = {
-        0: { transform: [{ translateY: 0 }] },
-        0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
-        1: { transform: [{ translateY: 0 }] }, // Back to original position
-      };
   return (
     <>
     <View className="flex-row mx-auto p-2 flex-1 mt-2 bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-[10px] justify-between w-[260px]" style={shadowStyle}>
@@ -139,27 +139,5 @@ const UserCourseCreated = ({userCourses, userCategories}) => {
     </>
   )
 }
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    inner: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: 16,
-    },
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
-export default UserCourseCreated
+
+export default memo(UserCourseCreated)

@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, StyleSheet, Platform, Dimensions, Touchable, TouchableWithoutFeedback } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Redirect, useLocalSearchParams } from 'expo-router'
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, TouchableWithoutFeedback } from 'react-native'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocalSearchParams } from 'expo-router'
 import useFetchFunction from '../../../hooks/useFetchFunction'
 import { acceptFriendRequest, GetInstructorsUserProfileProgresses, getUserProfile, getUserRelationStatus, makeUserFriendReq, removeFriendReq, removeFriendRequestReq } from '../../../services/fetchingService'
 import Loading from "../../../components/Loading"
@@ -29,15 +29,17 @@ import OnlineClassesCard from '../../../components/OnlineClassesCard'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../../../hooks/useShadowStyles'
 
-export const unstable_settings = {
-  initialRouteName: 'index',
-};
+  const currentYear = new Date().getFullYear();
+  const startDate = new Date(`${currentYear}-01-01`); // January 1st
+  const endDate = new Date(`${currentYear}-12-31`); // December 31st
+  const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
 const Profiles = () => {
     const {profile} = useLocalSearchParams();
     // console.log(profile, " profili");
     const {colorScheme} = useColorScheme();
     const {shadowStyle} = useShadowStyles();
+    
     useEffect(() => {
       setProfileData(null);
       setRelationStatus(null)
@@ -81,22 +83,19 @@ const Profiles = () => {
     const [isRefreshing, setIsRefreshing] = useState(true)
     const [showOnlineCoursesProgress, setShowOnlineCoursesProgress] = useState(false)
 
-    const currentYear = new Date().getFullYear();
-    const startDate = new Date(`${currentYear}-01-01`); // January 1st
-    const endDate = new Date(`${currentYear}-12-31`); // December 31st
-    const numDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    
 
-    const chartConfig = {
+    const chartConfig = useMemo(() => ({
       backgroundGradientFrom: colorScheme === "dark" ? "#1E2923" : "#FFD3B6",
       backgroundGradientFromOpacity: 0,
       backgroundGradientTo: colorScheme === "dark" ? "#08130D" : "#FFE8D6",
       backgroundGradientToOpacity: 0.5,
       color: (opacity = 1) => `rgba(255, 156, 1, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255 ,255, ${opacity})`,
+      labelColor: (opacity = 1) => `rgba(255, 255 ,255, ${opacity})`,
       strokeWidth: 2, // optional, default 3
       barPercentage: 0.5,
       useShadowColorFromDataset: false // optional
-    };
+    }), [colorScheme]);
 
     const [showQuizzes, setShowQuizzes] = useState(false)
     const [showCourses, setShowCourses] = useState(false)
@@ -124,32 +123,30 @@ const Profiles = () => {
       setIsRefreshing(false)
     }
 
-    const profileImage = () => {
+    const profileImage = useCallback(() => {
 
-    }
+    }, [])
 
-    const { showNotification: successFriendReq } = NotifierComponent({
+    const { showNotification: successFriendReq } = useMemo(() => NotifierComponent({
       title: "Kerkesa shkoi me sukes!",
       description: "Per statusin e miqesise do te njoftoheni tek seksioni i notifikimeve",
       theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: successFriendDeletion} = NotifierComponent({
+    const {showNotification: successFriendDeletion} = useMemo(() => NotifierComponent({
       title: "Kerkesa shkoi me sukses!",
       description: `Sapo e larguat ${profileData?.firstname} ${profileData?.lastname} nga statusi juaj miqesor me perdorues!`,
       theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const { showNotification: failedReq } = NotifierComponent({
+    const { showNotification: failedReq } = useMemo(() => NotifierComponent({
       title: "Dicka shkoi gabim!",
       description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes!",
       alertType: "warning",
       theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const makeFriend = async () => {
-      console.log(userData?.id);
-      
+    const makeFriend = useCallback(async () => {      
       const payload = {
         userId: userData?.id,
         receiverId: profile,
@@ -163,36 +160,36 @@ const Profiles = () => {
       }else{
         failedReq()
       }
-    }
+    }, [profile])
 
     const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
     const [onlineCoursesData, setOnlineCoursesData] = useState([])
 
-    const showOnlineCoursesProgresses = async () => {
-      setOnlineCoursesLoading(true)
-      
-      const response = await GetInstructorsUserProfileProgresses(profile)
-      
-      setOnlineCoursesData(response)
-      setOnlineCoursesLoading(false)
-    }
-  
+    
     useEffect(() => {
+      const showOnlineCoursesProgresses = async () => {
+        setOnlineCoursesLoading(true)
+        
+        const response = await GetInstructorsUserProfileProgresses(profile)
+        
+        setOnlineCoursesData(response)
+        setOnlineCoursesLoading(false)
+      }
       if(showOnlineCoursesProgress){
         showOnlineCoursesProgresses()
       }
     }, [showOnlineCoursesProgress])
 
-    const removeOnWaitingFriend = async () => {
+    const removeOnWaitingFriend = useCallback(async () => {
       const response = await removeFriendRequestReq(profile);
       if(response === 200){
         await relationRefetch();
       }else{
         failedReq();
       }
-    }
+    }, [profile])
 
-    const removeFriend = async () => {
+    const removeFriend = useCallback(async () => {
       const response = await removeFriendReq(profile)
       if(response === 200){
         successFriendDeletion()
@@ -202,19 +199,19 @@ const Profiles = () => {
         setRemoveFriendModal(false);
         failedReq()
       }
-    }
+    }, [profile])
 
-    const getAllFriends = async () => {
-      const response = await reqGetAllUserTypes(profileData?.id, 2)
+    const getAllFriends = useCallback(async () => {
+      const response = await reqGetAllUserTypes(profile, 2)
       if(response){
         // console.log(response);
         setAllFriendsData(response)
       }else{
         setAllFriendsData([])
       }
-    }
+    }, [profile])
 
-    const goToMessenger = (user) => {
+    const goToMessenger = useCallback((user) => {
       // console.log(user);
       
       const otherUserData = {
@@ -228,11 +225,11 @@ const Profiles = () => {
       setShowFriendListOptions([])
       
       navigateToMessenger(router, otherUserData, userData);
-    }
+    }, [router])
 
-    const showOptionsFriendList = (id) => {
+    const showOptionsFriendList = useCallback((id) => {
       setShowFriendListOptions([id])
-    }
+    }, [setShowFriendListOptions])
 
     useEffect(() => {
       if(allFriendsModal){
@@ -242,7 +239,7 @@ const Profiles = () => {
       }
     }, [allFriendsModal])
 
-    const outputRelation = () => {
+    const outputRelation = useCallback(() => {
       if(relationStatus === null){
         return 0 // Shto miqesine 0
       }else{
@@ -258,7 +255,7 @@ const Profiles = () => {
           return 3 //shoqerohu
         }
       }
-    }
+    }, [relationStatus, userData?.id])
     
     
 
@@ -321,14 +318,14 @@ const Profiles = () => {
     
     
 
-    const acceptFriend = async () => {
+    const acceptFriend = useCallback(async () => {
       const response = await acceptFriendRequest(relationStatus?.senderId)
       if(response === 200){
         await refreshData();
       }else{
         failedReq()
       }
-    }
+    }, [relationStatus])
 
     useEffect(() => {
       if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes && !showOnlineCoursesProgress){
@@ -837,29 +834,5 @@ const Profiles = () => {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  box: {
-    ...Platform.select({
-        ios: {
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.6,
-            shadowRadius: 10,
-          },
-          android: {
-            elevation: 8,
-          },
-    })
-},
-});
 
 export default Profiles

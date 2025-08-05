@@ -1,5 +1,5 @@
 import { View, Text, Image, Dimensions, ScrollView, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocalSearchParams } from 'expo-router'
 import { icons, images } from '../../../../constants';
 import { LineChart } from 'react-native-chart-kit';
@@ -21,11 +21,11 @@ const Statistics = () => {
   const [statisticsData, setStatisticsData] = useState(Array(12).fill(0))
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     refetch()
@@ -36,7 +36,7 @@ const Statistics = () => {
   }, [statisticsDataResponse]);
   
 
-  const chartConfig = {
+  const chartConfig = useMemo(() => ({
     backgroundGradientFrom: colorScheme === "dark" ? "#1E2923" : "#FFD3B6",
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: colorScheme === "dark" ? "#08130D" : "#FFE8D6",
@@ -51,9 +51,9 @@ const Statistics = () => {
     },
     barPercentage: 0.5,
     useShadowColorFromDataset: false // optional
-  };
+  }), [colorScheme]);
 
-  const data = {
+  const data = useMemo(() => ({
     labels: ["Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor", "Korrik", "Gusht", "Shtator", "Tetor", "Nentor", "Dhjetor"],
     datasets: [
       {
@@ -63,7 +63,7 @@ const Statistics = () => {
       }
     ],
     legend: [`${statistics === "1" ? "Kurset e kryera" : statistics === "2" ? "Kurset offline te krijuara" : statistics === "3" ? "Kuizet e kryera" : statistics === "4" ? "Kuizet e krijuara" : statistics === "5" ? "Blogjet e krijuara" : statistics === "6" ? "Diskutimet e krijuara" : statistics === "7" ? "Takimet online te mbajtura" : statistics === "8" ? "Nderveprimet e tua ne Shokun e Mesimit" : "Undefined"}`] // optional
-  };
+  }), [statisticsData, statistics]);
   
   const chartWidth = Math.max(screenWidth, data.labels.length * 80); // 80px per label
 

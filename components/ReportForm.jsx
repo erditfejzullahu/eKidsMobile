@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, ScrollView } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { reportSectionSchema } from '../schemas/reportSectionSchema'
@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker"
 import CustomButton from './CustomButton'
 import { currentUserID } from '../services/authService'
 import { CreateSupportReportTicket, reqUsersBySearch } from '../services/fetchingService'
-import _ from 'lodash'
+import {debounce} from 'lodash'
 import { icons } from '../constants'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
@@ -31,36 +31,35 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
     
     
     
-    const searchUsers = async (query) => {
+    const searchUsers = useCallback(async (query) => {
         if(query.length < 3){
             setSearchResults([])
             return;
         }
         setResultLoading(true)
         const response = await reqUsersBySearch(query)
-        console.log(response);
         
         setSearchResults(response);
         setResultLoading(false)
-    }
-    const debounceFetchUsers = useCallback(_.debounce(searchUsers, 500), [])
+    }, [])
+    const debounceFetchUsers = useCallback(debounce(searchUsers, 500), [])
     
-    const handleUserSelect = (user, onChange) => {
+    const handleUserSelect = useCallback((user, onChange) => {
         onChange(user.name)
         setUserReportedId(user.id)
         
         setShowResults(false)
-    }
+    }, [])
     
     const {control, handleSubmit, watch, trigger, reset, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(reportSectionSchema),
-        defaultValues: {
+        defaultValues: useMemo(() => ({
             issueType: 13,
             description: "",
             image: "",
             otherTopic: "",
             reportUser: ""
-        },
+        }), []),
         mode: "onTouched"
     })
 
@@ -75,20 +74,20 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         }
     }, [selectedTopic, reset]);
 
-    const {showNotification: success} = NotifierComponent({
+    const {showNotification: success} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: "Raportimi juaj shkoj me sukses. Do te njoftoheni ne emailin tuaj sa me shpejt qe eshte e mundur.",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: error} = NotifierComponent({
+    const {showNotification: error} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [])
 
-    const submitReport = async (data) => {
+    const submitReport = useCallback(async (data) => {
         if(userReportedId === null){
             UserIdNotSaved()
             return;
@@ -109,24 +108,24 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         }else{
             error();
         }
-    }
+    }, [])
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [])
 
-    const {showNotification: UserIdNotSaved} = NotifierComponent({
+    const {showNotification: UserIdNotSaved} = useMemo(() => NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Klikoni personin qe deshironi te raportoni!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [])
 
-    const pickImage = async (onChange) => {
+    const pickImage = useCallback(async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(permission.granted === false){
             permissionNotification();
@@ -144,7 +143,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }
+    }, [])
 
     useEffect(() => {
       return () => {
@@ -326,7 +325,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
   )
 }
 
-export default ReportForm
+export default memo(ReportForm)
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -358,19 +357,3 @@ const pickerSelectStyles = StyleSheet.create({
     fontWeight:'700'
   },
 });
-
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });

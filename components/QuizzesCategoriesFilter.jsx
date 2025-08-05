@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import SorterComponent from './SorterComponent'
 import { icons } from '../constants'
 import { useColorScheme } from 'nativewind'
@@ -47,4 +47,4 @@ const QuizzesCategoriesFilter = ({sortQuizzes, filterQuizzes, userCategories}) =
   )
 }
 
-export default QuizzesCategoriesFilter
+export default memo(QuizzesCategoriesFilter)

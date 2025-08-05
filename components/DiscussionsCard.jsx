@@ -1,11 +1,9 @@
-import { View, Text, Platform, Image, useWindowDimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
+import { View, Text, Image, useWindowDimensions } from 'react-native'
+import { memo, useEffect, useState } from 'react'
 import { icons } from '../constants'
 import { TouchableOpacity } from 'react-native'
 import RenderHTML from 'react-native-render-html'
 import { useRouter } from 'expo-router'
-import { noop } from 'lodash'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited, answers, views, createdAt, id}, discussionComponentSection = false, closeDiscussionModal}) => {
@@ -28,7 +26,8 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
         year: 'numeric',
         month: 'long',  // Full month name
         day: 'numeric',
-      });
+    });
+
   return (
     <TouchableOpacity className="bg-oBlack-light dark:bg-oBlack p-4 relative border border-gray-200 dark:border-black-200" style={shadowStyle} 
         onPress={() => {
@@ -112,20 +111,4 @@ const DiscussionsCard = ({discussion: {title, content, tags, user, votes, edited
   )
 }
 
-export default DiscussionsCard
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(DiscussionsCard)

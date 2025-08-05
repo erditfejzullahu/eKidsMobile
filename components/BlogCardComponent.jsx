@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, Platform } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { deleteBlog, getBlogDetails, getCourseCategories } from '../services/fetchingService'
 import _, { flatMap, flattenDeep } from 'lodash';
 import { TouchableOpacity } from 'react-native';
@@ -15,6 +15,19 @@ import { useNavigateToSupport } from '../hooks/goToSupportType';
 import NotifierComponent from './NotifierComponent';
 import Loading from './Loading';
 
+const formatAlbanianDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = date.toLocaleString('sq-AL', { month: 'short' });
+    const year = date.getFullYear().toString().slice(-2);
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    const period = hours >= 12 ? 'PD' : 'MD';
+    const displayHours = hours % 12 || 12;
+    
+    return `${day} ${month} ${year}, ${displayHours}:${minutes} ${period}`;
+};
 
 const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSection = false, removePostFromList}) => {
     // console.log(blog)
@@ -32,29 +45,29 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
     const user = userData?.data?.userData;
     const categories = userData?.data?.categories;
 
-    const moreOptionsItems = [
+    const moreOptionsItems = useMemo(() => [
         {label: "Detajet", action: () => setBlogDetails(true), show: true, icon: icons.edit},
         {label: "Shko tek blogu", action: () => router.push({pathname: `${blog?.id}`, params: {userId: blog?.userId, userName: blog?.user?.name, userPhoto: blog?.user?.profilePicture}}), show: true, icon: icons.blogs},
         {label: "Shto tek favoritet", action: () => setComingSoon(true), show: true, icon: icons.star},
         {label: "Raporto", action: () => navigateToSupport('report'), show: true, icon: icons.report},
         {label: "Dukshmeria", action: () => setComingSoon(true), show: blog?.userId === user?.id, icon: icons.earth},
         {label: "Fshij postimin", action: () => deleteBlogById(), show: blog?.userId === user?.id, icon: icons.trashbin}
-    ]
+    ], [])
 
-    const {showNotification: deletedBlogNotification} = NotifierComponent({
+    const {showNotification: deletedBlogNotification} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: `Blogu ${blog?.title} eshte fshire me sukses`,
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: deleteBlogNotificationError} = NotifierComponent({
+    const {showNotification: deleteBlogNotificationError} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: `Dicka shkoi gabim ne fshirjen e blogut ${blog?.id}`,
         theme: colorScheme,
         alertType: "warning"
-    })
+    }), [colorScheme])
 
-    const deleteBlogById = async () => {
+    const deleteBlogById = useCallback(async () => {
         const response = await deleteBlog(blog?.id)
         if(response === 200){
             deletedBlogNotification()
@@ -62,16 +75,15 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         }else{
             deleteBlogNotificationError();
         }
-    }
+    }, [])
 
-    const getBlogDetailsData = async () => {
+    const getBlogDetailsData = useCallback(async () => {
         setBlogDetailsLoading(true)
         const response = await getBlogDetails(blog?.id)
-        console.log(response);
         
         setBlogDetailsData(response || null)
         setBlogDetailsLoading(false);
-    }
+    }, [setBlogDetailsData, setBlogDetailsLoading])
 
     useEffect(() => {
       if(blogDetails){
@@ -101,19 +113,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         images: []
     })
 
-    const formatAlbanianDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = date.toLocaleString('sq-AL', { month: 'short' });
-        const year = date.getFullYear().toString().slice(-2);
-        const hours = date.getHours();
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        
-        const period = hours >= 12 ? 'PD' : 'MD';
-        const displayHours = hours % 12 || 12;
-        
-        return `${day} ${month} ${year}, ${displayHours}:${minutes} ${period}`;
-      };
+    
     
     useEffect(() => {
       if(blog?.imageUrls){
@@ -372,19 +372,5 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
     </>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
-export default BlogCardComponent
+
+export default memo(BlogCardComponent)

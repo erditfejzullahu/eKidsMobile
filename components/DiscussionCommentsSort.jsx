@@ -1,17 +1,18 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { icons } from '../constants'
 import * as Animatable from "react-native-animatable"
 import { Platform } from 'react-native'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 
+const [sortableComments, setSortableComments] = useState([
+    {label: "Nga votat", sort: "votes", icon: icons.votes},
+    {label: "Te rejat", sort: "newest", icon: icons.latest},
+    {label: "Te vjetrat", sort: "oldest", icon: icons.oldest}
+])
+
 const DiscussionCommentsSort = () => {
     const {shadowStyle} = useShadowStyles();
-    const [sortableComments, setSortableComments] = useState([
-        {label: "Nga votat", sort: "votes", icon: icons.votes},
-        {label: "Te rejat", sort: "newest", icon: icons.latest},
-        {label: "Te vjetrat", sort: "oldest", icon: icons.oldest}
-    ])
 
     const [selectedSort, setSelectedSort] = useState(sortableComments[0])
     const [openedSorter, setOpenedSorter] = useState(false)
@@ -43,20 +44,4 @@ const DiscussionCommentsSort = () => {
   )
 }
 
-export default DiscussionCommentsSort
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(DiscussionCommentsSort)

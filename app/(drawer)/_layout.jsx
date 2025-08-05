@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import { Drawer } from 'expo-router/drawer'
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer'
 import { icons } from '../../constants'
@@ -34,7 +34,7 @@ const showIcons = (icon, size, color) => {
     )
 }
 
-const CustomHeader = (props) => {
+const CustomHeader = memo((props) => {
     const {colorScheme} = useColorScheme();
     const navigation = useNavigation();
 
@@ -57,7 +57,7 @@ const CustomHeader = (props) => {
         return path === pathname ? "#FFA001" : colorScheme === 'dark' ? "#fff" : "#000";
     }
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         try {
             await logout();
             setIsLoggedIn(false)
@@ -69,30 +69,30 @@ const CustomHeader = (props) => {
             console.error('Error ne logout ', error);
             
         }
-    }
+    }, [navigation, setIsLoggedIn, setUser])
 
     const {drawerItems, drawerItemsUpdated} = useDrawerUpdater(); //get routes from this
 
-
-    const DrawerItems = ({ pathname, routerProps }) => {
-        
-        const routerToSpecificFix = (drawerProps, path, iconType) => {
-            if(path.includes('/course/lesson/')){
-                if(iconType === 48 || iconType === 49){
-                    router.replace(path)
-                }else{
-                    setModalVisible(true)
-                }
-            }else{
+    const routerToSpecificFix = useCallback((drawerProps, path, iconType) => {
+        if(path.includes('/course/lesson/')){
+            if(iconType === 48 || iconType === 49){
                 router.replace(path)
+            }else{
+                setModalVisible(true)
             }
-            
-            // console.log(drawerProps);
-            // console.log(path);
-            // setTimeout(() => {
-                drawerProps.closeDrawer();
-            // }, 50);
+        }else{
+            router.replace(path)
         }
+        
+        // console.log(drawerProps);
+        // console.log(path);
+        // setTimeout(() => {
+            drawerProps.closeDrawer();
+        // }, 50);
+    }, [])
+
+    const DrawerItems = useMemo(() => ({ pathname, routerProps }) => {
+        
         return (
             <>
                 {drawerItems.map((item, index) => (
@@ -108,7 +108,7 @@ const CustomHeader = (props) => {
                 
             </>
         );
-    };
+    }, [routerToSpecificFix, changeIconColor, colorScheme, drawerItems]);
     
     return(
         <>
@@ -173,7 +173,7 @@ const CustomHeader = (props) => {
             </CustomModal>
         </>
     )
-}
+})
 
 const _layout = () => {
     const [connection, setConnection] = useState(null)
@@ -288,7 +288,6 @@ const _layout = () => {
             
         } catch (error) {
             console.log(error, ' error infoking noptification count');
-            
         }
     }
     
@@ -305,11 +304,6 @@ const _layout = () => {
             {/* <Drawer.Screen name="(tabs)" options={{ title: 'Main Tabs' }} /> */}
         </Drawer>
         {isOpened && <Notifications />}
-        {/* <Stack.Screen name='users'/> */}
-        {/* <Stack.Screen name='(learnOnline)' /> */}
-        {/* <Stack.Screen name='(learnOnline)/meetings/[id]' />
-        <Stack.Screen name='(learnOnline)/onlineClass/[id]' />
-        <Stack.Screen name='(learnOnline)/tutor' /> */}
         </>
     )
 }

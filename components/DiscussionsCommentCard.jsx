@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, useWindowDimensions, TextInput } from 'react-native'
-import React, { useState } from 'react'
-import { Platform } from 'react-native'
+import { View, Text, Image, ScrollView, TouchableOpacity, useWindowDimensions, TextInput } from 'react-native'
+import  { memo, useCallback, useMemo, useState } from 'react'
 import { icons } from '../constants'
-import _ from 'lodash'
+import {flattenDeep} from 'lodash'
 import DiscussionAnswerVotesComponent from './DiscussionAnswerVotesComponent'
 import RenderHTML from 'react-native-render-html'
 import * as Animatable from "react-native-animatable"
@@ -19,30 +18,31 @@ const DiscussionsCommentCard = ({item}) => {
     const [openReply, setOpenReply] = useState(false)
     const [replyLoading, setReplyLoading] = useState(false)
     
-    const flatReplies = _.flattenDeep(item.replies)
+    const flatReplies = flattenDeep(item.replies)
     // console.log(flatReplies);
-    const date = new Date(item?.createdAt).toLocaleDateString("sq-AL", {
+    const date = useMemo(() => new Date(item?.createdAt).toLocaleDateString("sq-AL", {
         day: "2-digit",
         month: "short",
         year: "2-digit"
-    }) 
+    }), [item?.createdAt])
+
     const {width} = useWindowDimensions();
 
-    const {showNotification: unsuccessComment} = NotifierComponent({
+    const {showNotification: unsuccessComment} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim. Ju lutem provoni perseri apo kontakotni Panelin e Ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: threeCharUnsuccess} = NotifierComponent({
+    const {showNotification: threeCharUnsuccess} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Shkruani replikim me te gjate se 3 karaktere",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const makeReplyComment = async () => {
+    const makeReplyComment = useCallback(async () => {
         if(replyContent.length < 3){
             threeCharUnsuccess()
             return;
@@ -65,7 +65,7 @@ const DiscussionsCommentCard = ({item}) => {
             unsuccessComment()
         }
         setReplyLoading(false)
-    }
+    }, [setReplyLoading, setOpenReply, setReplyContent])
     
     
   return (
@@ -157,20 +157,4 @@ const DiscussionsCommentCard = ({item}) => {
   )
 }
 
-export default DiscussionsCommentCard
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(DiscussionsCommentCard)

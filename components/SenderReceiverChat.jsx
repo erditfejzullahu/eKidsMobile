@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, Modal, TouchableWithoutFeedback } from 'react-native'
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import { icons, images } from '../constants';
 import { useState } from 'react';
 import * as Animatable from 'react-native-animatable'
@@ -54,7 +54,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
 
     // console.log(renderItem);
 
-    const handleGoToLocation = (item) => {
+    const handleGoToLocation = useCallback((item) => {
         if(item === null) return;
 
         if(item.lesson){
@@ -76,9 +76,9 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
         }else if(item.onlineMeeting){
             router.replace(`/meetings/${item?.onlineMeeting?.id}`)
         }
-    }
+    }, [router])
     
-    const downloadFile = async () => {
+    const downloadFile = useCallback(async () => {
         try {
             setIsDownloading(true);
             setProgress(0)
@@ -112,9 +112,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             setIsDownloading(false)
             setProgress(0)
         }
-        
-
-    }
+    }, [])
     
   return (
     <>
@@ -384,20 +382,4 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
   )
 }
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-})
-
-export default SenderReceiverChat
+export default memo(SenderReceiverChat)

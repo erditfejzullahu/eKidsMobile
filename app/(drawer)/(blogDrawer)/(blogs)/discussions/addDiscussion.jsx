@@ -1,5 +1,4 @@
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native'
-import React from 'react'
+import { View, Text, Image, TouchableOpacity, Platform } from 'react-native'
 import { icons, images } from '../../../../../constants'
 import { useRouter } from 'expo-router'
 import CreateDiscussionForm from '../../../../../components/CreateDiscussionForm'
@@ -46,19 +45,3 @@ const AddDiscussion = () => {
 }
 
 export default AddDiscussion
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});

@@ -1,5 +1,5 @@
 import { View, Text, Button, ScrollView, Image, TextInput, RefreshControl, FlatList } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Drawer } from 'react-native-drawer-layout';
 import { Link, Stack, usePathname, useRouter } from 'expo-router';
 import { Dimensions } from 'react-native';
@@ -19,7 +19,7 @@ import { useNavigateToSupport } from '../../../hooks/goToSupportType';
 import { useColorScheme } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
 
-const TagsHeader = ({isOpened, passRouteClicked}) => {
+const TagsHeader = memo(({isOpened, passRouteClicked}) => {
   const {user, isLoading} = useGlobalContext();
   const userCategories = user?.data?.categories;
   // console.log(userCategories);
@@ -36,12 +36,12 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
 
   const {data, isLoading: discussionOrBlogTagsLoading, refetch} = useFetchFunction(() => discussionSection ? getTagsByTitle(discussionBlogsTagsInputs.discussionsInput.trim() === "" ? null : discussionBlogsTagsInputs.discussionsInput) : getAllBlogTags(discussionBlogsTagsInputs.blogsInput.trim() === "" ? null : discussionBlogsTagsInputs.blogsInput))
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: "", discussionsInput: ""}))
     await refetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
   useEffect(() => {
     if(data){
@@ -97,14 +97,15 @@ const TagsHeader = ({isOpened, passRouteClicked}) => {
       
 
   );
-};
+});
 
 const _layout = () => {
   const {colorScheme} = useColorScheme();
   const router = useRouter();
   const {isDrawerOpened, setIsDrawerOpened} = useBlogsDrawerContext();
   const {setDiscussionSection} = useTopbarUpdater();
-  const handleRoute = (data) => {
+
+  const handleRoute = useCallback((data) => {
     setIsDrawerOpened(false)
     if(data.discussion){
       console.log(data, ' tek layoutin')
@@ -112,7 +113,8 @@ const _layout = () => {
     }else{
       router.replace({pathname: `/blogAll`, params: {tagId: data.id, name: data.name}})
     }
-  }
+  }, [router, setIsDrawerOpened])
+
   const pathname = usePathname();
   useEffect(() => {
     if(pathname.includes('discussions')){

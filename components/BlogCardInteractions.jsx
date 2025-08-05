@@ -1,22 +1,28 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, TextInput, Modal } from 'react-native'
-import React, { useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { FlatList } from 'react-native-gesture-handler'
 import { icons, images } from '../constants'
 import { Platform } from 'react-native'
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view'
 import * as Animatable from "react-native-animatable"
 import * as ImagePicker from "expo-image-picker"
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system';
 import Loading from './Loading'
-import useFetchFunction from '../hooks/useFetchFunction'
 import { createBlogComment, getCommentsByBlog, reqGetAllUserTypes, reqLikeBlog, reqLikeBlogComment, reqShareToUser } from '../services/fetchingService'
-import _ from 'lodash'
+import {flattenDeep} from 'lodash'
 import { useEffect } from 'react'
 import NotifierComponent from './NotifierComponent'
 import { useColorScheme } from 'nativewind'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 import * as Linking from "expo-linking"
+
+const getAllRepliesWithDepth = (data, depth = 0) => {
+    return data.map(item => {
+        const replies = item.replies || [];
+        const updatedItem = {...item, depth};
+        return [updatedItem, ...getAllRepliesWithDepth(replies, depth + 1)]
+    })
+}
 
 const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     const user = userData?.data?.userData;
@@ -48,7 +54,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         fileName: ""
     })
 
-    const handleReplies = (index) => {
+    const handleReplies = useCallback((index) => {
         setOpenReplies((prevData) => {
             if(prevData.includes(index)){
                 const newArray = prevData.filter(idx => idx !== index)
@@ -57,17 +63,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
                 return [...prevData, index]
             }
         })
-    }
+    }, [setOpenReplies])
 
-    const getAllRepliesWithDepth = (data, depth = 0) => {
-        return data.map(item => {
-            const replies = item.replies || [];
-            const updatedItem = {...item, depth};
-            return [updatedItem, ...getAllRepliesWithDepth(replies, depth + 1)]
-        })
-    }
-
-    const handleCommentVisibility = async () => {
+    const handleCommentVisibility = useCallback(async () => {
         if(!openComments){
             await getComments()
             setOpenComments(true)
@@ -76,7 +74,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setCommentData([])
             setOpenComments(false)
         }
-    }
+    }, [setOpenComments, setPagination, setCommentData, setOpenComments])
 
     
     
@@ -87,13 +85,13 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     }, [pagination])
     
 
-    const getComments = async () => {                
+    const getComments = useCallback(async () => {                
         const response = await getCommentsByBlog(blog.id, fullBlogSection, pagination)
         
         if(response && response?.blogComments?.length > 0){
             // console.log(response, ' komente')
             // setCommentData(_.flattenDeep(getAllRepliesWithDepth(response.blogComments)))
-            const newComments = _.flattenDeep(getAllRepliesWithDepth(response.blogComments))
+            const newComments = flattenDeep(getAllRepliesWithDepth(response.blogComments))
             setCommentData((prevComments) => {
                 const mergedComments = [...prevComments]
 
@@ -112,7 +110,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setCommentData([])
             setHasMore(false)
         }
-    }
+    }, [setHasMore, setCommentData, pagination, blog?.id, fullBlogSection])
 
 
     useEffect(() => {        
@@ -143,16 +141,17 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     }, [])
     
 
-    const {showNotification: successComment} = NotifierComponent({
+    const {showNotification: successComment} = useMemo(() => NotifierComponent({
         title: "Sapo keni komentuar me sukses",
         theme: colorScheme
-    })
-    const {showNotification: unsuccessfulComment} = NotifierComponent({
+    }), [colorScheme])
+
+    const {showNotification: unsuccessfulComment} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ne krijimin e komentit tuaj dicka shkoi gabim. Ju lutem provoni perseri",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
     const createComment = async (parentId) => {
         let payload = {
@@ -178,16 +177,15 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }
     }
     
-    
-    const deleteItem = () => {
+    const deleteItem = useCallback(() => {
         setPickedItem({
             type: "",
             base64: "",
             fileName: ""
         })
-    }
+    }, [setPickedItem])
 
-    const pickDocument = async () => {
+    const pickDocument = useCallback(async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({type: '*/*',})
 
@@ -207,17 +205,17 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         } catch (error) {
             console.error(error);
         }
-    }
+    }, [setPickedItem])
 
-    const {showNotification: permissionNotification} = NotifierComponent({
+    const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
         description: "Klikoni per te shtuar lejet e posacshme",
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const openCamera = async () => {
+    const openCamera = useCallback(async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync()
         if(!permissionResult){
             permissionNotification();
@@ -244,8 +242,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             }))
             // console.log(image);
         }
-    }
-    const addImage = async () => {
+    }, [setPickedItem])
+
+    const addImage = useCallback(async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
         if(!permissionResult){
             permissionNotification();
@@ -272,16 +271,16 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             }))
             // console.log(image);
         }
-    }
+    }, [setPickedItem])
     
-    const {showNotification: unsuccessBlogLike} = NotifierComponent({
+    const {showNotification: unsuccessBlogLike} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Dicka shkoi gabim ne ndryshimin e statutit te pelqimit, provoni perseri!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const likeBlog = async (blogId, userId) => {
+    const likeBlog = useCallback(async (blogId, userId) => {
         const response = await reqLikeBlog(blogId, userId)
         
         if(response.message === "LikeAdd"){
@@ -291,9 +290,9 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }else{
             unsuccessBlogLike()
         }
-    }
+    }, [setBlogTemporaryLike])
 
-    const likeBlogComment = async (commentId, blogId) => {        
+    const likeBlogComment = useCallback(async (commentId, blogId) => {        
         const response = await reqLikeBlogComment(commentId, blogId)
         
         if(response.message === "LikeAdd"){
@@ -308,11 +307,11 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }else{
             unsuccessBlogLike();
         }
-    }
+    }, [setCommentTemporaryLike])
 
     const [allFriendsLoading, setAllFriendsLoading] = useState(false)
 
-    const getAllFriends = async () => {
+    const getAllFriends = useCallback(async () => {
         setAllFriendsLoading(true)
         const response = await reqGetAllUserTypes(user.id, 2);
         if(response){
@@ -321,21 +320,22 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setFriendsData([])
         }
         setAllFriendsLoading(false)
-    }
+    }, [setFriendsData, user?.id])
 
-    const {showNotification: successSender} = NotifierComponent({
+    const {showNotification: successSender} = useMemo(() => NotifierComponent({
         title: "Sapo derguat Blogun me sukses",
         description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!",
         theme: colorScheme
-    })
-    const {showNotification: errorShare} = NotifierComponent({
+    }), [colorScheme])
+
+    const {showNotification: errorShare} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const handleShareToUser = async (sendToUser) => {
+    const handleShareToUser = useCallback(async (sendToUser) => {
         const payload = {
             "senderUsername": user?.username,
             "receiverUsername": sendToUser?.username,
@@ -348,7 +348,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             errorShare()
         }
         setSendToFriends(false)
-    }
+    }, [user?.username, setSendToFriends])
 
     useEffect(() => {
       if(sendToFriends){
@@ -673,19 +673,5 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
     </>
   )
 }
-const styles = StyleSheet.create({
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
-export default BlogCardInteractions
+
+export default memo(BlogCardInteractions)

@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator } from 'react-native'
-import React from 'react'
+import React, { memo } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme } from 'nativewind'
 
@@ -14,4 +14,4 @@ const Loading = () => {
   )
 }
 
-export default Loading
+export default memo(Loading)

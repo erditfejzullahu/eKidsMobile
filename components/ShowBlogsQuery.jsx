@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image } from 'react-native'
-import React from 'react'
+import { memo } from 'react'
 import { getCourseCategories } from '../services/fetchingService'
 import { TouchableOpacity } from 'react-native'
 import { icons } from '../constants'
@@ -56,4 +56,4 @@ const ShowBlogsQuery = ({retrivedBlogData, userData}) => {
   )
 }
 
-export default ShowBlogsQuery
+export default memo(ShowBlogsQuery)

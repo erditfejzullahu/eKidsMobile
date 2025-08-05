@@ -1,8 +1,7 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { icons, images } from '../constants';
 import { useRouter } from 'expo-router';
-import { Platform } from 'react-native';
 import { navigateToMessenger } from '../hooks/useFetchFunction';
 import * as Animatable from "react-native-animatable"
 import { useShadowStyles } from '../hooks/useShadowStyles';
@@ -13,19 +12,20 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
     const {colorScheme} = useColorScheme();
     const router = useRouter();
     const [showOptions, setShowOptions] = useState(false)
+
     const date = new Date(usersData?.lastMessage?.message?.createdAt);
-    const formattedDate = date.toLocaleDateString('sq-AL', {
+    const formattedDate = useMemo(() => date.toLocaleDateString('sq-AL', {
         year: 'numeric',
         month: 'long',  // Full month name
         day: 'numeric',
-    });
+    }), [date]);
 
-    const handleRouteToUser = () => {
+    const handleRouteToUser = useCallback(() => {
         setShowOptions(false)
         router.replace(`/users/${usersData?.id}`)
-    }
+    }, [router])
 
-    const returnLastMessage = () => {
+    const returnLastMessage = useCallback(() => {
 
         if(usersData?.lastMessage === null){
             return "Nuk ka bisede aktuale. Fillo biseden tani!"
@@ -90,7 +90,8 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
                 }
             }
         }
-    }
+    }, [usersData])
+
   return (
     <TouchableWithoutFeedback onPress={() => setShowOptions(!showOptions)}>
         <TouchableOpacity onLongPress={() => setShowOptions(!showOptions)} delayLongPress={300}
@@ -146,20 +147,4 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
   )
 }
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-  })
-
-export default AllUsersInteractions
+export default memo(AllUsersInteractions)

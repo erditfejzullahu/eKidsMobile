@@ -1,5 +1,5 @@
-import { View, Text, RefreshControl, TouchableOpacity, StyleSheet, Image, FlatList } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, RefreshControl, TouchableOpacity, Image } from 'react-native'
+import { useCallback, useEffect, useState } from 'react'
 import DefaultHeader from "../../../components/DefaultHeader"
 import { Platform } from 'react-native'
 import { icons } from '../../../constants'
@@ -31,16 +31,14 @@ const Support = () => {
         chatSupportSection: false,
     })
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setRefreshKey(prev => prev + 1)
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
     useEffect(() => {
-        console.log(data);
-        
         setAvailableTickets(data || [])
     }, [data])
     
@@ -79,17 +77,18 @@ const Support = () => {
       )
     
 
-    const handleSectionPress = (section) => {
+    const handleSectionPress = useCallback((section) => {
         setSectionEnabled({
             supportSection: section === "supportSection",
             reportSection: section === "reportSection",
             chatSupportSection: section === "chatSupportSection"
         })
-    }
+    }, [])
 
-    const handleSuccessForm = () => {
+    const handleSuccessForm = useCallback(() => {
         setRefreshKey(prev => prev + 1)
-    }
+    }, [setRefreshKey])
+
 if(isLoading || isRefreshing) return <Loading />
   return (
     <KeyboardAwareScrollView
@@ -145,19 +144,3 @@ if(isLoading || isRefreshing) return <Loading />
 }
 
 export default Support
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})

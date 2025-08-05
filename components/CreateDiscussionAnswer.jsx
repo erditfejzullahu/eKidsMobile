@@ -1,17 +1,19 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
+import  { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor'
 import { createDiscussionAnswerAsync } from '../services/fetchingService'
 import Placeholder from '@tiptap/extension-placeholder'
-import { Platform } from 'react-native'
 import { currentUserID } from '../services/authService'
 import NotifierComponent from './NotifierComponent'
 import { useColorScheme } from 'nativewind'
+import { useShadowStyles } from '../hooks/useShadowStyles'
 
 const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
     const {colorScheme} = useColorScheme();
     const [commentSendLoading, setCommentSendLoading] = useState(false)
     const [answerContent, setAnswerContent] = useState("")
+
+    const {shadowStyle} = useShadowStyles();
 
     useImperativeHandle(ref, () => ({
         blurEditor: () => {
@@ -41,24 +43,24 @@ const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
     
     const editorContent = useEditorContent(editor, {type: "html"});
 
-    const {showNotification: underThreeChars} = NotifierComponent({
+    const {showNotification: underThreeChars} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Nuk pranohen komente/pergjigjje me me pak se 3 karaktere",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: successComment} = NotifierComponent({
+    const {showNotification: successComment} = useMemo(() => NotifierComponent({
         title: "Sukses",
         description: "Sapo komentuat/pergjigjjet ne diskutim",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: unSuccessComment} = NotifierComponent({
+    const {showNotification: unSuccessComment} = useMemo(() => NotifierComponent({
         title: "Gabim",
         description: "Dicka shkoi gabim, ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
     const createAnswer = async () => {
         if(answerContent.length < 7){
@@ -102,7 +104,7 @@ const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
         <Text className="text-oBlack dark:text-white pb-1 font-psemibold text-sm">Pergjigjja/Komenti juaj</Text>
         <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight pb-2">Ne klikim te fushes mund te manovroni me tekstin me ane te shiritit te paraqitur poshte fushes se shkrimit.</Text>
         <View>
-        <RichText editor={editor} style={[{backgroundColor: colorScheme === "dark" ? "#13131a" : "#fcf6f2", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: colorScheme === "dark" ? "#232533" : "#e5e7eb"}, styles.box]}/>
+        <RichText editor={editor} style={[{backgroundColor: colorScheme === "dark" ? "#13131a" : "#fcf6f2", height: 200, borderRadius: 6, paddingLeft: 10, paddingRight: 10, maxHeight: "200", borderWidth: 1, borderColor: colorScheme === "dark" ? "#232533" : "#e5e7eb"}, shadowStyle]}/>
         {/* <KeyboardAvoidingView style={{position: "absolute", width: "100%", bottom: 0}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}> */}
         <View className="rounded-md overflow-hidden">
             <Toolbar editor={editor} />
@@ -117,19 +119,3 @@ const CreateDiscussionAnswer = forwardRef(({id, sentSuccessResponse}, ref) => {
 })
 
 export default CreateDiscussionAnswer
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});

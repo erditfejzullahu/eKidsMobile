@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, ScrollView } from 'react-native'
-import React, { useCallback, useEffect } from 'react'
+import React, { memo, useCallback, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons, images } from '../constants'
@@ -10,7 +10,7 @@ import { DrawerActions } from '@react-navigation/native'
 import { useState } from 'react'
 import { useTopbarUpdater } from '../navigation/TopbarUpdater'
 import { useNotificationContext } from '../context/NotificationState'
-import _ from 'lodash'
+import {debounce} from 'lodash'
 import { getBlogByTitle, getDiscussionsByTitle, reqUsersBySearch } from '../services/fetchingService'
 import * as Animatable from "react-native-animatable"
 import BlogSearchInput from './ShowBlogsQuery'
@@ -33,30 +33,28 @@ const Topbar = () => {
     const {isOpened, setIsOpened, notificationsCount} = useNotificationContext();
     const [queryText, setQueryText] = useState(null)
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         const response = await reqUsersBySearch(queryText);
         if(response){
             setRetrivedData(response);
         }else{
             setRetrivedData(null)
         }
-    }
+    }, [])
 
-    const fetchBlogs = async () => {
+    const fetchBlogs = useCallback(async () => {
         const response = await getBlogByTitle(queryText)
         if(response){
             setRetrivedBlogData(response)
         }else{
             setRetrivedBlogData([])
         }
-    }
+    }, [])
 
-    const fetchDiscussions = async () => {
-        const response = await getDiscussionsByTitle(queryText)
-        console.log(response, ' res');
-        
+    const fetchDiscussions = useCallback(async () => {
+        const response = await getDiscussionsByTitle(queryText)        
         setRetrievedDiscussionData(response || [])
-    }
+    }, [])
 
     useEffect(() => {
       if(queryText === '' || queryText === null){
@@ -69,11 +67,11 @@ const Topbar = () => {
     }, [queryText])
     
 
-    const debounceFetchData = useCallback(_.debounce(fetchUsers, 500), [])
-    const debounceFetchBlogData = useCallback(_.debounce(fetchBlogs, 500), [])
-    const debounceFetchDiscussionData = useCallback(_.debounce(fetchDiscussions, 500), [])
+    const debounceFetchData = useCallback(debounce(fetchUsers, 500), [])
+    const debounceFetchBlogData = useCallback(debounce(fetchBlogs, 500), [])
+    const debounceFetchDiscussionData = useCallback(debounce(fetchDiscussions, 500), [])
 
-    const handleInput = () => {        
+    const handleInput = useCallback(() => {        
         if(showSearcher){
             if(queryText.length > 2) debounceFetchData(queryText)
         }else if(showBlogSearcher){
@@ -81,7 +79,7 @@ const Topbar = () => {
         }else if(showDiscussionSearcher){
             if(queryText.length > 2) debounceFetchDiscussionData(queryText);
         }
-    }
+    }, [showSearcher, showBlogSearcher, showDiscussionSearcher])
 
     useEffect(() => {
     
@@ -216,4 +214,4 @@ const Topbar = () => {
   )
 }
 
-export default Topbar
+export default memo(Topbar)

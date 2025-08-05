@@ -1,22 +1,17 @@
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react'
-import { FlatList, Image, KeyboardAvoidingView, RefreshControl, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Image, RefreshControl, ScrollView, Text, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native'
 import useFetchFunction from '../../../../../hooks/useFetchFunction';
-import { createDiscussionAnswerAsync, getDiscussionById, getDiscussionsAnswers, handleDiscussionVoteFunc } from '../../../../../services/fetchingService';
+import {  getDiscussionById, getDiscussionsAnswers } from '../../../../../services/fetchingService';
 import Loading from "../../../../../components/Loading"
-import { Platform } from 'react-native';
 import { icons } from '../../../../../constants';
 import { TouchableOpacity } from 'react-native';
 import RenderHTML from 'react-native-render-html';
 import { useRouter } from 'expo-router';
-import { CoreBridge, RichText, TenTapStartKit, Toolbar, useEditorBridge, useEditorContent } from '@10play/tentap-editor';
-import Placeholder from '@tiptap/extension-placeholder';
 import DiscussionCommentsSort from '../../../../../components/DiscussionCommentsSort';
 import DiscussionsCommentCard from '../../../../../components/DiscussionsCommentCard';
-import { currentUserID } from '../../../../../services/authService';
 import DiscussionVotesComponent from '../../../../../components/DiscussionVotesComponent';
 import EmptyState from "../../../../../components/EmptyState"
-import NotifierComponent from '../../../../../components/NotifierComponent';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import CreateDiscussionAnswer from '../../../../../components/CreateDiscussionAnswer';
 import { useTopbarUpdater } from '../../../../../navigation/TopbarUpdater';
@@ -51,12 +46,12 @@ const Discussion = () => {
     
     
     
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
       setDiscussionRefreshing(true)
       await refetch();
       await answersRefetch();
       setDiscussionRefreshing(false)
-    }    
+    }, [])
 
     useEffect(() => {
       if(data){
@@ -97,7 +92,7 @@ const Discussion = () => {
     if(isLoading || discussionRefreshing || answersLoading || userLoading) return <Loading />
     
   return (
-    <View className="flex-1 h-full bg-primary-light dark:bg-primary-light dark:bg-primary-light dark:bg-primary">
+    <View className="flex-1 h-full bg-primary-light dark:bg-primary">
         <TouchableWithoutFeedback
           onPress={() => {
             createAnswerRef.current?.blurEditor();
@@ -262,28 +257,3 @@ const Discussion = () => {
 }
 
 export default Discussion
-
-const styles = StyleSheet.create({
-    overlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'transparent',
-      zIndex: 10,
-    },
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});

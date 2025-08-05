@@ -1,8 +1,8 @@
-import { View, Text, ScrollView, RefreshControl, Image, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Modal, FlatList } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { useCallback, useMemo } from 'react'
 import { Link, Redirect, useLocalSearchParams } from 'expo-router'
 import useFetchFunction, { navigateToMessenger } from '../../../../hooks/useFetchFunction'
-import { getCourseCategories, getQuizById, getUserQuizzesCreated, reqCreateMistake, reqGetAllUserTypes, reqGetStatusQuiz, reqQuizCompleted } from '../../../../services/fetchingService'
+import { getCourseCategories, getQuizById, getUserQuizzesCreated, reqCreateMistake, reqGetStatusQuiz, reqQuizCompleted } from '../../../../services/fetchingService'
 import { useGlobalContext } from '../../../../context/GlobalProvider'
 import Loading from '../../../../components/Loading'
 import { useState } from 'react'
@@ -13,7 +13,6 @@ import { useRouter } from 'expo-router'
 import Checkbox from 'expo-checkbox'
 import CustomModal from '../../../../components/Modal'
 import NotifierComponent from '../../../../components/NotifierComponent'
-import { useTopbarUpdater } from '../../../../navigation/TopbarUpdater'
 import ShareToFriends from '../../../../components/ShareToFriends'
 import { useRole } from '../../../../navigation/RoleProvider'
 import { useColorScheme } from 'nativewind'
@@ -44,26 +43,26 @@ const Quiz = () => {
     const [successfulModal, setSuccessfulModal] = useState({visible: false, isEnd: false})
     const [unSuccessfulModal, setUnSuccessfulModal] = useState(false)
 
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         await refetch();
         await quizStatusRefetch();
         await countUserRefetch();
         setIsRefreshing(false)
-    }
+    }, [])
 
-    const removeOpenedWindows = () => {
+    const removeOpenedWindows = useCallback(() => {
         setOpenContactUser(false)
-    }
+    }, [setOpenContactUser])
 
-    const {showNotification} = NotifierComponent({
+    const {showNotification} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e Ndihmes",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const validateQuestions = async (answerItem, questionType, isEnd) => {        
+    const validateQuestions = useCallback(async (answerItem, questionType, isEnd) => {        
         setAllAnswers((prevItems) => {
             const key = `answerItem-${answerItem.id}`
             prevItems = prevItems || {} //fix null val
@@ -122,10 +121,9 @@ const Quiz = () => {
 
         }
 
-    }
+    }, [setAllAnswers, setSuccessfulModal, setMistakeData, setUnSuccessfulModal, setQuestionOrder])
 
-    const validateMultiples = async (answers, isEnd) => {
-        console.log(isEnd);
+    const validateMultiples = useCallback(async (answers, isEnd) => {
         
         const allAnswersIds = Object.keys(allAnswers).map((key) => key.split('-')[1]);
         
@@ -165,16 +163,16 @@ const Quiz = () => {
             }
         }
         setAllAnswers(null)
-    }
+    }, [setAllAnswers, setUnSuccessfulModal, setSuccessfulModal])
 
-    const handleContactCreator = () => {
+    const handleContactCreator = useCallback(() => {
         navigateToMessenger(router, userQuizCreatedData?.info, userData)
-    }
+    }, [router, userQuizCreatedData, userData])
 
-    const tryAgain = () => {
+    const tryAgain = useCallback(() => {
         setAllAnswers(null)
         setUnSuccessfulModal(false)
-    }
+    }, [setAllAnswers, setUnSuccessfulModal])
 
     useEffect(() => {
         setQuizData(null);
@@ -447,20 +445,5 @@ const Quiz = () => {
   )
 }
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-  })
 
 export default Quiz

@@ -68,23 +68,23 @@ const Blog = () => {
     setPassUserOutside(!passUserOutside);
   };
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIsRefreshing(true)
     setBlogTagId(null)
     setPagination({ pageNumber: 1, pageSize: 15 })
     setAllBlogs([])
     await blogRefetch();
     setIsRefreshing(false)
-  }
+  }, [])
 
-  const nextPage = () => {    
+  const nextPage = useCallback(() => {    
     if(hasMoreBlogs){
       setPagination(prevData => ({
         ...prevData,
         pageNumber: prevData.pageNumber + 1
       }))
     }
-  }
+  }, [hasMoreBlogs, setPagination])
 
   useEffect(() => {
     console.log(blogData, ' ??');

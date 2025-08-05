@@ -1,5 +1,5 @@
-import { View, Text, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { icons } from '../constants'
 import { useColorScheme } from 'nativewind';
 import { useShadowStyles } from '../hooks/useShadowStyles';
@@ -15,7 +15,7 @@ const DiscussionsFilter = ({sendData, sortBy}) => {
     const {shadowStyle} = useShadowStyles();
     const [discussionsSort, setDiscussionsSort] = useState(initialDiscussionsSort)
 
-    const handleDiscussionsFilter = (selectedItem, index) => {
+    const handleDiscussionsFilter = useCallback((selectedItem, index) => {
         setDiscussionsSort((prevData) => ([
             ...prevData.map((item) => ({
                 ...item,
@@ -23,7 +23,7 @@ const DiscussionsFilter = ({sendData, sortBy}) => {
             }))
         ]))
         sendData(selectedItem.param)
-    } 
+    }, [setDiscussionsSort])
 
     useEffect(() => {
         setDiscussionsSort((prevData) => ([
@@ -54,20 +54,4 @@ const DiscussionsFilter = ({sendData, sortBy}) => {
   )
 }
 
-export default DiscussionsFilter
-
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-            },
-            android: {
-                elevation: 8,
-            },
-        })
-    },
-});
+export default memo(DiscussionsFilter)

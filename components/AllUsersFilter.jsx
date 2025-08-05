@@ -1,5 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, Image, RefreshControl, TextInput } from 'react-native'
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import AllUsersInteractions from './AllUsersInteractions'
 import { useState } from 'react'
 import { icons } from '../constants'
@@ -25,12 +25,12 @@ const AllUsersFilter = ({userData}) => {
     const [searchParam, setSearchParam] = useState("")
 
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const onRefresh = async () => {
+    const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
         setSearchParam("")
         await refetch();
         setIsRefreshing(false)
-    }
+    }, [])
     
 
     useEffect(() => {
@@ -118,20 +118,4 @@ const AllUsersFilter = ({userData}) => {
 )
 }
 
-export default AllUsersFilter
-
-const styles = StyleSheet.create({
-  box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-})
+export default memo(AllUsersFilter)

@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Image } from 'react-native'
-import React, { useState } from 'react'
-import { useGlobalContext } from '../context/GlobalProvider';
-import { deleteQuizz, getCourseCategories, increaseViewCount, reqGetStatusQuiz, reqStartQuizCompletation } from '../services/fetchingService';
+import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { memo, useCallback, useMemo, useState } from 'react'
+import { deleteQuizz, getCourseCategories, increaseViewCount, reqStartQuizCompletation } from '../services/fetchingService';
 import * as Animatable from "react-native-animatable"
 import CustomModal from './Modal';
 import { icons } from '../constants';
@@ -11,6 +10,12 @@ import { useTopbarUpdater } from '../navigation/TopbarUpdater';
 import ShareToFriends from './ShareToFriends';
 import { useColorScheme } from 'nativewind';
 import { useShadowStyles } from '../hooks/useShadowStyles';
+
+   const bounceDownAnimation = {
+      0: { transform: [{ translateY: 0 }] },
+      0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
+      1: { transform: [{ translateY: 0 }] }, // Back to original position
+    };
 
 const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) => {
   const {shadowStyle} = useShadowStyles();
@@ -24,28 +29,28 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
     
     const {shareOpened, setShareOpened} = useTopbarUpdater();
 
-    const {showNotification: successDelete} = NotifierComponent({
+    const {showNotification: successDelete} = useMemo(() => NotifierComponent({
         title: "Me sukses!",
         description: `Sapo keni fshirë me sukses kuizin me emër ${quizData?.quizName}`,
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: unsuccessDelete} = NotifierComponent({
+    const {showNotification: unsuccessDelete} = useMemo(() => NotifierComponent({
         title: "Dicka shkoi gabim!",
         description: "Ju lutem provoni perseri apo kontaktoni Panelin e ndihmes!",
         alertType: "warning",
         theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const goToQuiz = () => {
+    const goToQuiz = useCallback(() => {
       if(shareOpened){
           setShareOpened(false)
       }
       setModalVisible(false)
       router.push(`/quiz/${quizData?.id}`)
-    }   
+    }, [router, shareOpened, setShareOpened, router, setModalVisible])
 
-    const deleteQuizPrompt = async () => {
+    const deleteQuizPrompt = useCallback(async () => {
       if(shareOpened){
           setShareOpened(true)
       }
@@ -53,9 +58,9 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
       setTimeout(() => {
           setDeleteModalVisible(true)
       }, 500);
-    }
+    }, [shareOpened, setShareOpened, setModalVisible, setDeleteModalVisible])
 
-    const deleteQuiz = async () => {        
+    const deleteQuiz = useCallback(async () => {        
       const response = await deleteQuizz(quizData?.id);
       
       if(response === 200){
@@ -67,27 +72,23 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
           unsuccessDelete();
       }
       console.log("delete quiz!!!");
-    }
+    }, [quizData])
 
-    const bounceDownAnimation = {
-      0: { transform: [{ translateY: 0 }] },
-      0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
-      1: { transform: [{ translateY: 0 }] }, // Back to original position
-    };
+ 
 
-    const {showNotification: successNotification} = NotifierComponent({
+    const {showNotification: successNotification} = useMemo(() => NotifierComponent({
       title: "Me sukses!",
       description: "Sapo startuat kuizin me sukes! Mund te percillni kuizet e startuara tek pjesa e Progresit tuaj tek Profili juaj!",
       theme: colorScheme
-    })
+    }), [colorScheme])
 
-    const {showNotification: unSuccessNotification} = NotifierComponent({
+    const {showNotification: unSuccessNotification} = useMemo(() => NotifierComponent({
       title: "Dicka shkoi gabim!",
       description: "Ju lutem provoni perseri duke klikuar mbi kuizin ose kontaktoni Panelin e Ndihmes!",
       theme: colorScheme
-    })
+    }),[colorScheme])
 
-    const handleQuizStart = async () => {
+    const handleQuizStart = useCallback(async () => {
       try {
         const payload = {
           "userId": userData?.id,
@@ -107,7 +108,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
       } catch (error) {
         console.error(error);
       }
-    }
+    }, [userData, quizData, router])
 
   return (
     <>
@@ -231,20 +232,4 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
   )
 }
 
-const styles = StyleSheet.create({
-    box: {
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.6,
-                shadowRadius: 10,
-              },
-              android: {
-                elevation: 8,
-              },
-        })
-    },
-  })
-
-export default SingleQuizComponent
+export default memo(SingleQuizComponent)

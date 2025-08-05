@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import {
   Modal,
   TouchableOpacity,
@@ -232,4 +232,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FullScreenImage;
+export default memo(FullScreenImage);

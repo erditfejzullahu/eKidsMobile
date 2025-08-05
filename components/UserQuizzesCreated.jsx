@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Platform, Image, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
+import React, { memo, useEffect, useState } from 'react'
 import { getCourseCategories } from '../services/fetchingService'
 import { images } from '../constants'
 import * as Animatable from 'react-native-animatable'
@@ -7,6 +7,12 @@ import { sortBy } from 'lodash'
 import { Link } from 'expo-router'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 import EmptyState from './EmptyState'
+
+  const bounceDownAnimation = {
+      0: { transform: [{ translateY: 0 }] },
+      0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
+      1: { transform: [{ translateY: 0 }] }, // Back to original position
+    };
 
 const UserQuizzesCreated = ({quizzesCreated, userCategories}) => {
   const {shadowStyle} = useShadowStyles();
@@ -32,12 +38,6 @@ const UserQuizzesCreated = ({quizzesCreated, userCategories}) => {
       }
     }, [sortName, sortViews])
     
-
-    const bounceDownAnimation = {
-        0: { transform: [{ translateY: 0 }] },
-        0.5: { transform: [{ translateY: 5 }] }, // Move down by 10 units
-        1: { transform: [{ translateY: 0 }] }, // Back to original position
-      };
     
   return (
     <View>
@@ -147,27 +147,5 @@ const UserQuizzesCreated = ({quizzesCreated, userCategories}) => {
                 </View>
   )
 }
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    inner: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: 16,
-    },
-    box: {
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.6,
-              shadowRadius: 10,
-            },
-            android: {
-              elevation: 8,
-            },
-      })
-  },
-  });
-export default UserQuizzesCreated
+
+export default memo(UserQuizzesCreated)
