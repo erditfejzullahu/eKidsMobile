@@ -48,7 +48,7 @@ const INProfileFirstSection = ({data}) => {
                 file: image.assets[0].uri
             }))
         }
-    }, [setImageChoosen])
+    }, [setImageChoosen, permissionNotification])
 
     const {showNotification: updateFailed} = useMemo(() => NotifierComponent({
       tite: "Dicka shkoi gabim!",
@@ -79,7 +79,7 @@ const INProfileFirstSection = ({data}) => {
         } catch (error) {
             
         }
-    }, [setUserData])
+    }, [setUserData, updateFailed, updateProfilePicture, userData, profileUpdateSuccess])
 
     useEffect(() => {
       if(imageChoosen.type && imageChoosen.base64){

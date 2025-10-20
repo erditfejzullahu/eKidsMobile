@@ -40,7 +40,7 @@ const Topbar = () => {
         }else{
             setRetrivedData(null)
         }
-    }, [])
+    }, [setRetrivedData, reqUsersBySearch, queryText])
 
     const fetchBlogs = useCallback(async () => {
         const response = await getBlogByTitle(queryText)
@@ -49,12 +49,12 @@ const Topbar = () => {
         }else{
             setRetrivedBlogData([])
         }
-    }, [])
+    }, [getBlogByTitle, setRetrivedBlogData, queryText])
 
     const fetchDiscussions = useCallback(async () => {
         const response = await getDiscussionsByTitle(queryText)        
         setRetrievedDiscussionData(response || [])
-    }, [])
+    }, [queryText, setRetrievedDiscussionData, getDiscussionsByTitle])
 
     useEffect(() => {
       if(queryText === '' || queryText === null){
@@ -79,7 +79,7 @@ const Topbar = () => {
         }else if(showDiscussionSearcher){
             if(queryText.length > 2) debounceFetchDiscussionData(queryText);
         }
-    }, [showSearcher, showBlogSearcher, showDiscussionSearcher])
+    }, [showSearcher, showBlogSearcher, showDiscussionSearcher, debounceFetchBlogData, debounceFetchData, debounceFetchDiscussionData, queryText])
 
     useEffect(() => {
     

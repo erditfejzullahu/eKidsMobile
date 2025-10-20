@@ -44,7 +44,7 @@ const AllOnlineCourses = () => {
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setLoadedFirst, setFilterData, refetch])
 
   const handleSorter = useCallback(async (data) => {
     setLoadedFirst(false)

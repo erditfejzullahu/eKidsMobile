@@ -65,7 +65,7 @@ const DiscussionsCommentCard = ({item}) => {
             unsuccessComment()
         }
         setReplyLoading(false)
-    }, [setReplyLoading, setOpenReply, setReplyContent])
+    }, [setReplyLoading, setOpenReply, setReplyContent, createDiscussionAnswerAsync, replyContent])
     
     
   return (

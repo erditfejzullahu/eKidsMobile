@@ -43,7 +43,7 @@ const Notifications = ({ onClose }) => {
             setIsOpened(false);
             setLoadedFirst(false)
         }
-    }, []);
+    }, [setIsOpened, setLoadedFirst]);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
@@ -52,7 +52,7 @@ const Notifications = ({ onClose }) => {
         setPaginationParams({pageNumber: 1})
         await refetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setLoadedFirst, setPaginationParams, refetch])
 
     const loadMore = useCallback(async () => {
         if(!notificationData.hasMore || isLoadingMore) return;
@@ -62,7 +62,7 @@ const Notifications = ({ onClose }) => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }, [notificationData?.hasMore, isLoadingMore])
+    }, [notificationData?.hasMore, isLoadingMore, setIsLoadingMore, setPaginationParams])
 
     useEffect(() => {
       refetch();
@@ -117,7 +117,7 @@ const Notifications = ({ onClose }) => {
                 }
             })
         }
-    }, [])
+    }, [reqDeleteNotification, setNotificationData])
 
 
     const {showNotification: errorInRequests} = useMemo(() => NotifierComponent({
@@ -145,7 +145,7 @@ const Notifications = ({ onClose }) => {
         }else{
             errorInRequests()
         }
-    }, [])
+    }, [acceptFriendRequest, acceptedFriendRequest, refetch, errorInRequests])
 
     const handleNotificationClick = useCallback((notification) => {        
         if(notification.type === 13 || notification.type === 14 || notification.type === 16){ //friend accepted
@@ -157,7 +157,7 @@ const Notifications = ({ onClose }) => {
         }else{
             comingSoon()
         }
-    }, [router])
+    }, [router, setIsOpened, comingSoon])
 
     const handleRemoveFriendRequest = useCallback(async (item) => {
         const response = await removeFriendRequestReq(item?.userId)
@@ -175,7 +175,7 @@ const Notifications = ({ onClose }) => {
         }else{
             errorInRequests();
         }
-    }, [])
+    }, [removeFriendRequestReq, refetch, setNotificationData])
     
     const outputNotificationWithType = useMemo(() => (item) => {        
         // LoginActivity = 10

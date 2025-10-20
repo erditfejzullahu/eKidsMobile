@@ -41,7 +41,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         
         setSearchResults(response);
         setResultLoading(false)
-    }, [])
+    }, [setSearchResults, setResultLoading, reqUsersBySearch, query])
     const debounceFetchUsers = useCallback(debounce(searchUsers, 500), [])
     
     const handleUserSelect = useCallback((user, onChange) => {
@@ -49,7 +49,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         setUserReportedId(user.id)
         
         setShowResults(false)
-    }, [])
+    }, [setUserReportedId, setShowResults])
     
     const {control, handleSubmit, watch, trigger, reset, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(reportSectionSchema),
@@ -108,7 +108,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         }else{
             error();
         }
-    }, [])
+    }, [success, onSuccess, CreateSupportReportTicket, userReportedId, reset])
 
     const {showNotification: permissionNotification} = useMemo(() => NotifierComponent({
         title: "Nevojitet leje!",
@@ -143,7 +143,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }, [])
+    }, [permissionNotification])
 
     useEffect(() => {
       return () => {

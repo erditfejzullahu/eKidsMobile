@@ -60,7 +60,7 @@ const SignUp = () => {
     setTimeout(() => {
       setIsRefreshing(false)
     }, 1000);
-  },[])
+  },[setIsRefreshing, reset])
 
   const submit = useCallback(async (data) => {
     try {
@@ -87,7 +87,7 @@ const SignUp = () => {
       console.error(error)
       errorr();
     }
-  }, [router])
+  }, [router, success, setIsLoggedIn, setUser, login, userDetails, errorr])
   
 if(isRefreshing) return <Loading />
   return (

@@ -74,7 +74,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setCommentData([])
             setOpenComments(false)
         }
-    }, [setOpenComments, setPagination, setCommentData, setOpenComments])
+    }, [setOpenComments, setPagination, setCommentData, setOpenComments, openComments, getComments])
 
     
     
@@ -290,7 +290,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }else{
             unsuccessBlogLike()
         }
-    }, [setBlogTemporaryLike])
+    }, [setBlogTemporaryLike, reqLikeBlog, unsuccessBlogLike])
 
     const likeBlogComment = useCallback(async (commentId, blogId) => {        
         const response = await reqLikeBlogComment(commentId, blogId)
@@ -307,7 +307,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         }else{
             unsuccessBlogLike();
         }
-    }, [setCommentTemporaryLike])
+    }, [setCommentTemporaryLike, reqLikeBlogComment])
 
     const [allFriendsLoading, setAllFriendsLoading] = useState(false)
 
@@ -320,7 +320,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             setFriendsData([])
         }
         setAllFriendsLoading(false)
-    }, [setFriendsData, user?.id])
+    }, [setFriendsData, user?.id, reqGetAllUserTypes, setAllFriendsLoading])
 
     const {showNotification: successSender} = useMemo(() => NotifierComponent({
         title: "Sapo derguat Blogun me sukses",
@@ -348,7 +348,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
             errorShare()
         }
         setSendToFriends(false)
-    }, [user?.username, setSendToFriends])
+    }, [user?.username, setSendToFriends, reqShareToUser, blog])
 
     useEffect(() => {
       if(sendToFriends){

@@ -41,7 +41,7 @@ const AllUpcomingOnlineMeetings = () => {
         await refetch();
         setFilterData({...initialFilterData, userActiveMeetingSection: true})
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setLoadedFirst, refetch, setFilterData])
 
     const inputData = useCallback((data) => {
         if(data){

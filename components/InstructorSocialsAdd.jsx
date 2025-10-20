@@ -65,13 +65,13 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
             newErrors[idx] = isValid ? null : "Linku nuk është valid!";
             return newErrors;
           });
-    }, [])
+    }, [setSocialsData, setSocialsError, getSocialIcon, isValidUrl])
 
     const removeSocial = useCallback((idx) => {
         setSocialsData((prevData) => {
             return prevData.filter((_, index) => index !== idx)
         })
-    }, [])
+    }, [setSocialsData])
 
     const success = useMemo(() => {
     return NotifierComponent({
@@ -122,7 +122,7 @@ const InstructorSocialsAdd = ({expertise, bio, isRefreshing}) => {
             unsuccess()
         }
         setIsLoading(false)
-    }, [])
+    }, [fillfields, setIsLoading, socialsData, expertise, socialsError, logout, success, unsuccess])
 
     useEffect(() => {
       if(isRefreshing){

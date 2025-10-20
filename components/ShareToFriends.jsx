@@ -26,7 +26,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     const [userFriendData, setUserFriendData] = useState([])
     const [shareLoading, setShareLoading] = useState(false)
 
-    const outputText = useCallback(() => {
+    const outputText = useMemo(() => {
         switch (shareType) {
             case "quiz":
                 return "Kuizin"
@@ -53,12 +53,12 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
 
     const successShare = useMemo(() => {
     const { showNotification } = NotifierComponent({
-        title: `Sapo derguat ${outputText()} me sukses`,
+        title: `Sapo derguat ${outputText} me sukses`,
         description: "Mund te kontrolloni mesazhin e derguar tek biseda me marresin e mesazhit!",
         theme: colorScheme
     });
     return showNotification;
-    }, [colorScheme, outputText()]); // Include outputText() in dependencies
+    }, [colorScheme, outputText]); // Include outputText() in dependencies
 
     const errorShare = useMemo(() => {
     const { showNotification } = NotifierComponent({
@@ -94,7 +94,7 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
             errorShare();
         }
         setShareLoading(false)
-    }, [])
+    }, [setShareLoading, passedItemId, shareType, currentUserData, successShare, reqShareToUser, errorShare])
 
     useEffect(() => {
         const getUserFriends = async () => {

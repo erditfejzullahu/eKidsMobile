@@ -27,7 +27,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
             setDiscussionsData([])
         }
         setDiscussionsLoading(false)
-    }, [])
+    }, [setDiscussionsLoading, setDiscussionsData, getUserCreatedBlogsOrDiscussions, userData])
 
     useEffect(() => {
       if(openModal){

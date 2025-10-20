@@ -23,9 +23,9 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
     const handleRouteToUser = useCallback(() => {
         setShowOptions(false)
         router.replace(`/users/${usersData?.id}`)
-    }, [router])
+    }, [router, setShowOptions])
 
-    const returnLastMessage = useCallback(() => {
+    const returnLastMessage = useMemo(() => {
 
         if(usersData?.lastMessage === null){
             return "Nuk ka bisede aktuale. Fillo biseden tani!"
@@ -116,7 +116,7 @@ const AllUsersInteractions = ({usersData, currentUserData}) => {
 
                     <View className="flex-1">   
                         <Text className="text-oBlack dark:text-white font-psemibold text-lg">{usersData?.firstname} {usersData?.lastname}</Text>
-                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight" numberOfLines={1}>{returnLastMessage()}</Text>
+                        <Text className="text-gray-600 dark:text-gray-400 text-xs font-plight" numberOfLines={1}>{returnLastMessage}</Text>
                         <Text className="text-oBlack dark:text-white text-xs font-plight text-right mt-1">{usersData?.lastMessage?.message?.createdAt ? formattedDate : ""}</Text>
                     </View>
                 </View>

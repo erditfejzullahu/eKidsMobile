@@ -120,7 +120,7 @@ const Profile = () => {
     } finally {
       setRefreshing(false);
     }
-  }, [])
+  }, [setRefreshing, userDetails, setUser, refetch])
 
   useEffect(() => {
     if(completedQuizzes){
@@ -153,7 +153,7 @@ const Profile = () => {
 
   const togglePassword = useCallback(() => {
     setChangePassword(!changePassword)
-  }, [changePassword])
+  }, [changePassword, setChangePassword])
 
   const updateSuccessful = useMemo(() => {
     const { showNotification } = NotifierComponent({
@@ -211,7 +211,7 @@ const Profile = () => {
     }else{
       updateFailed();
     }
-  }, [])
+  }, [updateUserDetails, updateSuccessful, onRefresh, updateFailed])
 
   const [image, setImage] = useState({
     type: '',
@@ -256,7 +256,7 @@ const Profile = () => {
       // changeProfilePicture(image);
     }
     
-  }, [])
+  }, [setImage, permissionNotification])
 
   useEffect(() => {
     if(image.type && image.base64){
@@ -284,7 +284,7 @@ const Profile = () => {
     } finally {
       setImage({type: "", base64: ""})
     }
-  }, [])
+  }, [profilePicIsUploading, profileUpdateSuccess, onRefresh, updateFailed, setImage])
   
   if(refreshing || isLoading){
     return(

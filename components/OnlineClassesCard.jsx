@@ -26,7 +26,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
             courseData: classes,
             updateData: true
         })
-    }, [navigation])
+    }, [navigation, classes])
 
     const handleLessonPress = useCallback((item) => {
         if(item.routeTo){
@@ -34,11 +34,11 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
         }else{
             setShowLessonInfoModal(true)
         }
-    }, [router])
+    }, [router, item, setShowLessonInfoModal])
 
     const handleCoursePress = useCallback(() => {
         router.push(`onlineClass/${classes.id}`)
-    }, [router])
+    }, [router, classes])
 
     if(profilePlace){
         return(

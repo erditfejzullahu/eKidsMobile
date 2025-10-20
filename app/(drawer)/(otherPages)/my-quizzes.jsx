@@ -45,7 +45,7 @@ const MyQuizzes = () => {
             sortByViews: data.shikime != null && "viewCount",
             sortViewOrder: data.shikime
         }))
-    }, [])
+    }, [setLoadedFirst, setFilterData])
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true)
@@ -64,7 +64,7 @@ const MyQuizzes = () => {
             searchParam: ""
         }))
         setIsRefreshing(false)
-    }, [setFilterData])
+    }, [setFilterData, setLoadedFirst, setIsRefreshing])
 
     const filterQuizzes = useCallback((item) => {
         setLoadedFirst(false)
@@ -72,7 +72,7 @@ const MyQuizzes = () => {
             ...prevData,
             categoryId: item.CategoryID  
         }))
-    }, [setFilterData])
+    }, [setFilterData, setLoadedFirst])
 
 
     const loadMore = useCallback(() => {
@@ -82,7 +82,7 @@ const MyQuizzes = () => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }, [yourQuizzesData?.hasMore, isLoadingMore])
+    }, [yourQuizzesData?.hasMore, isLoadingMore, setIsLoadingMore, setFilterData])
 
     useEffect(() => {
       if(data){

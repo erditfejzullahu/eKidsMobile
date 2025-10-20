@@ -42,7 +42,7 @@ const Categories = () => {
       ...prevData,
       searchParam: data
     }))
-  }, [])
+  }, [setSortingData])
   
   const onRefresh = useCallback(async () => {
     setLoadedFirst(false)
@@ -61,7 +61,7 @@ const Categories = () => {
       searchParam: ''
     }))
     await getCategories()
-  }, [])
+  }, [setLoadedFirst, setAllData, setSortingData, getCategories])
 
   const getCategories = useCallback(async () => {
     setRefreshing(true)
@@ -99,7 +99,7 @@ const Categories = () => {
       setShowLoadingMore(false)
       setRefreshing(false)
     }
-  }, [])
+  }, [setRefreshing, setAllData, fetchCategories, fetchCategory, categories, sortingData, setShowLoadingMore])
 
   const loadMore = useCallback(() => {
     if(!allData.hasMore || showLoadingMore) return;
@@ -108,7 +108,7 @@ const Categories = () => {
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }, [showLoadingMore, allData.hasMore])
+  }, [showLoadingMore, allData.hasMore, setSortingData, setShowLoadingMore])
 
   const sortCategories = useCallback((data) => {
     setLoadedFirst(false)
@@ -122,7 +122,7 @@ const Categories = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  })
+  }, [setLoadedFirst, setSortingData])
 
 
   useEffect(() => {

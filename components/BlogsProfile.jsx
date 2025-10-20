@@ -18,7 +18,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
     
     const onRefresh = useCallback(async () => {
         await getBlogs();
-    }, [])
+    }, [getBlogs])
 
     const getBlogs = useCallback(async () => {
         setBlogsLoading(true)
@@ -29,7 +29,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
             setBlogsData([])
         }
         setBlogsLoading(false)
-    }, [])
+    }, [setBlogsLoading, setBlogsData, getUserCreatedBlogsOrDiscussions])
 
     useEffect(() => {
       if(openModal){

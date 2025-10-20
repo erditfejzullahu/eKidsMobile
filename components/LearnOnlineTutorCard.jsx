@@ -17,7 +17,7 @@ const LearnOnlineTutorCard = ({item}) => {
 
     const handleCardPress = useCallback(() => {
         router.push(`tutor/${item?.instructorId}`)
-    }, [router])
+    }, [router, item])
   return (
     <TouchableOpacity onPress={handleCardPress} className="bg-oBlack-light dark:bg-oBlack relative border border-gray-200 dark:border-black-200 p-4" style={shadowStyle}>
         <Text className="absolute top-0 right-0 px-2 py-0.5 rounded-bl-md border-b border-l border-gray-200 dark:border-black-200 bg-gray-200 dark:bg-primary text-oBlack dark:text-white font-psemibold text-xs" style={shadowStyle}>Qe nga <Text className="text-secondary">{date}</Text></Text>

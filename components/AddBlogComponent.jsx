@@ -117,7 +117,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             
             setImagesSelected(selectedImages)
         }
-    }, [setImagesSelected])
+    }, [setImagesSelected, permissionNotification])
 
     const addCameraImage = useCallback(async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -140,7 +140,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
             }]
             setImagesSelected(newImage)
         }
-    }, [setImagesSelected])
+    }, [setImagesSelected, permissionNotification])
 
 
     const tagsexample = ["Tagu 1", "Tagu 2", "Tagu 3", "Tagu 4", "Tagu 5"]
@@ -166,7 +166,7 @@ const AddBlogComponent = ({userData, getUserOutside, sendRefreshCall}) => {
                 }
             }, 100);
         }
-    }, [setEnteredOnce])
+    }, [setEnteredOnce, enteredOnce])
 
     const {showNotification: successNotification} = useMemo(() => NotifierComponent({
         title: "Blogu i postua me sukses",

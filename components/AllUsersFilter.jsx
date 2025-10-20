@@ -30,7 +30,7 @@ const AllUsersFilter = ({userData}) => {
         setSearchParam("")
         await refetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setSearchParam, refetch])
     
 
     useEffect(() => {

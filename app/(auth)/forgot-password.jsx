@@ -23,7 +23,7 @@ const ForgotPassword = () => {
         setTimeout(() => {
             setIsRefreshing(false)
         }, 1000);
-    }, [])
+    }, [setIsRefreshing, setEmail])
 
 
     const successNotifier = useMemo(() => NotifierComponent({
@@ -49,6 +49,7 @@ const ForgotPassword = () => {
         alertType: "warning",
         theme: colorScheme
     }), [colorScheme])
+    
     const emptyField = emptyFieldNotifier.showNotification
 
     const submit = useCallback(async () => {
@@ -68,7 +69,7 @@ const ForgotPassword = () => {
             setEmail("")
             error();
         }
-    }, [router])
+    }, [router, setIsLoading, setEmail, ForgotPasswordReq, error])
 
     if(isRefreshing) return <Loading />
 

@@ -27,15 +27,15 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
         })       
     }, [showReply, setShowReply])
 
-    const prepareReplyComment = (item, commentValue) => {
+    const prepareReplyComment = useCallback((item, commentValue) => {
         handleReplyComment(item, commentValue)
         setCommentValue({});
         makeReply(item.commentId);
-    }
+    }, [handleReplyComment, setCommentValue, makeReply])
 
-    const prepareLikeComment = (item) => {
+    const prepareLikeComment = useCallback((item) => {
         handleCommentLike(item)
-    }
+    }, [handleCommentLike])
 
     useEffect(() => {
         if(commentData){                
@@ -44,7 +44,7 @@ const CommentsComponent = ({commentData, handleLessonLike, handleReplyComment, h
     }, [commentData])
 
     
-
+    // TODO: memoize
     const replies = (replyItem, commentIndex, limit, commentType) => {
 
 

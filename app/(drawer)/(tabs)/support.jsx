@@ -36,7 +36,7 @@ const Support = () => {
         setRefreshKey(prev => prev + 1)
         await refetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setRefreshKey, refetch])
 
     useEffect(() => {
         setAvailableTickets(data || [])
@@ -83,7 +83,7 @@ const Support = () => {
             reportSection: section === "reportSection",
             chatSupportSection: section === "chatSupportSection"
         })
-    }, [])
+    }, [setSectionEnabled])
 
     const handleSuccessForm = useCallback(() => {
         setRefreshKey(prev => prev + 1)

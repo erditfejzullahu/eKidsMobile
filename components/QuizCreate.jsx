@@ -107,7 +107,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
 
         setValidationErrors(errors)
         return isValid
-    }, [quizParents, quizForm, quizAnswersQuantity])
+    }, [quizParents, quizForm, quizAnswersQuantity, setValidationErrors])
 
     const createQuiz = useCallback(async () => {
         // First validate parent form
@@ -145,7 +145,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         } finally {
             setButtonIsLoading(false)
         }
-    }, [])
+    }, [setButtonIsLoading, failedQuiz, successQuiz, sendSuccess, resetForm, reqCreateQuiz, quizDetails, quizForm, validateQuizForm, validationError, isFormValid])
 
     const resetForm = useCallback(() => {
         setQuizForm({})
@@ -153,7 +153,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         setQuizAnswersQuantity({ "parent_1": [1,2,3] })
         setValidationErrors({})
         setTouchedFields({})
-    }, [])
+    }, [setQuizAnswersQuantity, setQuizForm, setQuizParents, setValidationErrors, setTouchedFields])
 
     const handleCorrectAnswers = useCallback((parent, answerOrder) => {
         const fieldKey = `quiz_parent_${parent}_correct_${answerOrder}`
@@ -184,7 +184,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             ...prev,
             [fieldKey]: true
         }))
-    }, [])
+    }, [setTouchedFields, setQuizForm])
 
     const setQuizType = useCallback((parent, type) => {
         setQuizForm(prev => ({
@@ -199,7 +199,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         }))
         
         setShowModal(prev => ({ ...prev, [parent]: false }))
-    }, [])
+    }, [setShowModal, setTouchedFields, setQuizForm])
 
     const handleValues = useCallback((index, field, value) => {
         const key = field === "question" 
@@ -216,14 +216,14 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             ...prev,
             [key]: true
         }))
-    }, [])
+    }, [setTouchedFields, setQuizForm])
 
     const handleAnswerAdd = useCallback((parentId) => {
         setQuizAnswersQuantity(prev => ({
             ...prev,
             [`parent_${parentId}`]: [...prev[`parent_${parentId}`], prev[`parent_${parentId}`].length + 1]
         }))
-    }, [])
+    }, [setQuizAnswersQuantity])
 
     const handleQuestionAdd = useCallback(() => {
         const newParentIndex = quizParents.length + 1
@@ -232,7 +232,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             ...prev,
             [`parent_${newParentIndex}`]: [1,2,3]
         }))
-    }, [])
+    }, [setQuizParents, setQuizAnswersQuantity, quizParents])
 
     const removeAnswer = useCallback((parentIndex, answerIndex) => {
         setQuizAnswersQuantity(prev => {
@@ -278,7 +278,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
             delete newErrors[`quiz_parent_${parentIndex}_answers_${answerIndex}`]
             return newErrors
         })
-    }, [])
+    }, [setValidationErrors, setQuizForm, setQuizAnswersQuantity])
 
     // Helper to check if field should show error
     const shouldShowError = (field) => {
@@ -286,7 +286,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
     }
 
     // Helper to get correct answer label
-    const getAnswerLabel = (parent, answer) => {
+    const getAnswerLabel = useMemo(() => (parent, answer) => {
         const type = quizForm[`quiz_parent_${parent}_type`]
         const isCorrect = quizForm[`quiz_parent_${parent}_correct_${answer}`] === true
 
@@ -295,7 +295,7 @@ const QuizCreate = ({quizDetails, sendSuccess, isFormValid}) => {
         } else {
             return isCorrect ? "E sakte" : "E pasakte"
         }
-    }
+    }, [quizForm])
 
     return (
         <>

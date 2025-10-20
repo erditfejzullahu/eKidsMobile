@@ -27,7 +27,7 @@ const Bookmark = () => {
     setIsLessonsListEmpty([])
     await refetch()
     setRefreshing(false)
-  }, [])
+  }, [setRefreshing, setIsCourseListEmpty, setIsLessonsListEmpty, refetch])
 
   useEffect(() => {
     if(data){
@@ -84,7 +84,7 @@ const Bookmark = () => {
     } catch (error) {
       console.error(error);
     }
-  }, [])
+  }, [deleteBookmarkById, onRefresh, bookmarkDeleted, bookmarkNotDeleted])
 
   const [isCourseListEmpty, setIsCourseListEmpty] = useState([])
   const [isLessonsListEmpty, setIsLessonsListEmpty] = useState([])

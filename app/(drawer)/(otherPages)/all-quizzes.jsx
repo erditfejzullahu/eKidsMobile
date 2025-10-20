@@ -60,7 +60,7 @@ const AllQuizzes = () => {
       ...prevValues,
       categoryId: category.CategoryID
     }))
-  }, [setFilterData])
+  }, [setFilterData, setLoadedFirst])
 
   const {setShareOpened, shareOpened} = useTopbarUpdater();
 
@@ -71,7 +71,7 @@ const AllQuizzes = () => {
       ...prev,
       pageNumber: prev.pageNumber + 1
     }))
-  }, [quizesData?.hasMore, isLoadingMore])
+  }, [quizesData?.hasMore, isLoadingMore, setIsLoadingMore, setFilterData])
 
   useEffect(() => {
     if(quizesData?.result?.length > 0){
@@ -120,7 +120,7 @@ const AllQuizzes = () => {
       searchParam: ""
     }))
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setLoadedFirst, setFilterData])
 
   if((isRefreshing || isLoading || quizzesLoading) && !loadedFirst){
     return(

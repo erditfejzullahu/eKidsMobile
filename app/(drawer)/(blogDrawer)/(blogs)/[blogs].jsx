@@ -24,7 +24,7 @@ const Blogs = () => {
         setBlogData([]);
         await refetch();
         setIsRefreshing(false);
-    }, []);
+    }, [setIsRefreshing, setBlogData, refetch]);
 
     useEffect(() => {
         if (data) {

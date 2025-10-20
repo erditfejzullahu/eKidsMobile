@@ -46,7 +46,7 @@ const AllOnlineMeetings = () => {
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setLoadedFirst, refetch, setFilterData])
 
   useEffect(() => {
     if(data?.meetings?.length > 0){

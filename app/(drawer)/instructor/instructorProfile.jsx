@@ -30,7 +30,7 @@ const InstructorProfile = () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, refetch])
 
   useEffect(() => {
     if(data){

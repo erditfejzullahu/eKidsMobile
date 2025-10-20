@@ -87,7 +87,7 @@ const SignIn = () => {
         console.error(errorr);
         error();
       }
-  }, [role])
+  }, [role, setIsLoggedIn, setUser, showNotification, refreshRole, login, userDetails])
 
   useEffect(() => {
     if(isLoggedIn){

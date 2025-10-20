@@ -93,7 +93,7 @@ const SingleCourse = ({course}) => {
             console.error(error);
             
         }
-    }, [courseData?.id, isBookmarked])
+    }, [courseData?.id, isBookmarked, makeBookmark, deleteBookmark, setIsBookmarked])
 
     const showModal = useCallback((item, type) => {
         if(type === 'textual'){
@@ -103,7 +103,7 @@ const SingleCourse = ({course}) => {
         }else if (type === 'quiz') {
             setModalVisible({visibility: true, type: 'quiz', lessonName: item?.lessonName})
         }
-    }, [])
+    }, [setModalVisible])
 
     useEffect(() => {
       if(course){

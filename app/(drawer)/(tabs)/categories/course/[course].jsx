@@ -48,7 +48,7 @@ const Course = () => {
     await refetch();
     await getStatus();
     setRefreshing(false)
-  }, [])
+  }, [setRefreshing, refetch, getStatus])
 
   useEffect(() => {
     setCourseData(null)

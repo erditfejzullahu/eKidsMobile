@@ -62,7 +62,7 @@ const Home = () => {
 
     await refetch();
     setRefreshing(false)
-  }, [])
+  }, [setRefreshing, setCurrentPage, setLoadedFirst, setAllCourses, setFilterData, refetch])
 
   const loadMoreCourses = useCallback(() => {
     if(!allCourses.hasMore || showLoadMore) return;
@@ -71,7 +71,7 @@ const Home = () => {
         ...prev,
         pageNumber: prev.pageNumber + 1
       }))
-  }, [allCourses.courses, showLoadMore])
+  }, [allCourses.courses, showLoadMore, setShowLoadMore, setFilterData])
 
   const updateFilterData = useCallback((data) => {
     setLoadedFirst(false)
@@ -85,7 +85,7 @@ const Home = () => {
       sortViewOrder: data.shikime,
       pageSize: data.pageSize,
     }))
-  }, [])
+  }, [setLoadedFirst, setFilterData])
 
   const searchFunction = useCallback((data) => {
     setLoadedFirst(false)
@@ -93,7 +93,7 @@ const Home = () => {
       ...prevData,
       searchParam: data
     }))
-  }, [])
+  }, [setLoadedFirst, setFilterData])
   
   useEffect(() => {
     refetch();    

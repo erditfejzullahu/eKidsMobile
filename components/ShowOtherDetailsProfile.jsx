@@ -249,7 +249,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 userJobs: updatedUserJobs,
             }
         })
-    }, [])
+    }, [setUserInformationData, ])
 
     const removeSpecificIndex = useCallback((index) => {
         if(showModals.type === "education"){
@@ -289,7 +289,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 howManyProfessionalSkills: prevValue.howManyProfessionalSkills - 1
             }))
         }
-    }, [])
+    }, [setHowManySections, setUserInformationData, showModals])
 
     const successUpdate = useMemo(() => {
         const { showNotification } = NotifierComponent({
@@ -382,9 +382,9 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 }))
             }
         }
-    }, [])
+    }, [setShowInformationStepTick, setShowModals, fillFields, userInformationData])
 
-    const formatDateOnlyForBackend = useCallback((date) => {
+    const formatDateOnlyForBackend = useMemo(() => (date) => {
         if(!(date instanceof Date) || isNaN(date)){
             throw new Error("Invalid date object");
         }
@@ -440,7 +440,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
             }
         }
         setUpdateDataLoading(false)
-    }, [userOtherData])
+    }, [userOtherData, setUpdateDataLoading, fillFields, showInformationStepTick, unsuccessfulUpdate, successUpdate, reqUpdateUserInformation, formatDateOnlyForBackend, userInformationData])
 
     // useEffect(() => {
     //     console.log(showModals.type);
@@ -456,7 +456,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
                 birthDay: date
             }))
         }
-    }, [])
+    }, [setUserInformationData])
 
     const clearData = useCallback((type) => {
         if(userOtherData && Object.keys(userOtherData).length === 0){
@@ -500,7 +500,7 @@ const ShowOtherDetailsProfile = ({userId}) => {
             })
         }
         setShowModals({visibility: false, type: ""})
-    },[])
+    },[setShowModals, userOtherData, setUserInformationData])
 
     
     useEffect(() => {

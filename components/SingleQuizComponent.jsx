@@ -48,7 +48,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
       }
       setModalVisible(false)
       router.push(`/quiz/${quizData?.id}`)
-    }, [router, shareOpened, setShareOpened, router, setModalVisible])
+    }, [router, shareOpened, setShareOpened, router, setModalVisible, quizData])
 
     const deleteQuizPrompt = useCallback(async () => {
       if(shareOpened){
@@ -72,7 +72,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
           unsuccessDelete();
       }
       console.log("delete quiz!!!");
-    }, [quizData])
+    }, [quizData, deleteQuizz, setDeleteModalVisible, successDelete, refetchCall, unsuccessDelete])
 
  
 
@@ -108,7 +108,7 @@ const SingleQuizComponent = ({quizData, allQuizzes = false, user, refetchCall}) 
       } catch (error) {
         console.error(error);
       }
-    }, [userData, quizData, router])
+    }, [userData, quizData, router, unSuccessNotification, successNotification, reqStartQuizCompletation])
 
   return (
     <>

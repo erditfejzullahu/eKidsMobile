@@ -39,7 +39,7 @@ const Tutor = () => {
     await refetch();
     await relationRefetch();
     setIsRefreshing(false);
-  }, [])
+  }, [setIsRefreshing, refetch, relationRefetch])
 
   useEffect(() => {
     setInstructorData(data || null)

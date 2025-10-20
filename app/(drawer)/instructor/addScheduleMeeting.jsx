@@ -84,12 +84,12 @@ const AddScheduleMeeting = () => {
     reset();
     await refetch()
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setCourseSelected, setNonCourseChecked, setDescription, setDurationTime, reset, refetch])
 
   const getLessonsBasedOfCourse = useCallback(async () => {
     const response = await InstructorLessonsBasedOfCourse(courseSelected)
     setLessonsData(response)
-  }, [setLessonsData])
+  }, [setLessonsData, courseSelected, InstructorLessonsBasedOfCourse])
 
   useEffect(() => {
     if(courseSelected !== null){
@@ -120,7 +120,7 @@ const AddScheduleMeeting = () => {
         setDurationTime("")
         navigation.setParams({meetingData: null, updateData: null})
       }
-    }, [navigation])
+    }, [navigation, reset, setCourseSelected, setNonCourseChecked, setDescription, setDurationTime])
   )
   
 

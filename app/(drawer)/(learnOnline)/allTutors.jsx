@@ -43,7 +43,7 @@ const AllTutors = () => {
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setLoadedFirst, setFilterData, refetch])
 
   useEffect(() => {
     console.log(data);

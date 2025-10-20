@@ -13,7 +13,7 @@ const FilteredCourses = ({ userCourses: { id, courseName, courseCategory, corseF
   const router = useRouter();
   const enrollCourse = useCallback(() => {
     router.push(`/categories/course/${id}`)
-  }, [router])
+  }, [router, id])
   return (
     <View className="w-full px-4">
       <TouchableOpacity

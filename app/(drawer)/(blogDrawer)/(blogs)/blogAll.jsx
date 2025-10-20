@@ -75,7 +75,7 @@ const Blog = () => {
     setAllBlogs([])
     await blogRefetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setBlogTagId, setPagination, setAllBlogs, blogRefetch])
 
   const nextPage = useCallback(() => {    
     if(hasMoreBlogs){

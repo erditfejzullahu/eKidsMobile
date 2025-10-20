@@ -33,7 +33,7 @@ const TutorCourses = () => {
         setFilterData({...initialFilterData})
         await refetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setLoadedFirst, setFilterData, refetch])
 
     const loadMore = useCallback(() => {
         if(!coursesData?.hasMore || loadingMore) return;

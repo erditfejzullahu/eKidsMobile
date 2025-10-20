@@ -57,7 +57,7 @@ const lessonContent = () => {
       await refetch()
       await commentRefetch()
       setRefreshing(false)
-    }, [])
+    }, [setRefreshing, setLessonData, setCommentData, refetch, commentRefetch, setRefreshing])
 
 
     const handleLessonLike = useCallback(async () => {
@@ -76,7 +76,7 @@ const lessonContent = () => {
       } catch (error) {
         console.error(error)
       }
-    }, [lesson])
+    }, [lesson, setLessonData, reqCreateLessonLike, lesson])
 
     
 
@@ -148,7 +148,7 @@ const lessonContent = () => {
       } catch (error) {
         console.error(error, ' qitu?');
       }
-    }, [])
+    }, [updateUserLessonStatus, updateNextLessonStarted, errorLesson])
 
     const updateNextLessonStarted = useCallback(async (userId, courseId, lessonId) => {
       try {
@@ -174,9 +174,9 @@ const lessonContent = () => {
         
         console.error(error, ' qitu1111??');
       }
-    }, [])
+    }, [updateUserLessonStatus, completedLesson, errorLesson])
 
-    const getStatuses = useCallback(async (processType) => {
+    const getStatuses = async (processType) => {
       const userId = await currentUserID();
       try {
         const response = await getUserCourseStatus(userId, lessonData?.lesson?.courseID);
@@ -237,35 +237,35 @@ const lessonContent = () => {
       } catch (error) {
         console.error(error, 'apo qitu?');
       }
-    }, [lessonData, router])
+    }
 
-    const handleModalClose = async () => {
+    const handleModalClose = useCallback(async () => {
       setModalVisible(false)
       await getStatuses('next')
-    }
+    }, [setModalVisible, getStatuses])
 
-    const goLessonFront = async () => {
+    const goLessonFront = useCallback(async () => {
       setModalVisible(true);
       // await getStatuses('next');
-    }
+    }, [setModalVisible])
 
-    const goLessonBack = async () => {
+    const goLessonBack = useCallback(async () => {
       await getStatuses('back')
-    }
+    }, [getStatuses])
     
     const handleBookmarkDelete = useCallback(() => {
       setLessonData((prevData) => ({
         ...prevData,
         isBookmarked: false
       }))
-    }, [])
+    }, [setLessonData])
 
     const handleBookmarkMade = useCallback(() => {
       setLessonData((prevData) => ({
         ...prevData,
         isBookmarked: true
       }))
-    }, []) 
+    }, [setLessonData]) 
 
     
     //TODO: FIX PLAYER ERROR WHEN LEAVE SCREEN AND STUFF.

@@ -95,7 +95,7 @@ const Conversation = () => {
             }))
             // console.log(image);
         }
-    }, [])
+    }, [setImage, permissionNotification])
 
     //documents upload
     const pickDocument = useCallback(async () => {
@@ -118,7 +118,7 @@ const Conversation = () => {
         } catch (error) {
             console.error(error);
         }
-    }, [])
+    }, [setImage])
     //documents upload
     
     const deleteImage = useCallback(() => {
@@ -136,7 +136,7 @@ const Conversation = () => {
         }else{
             console.log("Error reading messages");
         }
-    }, [conversation])
+    }, [conversation, reqReadMessages])
 
     useEffect(() => {
       setRelationStatus(relationData || null)
@@ -430,7 +430,7 @@ const Conversation = () => {
         }else{
             failedReq()
         }
-    }, [])
+    }, [relationRefetch, makeUserFriendReq, conversation, user])
 
     const removeOnWaitingFriend = useCallback(async () => {
         const response = await removeFriendRequestReq(conversation?.conversation);
@@ -439,7 +439,7 @@ const Conversation = () => {
         }else{
             failedReq();
         }
-    }, [])
+    }, [conversation, relationRefetch, failedReq, removeFriendRequestReq])
 
     const removeFriend = useCallback(async () => {
         const response = await removeFriendReq(conversation?.conversation)
@@ -451,7 +451,7 @@ const Conversation = () => {
             setRemoveFriendModal(false);
             failedReq()
         }
-    }, [])
+    }, [conversation, successFriendDeletion, setRemoveFriendModal, relationRefetch, failedReq, removeFriendReq])
 
     const acceptFriend = useCallback(async () => {
         const response = await acceptFriendRequest(relationStatus?.senderId)
@@ -460,7 +460,7 @@ const Conversation = () => {
         }else{
             failedReq()
         }
-    }, [])
+    }, [acceptFriendRequest, relationRefetch, relationStatus])
     
     //shtim i meszheve tvjetra
     const onEndReached = useCallback(() => {
@@ -470,7 +470,7 @@ const Conversation = () => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }, [messages?.hasMore, isLoadingMore])
+    }, [messages?.hasMore, isLoadingMore, setIsLoadingMore, setPaginationState])
 
     useEffect(() => {
       refetch()

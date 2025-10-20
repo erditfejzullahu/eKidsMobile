@@ -42,9 +42,9 @@ const UserProgressComponent = ({userDataId}) => {
                 return [...prev, id]
             }
         })
-    }, [])
+    }, [setCourseToggled])
 
-    const calculateProgress = useCallback((lessonDetails) => {
+    const calculateProgress = useMemo(() => (lessonDetails) => {
         if (!lessonDetails || lessonDetails.length === 0) return 0;
     
         const completedLessons = lessonDetails.filter(

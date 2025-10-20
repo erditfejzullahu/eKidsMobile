@@ -112,7 +112,7 @@ const SenderReceiverChat = ({renderItem, currentUser, conversationUserData}) => 
             setIsDownloading(false)
             setProgress(0)
         }
-    }, [])
+    }, [setProgress, setIsDownloading])
     
   return (
     <>

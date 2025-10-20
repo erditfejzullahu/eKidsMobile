@@ -60,7 +60,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failed()
         }
-    }, [setCourseModal])
+    }, [setCourseModal, success, failed, StartOnlineCourse, data])
 
     const outputRelation = useMemo(() => {
         if(relationStatus === null){
@@ -114,7 +114,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failedReq()
         }
-    }, [userData, data, relationRefetch])
+    }, [userData, data, relationRefetch, makeUserFriendReq, relationRefetch, successFriendReq, failedReq, userData])
 
     const acceptFriend = useCallback(async () => {
         const response = await acceptFriendRequest(relationStatus?.senderId, relationStatus?.receiverId)
@@ -123,7 +123,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failedReq()
         }
-    }, [relationRefetch, relationStatus])
+    }, [relationRefetch, relationStatus,relationRefetch, failedReq, acceptFriendRequest])
 
     const removeOnWaitingFriend = useCallback(async () => {
         const response = await removeFriendRequestReq(data?.userId);
@@ -132,7 +132,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }else{
             failedReq();
         }
-    }, [relationRefetch, data])
+    }, [relationRefetch, data, removeFriendRequestReq, relationRefetch, failedReq])
 
     const removeFriend = useCallback(async () => {
         const response = await removeFriendReq(data?.userId)
@@ -144,7 +144,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
             setRemoveFriendModal(false);
             failedReq()
         }
-    }, [data, relationRefetch, setRemoveFriendModal])
+    }, [data, relationRefetch, setRemoveFriendModal, successFriendDeletion, relationRefetch, failedReq])
 
     const contactInstructor = useCallback(() => {
         const instructorData = {
@@ -156,7 +156,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }
         
         navigateToMessenger(router, instructorData, userData?.data?.userData);
-    }, [router, instructorData, userData, data])
+    }, [router, instructorData, userData, data, navigateToMessenger])
 
     useEffect(() => {
         let timeout;

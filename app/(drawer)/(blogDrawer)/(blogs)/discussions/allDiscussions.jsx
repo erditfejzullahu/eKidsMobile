@@ -39,7 +39,7 @@ const AllDiscussions = () => {
             await refetch();
         }
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setLoadedFirst, setSortBy, setPaginationData, refetch, sortBy])
 
     const loadMore = useCallback(() => {
         if(!discussionData?.hasMore || loadingMore) return;
@@ -48,7 +48,7 @@ const AllDiscussions = () => {
             ...prev,
             pageNumber: prev.pageNumber + 1
         }))
-    }, [discussionData?.hasMore, loadingMore])
+    }, [discussionData?.hasMore, loadingMore, setLoadingMore, setPaginationData])
 
     useEffect(() => {
       refetch();

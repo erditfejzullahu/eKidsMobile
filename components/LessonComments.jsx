@@ -28,7 +28,7 @@ const LessonComments = ({lesson}) => {
         setCommentData(null)
         await commentRefetch()
         setRefreshing(false)
-    }, [])
+    }, [setRefreshing, setCommentData, commentRefetch])
 
     const {showNotification: commentMade} = useMemo(() => NotifierComponent({
         title: "Komenti u shtua me sukses!",
@@ -64,7 +64,7 @@ const LessonComments = ({lesson}) => {
             commentNotMade()
             console.log(error);
         }
-    }, [])
+    }, [commentValue, reqCreateComment, lesson, commentRefetch, scrollToEnd, setCommentValue, commentNotMade])
 
     const createReplyComment = useCallback(async (object, commentValue) => {
         const userId = await currentUserID();
@@ -82,7 +82,7 @@ const LessonComments = ({lesson}) => {
             commentNotMade()
         console.error(error);
         }
-    }, [])
+    }, [commentMade, commentNotMade, reqCreateReply, lesson, commentRefetch])
     
     const createLikeComment = useCallback(async (item) => {      
         const userId = await currentUserID();
@@ -94,7 +94,7 @@ const LessonComments = ({lesson}) => {
         } catch (error) {
         console.error(error);
         }
-    }, [])
+    }, [reqCreateLike, commentRefetch])
 
     const [visibleCommentsCount, setVisibleCommentsCount] = useState(4)
     const [showAllComments, setShowAllComments] = useState(false)
@@ -103,7 +103,7 @@ const LessonComments = ({lesson}) => {
       if (visibleCommentsCount < commentData?.length) {
         setVisibleCommentsCount((prevCount) => prevCount + 4);
       }
-    }, [visibleCommentsCount]);
+    }, [visibleCommentsCount, setVisibleCommentsCount, commentData]);
 
     useEffect(() => {
         setVisibleCommentsCount(4); // Reset visible comments on lesson change
@@ -138,7 +138,7 @@ const LessonComments = ({lesson}) => {
         } else {
         setHasCrossed(false); // Hide "Scroll to Top" button
         }
-    }, [])
+    }, [setHasCrossed])
 
     useEffect(() => {
         if(fireUpEndScroll){
@@ -169,7 +169,7 @@ const LessonComments = ({lesson}) => {
         //     }
         // }, 500);
         }
-    }, []);
+    }, [setShowAllComments, setFireUpEndScroll]);
 
     const scrollTotop = () => {
 

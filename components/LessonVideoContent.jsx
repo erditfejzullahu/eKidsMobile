@@ -46,7 +46,7 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
         errorLesson();
         console.error(error);
         }
-    }, [])
+    }, [deleteBookmark, successBookmarkDelete, errorLesson, lessonData])
 
     const reqBookmark = useCallback(async () => {
         const userId = await currentUserID()
@@ -59,12 +59,12 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
             errorLesson();
             console.error(error);
         }
-    }, [])
+    }, [makeBookmark, successBookmarkDelete, lessonData, errorLesson])
 
-    const switchBetweenContents = () => {
+    const switchBetweenContents = useCallback(() => {
         setIsChecked(!isChecked)
         setShowVideo(!showVideo)
-    }
+    }, [setIsChecked, isChecked, setShowVideo, showVideo])
 
     useFocusEffect(
         useCallback(() => {

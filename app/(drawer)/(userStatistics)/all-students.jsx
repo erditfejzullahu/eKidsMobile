@@ -24,7 +24,7 @@ const AllStudentsStatistics = () => {
         setSearchInput("")        
         await refetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, setSearchInput, refetch])
 
     const searchUsers = useCallback((data) => {        
         setSearchInput(data)

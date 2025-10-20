@@ -51,7 +51,7 @@ const Discussion = () => {
       await refetch();
       await answersRefetch();
       setDiscussionRefreshing(false)
-    }, [])
+    }, [setDiscussionRefreshing, refetch, answersRefetch])
 
     useEffect(() => {
       if(data){

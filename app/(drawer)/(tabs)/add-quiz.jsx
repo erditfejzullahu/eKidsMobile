@@ -42,16 +42,16 @@ const AddQuiz = () => {
       quizDescription: form.quizDescription === '' || form.quizDescription.length < 8
     };
     setFormErrors(newErrors);
-  }, [form]);
+  }, [form, setFormErrors]);
 
   const handleFieldChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setTouchedFields(prev => ({ ...prev, [field]: true }));
-  }, []);
+  }, [setForm, setTouchedFields]);
 
   const handleBlur = useCallback((field) => {
     setTouchedFields(prev => ({ ...prev, [field]: true }));
-  }, []);
+  }, [setTouchedFields]);
 
   const handleCreateSuccess = useCallback((data) => {
     if (data === true) {
@@ -67,7 +67,7 @@ const AddQuiz = () => {
         quizDescription: false
       });
     }
-  }, []);
+  }, [setForm, setTouchedFields]);
 
   const { user } = useGlobalContext();
   const userCategories = user?.data?.categories || [];

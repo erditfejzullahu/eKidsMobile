@@ -25,7 +25,7 @@ const Statistics = () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, refetch])
 
   useEffect(() => {
     refetch()

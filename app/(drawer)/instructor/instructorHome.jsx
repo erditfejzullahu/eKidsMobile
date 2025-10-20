@@ -46,7 +46,7 @@ const InstructorHome = () => {
     setFilterData({...initialFilterData})
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setLoadedFirst, setFilterData, refetch])
 
   const handleSorter = useCallback((data) => {
     setLoadedFirst(false)

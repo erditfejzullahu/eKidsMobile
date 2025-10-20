@@ -51,7 +51,7 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
                 </>
             )
         }
-    }, [])
+    }, [item])
 
     const date = new Date(item.createdAt).toLocaleDateString("sq-AL", {
         day: "2-digit",
@@ -75,11 +75,11 @@ const MeetingCardComponent = ({item, managePlace = false, viewProfilePlace = fal
         }else{
             editNotification();
         }
-    }, [navigation])
+    }, [navigation, editNotification, item])
 
     const handleCardPress = useCallback(() => {
         router.push(`meetings/${item.id}`)
-    }, [router])
+    }, [router, item])
 
   return (
     <TouchableOpacity onPress={handleCardPress} className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 relative p-2" style={shadowStyle}>

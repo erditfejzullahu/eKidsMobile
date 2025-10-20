@@ -13,7 +13,7 @@ const AllCategories = ({userCategories: {CategoryID, categoryName, categoryConte
     const animationType = CategoryID % 2 === 0 ? 'slideInLeft' : 'slideInRight'
     const enrollCourses = useCallback(() => {
       router.push(`/categories/${CategoryID}`)
-    }, [router])
+    }, [router, CategoryID])
   return (
     <View className="w-full px-4">
         <TouchableOpacity

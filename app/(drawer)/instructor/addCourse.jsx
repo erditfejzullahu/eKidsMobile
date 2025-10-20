@@ -61,7 +61,7 @@ const AddCourse = () => {
         setTimeout(() => {
             setIsRefreshing(false)
         }, 100);
-    }, [])
+    }, [setIsRefreshing, reset, setTopic, setSectionLessons, setSections, setSectionLessonsTouched, setStep])
 
     const {control, handleSubmit, reset, trigger, watch, formState: {errors, isSubmitting}} = useForm({
         resolver: zodResolver(courseSchema),
@@ -150,7 +150,7 @@ const AddCourse = () => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }, [])
+    }, [permissionNotification, onchange])
 
     const onSubmit = useCallback(async (data) => {
         const response = await InstructorCreateCourse(data);
@@ -162,7 +162,7 @@ const AddCourse = () => {
         }else{
             error()
         }
-    }, [reset, router])
+    }, [reset, router, success, error, InstructorCreateCourse])
 
     useFocusEffect(
         useCallback(() => {
@@ -181,7 +181,7 @@ const AddCourse = () => {
                     navigation.setParams({ courseData: undefined, updateData: undefined });
                 }, 100);
             }
-        }, [navigation])
+        }, [navigation, reset])
     )
     
 

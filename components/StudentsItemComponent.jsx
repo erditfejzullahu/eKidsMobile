@@ -17,7 +17,7 @@ const StudentsItemComponent = ({item, currentUserData}) => {
             profilePictureUrl: item.profilePictureUrl
         }
         navigateToMessenger(router, otherUserData, currentUserData.data.userData)
-    }, [router, otherUserData, currentUserData])
+    }, [router, otherUserData, currentUserData, navigateToMessenger])
 
   return (
     <View className="bg-oBlack-light dark:bg-oBlack border border-gray-200 dark:border-black-200 rounded-md p-4 relative" style={shadowStyle}>

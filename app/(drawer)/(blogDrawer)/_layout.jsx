@@ -41,7 +41,7 @@ const TagsHeader = memo(({isOpened, passRouteClicked}) => {
     setDiscussionBlogsTagsInputs((prev) => ({...prev, blogsInput: "", discussionsInput: ""}))
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, setDiscussionBlogsTagsInputs, refetch])
 
   useEffect(() => {
     if(data){

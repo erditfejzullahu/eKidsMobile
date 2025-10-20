@@ -75,7 +75,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
             let base64 =  `data:${image.assets[0].mimeType};base64,${image.assets[0].base64}`
             onChange(base64)
         }
-    }, [])
+    }, [permissionNotification])
 
     const submitSupport = useCallback(async (data) => {
         const userId = await currentUserID()
@@ -93,7 +93,7 @@ const SupportForm = ({onSuccess, availableTickets = []}) => {
         }else{
             error();
         }
-    }, [])
+    }, [CreateSupportReportTicket, success, onSuccess, error])
 
   return (
     <View className="gap-3" style={shadowStyle}>

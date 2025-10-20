@@ -23,7 +23,7 @@ const DiscussionsFilter = ({sendData, sortBy}) => {
             }))
         ]))
         sendData(selectedItem.param)
-    }, [setDiscussionsSort])
+    }, [setDiscussionsSort, sendData])
 
     useEffect(() => {
         setDiscussionsSort((prevData) => ([

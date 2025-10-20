@@ -12,7 +12,7 @@ const SearchInput = ({ title, placeholder, otherStyles, searchFunc, valueData, .
 
     const sendSearchData = useCallback(() => {
       searchFunc(searchData.data);
-    }, [searchData.data])
+    }, [searchData.data, searchFunc])
     return (
             <View className="border-2 border-gray-200 dark:border-black-200 w-full h-16 px-4 bg-oBlack-light dark:bg-black-100 rounded-2xl focus:border-secondary items-center flex-row">
                 <TextInput

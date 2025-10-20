@@ -69,7 +69,7 @@ const CustomHeader = memo((props) => {
             console.error('Error ne logout ', error);
             
         }
-    }, [navigation, setIsLoggedIn, setUser])
+    }, [navigation, setIsLoggedIn, setUser, logout])
 
     const {drawerItems, drawerItemsUpdated} = useDrawerUpdater(); //get routes from this
 
@@ -89,7 +89,7 @@ const CustomHeader = memo((props) => {
         // setTimeout(() => {
             drawerProps.closeDrawer();
         // }, 50);
-    }, [])
+    }, [router, setModalVisible])
 
     const DrawerItems = useMemo(() => ({ pathname, routerProps }) => {
         

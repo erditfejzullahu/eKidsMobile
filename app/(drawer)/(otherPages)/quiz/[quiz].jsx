@@ -49,7 +49,7 @@ const Quiz = () => {
         await quizStatusRefetch();
         await countUserRefetch();
         setIsRefreshing(false)
-    }, [])
+    }, [setIsRefreshing, refetch, quizStatusRefetch, countUserRefetch])
 
     const removeOpenedWindows = useCallback(() => {
         setOpenContactUser(false)
@@ -121,7 +121,7 @@ const Quiz = () => {
 
         }
 
-    }, [setAllAnswers, setSuccessfulModal, setMistakeData, setUnSuccessfulModal, setQuestionOrder])
+    }, [setAllAnswers, setSuccessfulModal, setMistakeData, setUnSuccessfulModal, setQuestionOrder, userData, quiz, reqQuizCompleted, reqCreateMistake, showNotification])
 
     const validateMultiples = useCallback(async (answers, isEnd) => {
         
@@ -163,11 +163,11 @@ const Quiz = () => {
             }
         }
         setAllAnswers(null)
-    }, [setAllAnswers, setUnSuccessfulModal, setSuccessfulModal])
+    }, [setAllAnswers, setUnSuccessfulModal, setSuccessfulModal, setQuestionOrder, userData, quiz, reqQuizCompleted, reqCreateMistake, showNotification])
 
     const handleContactCreator = useCallback(() => {
         navigateToMessenger(router, userQuizCreatedData?.info, userData)
-    }, [router, userQuizCreatedData, userData])
+    }, [router, userQuizCreatedData, userData, navigateToMessenger])
 
     const tryAgain = useCallback(() => {
         setAllAnswers(null)

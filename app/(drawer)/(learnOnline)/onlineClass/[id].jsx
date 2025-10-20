@@ -39,7 +39,7 @@ const OnlineClass = () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, refetch])
 
   const {showNotification: success} = useMemo(() => NotifierComponent({
     title: "Sukses",
@@ -81,7 +81,7 @@ const OnlineClass = () => {
         failed();
       }
     }
-  }, [router, courseData])
+  }, [router, courseData, StartOnlineCourse])
 
   const handleGoToInstructor = useCallback(() => {
     instructorRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -102,7 +102,7 @@ const OnlineClass = () => {
     }else{
       becomeStudent()
     }
-  }, [router, courseData])
+  }, [router, courseData, becomeStudent])
 
   useEffect(() => {
     setCourseData(data || null)

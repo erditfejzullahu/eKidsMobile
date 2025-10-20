@@ -107,7 +107,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
 
         setActiveOptionId(id);
         setActiveSubOptionId(null);
-    }, [])
+    }, [setSortableOptions, setActiveOptionId, setActiveSubOptionId])
 
     const setActiveUnderButton = useCallback((mainId, subId) => {
         
@@ -149,7 +149,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
                 return subId
             }
         })        
-    }, [])
+    }, [setSortableOptions, setActiveSubOptionId, setData])
 
     useEffect(() => {
         // Check if any sub-option in any option is ticked
@@ -176,7 +176,7 @@ const SorterComponent = ({ showSorter, sortButton }) => {
 
     const sendSortData = useCallback(() => {
         sortButton(sendData);
-    }, [sendData])
+    }, [sendData, sortButton])
     
     if (!showSorter) return null;
     return (

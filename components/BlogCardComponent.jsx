@@ -75,7 +75,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         }else{
             deleteBlogNotificationError();
         }
-    }, [])
+    }, [deletedBlogNotification, deleteBlog, blog, removePostFromList, deleteBlogNotificationError])
 
     const getBlogDetailsData = useCallback(async () => {
         setBlogDetailsLoading(true)
@@ -83,7 +83,7 @@ const BlogCardComponent = ({blog, userData, filterByTagId = null, fullBlogSectio
         
         setBlogDetailsData(response || null)
         setBlogDetailsLoading(false);
-    }, [setBlogDetailsData, setBlogDetailsLoading])
+    }, [setBlogDetailsData, setBlogDetailsLoading, getBlogDetails, blog])
 
     useEffect(() => {
       if(blogDetails){

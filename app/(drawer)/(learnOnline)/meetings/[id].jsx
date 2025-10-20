@@ -41,7 +41,7 @@ const Meetings = () => {
     setIsRefreshing(true)
     await refetch();
     setIsRefreshing(false)
-  }, [])
+  }, [setIsRefreshing, refetch])
 
   const outputText = useMemo(() => {
     if(!meetingData?.isAllowed){
@@ -194,7 +194,7 @@ const Meetings = () => {
     }else{
       failed();
     }
-  }, [refetch, meetingData])
+  }, [refetch, meetingData, StartOnlineCourse, refetch, currentUserID])
 
   useEffect(() => {
     setMeetingData(data || null)

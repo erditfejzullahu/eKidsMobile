@@ -60,7 +60,7 @@ const Profiles = () => {
         if(!userLoading && (parseInt(profile) === parseInt(userData?.id))){
           router.replace('/profile')
         }
-      }, [profile, userData, userLoading])
+      }, [profile, userData, userLoading, router])
     )
 
     const {data, isLoading, refetch} = useFetchFunction(() => getUserProfile(profile))
@@ -71,7 +71,7 @@ const Profiles = () => {
           console.log('Redirecting to tutor profile');
           router.replace(`/tutor/${data?.instructorId}`);
         }
-      }, [data, isLoading, profile])
+      }, [data, isLoading, profile, router])
     )
     
 
@@ -160,7 +160,7 @@ const Profiles = () => {
       }else{
         failedReq()
       }
-    }, [profile])
+    }, [profile, relationRefetch, makeUserFriendReq, successFriendReq])
 
     const [onlineCoursesLoading, setOnlineCoursesLoading] = useState(false)
     const [onlineCoursesData, setOnlineCoursesData] = useState([])
@@ -187,7 +187,7 @@ const Profiles = () => {
       }else{
         failedReq();
       }
-    }, [profile])
+    }, [profile, removeFriendRequestReq, relationRefetch, failedReq])
 
     const removeFriend = useCallback(async () => {
       const response = await removeFriendReq(profile)
@@ -199,7 +199,7 @@ const Profiles = () => {
         setRemoveFriendModal(false);
         failedReq()
       }
-    }, [profile])
+    }, [profile, removeFriendReq, successFriendDeletion, setRemoveFriendModal, refreshData, failedReq])
 
     const getAllFriends = useCallback(async () => {
       const response = await reqGetAllUserTypes(profile, 2)
@@ -209,7 +209,7 @@ const Profiles = () => {
       }else{
         setAllFriendsData([])
       }
-    }, [profile])
+    }, [profile, reqGetAllUserTypes, setAllFriendsData])
 
     const goToMessenger = useCallback((user) => {
       // console.log(user);
@@ -225,7 +225,7 @@ const Profiles = () => {
       setShowFriendListOptions([])
       
       navigateToMessenger(router, otherUserData, userData);
-    }, [router])
+    }, [router, navigateToMessenger, userData, setAllFriendsData, setShowFriendListOptions])
 
     const showOptionsFriendList = useCallback((id) => {
       setShowFriendListOptions([id])
@@ -325,7 +325,7 @@ const Profiles = () => {
       }else{
         failedReq()
       }
-    }, [relationStatus])
+    }, [relationStatus, refreshData, acceptFriendRequest, failedReq])
 
     useEffect(() => {
       if(!showQuizzes && !showCourses && !showCreatedCourses && !showCreatedQuizzes && !showOnlineCoursesProgress){
