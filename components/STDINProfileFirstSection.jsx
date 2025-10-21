@@ -156,7 +156,7 @@ const STDINProfileFirstSection = ({data, userData, relationStatus, relationRefet
         }
         
         navigateToMessenger(router, instructorData, userData?.data?.userData);
-    }, [router, instructorData, userData, data, navigateToMessenger])
+    }, [router, userData, data, navigateToMessenger])
 
     useEffect(() => {
         let timeout;

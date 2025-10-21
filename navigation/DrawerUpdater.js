@@ -1,5 +1,5 @@
 import { useRouter, useSegments, usePathname } from "expo-router";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 import { icons } from "../constants";
 import { getUserCourseStatus } from "../services/fetchingService";
 import { currentUserID } from "../services/authService";
@@ -7,7 +7,7 @@ import { getRole } from "../services/authService";
 import { useRole } from "./RoleProvider";
 const DrawerUpdaterContext = createContext();
 
-export const useDrawerUpdater = () => useContext(DrawerUpdaterContext);
+export const useDrawerUpdater = () => use(DrawerUpdaterContext);
 
 const instructorMenuItems = [
     { label: "Support(working)", icon: icons.customerSupport, path: "/support" },

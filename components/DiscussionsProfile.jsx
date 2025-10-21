@@ -9,8 +9,15 @@ import { RefreshControl } from 'react-native'
 import EmptyState from './EmptyState'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 import { useColorScheme } from 'nativewind'
+import { useGlobalContext } from '../context/GlobalProvider'
 
 const DiscussionsProfile = ({userData, otherSection = false}) => {
+    const {user} = useGlobalContext();
+    const currentData = user?.data?.userData;
+
+    const otherPerson = parseInt(currentData?.id) !== parseInt(otherSection ? userData?.id : userData?.data?.userData?.id);
+    
+    
     const {colorScheme} = useColorScheme();
     const {shadowStyle} = useShadowStyles();
     const [openModal, setOpenModal] = useState(false)
@@ -70,7 +77,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
                             keyExtractor={(item) => item.id}
                             ListHeaderComponent={() => (
                                 <View className="mx-auto my-4 border-b border-gray-200 px-4 dark:border-black-200 bg-oBlack-light dark:bg-oBlack rounded-b-[10px] -mb-2" style={shadowStyle}>
-                                    <Text className="text-oBlack dark:text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherSection ? `Diskutimet e ${userData?.instructorName?.split(" ")[0]}` : "Diskutimet tua"}</Text>
+                                    <Text className="text-oBlack dark:text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherPerson ? `Diskutimet e ${userData?.firstname}` : "Diskutimet tua"}</Text>
                                 </View>
                             )}
                             renderItem={({ item }) => (
@@ -79,7 +86,7 @@ const DiscussionsProfile = ({userData, otherSection = false}) => {
                             ListEmptyComponent={() => (
                                 <View className="border border-gray-200 dark:border-black-200 py-3 pb-2" style={shadowStyle}>
                                     <EmptyState
-                                        title={`${otherSection ? `${userData?.instructorName?.split(" ")[0]} nuk ka bere ende diskutime` : "Nuk keni bere ende diskutime"}`}
+                                        title={`${otherPerson ? `${userData?.firstname + " " + userData?.lastname} nuk ka bere ende diskutime` : "Nuk keni bere ende diskutime"}`}
                                         subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
                                         isBookMarkPage
                                         buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}

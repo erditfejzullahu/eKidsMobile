@@ -66,62 +66,63 @@ const LessonVideoContent = ({videoContent, writtenContent, lessonData, successBo
         setShowVideo(!showVideo)
     }, [setIsChecked, isChecked, setShowVideo, showVideo])
 
-    useFocusEffect(
-        useCallback(() => {
-            return () => {
-                try {
-                    if(player && player?.playing){
-                        player.pause();
-                    }
-                } catch (error) {
-                    console.error('Error pausing ', error);
-                }
-            }
-        }, [player])
-    )
+    // TODO: FIX VIDEO NOT PAUSING OR ERROR
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         return () => {
+    //             try {
+    //                 if(player && player?.playing){
+    //                     player.pause();
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error pausing ', error);
+    //             }
+    //         }
+    //     }, [player])
+    // )
 
-    useEffect(() => {
-        if(videoContent){
-        const completedVideo = player.addListener('playToEnd', () => {
-            setVideoCompleted(true)
-        })
-        return () => {
-            if(player && player?.playing) {
-                player.pause();  // Pause the video
-            }
-            // Remove any listeners (important to prevent memory leaks)
-            if (player && player.removeListener) {
-                player.removeListener('playToEnd'); 
-            }
-        };
-        }
-    }, [videoContent, player])
+    // useEffect(() => {
+    //     if(videoContent){
+    //     const completedVideo = player.addListener('playToEnd', () => {
+    //         setVideoCompleted(true)
+    //     })
+    //     return () => {
+    //         if(player && player?.playing) {
+    //             player.pause();  // Pause the video
+    //         }
+    //         // Remove any listeners (important to prevent memory leaks)
+    //         if (player && player.removeListener) {
+    //             player.removeListener('playToEnd'); 
+    //         }
+    //     };
+    //     }
+    // }, [videoContent, player])
 
 
     
 
-    useEffect(() => {
-        return () => {
-        try {
-            if(player.playing){
-            player.pause();
-            }
-        } catch (error) {
+    // useEffect(() => {
+    //     return () => {
+    //     try {
+    //         if(player.playing){
+    //         player.pause();
+    //         }
+    //     } catch (error) {
             
-        }
-        }
-    }, [player])
+    //     }
+    //     }
+    // }, [player])
 
-    useEffect(() => {
-        if(player.duration){
-        if(player.currentTime.toFixed(2) === player.duration.toFixed(2)){
-            setTimeout(() => {
-            setVideoCompleted(true);
-            }, 400);
-        }
-        }
+    // useEffect(() => {
+    //     if(player.duration){
+    //     if(player.currentTime.toFixed(2) === player.duration.toFixed(2)){
+    //         setTimeout(() => {
+    //         setVideoCompleted(true);
+    //         }, 400);
+    //     }
+    //     }
         
-    }, [player.currentTime, player.duration])
+    // }, [player.currentTime, player.duration])
 
     useEffect(() => {
         showVideo ? player.play() : player.pause();

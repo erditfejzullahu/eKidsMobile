@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, use } from 'react'
 import { userDetails } from '../services/necessaryDetails';
 
 const GlobalContext = createContext();
-export const useGlobalContext = () => useContext(GlobalContext);
+export const useGlobalContext = () => use(GlobalContext);
 
 const GlobalProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)

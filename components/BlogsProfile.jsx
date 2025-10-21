@@ -8,6 +8,7 @@ import { getUserCreatedBlogsOrDiscussions } from '../services/fetchingService'
 import EmptyState from './EmptyState'
 import { useShadowStyles } from '../hooks/useShadowStyles'
 import { useColorScheme } from 'nativewind'
+import { useGlobalContext } from '../context/GlobalProvider'
 
 const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
     const {colorScheme} = useColorScheme();
@@ -15,6 +16,12 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
     const [openModal, setOpenModal] = useState(false)
     const [blogsLoading, setBlogsLoading] = useState(false)
     const [blogsData, setBlogsData] = useState([])
+
+    const {user} = useGlobalContext();
+    const currentData = user?.data?.userData;
+
+    const otherPerson = parseInt(currentData?.id) !== parseInt(otherSection ? otherData?.userId : userData?.data?.userData?.id);
+    
     
     const onRefresh = useCallback(async () => {
         await getBlogs();
@@ -71,7 +78,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
                         keyExtractor={(item) => item.id}
                         ListHeaderComponent={() => (
                             <View className="mx-auto my-4 border-b border-gray-200 dark:border-black-200 bg-oBlack-light px-4 dark:bg-oBlack rounded-b-[10px] -mb-2" style={shadowStyle}>
-                                <Text className="text-oBlack dark:text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherSection ? `Blogjet e ${otherData?.instructorName?.split(" ")[0]}` : "Blogjet tua"}</Text>
+                                <Text className="text-oBlack dark:text-white font-psemibold text-2xl text-center border-b border-secondary self-start">{otherPerson ? `Blogjet e ${userData?.firstname}` : "Blogjet tua"}</Text>
                             </View>
                         )}
                         renderItem={({ item }) => (
@@ -80,7 +87,7 @@ const BlogsProfile = ({userData, otherSection = false, otherData = {}}) => {
                         ListEmptyComponent={() => (
                             <View className="border border-gray-200 dark:border-black-200 py-3 pb-2" style={shadowStyle}>
                             <EmptyState 
-                                title={`${otherSection ? `${otherData?.instructorName?.split(" ")[0]} nuk ka postuar ende` : "Nuk keni postuar ende blogs"}`}
+                                title={`${otherPerson ? `${userData?.firstname + " " + userData?.lastname} nuk ka postuar ende` : "Nuk keni postuar ende blogs"}`}
                                 subtitle={"Nese mendoni qe eshte gabim, provoni perseri apo kontaktoni Panelin e Ndihmes!"}
                                 isBookMarkPage
                                 buttonStyle={colorScheme === 'light' ? "!rounded-none !border !border-gray-200" : ""}

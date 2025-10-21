@@ -41,7 +41,7 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         
         setSearchResults(response);
         setResultLoading(false)
-    }, [setSearchResults, setResultLoading, reqUsersBySearch, query])
+    }, [setSearchResults, setResultLoading, reqUsersBySearch])
     const debounceFetchUsers = useCallback(debounce(searchUsers, 500), [])
     
     const handleUserSelect = useCallback((user, onChange) => {
@@ -116,14 +116,14 @@ const ReportForm = ({onSuccess, availableTickets = []}) => {
         alertType: "warning",
         onPressFunc: () => Linking.openSettings(),
         theme: colorScheme
-    }), [])
+    }), [colorScheme])
 
     const {showNotification: UserIdNotSaved} = useMemo(() => NotifierComponent({
         tite: "Dicka shkoi gabim!",
         description: "Klikoni personin qe deshironi te raportoni!",
         alertType: "warning",
         theme: colorScheme
-    }), [])
+    }), [colorScheme])
 
     const pickImage = useCallback(async (onChange) => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()

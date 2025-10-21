@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, use } from "react";
 
 const BlogsDrawerContext = createContext();
-export const useBlogsDrawerContext = () => useContext(BlogsDrawerContext);
+export const useBlogsDrawerContext = () => use(BlogsDrawerContext);
 
 const BlogsDrawerProvider = ({children}) => {
     const [isDrawerOpened, setIsDrawerOpened] = useState(false)

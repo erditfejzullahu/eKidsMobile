@@ -8,6 +8,8 @@ import { icons } from '../constants';
 import NotifierComponent from './NotifierComponent';
 import { useColorScheme } from 'nativewind';
 import { useShadowStyles } from '../hooks/useShadowStyles';
+import EmptyState from './EmptyState';
+import { router } from 'expo-router';
 
 const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
     const {colorScheme} = useColorScheme();
@@ -100,16 +102,18 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
         const getUserFriends = async () => {
             setUserFriendLoading(true)
             const response = await reqGetAllUserTypes(currentUserData?.id, 2)
+            
             if(response){
+                
                 setUserFriendData(response);
             }
             setUserFriendLoading(false)
         }
 
         if(shareOpened){        
-          getUserFriends();
+            getUserFriends();
         }
-      }, [shareOpened])
+    }, [shareOpened])
       
 
   return (
@@ -165,6 +169,17 @@ const ShareToFriends = ({currentUserData, shareType, passedItemId}) => {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
+                            </View>
+                        )}
+                        ListEmptyComponent={() => (
+                            <View className='mt-3'>
+                                <EmptyState 
+                                    title={"Nuk keni miq ende"}
+                                    subtitle={"Shtoni miqesi duke kaluar tek seksioni i Lajmetarit..."}
+                                    isSearchPage={true}
+                                    buttonTitle={"Provoni perseri"}
+                                    buttonFunction={() => {router.push('(messenger)/all-messages'); setShareOpened(false); setUserFriendData([])}}
+                                />
                             </View>
                         )}
                     />

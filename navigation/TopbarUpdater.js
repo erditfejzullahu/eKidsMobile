@@ -1,10 +1,10 @@
-import { createContext, useContext } from "react";
+import { createContext, use} from "react";
 import { usePathname } from "expo-router";
 import { useEffect } from "react";
 import { useState } from "react";
 
 const TopbarUpdaterContext = createContext();
-export const useTopbarUpdater = () => useContext(TopbarUpdaterContext);
+export const useTopbarUpdater = () => use(TopbarUpdaterContext);
 const TopbarUpdaterProvider = ({children}) => {
     const [showSearcher, setShowSearcher] = useState(false)
     const [showBlogSearcher, setShowBlogSearcher] = useState(false)

@@ -1,5 +1,5 @@
 import { View, Text,  TouchableOpacity } from 'react-native'
-import  {memo, useCallback, useEffect, useState} from 'react'
+import  {memo, useCallback, useEffect, useMemo, useState} from 'react'
 import { userActualProgresses } from '../services/fetchingService'
 import Loading from './Loading'
 import useFetchFunction from '../hooks/useFetchFunction'

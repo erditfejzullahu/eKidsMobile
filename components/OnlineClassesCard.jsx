@@ -34,7 +34,7 @@ const OnlineClassesCard = ({classes, userCategories, managePlace = false, profil
         }else{
             setShowLessonInfoModal(true)
         }
-    }, [router, item, setShowLessonInfoModal])
+    }, [router, setShowLessonInfoModal])
 
     const handleCoursePress = useCallback(() => {
         router.push(`onlineClass/${classes.id}`)

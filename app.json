@@ -1,5 +1,6 @@
 {
   "expo": {
+    "jsengine": "hermes",
     "name": "ShokuMesimit",
     "scheme": "e-kids",
     "slug": "e-kidsMobapp",
@@ -17,8 +18,6 @@
     },
     "ios": {
       "supportsTablet": true,
-      "supportsPictureInPicture": true,
-      "supportsBackgroundPlayback": true,
       "bundleIdentifier": "com.anonymous.ekidsMobapp",
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs camera access for video calls.",
@@ -33,8 +32,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "supportsPictureInPicture": true,
-      "supportsBackgroundPlayback": true,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",

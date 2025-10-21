@@ -53,11 +53,9 @@ const lessonContent = () => {
     const onRefresh = useCallback(async () => {
       setRefreshing(true)
       setLessonData(null)
-      setCommentData(null)
       await refetch()
-      await commentRefetch()
       setRefreshing(false)
-    }, [setRefreshing, setLessonData, setCommentData, refetch, commentRefetch, setRefreshing])
+    }, [setRefreshing, setLessonData, refetch, setRefreshing])
 
 
     const handleLessonLike = useCallback(async () => {

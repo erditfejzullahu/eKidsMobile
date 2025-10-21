@@ -1,7 +1,7 @@
-import { useContext, createContext, useState } from "react";
+import {  createContext, useState, use } from "react";
 
 const LessonCommentsContext = createContext();
-export const useLessonCommentsContext = () => useContext(LessonCommentsContext);
+export const useLessonCommentsContext = () => use(LessonCommentsContext);
 
 const LessonCommentsProvider = ({children}) => {
     const [fireUpEndScroll, setFireUpEndScroll] = useState(false)

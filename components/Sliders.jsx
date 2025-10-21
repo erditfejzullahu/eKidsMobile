@@ -77,7 +77,7 @@ const Sliders = ({ posts = [], keyID, dataCategory }) => {
     const handlePress = useCallback((item) => {
         // console.log(item.CategoryID);
         router.push(`/categories/${item.CategoryID}`)
-    }, [router, item])
+    }, [router])
 
   return (
     <FlatList 

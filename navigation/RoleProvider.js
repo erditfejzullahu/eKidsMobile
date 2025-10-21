@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, use, useEffect, useState } from "react";
 import { getRole } from "../services/authService";
 
 const RoleContext = createContext();
 
-export const useRole = () => useContext(RoleContext);
+export const useRole = () => use(RoleContext);
 
 export const RoleProvider = ({children}) => {
     const [role, setRole] = useState(null); // can be Admin, Student, Instructor

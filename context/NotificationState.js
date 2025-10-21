@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, use, useState } from "react";
 
 const NotificationContext = createContext()
-export const useNotificationContext = () => useContext(NotificationContext);
+export const useNotificationContext = () => use(NotificationContext);
 
 const NotificationProvider = ({children}) => {
     const [isOpened, setIsOpened] = useState(false)

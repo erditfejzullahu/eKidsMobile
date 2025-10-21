@@ -157,7 +157,7 @@ const BlogCardInteractions = ({blog, userData, fullBlogSection = false}) => {
         let payload = {
             blogId: blog.id,
             comment_Content: parentId ? replyComment : commentWritten,
-            base64Data: pickedItem.base64 !== "" ? `${base64Data.type}${base64Data.base64}` : null,
+            base64Data: pickedItem.base64 !== "" ? `${pickedItem.type}${pickedItem.base64}` : null,
             parentId: parentId || null,
             userId: user.id
         }
